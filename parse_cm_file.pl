@@ -8,8 +8,9 @@ package Parse_CM_File;
 ###############################################################
 
 use POSIX;
-use lib '/proj/rad1/ska/lib/perl5/local';
-use TomUtil;
+use lib '/proj/sot/ska/lib/site_perl';
+use Ska::Convert qw(date2time);
+
 use Time::JulianDay;
 use Time::DayOfYear;
 use Time::Local;
