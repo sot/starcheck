@@ -636,7 +636,12 @@ sub calc_fid_ang {
     $si =~ tr/a-z/A-Z/;
     $si =~ s/[-_]//;
     
-    ($si2hrma) = ($si =~ /(ACIS|HRCI|HRCS)/);
+    # Handle case of mistakenly commanding ACIS fids for HRC observation by returning
+    # bogus values that will generate a red warning
+    return (0.0, 100.*$fid) if ($si =~ /HRC/ and $fid <= 6);  
+
+    my ($si2hrma) = ($si =~ /(ACIS|HRCI|HRCS)/);
+
     my %offset = (ACIS => 0,
 		  HRCI => 6,
 		  HRCS => 10);
@@ -649,6 +654,9 @@ sub calc_fid_ang {
     my $z_f = -$sim_z_offset * $odb{"ODB_TSC_STEPS"}[0];
     my $x_f = 0;
 
+    if (not $y_s) {
+	print "yagzag $self->{obsid} '$si' '$si2hrma' '$y_s' '$z_s' '$r_h' '$x_f'\n";
+    }
     my $yag = -$y_s / ($r_h - $x_f) * $r2a;
     my $zag = -($z_s + $z_f) / ($r_h - $x_f) * $r2a;
     
