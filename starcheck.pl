@@ -224,7 +224,7 @@ foreach $obsid (@obsid_id) {
     }
 
     $obs{$obsid}->check_star_catalog();
-
+    $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_monitor_commanding(\@bs);
 
     $obs{$obsid}->check_sim_position(@sim_trans);

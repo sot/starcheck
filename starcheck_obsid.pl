@@ -20,6 +20,7 @@ use lib '/proj/rad1/ska/lib/perl5/local';
 use Quat;
 use File::Basename;
 use POSIX qw(floor);
+use FigureOfMerit;
 
 # Constants
 
@@ -752,6 +753,13 @@ sub print_report {
 	$o .= "\\yellow_end\n";
     }
     $o .= "\n";
+    if (exists $self->{figure_of_merit}) {
+	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
+	$o .= "\\red_start " if $bad_FOM;
+	$o .= "Figure of Merit : $self->{figure_of_merit}->{cum_prob}\n";
+	$o .= "\\red_end " if $bad_FOM;
+	$o .= "Stars Expected  : $self->{figure_of_merit}->{expected}\n";
+    }
     return $o;
 }
 

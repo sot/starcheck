@@ -7,6 +7,14 @@ Things to do:
 - Check that the faint mag limit is at least 1.28 more than the star mag
 - Parse SCS107 statement in fidsel history
 
+V4.8	08-Apr-03
+-----------------
+- Add a figure of merit calculator to evaluate the quality (from an
+  acquisition standpoint) of a catalog.  Outputs the log probability of
+  bright star hold and expected number of successful acquisition stars
+  to the star catalog summary.  High risk catalogs (log P(BSH) > -5.2)
+  are flagged in red. 
+
 V4.7	28-Oct-02
 -----------------
 - Add a line in starcheck_obsid.pl to initialize GS_PASS* hash elements to ''.  
