@@ -1,0 +1,79 @@
+#! /bin/sh
+
+# Regression tests for starcheck
+
+# Define the files and directories
+home=$PWD
+mphome=/data/mpcrit1/mplogs
+log=$home/regress_log
+diffs=$home/regress_diffs
+
+# Remove existing log and diffs files
+for file in $log $diffs
+do
+  if [ -w $file ]
+  then
+    echo "rm $file"
+    rm $file
+  fi
+done
+
+# Go through specified loads and run test and release starcheck versions
+for load in \
+    2004/MAR0104/oflsb \
+    2004/MAR0804/oflsc \
+    2004/MAR1504/oflsa \
+    2004/MAR1904/oflsa \
+    2004/MAR2204/oflsb \
+    2004/MAR2904/oflsc 
+do
+  echo ""
+  echo "***** Running starcheck on load $load *****"
+
+  test=$home/regress/test/$load
+  release=$home/regress/release/$load
+
+  # Make sure we have a clean test directory
+  if [ -d $test ]
+  then
+    echo "rm -r $test"
+    rm -r $test
+  fi
+
+  echo "mkdir -p $test"
+  mkdir -p $test
+
+  echo "cd $test"
+  cd $test
+
+  # Run test version
+  #
+  echo "Running: $home/starcheck.pl -dir $mphome/$load"
+  echo "******************** (TEST) $load *******************" >> $log
+  $home/starcheck.pl -dir $mphome/$load 2>&1| tee -a $log 
+
+  # Now run current release version if not already there
+  #
+  if [ ! -r $release/starcheck.txt ]
+  then
+    echo "mkdir -p $release"
+    mkdir -p $release
+
+    echo "cd $release"
+    cd $release
+
+    echo "Running: /proj/sot/ska/perl/starcheck.pl -dir $mphome/$load"
+    echo "**** (RELEASE) $load ****" >> $log
+    /proj/sot/ska/perl/starcheck.pl -dir $mphome/$load 2>&1| tee -a $log 
+  fi  
+
+  # Now compare with release version
+
+  echo "diff $test/starcheck.txt $release/starcheck.txt >> $diffs"
+  echo "********************* $load ********************" >> $diffs
+  diff $test/starcheck.txt $release/starcheck.txt >> $diffs
+
+  cd $home
+done
+
+echo    

@@ -3,6 +3,9 @@ PERL            = $(SKA)/perl
 PERLLIB         = $(SKA)/lib/perl5/local
 
 
+test:
+	run_regress
+
 install:
 	cp starcheck.pl $(PERL)/
 	cp starcheck_obsid.pl $(PERL)/
