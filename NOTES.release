@@ -7,6 +7,10 @@ Things to do:
 - Check that the faint mag limit is at least 1.28 more than the star mag
 - Parse SCS107 statement in fidsel history
 
+V4.14   10-Mar-2004
+-------------------
+- Delete stage1 information from GS_PASS, to de-clutter NOTES column
+
 V4.13   29-Jan-2004
 -------------------
 - Correct parsing for new SAUSAGE guide star summary format.
@@ -19,7 +23,6 @@ V4.13   29-Jan-2004
 - OBSIDS > 50k are designated non-science.
 - Stars will no longer show up as self-spoiled due to roundoff errors.
 - Increased severity of warning for no color (B-V=0.7) guide stars.
-
 
 V4.12   16-Jul-2003
 -------------------
