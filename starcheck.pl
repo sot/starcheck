@@ -10,7 +10,7 @@
 #
 ##*******************************************************************************
 
-$version = "3.41";
+$version = "3.5";
 
 # Set defaults and get command line options
 
@@ -67,8 +67,8 @@ $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 $dot_file   = get_file("$par{dir}/md*:*.dot",     'DOT', 'required');
 $mech_file  = get_file("$par{dir}/TEST_mechcheck.txt", 'mech check');
 $soe_file   = get_file("$par{dir}/ms*.soe", 'SOE');
-$fidsel_file= get_file("$par{dir}/../History/FIDSEL.txt*",'fidsel');    
-$odb_file   = get_file("/proj/sot/ska/ops/SFE/fid_CHARACTERIS_JUL01", 'odb', 'required') if ($fidsel_file);
+$fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
+$odb_file   = get_file("/proj/sot/ska/ops/SFE/fid_CHARACTERIS_JUL01", 'odb', 'required');
 
 $bad_agasc_file = "/proj/sot/ska/ops/SFE/agasc.bad";
 
@@ -114,12 +114,10 @@ foreach $bs (@bs) {
 # Read FIDSEL (fid light) history file and ODB (for fid
 # characteristics) and parse
 
-if ($fidsel_file) {
-    ($error, @fidsel) = Parse_CM_File::fidsel($fidsel_file) ;
-    map { warning("$_\n") } @{$error};
-    %odb = Parse_CM_File::odb($odb_file);
-    Obsid::set_odb(%odb);
-}
+($error, @fidsel) = Parse_CM_File::fidsel($fidsel_file, \@bs) ;
+map { warning("$_\n") } @{$error};
+%odb = Parse_CM_File::odb($odb_file);
+ Obsid::set_odb(%odb);
 
 # Read bad AGASC stars
 
@@ -169,7 +167,7 @@ foreach $obsid (@obsid_id) {
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
     $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file);
-    $obs{$obsid}->set_fids(@fidsel) if ($fidsel_file && $mm_file);
+    $obs{$obsid}->set_fids(@fidsel);
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
 }
 

@@ -13,59 +13,98 @@ use TomUtil;
 use Time::JulianDay;
 use Time::DayOfYear;
 use Time::Local;
+use IO::File;
 
 1;
 
 ###############################################################
 sub fidsel {
 ###############################################################
-    $fidsel = shift;
+    $fidsel_file = shift;	# FIDSEL file name
+    $bs          = shift;	# Reference to backstop array
     my $error = [];
-
 
     my @fs = ();
     foreach (0 .. 14) {
 	$fs[$_] = [];
     }
     
-    unless (open (FIDSEL, $fidsel)) {
-	push @{$error}, "Couldn't open fidsel file $fidsel for reading";
-	return ($error);
-    }
-
-    while (<FIDSEL>) {
-	# Parse lines like:
-	# 2001211.190730558   | AFLCRSET RESET
-	# 2001211.190731558   | AFLC02D1 FID 02 ON
-	if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
-	    my ($yr, $doy, $hr, $min, $sec, $action) = ($1,$2,$3,$4,$5,$6);
-
-	    # Convert to time, and subtract 10 seconds so that fid lights are
-	    # on slightly before end of manuever.  In actual commanding, they
-	    # come on about 1-2 seconds *after*. 
-	    $time = date2time("$yr:$doy:$hr:$min:$sec") - 10;
-
-	    # If command contains RESET, then turn off (i.e. set tstop) any 
-	    # fid light that is on
-	    if ($action =~ /RESET/) {
-		foreach $fid (1 .. 14) {
-		    foreach $fid_interval (@{$fs[$fid]}) {
-			$fid_interval->{tstop} = $time unless ($fid_interval->{tstop});
-		    }
+    my ($actions, $times) = get_fid_actions($fidsel_file, $bs);
+    
+    for ($i = 0; $i <= $#{$times}; $i++) {
+	# If command contains RESET, then turn off (i.e. set tstop) any 
+	# fid light that is on
+	if ($actions->[$i] =~ /RESET/) {
+	    foreach $fid (1 .. 14) {
+		foreach $fid_interval (@{$fs[$fid]}) {
+		    $fid_interval->{tstop} = $times->[$i] unless ($fid_interval->{tstop});
 		}
 	    }
-	    # Otherwise turn fid on by adding a new entry with tstart=time
-	    elsif (($fid) = ($action =~ /FID\s+(\d+)\s+ON/)) {
-		push @{$fs[$fid]}, { tstart => $time };
-	    } else {
-		push @{$error}, "Parse_cm_file::fidsel: WARNING - Could not parse $_";
-	    }
+	}
+	# Otherwise turn fid on by adding a new entry with tstart=time
+	elsif (($fid) = ($actions->[$i] =~ /FID\s+(\d+)\s+ON/)) {
+	    push @{$fs[$fid]}, { tstart => $times->[$i] };
+	} else {
+	    push @{$error}, "Parse_cm_file::fidsel: WARNING - Could not parse $actions->[$i]";
 	}
     }
-    close FIDSEL;
 
     return ($error, @fs);
 }    
+
+###############################################################
+sub get_fid_actions {
+###############################################################
+    my $fs_file = shift;	# Fidsel file name
+    my $bs_arr = shift;		# Backstop array reference
+    my $bs;
+    my @bs_action;
+    my @bs_time;
+    my @fs_action;
+    my @fs_time;
+
+    # First get everything from backstop
+    foreach $bs (@{$bs_arr}) {
+	if ($bs->{cmd} eq 'COMMAND_HW') {
+	    my %params = parse_params($bs->{params});
+	    if ($params{TLMSID} eq 'AFIDP') {
+		my $msid = $params{MSID};
+		push @bs_action, "$msid FID $1 ON" if ($msid =~ /AFLC(\d+)/);
+		push @bs_action, "RESET" if ($msid =~ /AFLCRSET/);
+		push @bs_time, $bs->{time} - 10;  # see comment below about timing
+	    }
+	}
+    }
+
+    # Now get everything from FIDSEL
+    # Parse lines like:
+    # 2001211.190730558   | AFLCRSET RESET
+    # 2001211.190731558   | AFLC02D1 FID 02 ON
+    if ($fs_file && ($fidsel_fh = new IO::File $fs_file, "r")) {
+	while (<$fidsel_fh>) {
+	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
+		my ($yr, $doy, $hr, $min, $sec, $action) = ($1,$2,$3,$4,$5,$6);
+		
+		if ($action =~ /(RESET|FID.+ON)/) {
+		    # Convert to time, and subtract 10 seconds so that fid lights are
+		    # on slightly before end of manuever.  In actual commanding, they
+		    # come on about 1-2 seconds *after*. 
+		    $time = date2time("$yr:$doy:$hr:$min:$sec") - 10;
+		    push @fs_action, $action;
+		    push @fs_time, $time;
+		}
+	    }
+	}
+
+	$fidsel_fh->close();
+    }
+
+    my @ok = grep { $fs_time[$_] < $bs_time[0] } (0 .. $#fs_time);
+    my @action = (@fs_action[@ok], @bs_action);
+    my @time   = (@fs_time[@ok], @bs_time);
+    
+    return (\@action, \@time);
+}
 
 ###############################################################
 sub backstop {
