@@ -28,6 +28,7 @@ use POSIX qw(floor);
 
 # Constants
 
+$VERSION = '$Id$';  # '
 $r2a = 3600. * 180. / 3.14159265;
 $faint_plot_mag = 11.0;
 $alarm = ">> WARNING:";

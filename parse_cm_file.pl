@@ -15,6 +15,8 @@ use Time::DayOfYear;
 use Time::Local;
 use IO::File;
 
+$VERSION = '$Id$';  # '
+
 1;
 
 ###############################################################

@@ -10,7 +10,8 @@
 #
 ##*******************************************************************************
 
-$version = "3.5";
+$VERSION = '$Id$';  # '
+($version) = ($VERSION =~ /starcheck.pl,v\s+(\S+)/);
 
 # Set defaults and get command line options
 
