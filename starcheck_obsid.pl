@@ -308,6 +308,7 @@ sub set_star_catalog {
 	$c->{"GS_MAG$i"} = '---';
 	$c->{"GS_YANG$i"} = 0;
 	$c->{"GS_ZANG$i"} = 0;
+	$c->{"GS_PASS$i"} = '';
     }
 }
 

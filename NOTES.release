@@ -5,6 +5,14 @@ Things to do:
 - Check that the faint mag limit is at least 1.28 more than the star mag
 - Parse SCS107 statement in fidsel history
 
+V4.7	28-Oct-02
+-----------------
+- Add a line in starcheck_obsid.pl to initialize GS_PASS* hash elements to ''.  
+  This is needed for MON stars
+
+- Changed starcheck.pl so that it correctly defines HTML tag for annotated 
+  guide star summary for SAUSAGE/AGASC 1.5.
+
 V4.6	11-Oct-02
 -----------------
 - Added code to read in SAUSAGE indicator of star quality (asterisks in

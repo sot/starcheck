@@ -304,9 +304,10 @@ if ($par{html}) {
     close OUT;
     print STDERR "Wrote HTML report to $STARCHECK.html\n";
 
+    my $guide_summ_start = ($mp_agasc_version eq '1.4') ? 'PROCESSING SOCKET REQUESTS' : '';
     make_annotated_file('', 'starcat.dat.', ' -ra ', $make_stars);
     make_annotated_file('', ' ID=\s+', ', ', $backstop);
-    make_annotated_file('PROCESSING SOCKET REQUESTS', '^\s+ID:\s+', '\S\S', $guide_summ);
+    make_annotated_file($guide_summ_start, '^\s+ID:\s+', '\S\S', $guide_summ);
     make_annotated_file('', '^ ID=', ', ', $or_file);
     make_annotated_file('', ' ID:\s+', '\S\S', $mm_file);
     make_annotated_file('', 'OBSID,ID=', ',', $dot_file);
