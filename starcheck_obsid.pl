@@ -77,7 +77,7 @@ sub set_bad_agasc {
     }
     close BS;
 
-    print STDERR "Read ",(scalar keys %bad_id) ," bad AGASC IDs read from $bad_file\n";
+    print STDERR "Read ",(scalar keys %bad_id) ," bad AGASC IDs from $bad_file\n";
     return 1;
 }
 
@@ -458,9 +458,10 @@ sub check_star_catalog {
 	    # and spoiler is located between star and readout
 	    if ($dz < $col_sep_dist
 		and $dm > $col_sep_mag
-		and ($star->{yag}/$yag) > 1.0) {
-		push @warn,sprintf("$alarm Common Column. [%2d]-[%2d]:" .
-				   "   Z separation: %3d\n",$i,$j,$dz);
+		and ($star->{yag}/$yag) > 1.0 
+                and abs($star->{yag}) < 2500) {
+		push @warn,sprintf("$alarm Common Column. [%2d] - %10d " .
+				   "at Y,Z,Mag: %5d %5d %5.2f\n",$i,$star->{id},$star->{yag},$star->{zag},$star->{mag});
 	    }
 	}
 
