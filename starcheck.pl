@@ -207,6 +207,8 @@ foreach $obsid (@obsid_id) {
 
     $obs{$obsid}->check_star_catalog();
 
+    $obs{$obsid}->check_monitor_commanding(\@bs);
+
     $obs{$obsid}->check_sim_position(@sim_trans);
 
     # Make sure there is only one star catalog per obsid
@@ -461,7 +463,7 @@ sub read_guide_summary {
 
     while (<GUIDE_SUMM>) {
 	# Look for an obsid, ra, dec, or roll
-	if (/\s+ID:\s+(.+)00/) {
+	if (/\s+ID:\s+(.+)\d\d/) {
 	    ($obsid = $1) =~ s/^0*//;
 	    $first = 0;
 	}

@@ -6,3 +6,6 @@ install:
 	cp starcheck.pl $(PERL)/
 	cp starcheck_obsid.pl $(PERL)/
 	cp parse_cm_file.pl $(PERL)/
+
+clean:
+	rm starcheck.pl starcheck_obsid.pl parse_cm_file.pl

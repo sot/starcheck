@@ -24,6 +24,7 @@ package Obsid;
 use lib '/proj/rad1/ska/lib/perl5/local';
 use Quat;
 use File::Basename;
+use POSIX qw(floor);
 
 # Constants
 
@@ -472,6 +473,56 @@ sub check_star_catalog {
 }
 
 ##*********************************************************************************************
+sub check_monitor_commanding {
+##*********************************************************************************************
+    my $self = shift;
+    my $backstop = shift;	# Reference to array of backstop commands
+    my $time_tol = 10;		# Commands must be within $time_tol of expectation
+    my $c;
+    my $bs;
+    my $cmd;
+
+    # Check for existence of a star catalog
+    return unless ($c = find_command($self, "MP_STARCAT"));
+    
+    # See if there are any monitor stars.  Return if not.
+    my @mon_stars = grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
+    return unless (@mon_stars);
+
+    # Find the associated maneuver command for this obsid.  Need this to get the
+    # exact time of the end of maneuver
+    unless ($manv = find_command($self, "MP_TARGQUAT", -1)) {
+	push @{$self->{warn}}, sprintf("$alarm Cannot find maneuver for checking monitor commanding\n");
+	return;
+    }
+
+    # Now check in backstop commands for :
+    #  Dither is disabled (AODSDITH) 1 min prior to the end of the maneuver (EOM)
+    #    to the target attitude.
+    #  The OFP Aspect Camera Process is restarted (AOACRSET) 3 minutes after EOM.
+    #  Dither is enabled (AOENDITH) 5 min after EOM
+
+    $t_manv = $manv->{tstop};
+    my %dt = (AODSDITH => -60, AOACRSET => 180, AOENDITH => 300);
+    my %cnt = map { $_ => 0 } keys %dt;
+    foreach $bs (grep { $_->{cmd} eq 'COMMAND_SW' } @{$backstop}) {
+	my %param = Parse_CM_File::parse_params($bs->{params});
+	next unless ($param{TLMSID} =~ /^AO/);
+	foreach $cmd (keys %dt) {
+	    $cnt{$cmd}++ if ($param{TLMSID} eq $cmd and
+			     abs($bs->{time} - ($t_manv+$dt{$cmd})) < $time_tol);
+	}
+    }
+
+    # Add warning messages unless exactly one of each command was found at the right time
+    foreach $cmd (qw (AODSDITH AOACRSET AOENDITH)) {
+	next if ($cnt{$cmd} == 1);
+	$cnt{$cmd} = 'no' if ($cnt{$cmd} == 0);
+	push @{$self->{warn}}, "$alarm Found $cnt{$cmd} $cmd commands near " . time2date($t_manv+$dt{$cmd}) . "\n";
+    }
+}
+
+##*********************************************************************************************
 sub check_fids {
 ##*********************************************************************************************
     my $self = shift;
@@ -863,4 +914,16 @@ sub sym_size {
     return ( (0.5 - 3.0) * ($mag - 6.0) / (12.0 - 6.0) + 2.5);
 }
 
+###################################################################################
+sub time2date {
+###################################################################################
+# Date format:  1999:260:03:30:01.542
+    my $time = shift;
+    my $t1998 = @_ ? 0.0 : 883612736.816; # 2nd argument implies Unix time not CXC time
+    my $floor_time = floor($time+$t1998);
+    ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($floor_time);
+
+    return sprintf ("%04d:%03d:%02d:%02d:%06.3f",
+		    $year+1900, $yday+1, $hour, $min, $sec + ($time+$t1998-$floor_time));
+}
 
