@@ -7,6 +7,11 @@ Things to do:
 - Check that the faint mag limit is at least 1.28 more than the star mag
 - Parse SCS107 statement in fidsel history
 
+V4.12   16-Jul-2003
+-------------------
+- Change set_bad_agasc so that it requires star ID to be first numeric
+  non-white space on line.  (from /\s*(\d+)/  to /^ \s* (\d+)/x).
+
 V4.10   06-Jun-2003
 -------------------
 - Track dither state in Chex (Chandra expected state file).  Dither state is

@@ -82,7 +82,7 @@ sub set_bad_agasc {
     my $bad_file = shift;
     open BS, $bad_file or return 0;
     while (<BS>) {
-	$bad_id{$1} = 1 if (/\s*(\d+)/);
+	$bad_id{$1} = 1 if (/^ \s* (\d+)/x);
     }
     close BS;
 
