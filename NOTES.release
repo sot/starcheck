@@ -1,0 +1,204 @@
+Things to do:
+
+- Check for ACIS-I-6 bad pixel problem
+- Make sure DOT was updated by automatic post-OFLS scripts
+- Check that the faint mag limit is at least 1.28 more than the star mag
+- Parse SCS107 statement in fidsel history
+
+V4.1	26-Mar-02
+-----------------
+- Added ability to read maneuver error file
+- Catalog limit checking uses a maneuver error of $ACA_MANERR_PAD + MaxErrYZ 
+  (from man. error file).  $ACA_MANERR_PAD set to 20 arcsec.  If maneuver 
+  error file is unavailable, uses old formula of (45 + angle/2) arcsec.
+- Added check that search box size is less than slew error
+- Changed default slew error (if no information about slew angle or maneuver
+  error is available) from 135 to 120
+- Removed search box overlap warning; superseded by spoiler star warning
+- Load ASCDS environment internally if not already loaded, so it is no longer
+  necessary to be in this environment to run starcheck.
+- Removed extraneous newline from makestars file
+
+Testing:
+- Ran on APR0102, MAR2502, and MAR3002 loads.  Found only expected differences.
+  MAR2502 was run without a maneuver error file to confirm backwards
+  compatibility.
+- Results in directory /proj/sot/ska/dev/starcheck/Test/V4.1.
+
+V4.0	01-Mar-02
+-----------------
+Change DOT glob from md*:*.dot to md*.dot to accomodate change in file naming
+convention.  There is a (small?) subset of old loads for which the new glob
+will fail due to multiple matches, but this is better than excluding the
+old loads with the : separator.
+
+V3.9	01-Feb-02
+-----------------
+Minor bug fixes related to FEB0702a load, which has commanding for two catalogs
+that is not in the DOT or maneuver summary files:
+
+- Check that maneuver summary data are available before checking for proper
+  fid light configuration.  Man. summary data indicate the time when fid lights
+  will be acquired
+
+- Check that an obsid is numeric before trying to format it as such in the
+  make_stars link
+
+V3.8	24-Jan-02
+-----------------
+- Change magnitude checking to have a yellow limits for mag > 10.2 and red limit
+  for mag > 10.7
+- Check star class, color, magnitude error, and position error.  Issue yellow warnings
+  if color=0.7 or 1.5 (indicating unknown or unreliable colors) or if mag_err > 99
+  or if pos_err > 99.  Issue red warning if class != 0. 
+- Do not check mag limits, search spoiler, or column spoilers for monitor boxes
+
+V3.7   17-Jan-02
+-----------------
+- Added CVS version strings to code
+
+V3.6   17-Jan-02
+----------------
+- Add new check (check_monitor_commanding) to verify that the workaround 
+  FOT request commanding for monitor windows is done properly
+
+V3.5   27-Sep-01
+----------------
+- Updated FID checking so that it does not *require* the History file, although
+  it is used if available.  The FIDSEL commands from Backstop are read in, and
+  take precedence over any information in the History file.
+
+- Reverted location of History files to $par{dir}/History, per spec from P. Allen
+
+V3.41  18-Sep-01
+----------------
+- Changed file location for History FIDSEL file from $par{dir}/History to
+  $par{dir}/../History
+
+V3.4   6-Sep-01
+-----------------
+- Fixed targ quat warning
+
+- Check that correct fids are commanded using the FIDSEL history file
+
+- Fixed bug in which dither was always set to 20 arcsec in star catalog check
+
+- Added routine in parse_cm_files.pl to read FIDSEL history file
+
+- Removed warning when star/fid is in GUIDE star summary but not in catalog
+
+- Added a check that dither frequency is non-zero before attempting to divide
+
+V3.33	3-Jul-01
+----------------
+- Change the pattern matching for the mm*sum file to be mps/mm*.sum
+  instead of */mm*.sum (per request of J. Grimes)
+
+V3.31, V3.32  17-May-01
+------------
+- Check AGASC IDs in the starcats against a list of "bad" AGASC IDs
+
+  V3.31 is RAC's version.  V3.32 is from TLA, with more checks
+  and a processing warning if the bad stars file is not found
+
+V3.3  6-Feb-01
+---
+- Checks for SIM position mismatch (OR versus backstop)
+
+- Writes make_stars commands to make_stars.txt.html, and inserts
+  appropriate links to file
+
+- Don't update Chex history file if Aldcroft is running it
+
+- Print a warning if there is no star catalog
+
+- Check for fid spoilers (in starcheck_obsid.pl)
+
+- Read SIM focus and tsc continuity statements in TEST_mechcheck
+
+V3.2  4-Oct-00
+----
+- Change Chex so that the predicted state file is written in reverse
+  chronological order.
+
+- Changed get() routine so it only reads the state file up to the
+  time necessary. This greatly speeds up state queries at the current 
+  or recent times
+
+- Added some logic to check if an existing state array in memory is
+  adequate to determine the state at the match time.  If not, the
+  state file is re-read
+
+V3.1
+----
+- Fix problem in matching MP_TARGQUAT cmd from backstop with MAN information
+
+- Change warning for "star in guide star summary but not backstop" from
+  red to yellow
+
+- Fix bug in Chex which was not tracking obsid correctly
+
+- Added quaternion to info parsed in Parse_CM_File::MM, and got rid of
+  special "INITIAL" obsid
+
+V3.0
+----
+- Reads optional CM files SOE and mech check
+
+- Put some common functions into TomUtil perl library
+
+- Fixed error in specification of DOT glob
+
+- Generates Chandra Expected state information using Chex module,
+  unless disabled with -nochex flag.  State information is kept
+  in an RDB file, to be accessed with Chex module.
+
+- Moved code to read backstop file into parse_cm_file.pl
+
+- Removed SIMFOCUS dot command, which was producing errors even
+  though it was ignored
+
+- Added check in starcheck_obsid which looks for a discrepancy
+  between quaternion from MAN summary file and backstop
+
+- Moved radec2yagzag and mult routines from starcheck_obsid.pl to Quat.pm
+
+- Added routines SOE, backstop, and mechcheck to parse_cm_file.pl
+
+V2.0
+-----
+- Reads OR, DOT, and Maneuver summary files and uses this
+  information in report.  DOT is used only to properly assign an 
+  obsid to each of the commands and maneuvers.  All the detailed 
+  star checking uses the backstop input.  
+
+- For each obsid, a link to the corresponding point in the
+  backstop, OR, DOT, Maneuver summary, and guide star summary
+  files is provided
+
+- Field stars from AGASC are correlated with star catalog entries
+  to identify stars which are not in the guide summary file
+
+- Maneuver summary data used to derive maneuver angle error, which is
+  used in star checking (e.g. possible search spoiler stars)
+
+- Changed "Nearby star" to "Search spoiler" which occurs when any
+  field star is within the search box + search error and is within 1.0 mags
+
+- Changed common column so it only flags cases with spoiler star
+  more than 4.5 mags brighter than tracked star (as in star selection)
+
+- Added "yellow" limit errors, which are not likely to cause a problem
+  (but should still be noted)
+
+- Added dither and maneuver information to report
+
+- Fixed CCD boundaries to match values from RAC
+
+- Added version number and identification in report
+
+- Changed code so the PERL5LIB env variable should not be needed
+
+- Changed default output root from "STARCHECK" to "starcheck", so
+  the -out option should not normally be needed for SOT MP
+
