@@ -284,13 +284,13 @@ sub MM {
 	$start_stop = !$start_stop if (/(INITIAL|INTERMEDIATE|FINAL) ATTITUDE/);
         $initial_obsid = $1 if (/INITIAL ID:\s+(\S+)\S\S/);
         $obsid = $1 if (/FINAL ID:\s+(\S+)\S\S/);
-	$start_date = $1 if ($start_stop && /TIME\(GMT\):\s+(\S+)/);
-	$stop_date  = $1 if (! $start_stop && /TIME\(GMT\):\s+(\S+)/);
-	$ra         = $1 if (/RA\(deg\):\s+(\S+)/);
-	$dec        = $1 if (/DEC\(deg\):\s+(\S+)/);
-	$roll       = $1 if (/ROLL\(deg\):\s+(\S+)/);
-	$dur        = $1 if (/Duration\(sec\):\s+(\S+)/);
-	$angle      = $1 if (/Maneuver Angle\(deg\):\s+(\S+)/);
+	$start_date = $1 if ($start_stop && /TIME\s*\(GMT\):\s+(\S+)/);
+	$stop_date  = $1 if (! $start_stop && /TIME\s*\(GMT\):\s+(\S+)/);
+	$ra         = $1 if (/RA\s*\(deg\):\s+(\S+)/);
+	$dec        = $1 if (/DEC\s*\(deg\):\s+(\S+)/);
+	$roll       = $1 if (/ROLL\s*\(deg\):\s+(\S+)/);
+	$dur        = $1 if (/Duration\s*\(sec\):\s+(\S+)/);
+	$angle      = $1 if (/Maneuver Angle\s*\(deg\):\s+(\S+)/);
 	@quat       = ($1,$2,$3,$4) if (/Quaternion:\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/);
 
 	if (/Profile Parameters/) { # Effective end of maneuver statement
