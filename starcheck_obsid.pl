@@ -16,6 +16,7 @@ package Obsid;
 
 # Library dependencies
 
+use warnings;
 use lib '/proj/sot/ska/lib/site_perl';
 use Quat;
 use swapACACoords;
@@ -497,7 +498,7 @@ sub check_star_catalog {
 
     # Match positions of fids in star catalog with expected, and verify a one to one 
     # correspondance between FIDSEL command and star catalog
-    check_fids($self, $c, \@warn) if (exists $self->{fidsel});
+    check_fids($self, $c, \@warn);
 
     foreach $i (1..16) {
 	($sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
@@ -719,7 +720,6 @@ sub check_fids {
     my $warn = shift;		# Array ref to warnings for this obsid
 
     my (@fid_ok, @fidsel_ok);
-    my $n = 0;
     my ($i, $i_fid);
     
     # If no star cat fids and no commanded fids, then return
@@ -735,7 +735,11 @@ sub check_fids {
     # Calculate yang and zang for each commanded fid, then cross-correlate with
     # all commanded fids.
     foreach $fid (@{$self->{fidsel}}) {
-	my ($yag, $zag) = calc_fid_ang($fid, $self->{SI}, $self->{SIM_OFFSET_Z});
+	my ($yag, $zag, $error) = calc_fid_ang($fid, $self->{SI}, $self->{SIM_OFFSET_Z});
+	if ($error) {
+	    push @{$warn}, "$alarm $error\n";
+	    next;
+	}
 	$fidsel_ok = 0;
 
 	# Cross-correlate with all star cat fids
@@ -752,7 +756,6 @@ sub check_fids {
 
 	push @{$warn}, "$alarm Fid $self->{SI} $fid is turned on with FIDSEL but not found in star catalog\n"
 	    unless ($fidsel_ok);
-	$n++;
     }
     
     for $i_fid (0 .. $#fid_ok) {
@@ -781,21 +784,25 @@ sub calc_fid_ang {
     $si =~ tr/a-z/A-Z/;
     $si =~ s/[-_]//;
     
-    # Handle case of mistakenly commanding ACIS fids for HRC observation by returning
-    # bogus values that will generate a red warning
-    return (0.0, 100.*$fid) if ($si =~ /HRC/ and $fid <= 6);  
-
     my ($si2hrma) = ($si =~ /(ACIS|HRCI|HRCS)/);
 
-    my %offset = (ACIS => 0,
-		  HRCI => 6,
-		  HRCS => 10);
-    my $fid_id = $fid - $offset{$si2hrma};
+    # Define allowed range for $fid for each detector
+    my %range = (ACIS => [1,6],
+		 HRCI => [7,10],
+		 HRCS => [11,14]);
+
+    # Check that the fid light (from fidsel history) is appropriate for the detector
+    unless ($fid >= $range{$si2hrma}[0] and $fid <= $range{$si2hrma}[1]) {
+	return (undef, undef, "Commanded fid light $fid does not correspond to detector $si2hrma");
+    }
+    
+    # Generate index into ODB tables.  This goes from 0..5 (ACIS) or 0..3 (HRC)
+    my $fid_id = $fid - $range{$si2hrma}[0]; 
     
     # Calculate fid angles using formula in OFLS
-    my $y_s = $odb{"ODB_${si}_FIDPOS"}[($fid_id-1)*2];
-    my $z_s = $odb{"ODB_${si}_FIDPOS"}[($fid_id-1)*2+1];
-    my $r_h = $odb{"ODB_${si2hrma}_TO_HRMA"}[$fid_id-1];
+    my $y_s = $odb{"ODB_${si}_FIDPOS"}[$fid_id*2];
+    my $z_s = $odb{"ODB_${si}_FIDPOS"}[$fid_id*2+1];
+    my $r_h = $odb{"ODB_${si2hrma}_TO_HRMA"}[$fid_id];
     my $z_f = -$sim_z_offset * $odb{"ODB_TSC_STEPS"}[0];
     my $x_f = 0;
 
