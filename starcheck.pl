@@ -66,7 +66,7 @@ $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 $dot_file   = get_file("$par{dir}/md*:*.dot",     'DOT', 'required');
 $mech_file  = get_file("$par{dir}/TEST_mechcheck.txt", 'mech check');
 $soe_file   = get_file("$par{dir}/ms*.soe", 'SOE');
-$bad_agasc_file = "/proj/gads6/ops/SFE/agasc.bad";
+$bad_agasc_file = "/proj/sot/ska/ops/SFE/agasc.bad";
 
 # If making plots, check for mp_get_agasc, and make a plot directory if required
 

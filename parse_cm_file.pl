@@ -242,7 +242,7 @@ sub mechcheck {
 sub SOE {
 ##***************************************************************************
     $soe_file = shift;
-# Taken from RAC's code /proj/gads6/ops/soe/soeA.pl
+# Taken from RAC's code /proj/sot/ska/ops/soe/soeA.pl
 
 # read the SOE record formats into the hashes of lists $fld and $len
     while (<DATA>) {
