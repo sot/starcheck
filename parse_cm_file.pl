@@ -108,6 +108,48 @@ sub get_fid_actions {
     return (\@action, \@time);
 }
 
+#AXMAN Run at 03/25/2002 08:57:09  Version of Mar-12-2002
+#
+#Man File = C:\wsdavis\CXOFiles\MPS_Sched_Chk\APR0102A\md091_0405.dot.man
+#Calib File 1 = C:\wsdavis\CXOFiles\ManError\GYRO_OAC.mat
+#Calib File 2 = C:\wsdavis\CXOFiles\ManError\GYROTotalCal.mat
+#SBoxMargin =    20.00 asec, 3-sig init roll uncer =    30.00 asec
+# obsid MaxErrYZ Seg start_time        stop_time         ssss    angle    X-axis    Y-axis    Z-axis     initQ1      initQ2      initQ3      initQ4       finalQ1     finalQ2     finalQ3     finalQ4     iru-X    iru-Y    iru-Z     aber-X   aber-Y   aber-Z  del-Y    del-Z    delYZ   iruadjYZ totadjYZ syserr.Y syserr.Z ranerr.Y ranerr.Z
+#  2193    59.43  0  2002:091:04:50:16 2002:091:05:09:04 ----   35.531 -0.425054 -0.486987  0.763003   0.85686666 -0.10606580 -0.34000709  0.37272612   0.69244839 -0.31178304 -0.37809776  0.52947960   -21.34     8.07    20.98     4.11     5.37    -8.15     0.00     0.00     0.00    22.48    29.25     2.70    29.13    12.15    10.31
+#  1664    87.62  0  2002:091:10:59:56 2002:091:11:27:23 ----   74.053  0.113094 -0.877861  0.465370   0.69244839 -0.31178304 -0.37809776  0.52947960   0.30163013 -0.74861636 -0.49829514  0.31669350   -30.97    23.87    28.00     5.67    16.14   -15.44     0.00    -0.00     0.00    36.79    44.12     7.73    43.44    15.59    24.18
+#total number of maneuvers = 27
+#----      5
+#---+      1
+###############################################################
+sub man_err {
+###############################################################
+    my $man_err = shift;
+    my $in_man = 0;
+    my @me = ();
+    open (MANERR, $man_err)
+	or die "Couldn't open maneuver error file $man_err for reading\n";
+    while (<MANERR>) {
+	last if (/total number/i);
+	if ($in_man) {
+	    my @vals = split;
+	    if ($#vals != $#cols) {
+		warn "man_err: ERROR - mismatch between column names and data values\n";
+		return ();	# return nothing
+	    }
+	    my %data = map { $cols[$_], $vals[$_] } (0 .. $#cols);
+	    $data{Seg} = 1 if ($data{Seg} == 0); # Make it easier later on to match the segment number
+				# with the MP_TARGQUAT commands
+	    push @me, \%data;
+	}
+	if (/^\s*obsid\s+maxerryz\s+seg/i) {
+	    @cols = split;
+	    $in_man = 1;
+	}
+    }
+
+    return @me;
+}
+
 ###############################################################
 sub backstop {
 ###############################################################

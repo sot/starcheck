@@ -29,6 +29,7 @@ use POSIX qw(floor);
 # Constants
 
 $VERSION = '$Id$';  # '
+$ACA_MANERR_PAD = 20;		# Maneuver error pad for ACA effects (arcsec)
 $r2a = 3600. * 180. / 3.14159265;
 $faint_plot_mag = 11.0;
 $alarm = ">> WARNING:";
@@ -172,6 +173,9 @@ sub set_maneuver {
 		    $c->{$_} = $m->{$_};
 		}
 
+		# Set the default maneuver error
+		$c->{man_err} = (exists $c->{angle}) ? 45 + $c->{angle}/2. : 120;
+
 		# Now check for consistency between quaternion from MANUEVER summary
 		# file and the quat from backstop (MP_TARGQUAT cmd)
 
@@ -195,6 +199,37 @@ sub set_maneuver {
 	}
 	push @{$self->{yellow_warn}}, sprintf("$alarm Did not find match in MAN summary for MP_TARGQUAT at $c->{date}\n")
 	    unless ($found);
+    }
+}
+
+sub set_manerr {
+#
+# Set the maneuver error for each MP_TARGQUAT command within the obsid
+# using the more accurate values from Bill Davis' code
+#
+    my $self = shift;
+    my @manerr = @_;
+    my $n = 1;
+    while ($c = find_command($self, "MP_TARGQUAT", $n)) {
+
+	foreach $me (@manerr) {
+	    # There should be a one-to-one mapping between maneuver segments in the maneuver
+	    # error file and those in the obsid records.  First, find what *should* be the
+	    # match.  Then check quaternions to make sure
+
+	    if ($self->{obsid} eq $me->{obsid} && $n == $me->{Seg}) {
+		if (   abs($me->{finalQ1} - $c->{Q1}) < 1e-7
+		    && abs($me->{finalQ2} - $c->{Q2}) < 1e-7
+		    && abs($me->{finalQ3} - $c->{Q3}) < 1e-7)
+		{
+		    $c->{man_err} = $me->{MaxErrYZ} + $ACA_MANERR_PAD;
+		    $c->{man_err_data} = $me; # Save the whole record just in case
+		} else {
+		    push @{$self->{yellow_warn}}, sprintf("$alarm Mismatch in target quaternion ($c->{date}) and maneuver error file\n");
+		}
+	    }
+	}
+	$n++;
     }
 }
 
@@ -336,9 +371,9 @@ sub check_star_catalog {
 	$dither = 20.0;
     }
 
-    # Set slew error (arcsec) for this obsid, or 135 if not available
+    # Set slew error (arcsec) for this obsid, or 120 if not available
     my $targquat = find_command($self, "MP_TARGQUAT", -1);
-    my $slew_err = ($targquat && $targquat->{angle}) ? 45 + $targquat->{angle}/2. : 135.0;
+    my $slew_err = $targquat->{man_err} || 120;
 
     my @warn = ();
     my @yellow_warn = ();
@@ -411,35 +446,14 @@ sub check_star_catalog {
 	    }
 	}
 
-	# Search box size
-	if ($type ne 'MON' and
-	    $c->{"HALFW$i"} > 120) {
+	# Search box too large
+	if ($type ne 'MON' and $c->{"HALFW$i"} > 120) {
 	    push @warn, sprintf "$alarm Search Box Too Large. [%2d]\n",$i;
 	}
 
-	# Search box overlap
-	foreach $j ($i+1 .. 16) {
-	    next if ($c->{"TYPE$j"} eq 'NUL');
-	    $ymin = ($c->{"YMIN$i"} > $c->{"YMIN$j"})? $c->{"YMIN$i"} : $c->{"YMIN$j"};
-	    $ymax = ($c->{"YMAX$i"} < $c->{"YMAX$j"})? $c->{"YMAX$i"} : $c->{"YMAX$j"};
-	    $zmin = ($c->{"ZMIN$i"} > $c->{"ZMIN$j"})? $c->{"ZMIN$i"} : $c->{"ZMIN$j"};
-	    $zmax = ($c->{"ZMAX$i"} < $c->{"ZMAX$j"})? $c->{"ZMAX$i"} : $c->{"ZMAX$j"};
-	    $mmin = ($c->{"MINMAG$i"} > $c->{"MINMAG$j"})? $c->{"MINMAG$i"} : $c->{"MINMAG$j"};
-	    $mmax = ($c->{"MAXMAG$i"} < $c->{"MAXMAG$j"})? $c->{"MAXMAG$i"} : $c->{"MAXMAG$j"};
-	    $yol = $ymax - $ymin;
-	    $zol = $zmax - $zmin;
-	    $mol = $mmax - $mmin;
-	    if (($yol > 0) and ($zol > 0)) {
-		my $warn = sprintf("$alarm Search Box Overlap. [%2d]-[%2d]: " .
-				   "Y,Z,Mag Overlaps: %5.1f %5.1f %5.3f\n",$i,$j,$yol,$zol,$mol);
-		$dy = abs($yag-$c->{"YANG$j"});
-		$dz = abs($zag-$c->{"ZANG$j"});
-		if ($dz < $halfw + $search_err and $dy < $halfw + $search_err) {
-		    push @warn, $warn;
-		} else {
-		    push @yellow_warn, $warn;
-		}
-	    }
+	# ACQ/BOTH search box smaller than slew error
+	if (($type =~ /BOT|ACQ/) and $c->{"HALFW$i"} < $slew_err) {
+	    push @warn, sprintf "$alarm Search Box smaller than slew error [%2d]\n",$i;
 	}
 
 	# Spoiler star (for search) and common column
@@ -672,8 +686,8 @@ sub print_report {
 	    $o .= sprintf "MP_TARGQUAT at $c->{date} (VCDU count = $c->{vcdu})\n";
 	    $o .= sprintf "  Q1,Q2,Q3,Q4: %.8f  %.8f  %.8f  %.8f\n", $c->{Q1}, $c->{Q2}, $c->{Q3}, $c->{Q4};
 	    $o .= sprintf("  MANVR: Angle= %6.2f deg  Duration= %.0f sec  Slew err= %.1f arcsec\n",
-			  $c->{angle}, $c->{dur}, 45+$c->{angle}/2.)
-		if (exists $c->{angle} and exists $c->{dur});
+			  $c->{angle}, $c->{dur}, $c->{man_err})
+		if (exists $c->{man_err} and exists $c->{dur} and exists $c->{angle});
 	    $o .= "\n";
 	}
     }

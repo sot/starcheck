@@ -54,6 +54,8 @@ use Time::DayOfYear;
 use Time::Local;
 use PoorTextFormat;
 use TomUtil;
+use lib '/proj/axaf/simul/lib/perl';
+use GrabEnv qw( grabenv );
 
 $dir  = dirname($PROGRAM_NAME);
 require "$dir/starcheck_obsid.pl";
@@ -70,14 +72,19 @@ $mech_file  = get_file("$par{dir}/TEST_mechcheck.txt", 'mech check');
 $soe_file   = get_file("$par{dir}/ms*.soe", 'SOE');
 $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 $odb_file   = get_file("/proj/sot/ska/ops/SFE/fid_CHARACTERIS_JUL01", 'odb', 'required');
+$manerr_file= get_file("md*dot_man.txt",'manerr');    
 
 $bad_agasc_file = "/proj/sot/ska/ops/SFE/agasc.bad";
 
 # If making plots, check for mp_get_agasc, and make a plot directory if required
 
 if ($par{plot}) {
-    die "Cannot find mp_get_agasc to make plots.  Are you in the CXCDS environment?\n"
-	if (`which mp_get_agasc` =~ /no mp_get_agasc/);
+    if (`which mp_get_agasc` =~ /no mp_get_agasc/) {
+	%ENV = grabenv("tcsh", "source /home/ascds/.ascrc -r release");
+	if (`which mp_get_agasc` =~ /no mp_get_agasc/) {
+	    die "Cannot find mp_get_agasc to make plots.  Are you in the CXCDS environment?\n";
+	}
+    }
 }
 
 unless (-e $STARCHECK) {
@@ -119,6 +126,10 @@ foreach $bs (@bs) {
 map { warning("$_\n") } @{$error};
 %odb = Parse_CM_File::odb($odb_file);
  Obsid::set_odb(%odb);
+
+# Read Maneuver error file containing more accurate maneuver errors
+
+@manerr = Parse_CM_File::man_err($manerr_file) if ($manerr_file);
 
 # Read bad AGASC stars
 
@@ -167,6 +178,7 @@ foreach $obsid (@obsid_id) {
     $obs{$obsid}->set_target();
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
+    $obs{$obsid}->set_manerr(@manerr) if (@manerr);
     $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file);
     $obs{$obsid}->set_fids(@fidsel);
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
@@ -269,7 +281,7 @@ open (OUT, "> $make_stars") or die "Couldn't open $make_stars for writing\n";
 foreach $obsid (@obsid_id) {
     my $c = $obs{$obsid};
     my $format = ($c->{obsid} =~ /^[0-9]+$/) ? "%05d" : "%s";
-    printf OUT "../make_stars.pl -starcat starcat.dat.$format\n", $c->{obsid};
+    printf OUT "../make_stars.pl -starcat starcat.dat.$format", $c->{obsid};
     print OUT " -ra $c->{ra} -dec $c->{dec} -roll $c->{roll} ";
     print OUT "-sim_z $c->{SIM_OFFSET_Z} " if ($c->{SIM_OFFSET_Z});
     print OUT "-si $c->{SI} " if ($c->{SI});
