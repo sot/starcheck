@@ -207,11 +207,13 @@ sub set_fids {
 ##################################################################################
     my $self = shift;
     my @fidsel = @_;
+    my $tstart;
     $self->{fidsel} = [];  # Init to know that fids have been set and should be checked
 
+    # Return unless there is a manuever command and associated tstop value (from manv summ)
+
     return unless ($c = find_command($self, "MP_TARGQUAT", -1));
-    
-    my $tstart = $c->{tstop};	# "Start" of observation = end of manuever
+    return unless ($tstart = $c->{tstop});	# "Start" of observation = end of manuever
     
     # Loop through fidsel commands for each fid light and find any intervals
     # where fid is on at time $tstart

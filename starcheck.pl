@@ -268,7 +268,8 @@ $make_stars = "$STARCHECK/make_stars.txt";
 open (OUT, "> $make_stars") or die "Couldn't open $make_stars for writing\n";
 foreach $obsid (@obsid_id) {
     my $c = $obs{$obsid};
-    printf OUT "../make_stars.pl -starcat starcat.dat.%05d", $c->{obsid};
+    my $format = ($c->{obsid} =~ /^[0-9]+$/) ? "%05d" : "%s";
+    printf OUT "../make_stars.pl -starcat starcat.dat.$format\n", $c->{obsid};
     print OUT " -ra $c->{ra} -dec $c->{dec} -roll $c->{roll} ";
     print OUT "-sim_z $c->{SIM_OFFSET_Z} " if ($c->{SIM_OFFSET_Z});
     print OUT "-si $c->{SI} " if ($c->{SI});
