@@ -67,7 +67,7 @@ $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 $dot_file   = get_file("$par{dir}/md*:*.dot",     'DOT', 'required');
 $mech_file  = get_file("$par{dir}/TEST_mechcheck.txt", 'mech check');
 $soe_file   = get_file("$par{dir}/ms*.soe", 'SOE');
-$fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
+$fidsel_file= get_file("$par{dir}/../History/FIDSEL.txt*",'fidsel');    
 $odb_file   = get_file("/proj/sot/ska/ops/SFE/fid_CHARACTERIS_JUL01", 'odb', 'required') if ($fidsel_file);
 
 $bad_agasc_file = "/proj/sot/ska/ops/SFE/agasc.bad";
