@@ -7,6 +7,31 @@ Things to do:
 - Check that the faint mag limit is at least 1.28 more than the star mag
 - Parse SCS107 statement in fidsel history
 
+V4.10   06-Jun-2003
+-------------------
+- Track dither state in Chex (Chandra expected state file).  Dither state is
+  determined using both backstop and the OR list, to protect against incorrect
+  commanding in backstop.
+
+- Added checking in starcheck for dither configuration by comparing OR value of
+  dither to commanding from backstop
+
+- Increase box size for identifying star to 1.5 arcsec halfwidth (producing
+  spurious red warnings)
+
+- Remove monitor commanding check for non-science observations (producing
+  many spurious red warnings)
+
+- Cleaned up Chex.pm a bit:
+  - Use /proj/sot/ska/lib/site_perl
+  - Use POSIX::tmpnam
+  - Init RDB file from internal state vars, not from existing file
+  - Make Chex still run without an existing state RDB file
+
+V4.9    08-Apr-2003
+-----------------
+- Brett added acquisition figure of merit code and output
+
 V4.8	08-Apr-03
 -----------------
 - Add a figure of merit calculator to evaluate the quality (from an

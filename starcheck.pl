@@ -1,4 +1,4 @@
-#!/proj/axaf/bin/perl  -w
+#!/usr/bin/env /proj/axaf/bin/perlwrap
 
 ##*******************************************************************************
 #
@@ -12,14 +12,30 @@ $VERSION = '$Id$';  # '
 
 # Set defaults and get command line options
 
+use warnings;
 use Getopt::Long;
-use Data::Dumper;
 use IO::File;
-$par{dir}   = '.';
-$par{plot}  = 1;
-$par{html}  = 1;
-$par{text}  = 1;
-$par{chex}  =  undef;  #  '/proj/sot/ska/ops/Chex/pred_state.rdb' for MP'ers
+
+use English;
+use File::Basename;
+
+use lib '/proj/sot/ska/lib/site_perl';
+# use lib '/proj/sot/ska/dev/Chex';   # For testing Chex
+
+use Time::JulianDay;
+use Time::DayOfYear;
+use Time::Local;
+use PoorTextFormat;
+use Chex;
+
+use lib '/proj/axaf/simul/lib/perl';
+use GrabEnv qw( grabenv );
+
+%par = (dir  => '.',
+	plot => 1,
+	html => 1,
+	text => 1,
+	chex => undef);
 
 $log_fh = open_log_file("/proj/sot/ska/ops/Chex/starcheck.log");
 
@@ -39,20 +55,7 @@ $STARCHECK   = $par{out} || 'starcheck';
 usage( 1 )
     if $par{help};
 
-# If non-trivial run, then load rest of libraries
-
-use English;
-use File::Basename;
-
-use lib '/proj/rad1/ska/lib/perl5/local';
-use Time::JulianDay;
-use Time::DayOfYear;
-use Time::Local;
-use PoorTextFormat;
-
-use lib '/proj/axaf/simul/lib/perl';
-use GrabEnv qw( grabenv );
-
+# If non-trivial run, then load rest of routines
 $dir  = dirname($PROGRAM_NAME);
 require "$dir/starcheck_obsid.pl";
 require "$dir/parse_cm_file.pl";
@@ -67,6 +70,7 @@ $dot_file   = get_file("$par{dir}/mps/md*.dot",     'DOT', 'required');
 $mech_file  = get_file("$par{dir}/output/TEST_mechcheck.txt", 'mech check');
 $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
+$dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');    
 $odb_file   = get_file("/proj/sot/ska/ops/SFE/fid_CHARACTERIS_JUL01", 'odb', 'required');
 $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 
@@ -135,6 +139,10 @@ map { warning("$_\n") } @{$error};
 # Read Maneuver error file containing more accurate maneuver errors
 
 @manerr = Parse_CM_File::man_err($manerr_file) if ($manerr_file);
+
+# Read DITHER history file and backstop to determine expected dither state
+
+@dither = Parse_CM_File::dither($dither_file, \@bs);
 
 # Read bad AGASC stars
 
@@ -226,8 +234,8 @@ foreach $obsid (@obsid_id) {
     $obs{$obsid}->check_star_catalog();
     $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_monitor_commanding(\@bs);
-
     $obs{$obsid}->check_sim_position(@sim_trans);
+    $obs{$obsid}->check_dither(\@dither);
 
     # Make sure there is only one star catalog per obsid
     warning ("More than one star catalog assigned to Obsid $obsid\n")
@@ -304,7 +312,8 @@ if ($par{html}) {
     close OUT;
     print STDERR "Wrote HTML report to $STARCHECK.html\n";
 
-    my $guide_summ_start = ($mp_agasc_version eq '1.4') ? 'PROCESSING SOCKET REQUESTS' : '';
+    my $guide_summ_start = (defined $mp_agasc_version and $mp_agasc_version eq '1.4') ? 
+      'PROCESSING SOCKET REQUESTS' : '';
     make_annotated_file('', 'starcat.dat.', ' -ra ', $make_stars);
     make_annotated_file('', ' ID=\s+', ', ', $backstop);
     make_annotated_file($guide_summ_start, '^\s+ID:\s+', '\S\S', $guide_summ);
@@ -325,8 +334,6 @@ if ($par{text}) {
 # Update the Chandra expected state file, if desired and possible
 
 if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
-#   use lib '/proj/rad1/ska/dev/Backstop';
-   use Chex;
    print STDERR "Updating Chandra expected state file\n";
    print $log_fh "Updating Chandra expected state file\n" if ($log_fh);
    $chex = new Chex $par{chex};
@@ -335,7 +342,9 @@ if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
 		 dot          => \%dot,
 		 soe          => \%soe,
 		 OR           => \%or,
-		 backstop     => \@bs);
+		 backstop     => \@bs,
+		 dither       => \@dither,
+		);
 }
 
 ##***************************************************************************

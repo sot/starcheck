@@ -16,7 +16,7 @@ package Obsid;
 
 # Library dependencies
 
-use lib '/proj/rad1/ska/lib/perl5/local';
+use lib '/proj/sot/ska/lib/site_perl';
 use Quat;
 use File::Basename;
 use POSIX qw(floor);
@@ -42,6 +42,8 @@ $alarm = ">> WARNING:";
 	      orange  => 8,
 	      purple  => 12,
 	      magenta => 6);
+
+$ID_DIST_LIMIT = 1.5;		# 1.5 arcsec box for ID'ing a star
 
 1;
 
@@ -126,6 +128,7 @@ sub set_target {
     $self->{ra} = sprintf("%.6f", $self->{ra});
     $self->{dec} = sprintf("%.6f", $self->{dec});
     $self->{roll} = sprintf("%.6f", $self->{roll});
+
 }
 
 sub radecroll {
@@ -313,7 +316,39 @@ sub set_star_catalog {
     }
 }
 
+#############################################################################################
+sub check_dither {
+#############################################################################################
+    my $self = shift;
+    my $dthr = shift;		# Ref to array of hashes containing dither states
+    my %dthr_cmd = (ON => 'ENAB',   # Translation from OR terminology to dither state term.
+		    OFF => 'DISA');
+    my $dither_time_pad = 8*60; # Check dither status at obs start + 8 minutes to allow 
+				# for disabled dither because of mon star commanding
+    my $c;
+
+    return if ($self->{obsid} > 60000); # For eng obs, don't have OR to specify dither
+    unless ($c = find_command($self, "MP_TARGQUAT", -1) and defined $self->{DITHER_ON}) {
+	push @{$self->{warn}}, "$alarm Dither status not checked\n";
+	return;
+    }
+    my $obs_tstart = $c->{tstop};
+
+    # Determine current dither status by finding the last dither commanding before 
+    # the start of observation (+ 8 minutes)
+    foreach $dither (reverse @{$dthr}) {
+	if ($obs_tstart + $dither_time_pad >= $dither->{time}) {
+	    my ($or_val, $bs_val) = ($dthr_cmd{$self->{DITHER_ON}}, $dither->{state});
+	    push @{$self->{warn}}, "$alarm Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
+	      if ($or_val ne $bs_val);
+	    last;
+	}
+    }
+}
+
+#############################################################################################
 sub check_sim_position {
+#############################################################################################
     my $self = shift;
     my @sim_trans = @_;		# Remaining values are SIMTRANS backstop cmds
     my $c;
@@ -472,8 +507,8 @@ sub check_star_catalog {
 
 	foreach $star (@{$self->{agasc_stars}}) {
 	    # Skip tests if $star is the same as the catalog star
-	    next if (   abs($star->{yag} - $yag) < 1.0
-		     && abs($star->{zag} - $zag) < 1.0
+	    next if (   abs($star->{yag} - $yag) < $ID_DIST_LIMIT
+		     && abs($star->{zag} - $zag) < $ID_DIST_LIMIT
 		     && abs($star->{mag} - $mag) < 0.1  );
 
 	    $dy = abs($yag-$star->{yag});
@@ -526,6 +561,9 @@ sub check_monitor_commanding {
     my $c;
     my $bs;
     my $cmd;
+
+    # Don't worry about monitor commanding for non-science observations
+    return if ($self->{obsid} > 60000);
 
     # Check for existence of a star catalog
     return unless ($c = find_command($self, "MP_STARCAT"));
@@ -845,7 +883,6 @@ sub identify_stars {
 ##***************************************************************************
     $self = shift;
     return unless ($c = find_command($self, 'MP_STARCAT'));
-    $DIST_LIMIT = 1.0;		# 1 arcsec box for ID
 
     for $i (1 .. 16) {
 	next if ($c->{"TYPE$i"} eq 'NUL');
@@ -853,8 +890,8 @@ sub identify_stars {
 	$zag = $c->{"ZANG$i"};
 	
 	foreach $star (@{$self->{agasc_stars}}) {
-	    if (abs($star->{yag} - $yag) < $DIST_LIMIT
-		&& abs($star->{zag} - $zag) < $DIST_LIMIT) {
+	    if (abs($star->{yag} - $yag) < $ID_DIST_LIMIT
+		&& abs($star->{zag} - $zag) < $ID_DIST_LIMIT) {
 		$c->{"GS_BV$i"} = $star->{bv};
 		$c->{"GS_MAGERR$i"} = $star->{magerr};
 		$c->{"GS_POSERR$i"} = $star->{poserr};

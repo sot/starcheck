@@ -9,7 +9,7 @@ package Parse_CM_File;
 
 use POSIX;
 use lib '/proj/sot/ska/lib/site_perl';
-use Ska::Convert qw(date2time);
+use Ska::Convert qw(date2time time2date);
 
 use Time::JulianDay;
 use Time::DayOfYear;
@@ -18,6 +18,59 @@ use IO::File;
 
 $VERSION = '$Id$';  # '
 1;
+
+###############################################################
+sub dither {
+###############################################################
+    my $dh_file = shift;	# Dither history file name
+    my $bs_arr = shift;		# Backstop array reference
+    my $bs;
+    my @bs_state;
+    my @bs_time;
+    my @dh_state;
+    my @dh_time;
+    my %dith_cmd = ('DS' => 'DISA', 'EN' => 'ENAB');
+
+    # First get everything from backstop
+    foreach $bs (@{$bs_arr}) {
+	if ($bs->{cmd} eq 'COMMAND_SW') {
+	    my %params = parse_params($bs->{params});
+	    if ($params{TLMSID} =~ 'AO(DS|EN)DITH') {
+		push @bs_state, $dith_cmd{$1};
+		push @bs_time, $bs->{time};  # see comment below about timing
+	    }
+	}
+    }
+
+    # Now get everything from DITHER
+    # Parse lines like:
+    # 2002262.094827395   | DSDITH  AODSDITH
+    # 2002262.095427395   | ENDITH  AOENDITH
+
+    if ($dh_file && ($dith_hist_fh = new IO::File $dh_file, "r")) {
+	while (<$dith_hist_fh>) {
+	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (EN|DS) DITH/x) {
+		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
+		$time = date2time("$yr:$doy:$hr:$min:$sec");
+		push @dh_state, $dith_cmd{$state};
+		push @dh_time, $time;
+	    }
+	}
+
+	$dith_hist_fh->close();
+    }
+
+    my @ok = grep { $dh_time[$_] < $bs_time[0] } (0 .. $#dh_time);
+    my @state = (@dh_state[@ok], @bs_state);
+    my @time   = (@dh_time[@ok], @bs_time);
+    
+    # Now make an array of hashes as the final output.  Keep track of where the info
+    # came from, for later use in Chex
+    return map { { time   => $time[$_],
+		   state  => $state[$_],
+		   source => $time[$_] < $bs_time[0] ? 'history' : 'backstop'}
+	       } (0 .. $#state);
+}
 
 ###############################################################
 sub fidsel {
