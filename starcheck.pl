@@ -89,8 +89,8 @@ if ($par{plot}) {
     }
 
     ($mp_agasc_version) = ($ENV{ASCDS_AGASC} =~ /agasc(\dp\d)/);
-    die "Starcheck only supports AGASC 1.4 and 1.5.  Found '$mp_agasc_version'\n"
-	unless ($mp_agasc_version =~ /(1p4|1p5)/);
+    die "Starcheck only supports AGASC 1.4, 1.5, and 1.6.  Found '$mp_agasc_version'\n"
+	unless ($mp_agasc_version =~ /(1p4|1p5|1p6)/);
     $mp_agasc_version =~ s/p/./;
     ($ascds_version_name) = ($ENV{ASCDS_BIN} =~ /\/DS\.([^\/]+)/);
     $ascds_version = $ENV{ASCDS_VERSION};
