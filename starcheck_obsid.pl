@@ -18,6 +18,7 @@ package Obsid;
 
 use lib '/proj/sot/ska/lib/site_perl';
 use Quat;
+use swapACACoords;
 use File::Basename;
 use POSIX qw(floor);
 use FigureOfMerit;
@@ -74,6 +75,28 @@ sub set_odb {
     $odb{"ODB_TSC_STEPS"}[0] =~ s/D/E/;
 }
 
+sub set_ACA_bad_pixels {
+    my $pixel_file = shift;
+    open BP, $pixel_file or return 0;
+    my @tmp = <BP>;
+    my @lines = grep { /^\s+(\d|-)/ } @tmp;
+    splice(@lines, 0, 2); # the first two lines are quadrant boundaries
+    foreach (@lines) {
+	my @line = split /;|,/, $_;
+	#cut out the quadrant boundaries
+	foreach $i ($line[0]..$line[1]) {
+	    foreach $j ($line[2]..$line[3]) {
+		my $pixel = {};
+		my ($yag,$zag) = toAngle($i,$j);
+		$pixel->{yag} = $yag;
+		$pixel->{zag} = $zag;
+		push @bad_pixels, $pixel;
+	    }
+	}
+    }
+    close BP;
+    print STDERR "Read ", ($#bad_pixels+1), " ACA bad pixels from $pixel_file\n";
+}
 
 sub set_bad_agasc {
 # Read bad AGASC ID file
@@ -327,7 +350,7 @@ sub check_dither {
 				# for disabled dither because of mon star commanding
     my $c;
 
-    return if ($self->{obsid} > 60000); # For eng obs, don't have OR to specify dither
+    return if ($self->{obsid} > 50000); # For eng obs, don't have OR to specify dither
     unless ($c = find_command($self, "MP_TARGQUAT", -1) and defined $self->{DITHER_ON}) {
 	push @{$self->{warn}}, "$alarm Dither status not checked\n";
 	return;
@@ -403,7 +426,7 @@ sub check_star_catalog {
     my $y0           = 33;	# CCD QB coordinates (arcsec)
     my $z0           = -27;
    
-    my $is_science = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} < 60000);
+    my $is_science = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} < 50000);
     my $min_guide    = $is_science ? 5 : 6; # Minimum number of each object type
     my $min_acq      = $is_science ? 4 : 5;
     my $min_fid      = 3;
@@ -428,6 +451,9 @@ sub check_star_catalog {
 	push @{$self->{warn}}, "$alarm No star catalog\n";
 	return;
     }
+
+    # Reset the minimum number of guide stars if a monitor window is commanded
+    $min_guide -= scalar grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
 
     print STDERR "Checking star catalog for obsid $self->{obsid}\n";
 
@@ -463,13 +489,16 @@ sub check_star_catalog {
 	# Set NOTES variable for marginal or bad star based on AGASC info
 	$c->{"GS_NOTES$i"} = '';
 	my $note = '';
+	my $marginal_note = '';
 	if (defined $c->{"GS_CLASS$i"}) {
 	    $c->{"GS_NOTES$i"} .= 'b' if ($c->{"GS_CLASS$i"} != 0);
 	    $c->{"GS_NOTES$i"} .= 'c' if ($c->{"GS_BV$i"} == 0.700);
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
 	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 199);
 	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",$c->{"GS_BV$i"},($c->{"GS_MAGERR$i"})/100,($c->{"GS_POSERR$i"})/1000) if ($c->{"GS_NOTES$i"} =~ /[cmp]/);
-	    push @yellow_warn, sprintf("$alarm Marginal star. [%2d]: %s\n",$i,$note) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
+	    $marginal_note = sprintf("$alarm Marginal star. [%2d]: %s\n",$i,$note) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
+	    if ( $c->{"GS_NOTES$i"} =~ /c/ && $type =~ /BOT|GUI/ ) { push @warn, $marginal_note }
+	    elsif ($marginal_note) { push @yellow_warn, $marginal_note }
 	    push @warn, sprintf("$alarm Bad star. [%2d]: Class = %s %s\n", $i,$c->{"GS_CLASS$i"},$note) if ($c->{"GS_NOTES$i"} =~ /b/);
 	}
 
@@ -502,14 +531,40 @@ sub check_star_catalog {
 	if (($type =~ /BOT|ACQ/) and $c->{"HALFW$i"} < $slew_err) {
 	    push @warn, sprintf "$alarm Search Box smaller than slew error [%2d]\n",$i;
 	}
+	
+	# Check that readout sizes are all 6x6 for science observations
+	push @warn, sprintf("$alarm Readout Size. [%2d]: %s Should be 6x6\n", $i, $c->{"SIZE$i"})
+	    if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6");
+
+	# Bad Pixels
+        my @close_pixels;
+        my @dr;
+	if ($type ne 'ACQ' and $c->{"GS_PASS$i"} =~ /^1|\s+|g[1-2]/) {
+	    foreach $pixel (@bad_pixels) {
+		$dy = abs($yag-$pixel->{yag});
+		$dz = abs($zag-$pixel->{zag});
+		$dr = sqrt($dy**2 + $dz**2);
+		next unless ( $dz < $dither+25 and $dy < $dither+25 );
+		push @close_pixels, sprintf("%3d, %3d, %3d\n", $dy, $dz, $dr);
+		push @dr, $dr;
+	    }   
+	    if ( @close_pixels > 0 ) {
+		my ($closest) = sort { $dr[$a] <=> $dr[$b] } (0 .. $#dr);
+		my $warn = sprintf("$alarm Nearby ACA bad pixel. [%2d] - " .
+				   "Y,Z,Radial seps: " . $close_pixels[$closest],
+				   $i); #Only warn for the closest pixel
+		push @warn, $warn;
+	    }
+	}
 
 	# Spoiler star (for search) and common column
 
 	foreach $star (@{$self->{agasc_stars}}) {
 	    # Skip tests if $star is the same as the catalog star
-	    next if (   abs($star->{yag} - $yag) < $ID_DIST_LIMIT
-		     && abs($star->{zag} - $zag) < $ID_DIST_LIMIT
-		     && abs($star->{mag} - $mag) < 0.1  );
+	    next if (   $star->{id} == $sid 
+			|| ( abs($star->{yag} - $yag) < $ID_DIST_LIMIT 
+			     && abs($star->{zag} - $zag) < $ID_DIST_LIMIT 
+			     && abs($star->{mag} - $mag) < 0.1 ) );
 
 	    $dy = abs($yag-$star->{yag});
 	    $dz = abs($zag-$star->{zag});
@@ -557,20 +612,41 @@ sub check_monitor_commanding {
 ##*********************************************************************************************
     my $self = shift;
     my $backstop = shift;	# Reference to array of backstop commands
+    my $or = shift;             # Reference to OR list hash
     my $time_tol = 10;		# Commands must be within $time_tol of expectation
     my $c;
     my $bs;
     my $cmd;
 
+    my $r2a = 180./3.14159265*3600;
+
     # Don't worry about monitor commanding for non-science observations
-    return if ($self->{obsid} > 60000);
+    return if ($self->{obsid} > 50000);
 
     # Check for existence of a star catalog
     return unless ($c = find_command($self, "MP_STARCAT"));
-    
+
     # See if there are any monitor stars.  Return if not.
     my @mon_stars = grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
     return unless (@mon_stars);
+
+    # Check that the commanded monitor stars agree in position with the OR specification
+    my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
+    my ($yag, $zag) = Quat::radec2yagzag($or->{MON_RA}, $or->{MON_DEC}, $q_aca);
+    foreach (@mon_stars) {
+	my $y_sep = $yag*$r2a - $c->{"YANG$_"};
+	my $z_sep = $zag*$r2a - $c->{"ZANG$_"};
+	my $sep = sqrt($y_sep**2 + $z_sep**2);
+	push @{$self->{warn}}, sprintf("$alarm Monitor Window [%2d] is %6.2f arc-seconds off of OR specification\n"
+				       , $_, $sep) if $sep > 20.;
+	my $track = $c->{"RESTRK$_"};
+	push @{$self->{warn}}, sprintf("$alarm Monitor Window [%2d] is set to Convert-to-Track\n"
+				       , $_) if $track == 1;
+	my $dts =  $c->{"DIMDTS$_"};
+	my $type = $c->{"TYPE$dts"};
+	push @{$self->{warn}}, sprintf("$alarm DTS for [%2d] is set to [%2d] which is type %s\n", 
+				       $_, $dts, $type) if $type =~ /FID|MON/; 
+    }
 
     # Find the associated maneuver command for this obsid.  Need this to get the
     # exact time of the end of maneuver
@@ -624,7 +700,6 @@ sub check_fids {
 	push @{$warn}, "$alarm Unable to check fids because SI or SIM_OFFSET_Z undefined\n";
 	return;
     }
-    
     @fid_ok = map { 0 } @{$self->{fid}};
 
     # Calculate yang and zang for each commanded fid, then cross-correlate with
@@ -644,11 +719,13 @@ sub check_fids {
 		last;
 	    }
 	}
+     
+
 	push @{$warn}, "$alarm Fid $self->{SI} $fid is turned on with FIDSEL but not found in star catalog\n"
 	    unless ($fidsel_ok);
 	$n++;
     }
-
+    
     for $i_fid (0 .. $#fid_ok) {
 	push @{$warn}, "$alarm Fid with IDX=\[$self->{fid}[$i_fid]\] is in star catalog but is not turned on via FIDSEL\n"
 	    unless ($fid_ok[$i_fid]);
@@ -751,7 +828,7 @@ sub print_report {
     }
     if ($c = find_command($self, "MP_STARCAT")) {
 	@cat_fields = qw (IMNUM GS_ID    TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
-	@cat_format = qw (  %3d  %12s     %6s   %5s  %8.3f    %8s  %8.3f  %7d  %7d    %4d    %4d   %5d     %3s  %4s);
+	@cat_format = qw (  %3d  %12s     %6s   %5s  %8.3f    %8s  %8.3f  %7d  %7d    %4d    %4d   %5d     %6s  %4s);
 
 	$o .= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu})\n";
 	$o .= sprintf "----------------------------------------------------------------------------------------\n";
@@ -764,9 +841,9 @@ sub print_report {
 	    next if ($c->{"TYPE$i"} eq 'NUL');
 
 	    # Define the color of output star catalog line based on NOTES.  Yellow if
-	    # NOTES is non-trivial, Red if NOTES has a 'b' for bad class.
+	    # NOTES is non-trivial, Red if NOTES has a 'b' for bad class or if a guide star has bad color.
 	    my $color = ($c->{"GS_NOTES$i"} =~ /\S/) ? 'yellow' : '';
-	    $color = 'red' if ($c->{"GS_NOTES$i"} =~ /b/);
+	    $color = 'red' if ($c->{"GS_NOTES$i"} =~ /b/ || ($c->{"GS_NOTES$i"} =~ /c/ && $c->{"TYPE$i"} =~ /GUI|BOT/));
 	    
 	    $o .= "\\${color}_start " if ($color);
 	    $o .= sprintf "[%2d]",$i;
@@ -832,8 +909,8 @@ sub add_guide_summ {
 	    $c->{"GS_MAG$j"} = sprintf "%8.3f", $f[4];
 	    $c->{"GS_YANG$j"} = $f[5] * $r2a;
 	    $c->{"GS_ZANG$j"} = $f[6] * $r2a;
-	    # Parse the optional **'s at the end which indicate SAUSAGE star selection pass number
-	    $c->{"GS_PASS$j"} = defined $f[7] ? length $f[7] : '';
+	    # Parse the SAUSAGE star selection pass number
+	    $c->{"GS_PASS$j"} = defined $f[7] ? ($f[7] =~ /\*+/ ? length $f[7] : $f[7]) : ' ';
 	}
     }
 #    unless ($OK) {
@@ -861,7 +938,6 @@ sub get_agasc_stars {
 	# which have different output formats.  Choose the right one based on AGASC version:
 	my ($id, $ra, $dec, $poserr, $mag, $magerr, $bv, $class) =($mp_agasc_version eq '1.4') ?
 	    @flds[0..3,7..10] : @flds[0..3,12,13,19,14];
-
 	my ($yag, $zag) = Quat::radec2yagzag($ra, $dec, $q_aca);
 	$yag *= $r2a;
 	$zag *= $r2a;

@@ -75,6 +75,7 @@ $odb_file   = get_file("/proj/sot/ska/ops/SFE/fid_CHARACTERIS_JUL01", 'odb', 're
 $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 
 $bad_agasc_file = "/proj/sot/ska/ops/SFE/agasc.bad";
+$ACA_bad_pixel_file = "/proj/sot/ska/acacal/ACABadPixels";
 
 # If making plots, check for mp_get_agasc, and make a plot directory if required
 
@@ -115,7 +116,6 @@ foreach $bs (@bs) {
 
 # Read DOT, which is used to figure the Obsid for each command
 %dot = Parse_CM_File::DOT($dot_file) if ($dot_file);
-
 # Read momentum management (maneuvers + SIM move) summary file 
 %mm = Parse_CM_File::MM($mm_file) if ($mm_file);
 
@@ -143,6 +143,11 @@ map { warning("$_\n") } @{$error};
 # Read DITHER history file and backstop to determine expected dither state
 
 @dither = Parse_CM_File::dither($dither_file, \@bs);
+
+# Read in the ACA bad pixels
+
+warning("Could not open ACA bad pixel file $ACA_bad_pixel_file\n")
+    unless (Obsid::set_ACA_bad_pixels($ACA_bad_pixel_file));
 
 # Read bad AGASC stars
 
@@ -233,7 +238,7 @@ foreach $obsid (@obsid_id) {
 
     $obs{$obsid}->check_star_catalog();
     $obs{$obsid}->make_figure_of_merit();
-    $obs{$obsid}->check_monitor_commanding(\@bs);
+    $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_sim_position(@sim_trans);
     $obs{$obsid}->check_dither(\@dither);
 
@@ -495,7 +500,7 @@ sub read_guide_summary {
 
     while (<GUIDE_SUMM>) {
 	# Look for an obsid, ra, dec, or roll
-	if (/\s+ID:\s+(.+)\d\d/) {
+	if (/\s+ID:\s+(\w{5})/) {
 	    ($obsid = $1) =~ s/^0*//;
 	    $first = 0;
 	}

@@ -300,7 +300,7 @@ sub OR_parse_obs {
 
     my @obs_columns = qw(obsid TARGET_RA TARGET_DEC TARGET_NAME
 			 SI TARGET_OFFSET_Y TARGET_OFFSET_Z
-			 SIM_OFFSET_X SIM_OFFSET_Z GRATING);
+			 SIM_OFFSET_X SIM_OFFSET_Z GRATING MON_RA MON_DEC);
     # Init some defaults
     my %obs = ();
     foreach (@obs_columns) {
@@ -313,6 +313,8 @@ sub OR_parse_obs {
     $obs{obsid} = 0+$1 if (/ID=(\d+),/);
     ($obs{TARGET_RA}, $obs{TARGET_DEC}) = ($1, $2)
 	if (/TARGET=\(([^,]+),([^,\)]+)/);
+    ($obs{MON_RA}, $obs{MON_DEC}) = ($1, $2)
+	if (/STAR=\(([^,]+),([^,\)]+)/);
     $obs{TARGET_NAME} = $3
 	if (/TARGET=\(([^,]+),([^,]+),\s*\{([^\}]+)\}\),/);
     $obs{SI} = $1 if (/SI=([^,]+)/);
