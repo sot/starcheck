@@ -169,7 +169,6 @@ fix_targquat_time();
 for $i (0 .. $#cmd) {
     # Get obsid for this cmd by matching up with corresponding commands
     # from DOT.   Returns undef if it isn't "interesting"
-
     next unless ($obsid = get_obsid ($time[$i], $cmd[$i], $date[$i]));
 
     # If obsid hasn't been seen before, create obsid object
@@ -419,10 +418,11 @@ sub set_dot_cmd {
 		   );
 
     %dot_time_offset = (ATS_DTHR  => -120.0,
-			ATS_OBSID => +180.0,
+			ATS_OBSID => 90.0,
 			);
 
     %dot_tolerance = (ATS_DTHR  => 200.0,
+		      ATS_OBSID => 110.0,
 			);
 }
 
@@ -444,10 +444,8 @@ sub get_obsid {
     foreach $obsid_index (keys %dot) {
 	next unless ($dot_cmd{ $dot{$obsid_index}{cmd_identifier}});
 	$cmd_identifier = $dot{$obsid_index}{cmd_identifier};
-
 	$dt        = $dot_time_offset{$cmd_identifier} || 0.0;
 	$tolerance = $dot_tolerance{$cmd_identifier}   || $TIME_TOLERANCE ;
-
 	if ($dot_cmd{$cmd_identifier} eq $cmd
 	    && abs($dot{$obsid_index}{time} + $dt - $time) < $tolerance) {
 	    return $1 if ($obsid_index =~ /\S0*(.+)\d\d\d\d/);
@@ -466,7 +464,6 @@ sub get_obsid {
 	$bogus_obsid++ if ($cmd eq 'MP_STARCAT');
     }
 	
-
     return ($obsid);
 }    
 

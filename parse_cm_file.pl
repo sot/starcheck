@@ -22,16 +22,6 @@ $VERSION = '$Id$';  # '
 ###############################################################
 sub dither {
 ###############################################################
-    my $dh_file = shift;	# Dither history file name
-    my $bs_arr = shift;		# Backstop array reference
-    my $bs;
-    my @bs_state;
-    my @bs_time;
-    my @dh_state;
-    my @dh_time;
-    my %dith_cmd = ('DS' => 'DISA', 'EN' => 'ENAB');
-
-    # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
 	if ($bs->{cmd} eq 'COMMAND_SW') {
 	    my %params = parse_params($bs->{params});
@@ -209,7 +199,6 @@ sub man_err {
 	    $in_man = 1;
 	}
     }
-
     return @me;
 }
 
@@ -264,7 +253,6 @@ sub DOT {
 	$dot{$_}{cmd_identifier} = "$dot{$_}{anon_param1}_$dot{$_}{anon_param2}"
 	    if ($dot{$_}{anon_param1} and $dot{$_}{anon_param2});
     } 
-
     return %dot;
 }
 

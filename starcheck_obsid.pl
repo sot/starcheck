@@ -157,7 +157,7 @@ sub set_files {
 sub set_target {
 #
 # Set the ra, dec, roll attributes based on target
-# quaternion parameters in the target_cmd
+# quaternion parameters in the target_md
 #
 ##################################################################################
     my $self = shift;
@@ -231,7 +231,6 @@ sub set_maneuver {
 		# Set the default maneuver error (based on WS Davis data) and cap at 85 arcsec
 		$c->{man_err} = (exists $c->{angle}) ? 35 + $c->{angle}/2. : 85;
 		$c->{man_err} = 85 if ($c->{man_err} > 85);
-
 		# Now check for consistency between quaternion from MANUEVER summary
 		# file and the quat from backstop (MP_TARGQUAT cmd)
 
@@ -269,16 +268,16 @@ sub set_manerr {
     my @manerr = @_;
     my $n = 1;
     while ($c = find_command($self, "MP_TARGQUAT", $n)) {
-
+	
 	foreach $me (@manerr) {
 	    # There should be a one-to-one mapping between maneuver segments in the maneuver
 	    # error file and those in the obsid records.  First, find what *should* be the
 	    # match.  Then check quaternions to make sure
-
+	    
 	    if ($self->{obsid} eq $me->{obsid} && $n == $me->{Seg}) {
 		if (   abs($me->{finalQ1} - $c->{Q1}) < 1e-7
-		    && abs($me->{finalQ2} - $c->{Q2}) < 1e-7
-		    && abs($me->{finalQ3} - $c->{Q3}) < 1e-7)
+		       && abs($me->{finalQ2} - $c->{Q2}) < 1e-7
+		       && abs($me->{finalQ3} - $c->{Q3}) < 1e-7)
 		{
 		    $c->{man_err} = $me->{MaxErrYZ} + $ACA_MANERR_PAD;
 		    $c->{man_err_data} = $me; # Save the whole record just in case
