@@ -22,7 +22,14 @@ use Quat;
 use swapACACoords;
 use File::Basename;
 use POSIX qw(floor);
-use FigureOfMerit;
+use English;
+
+# Set some global vars with directory locations
+our $SKA = $ENV{SKA} || '/proj/sot/ska';
+our $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
+require  "${Starcheck_Share}/figure_of_merit.pl";
+
+# use FigureOfMerit;
 
 # Constants
 

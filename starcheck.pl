@@ -1,4 +1,4 @@
-#!/usr/bin/env /proj/axaf/bin/perlwrap
+#! /usr/bin/env /proj/sot/ska/bin/perlska
 
 ##*******************************************************************************
 #
@@ -19,9 +19,6 @@ use IO::File;
 use English;
 use File::Basename;
 
-use lib '/proj/sot/ska/lib/site_perl';
-# use lib '/proj/sot/ska/dev/Chex';   # For testing Chex
-
 use Time::JulianDay;
 use Time::DayOfYear;
 use Time::Local;
@@ -31,13 +28,18 @@ use Chex;
 use lib '/proj/axaf/simul/lib/perl';
 use GrabEnv qw( grabenv );
 
+# Set some global vars with directory locations
+our $SKA = $ENV{SKA} || '/proj/sot/ska';
+our $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
+our $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
+
 %par = (dir  => '.',
 	plot => 1,
 	html => 1,
 	text => 1,
 	chex => undef);
 
-$log_fh = open_log_file("/proj/sot/ska/ops/Chex/starcheck.log");
+$log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
 
 GetOptions( \%par, 
 	   'help', 
@@ -56,9 +58,8 @@ usage( 1 )
     if $par{help};
 
 # If non-trivial run, then load rest of routines
-$dir  = dirname($PROGRAM_NAME);
-require "$dir/starcheck_obsid.pl";
-require "$dir/parse_cm_file.pl";
+require "${Starcheck_Share}/starcheck_obsid.pl";
+require "${Starcheck_Share}/parse_cm_file.pl";
 
 # Find backstop, guide star summary, OR, and maneuver files.  Only backstop is required
 
@@ -71,11 +72,11 @@ $mech_file  = get_file("$par{dir}/output/TEST_mechcheck.txt", 'mech check');
 $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');    
-$odb_file   = get_file("/proj/sot/ska/ops/SFE/fid_CHARACTERIS_JUL01", 'odb', 'required');
+$odb_file   = get_file("$Starcheck_Data/fid_CHARACTERIS_JUL01", 'odb', 'required');
 $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 
-$bad_agasc_file = "/proj/sot/ska/ops/SFE/agasc.bad";
-$ACA_bad_pixel_file = "/proj/sot/ska/acacal/ACABadPixels";
+$bad_agasc_file = "$Starcheck_Data/agasc.bad";
+$ACA_bad_pixel_file = "$Starcheck_Data/ACABadPixels";
 
 # If making plots, check for mp_get_agasc, and make a plot directory if required
 
