@@ -702,8 +702,8 @@ sub print_report {
 	}
     }
     if ($c = find_command($self, "MP_STARCAT")) {
-	@cat_fields = qw (IMNUM GS_ID    TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_NOTES);
-	@cat_format = qw (  %3d  %12s     %6s   %5s  %8.3f    %8s  %8.3f  %7d  %7d    %4d    %4d   %5d   %6s);
+	@cat_fields = qw (IMNUM GS_ID    TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+	@cat_format = qw (  %3d  %12s     %6s   %5s  %8.3f    %8s  %8.3f  %7d  %7d    %4d    %4d   %5d     %3s  %4s);
 
 	$o .= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu})\n";
 	$o .= sprintf "----------------------------------------------------------------------------------------\n";
@@ -777,6 +777,8 @@ sub add_guide_summ {
 	    $c->{"GS_MAG$j"} = sprintf "%8.3f", $f[4];
 	    $c->{"GS_YANG$j"} = $f[5] * $r2a;
 	    $c->{"GS_ZANG$j"} = $f[6] * $r2a;
+	    # Parse the optional **'s at the end which indicate SAUSAGE star selection pass number
+	    $c->{"GS_PASS$j"} = defined $f[7] ? length $f[7] : '';
 	}
     }
 #    unless ($OK) {
