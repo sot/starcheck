@@ -21,7 +21,7 @@ $par{plot}  = 1;
 $par{html}  = 1;
 $par{text}  = 1;
 $par{chex}  = ($ENV{USER} eq 'aldcroft' or $ENV{USER} eq 'rac') ?
-    undef : '/proj/sot/ska/ops/Chex';
+    undef : '/proj/sot/ska/ops/Chex/pred_state.rdb';
 
 $log_fh = open_log_file("/proj/sot/ska/ops/Chex/starcheck.log");
 
