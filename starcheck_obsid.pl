@@ -379,8 +379,8 @@ sub check_dither {
 #############################################################################################
     my $self = shift;
     my $dthr = shift;		  # Ref to array of hashes containing dither states
-    my %dthr_cmd = (ON => 'EN',   # Translation from OR terminology to dither state term.
-		    OFF => 'DS');
+    my %dthr_cmd = (ON => 'ENAB',   # Translation from OR terminology to dither state term.
+		    OFF => 'DISA');
     my $obs_beg_pad = 8*60;       # Check dither status at obs start + 8 minutes to allow 
                                   # for disabled dither because of mon star commanding
     my $obs_end_pad = 3*60;

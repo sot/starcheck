@@ -22,14 +22,21 @@ $VERSION = '$Id$';  # '
 ###############################################################
 sub dither {
 ###############################################################
-    my $dh_file = shift;        # Dither history file
-    my $bs_arr = shift;		# Backstop array reference
+    my $dh_file = shift;      # Dither history file name
+    my $bs_arr = shift;               # Backstop array reference
+    my $bs;
+    my @bs_state;
+    my @bs_time;
+    my @dh_state;
+    my @dh_time;
+    my %dith_cmd = ('DS' => 'DISA', 'EN' => 'ENAB');
 
+    # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
 	if ($bs->{cmd} eq 'COMMAND_SW') {
 	    my %params = parse_params($bs->{params});
 	    if ($params{TLMSID} =~ 'AO(DS|EN)DITH') {
-		push @bs_state, $1;
+		push @bs_state, $dith_cmd{$1};
 		push @bs_time, $bs->{time};  # see comment below about timing
 	    }
 	}
@@ -45,7 +52,7 @@ sub dither {
 	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (EN|DS) DITH/x) {
 		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
 		$time = date2time("$yr:$doy:$hr:$min:$sec");
-		push @dh_state, $state;
+		push @dh_state, $dith_cmd{$state};
 		push @dh_time, $time;
 	    }
 	}
