@@ -7,9 +7,9 @@ test:
 	run_regress
 
 install:
-	cp starcheck.pl $(PERL)/
-	cp starcheck_obsid.pl $(PERL)/
-	cp parse_cm_file.pl $(PERL)/
+	rsync -a starcheck.pl $(PERL)/
+	rsync -a starcheck_obsid.pl $(PERL)/
+	rsync -a parse_cm_file.pl $(PERL)/
 
 clean:
 	rm starcheck.pl starcheck_obsid.pl parse_cm_file.pl
