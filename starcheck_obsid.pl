@@ -907,9 +907,9 @@ sub print_report {
     if (exists $self->{figure_of_merit}) {
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
 	$o .= "\\red_start " if $bad_FOM;
-	$o .= "Figure of Merit : $self->{figure_of_merit}->{cum_prob}\n";
+	$o .= "Acquisition Figure of Merit : $self->{figure_of_merit}->{cum_prob}\n";
 	$o .= "\\red_end " if $bad_FOM;
-	$o .= "Stars Expected  : $self->{figure_of_merit}->{expected}\n";
+	$o .= "Acquisition Stars Expected  : $self->{figure_of_merit}->{expected}\n";
     }
     return $o;
 }
