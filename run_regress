@@ -8,6 +8,9 @@ mphome=/data/mpcrit1/mplogs
 log=$home/regress_log
 diffs=$home/regress_diffs
 
+# Change this to /proj/sot/ska/bin after next release
+RELEASE_BIN=/proj/sot/ska/perl  
+
 # Remove existing log and diffs files
 for file in $log $diffs
 do
@@ -51,7 +54,7 @@ do
   #
   echo "Running: $home/starcheck.pl -dir $mphome/$load"
   echo "******************** (TEST) $load *******************" >> $log
-  $home/starcheck.pl -dir $mphome/$load 2>&1| tee -a $log 
+  env SKA=$home PERL5LIB= $home/starcheck.pl -dir $mphome/$load 2>&1| tee -a $log 
 
   # Now run current release version if not already there
   #
@@ -65,7 +68,7 @@ do
 
     echo "Running: /proj/sot/ska/perl/starcheck.pl -dir $mphome/$load"
     echo "**** (RELEASE) $load ****" >> $log
-    /proj/sot/ska/perl/starcheck.pl -dir $mphome/$load 2>&1| tee -a $log 
+    env SKA= PERL5LIB= $RELEASE_BIN/starcheck.pl -dir $mphome/$load 2>&1| tee -a $log 
   fi  
 
   # Now compare with release version

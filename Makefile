@@ -4,9 +4,9 @@ include /proj/sot/ska/include/Makefile.FLIGHT
 
 BIN = starcheck.pl 
 SHARE = starcheck_obsid.pl parse_cm_file.pl figure_of_merit.pl
-DATA = data/ACABadPixels data/agasc.bad  data/fid_CHARACTERIS_JUL01
+DATA = ACABadPixels agasc.bad  fid_CHARACTERIS_JUL01
 
-test: AUG0104A share lib 
+test: AUG0104A share lib data
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
