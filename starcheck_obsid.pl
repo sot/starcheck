@@ -309,8 +309,9 @@ sub check_star_catalog {
     my $col_sep_dist = 50;	# Common column pixel separation
     my $col_sep_mag  = 4.5;	# Common column mag separation (from ODB_MIN_COL_MAG_G)
 
-    my $mag_faint    = 10.2;	# Faint mag limit
-    my $mag_bright   = 6.0;	# Bright mag limit 
+    my $mag_faint_red   = 10.7;	# Faint mag limit (red)
+    my $mag_faint_yellow= 10.2;	# Faint mag limit (yellow)
+    my $mag_bright      = 6.0;	# Bright mag limit 
 
     my $spoil_dist   = 140;	# Min separation of star from other star within $sep_mag mags
     my $spoil_mag    = 5.0;	# Don't flag if mag diff is more than this
@@ -376,6 +377,17 @@ sub check_star_catalog {
 	push @yellow_warn,sprintf "$alarm Non-numeric AGASC ID. [%2d]: %s\n",$i,$sid if ($sid ne '---' && $sid =~ /\D/);
 	push @warn,sprintf "$alarm Bad AGASC ID. [%2d]: %s\n",$i,$sid if ($bad_id{$sid});
 
+	# Set NOTES variable for marginal or bad star based on AGASC info
+	$c->{"GS_NOTES$i"} = '';
+	if (defined $c->{"GS_CLASS$i"}) {
+	    $c->{"GS_NOTES$i"} .= 'b' if ($c->{"GS_CLASS$i"} != 0);
+	    $c->{"GS_NOTES$i"} .= 'c' if ($c->{"GS_BV$i"} == 0.700 or $c->{"GS_BV$i"} == 1.500);
+	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
+	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 99);
+	    push @yellow_warn, sprintf("$alarm Marginal star. [%2d]\n", $i) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
+	    push @warn, sprintf("$alarm Bad star. [%2d]\n", $i)             if ($c->{"GS_NOTES$i"} =~ /b/);
+	}
+
 	# Star/fid outside of CCD boundaries
 	if (   $yag > $y_ang_max - $slot_dither || $yag < $y_ang_min + $slot_dither
 	    || $zag > $z_ang_max - $slot_dither || $zag < $z_ang_min + $slot_dither) {
@@ -383,15 +395,18 @@ sub check_star_catalog {
 	}
 
 	# Quandrant boundary interference
-	if (abs($yag-$y0) < $qb_dist + $slot_dither
+	if ($type ne 'MON' and abs($yag-$y0) < $qb_dist + $slot_dither
 	     or abs($zag-$z0) < $qb_dist + $slot_dither ) {
 	    push @yellow_warn, sprintf "$alarm Quadrant Boundary. [%2d]\n",$i;
 	}
 
 	# Faint and bright limits
-	if ($type ne 'MON' and $mag ne '---' and
-	    ($mag < $mag_bright or $mag > $mag_faint)) {
-	    push @warn, sprintf "$alarm Magnitude. [%2d]: %6.3f\n",$i,$mag;
+	if ($type ne 'MON' and $mag ne '---') {
+	    if ($mag < $mag_bright or $mag > $mag_faint_red) {
+		push @warn, sprintf "$alarm Magnitude. [%2d]: %6.3f\n",$i,$mag;
+	    } elsif ($mag > $mag_faint_yellow) {
+		push @yellow_warn, sprintf "$alarm Magnitude. [%2d]: %6.3f\n",$i,$mag;
+	    }
 	}
 
 	# Search box size
@@ -450,7 +465,7 @@ sub check_star_catalog {
 	    }
 
 	    # Star within search box + search error and within 1.0 mags
-	    if ($dz < $halfw + $search_err and $dy < $halfw + $search_err and $dm > -1.0) {
+	    if ($type ne 'MON' and $dz < $halfw + $search_err and $dy < $halfw + $search_err and $dm > -1.0) {
 	        my $warn = sprintf("$alarm Search spoiler. [%2d]- %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
 		if ($dm > -0.2)  { push @warn, $warn }
@@ -458,7 +473,8 @@ sub check_star_catalog {
 	    }
 	    # Common column: dz within limit, spoiler is $col_sep_mag brighter than star,
 	    # and spoiler is located between star and readout
-	    if ($dz < $col_sep_dist
+	    if ($type ne 'MON'
+		and $dz < $col_sep_dist
 		and $dm > $col_sep_mag
 		and ($star->{yag}/$yag) > 1.0 
                 and abs($star->{yag}) < 2500) {
@@ -660,23 +676,28 @@ sub print_report {
 	}
     }
     if ($c = find_command($self, "MP_STARCAT")) {
-	@cat_fields = qw (IMNUM GS_ID    TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW);
-	@cat_format = qw (  %3d  %12s     %6s   %5s  %8.3f    %8s  %8.3f  %7d  %7d    %4d    %4d    %5d);
+	@cat_fields = qw (IMNUM GS_ID    TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_NOTES);
+	@cat_format = qw (  %3d  %12s     %6s   %5s  %8.3f    %8s  %8.3f  %7d  %7d    %4d    %4d   %5d   %6s);
 
 	$o .= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu})\n";
-	$o .= sprintf "----------------------------------------------------------------------------------\n";
-#              [ 4]  3   971113176   GUI  6x6   5.797   7.314   8.844  -2329  -2242   1   1   25
-	$o .= sprintf " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW\n";
-	$o .= sprintf "----------------------------------------------------------------------------------\n";
+	$o .= sprintf "----------------------------------------------------------------------------------------\n";
+	$o .= sprintf " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW NOTES\n";
+#                      [ 4]  3   971113176   GUI  6x6   5.797   7.314   8.844  -2329  -2242   1   1   25  bcmp
+	$o .= sprintf "----------------------------------------------------------------------------------------\n";
 	
 	
 	foreach $i (1..16) {
 	    next if ($c->{"TYPE$i"} eq 'NUL');
 
+	    # Define the color of output star catalog line based on NOTES.  Yellow if
+	    # NOTES is non-trivial, Red if NOTES has a 'b' for bad class.
+	    my $color = ($c->{"GS_NOTES$i"} =~ /\S/) ? 'yellow' : '';
+	    $color = 'red' if ($c->{"GS_NOTES$i"} =~ /b/);
+	    
+	    $o .= "\\${color}_start " if ($color);
 	    $o .= sprintf "[%2d]",$i;
-	    foreach $n (0 .. $#cat_fields) {
-		$o .= sprintf "$cat_format[$n]", $c->{"$cat_fields[$n]$i"}
-	    };
+	    map { $o .= sprintf "$cat_format[$_]", $c->{"$cat_fields[$_]$i"} } (0 .. $#cat_fields);
+	    $o .= "\\${color}_end " if ($color);
 	    $o .= sprintf "\n";
 	}
     }
@@ -749,13 +770,14 @@ sub get_agasc_stars {
     my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
 
     foreach (@stars) {
-	my ($id, $ra, $dec, undef, undef, undef, undef, $mag, undef, $bv) = split;
+	my ($id, $ra, $dec, $poserr, undef, undef, undef, $mag, $magerr, $bv, $class) = split;
 	my ($yag, $zag) = Quat::radec2yagzag($ra, $dec, $q_aca);
 	$yag *= $r2a;
 	$zag *= $r2a;
-	push @{$self->{agasc_stars}}, { id => $id,
+	push @{$self->{agasc_stars}}, { id => $id, class => $class,
 					ra  => $ra,  dec => $dec,
 					mag => $mag, bv  => $bv,
+					magerr => $magerr, poserr  => $poserr,
 					yag => $yag, zag => $zag } ;
     }
 }
@@ -767,14 +789,19 @@ sub identify_stars {
     return unless ($c = find_command($self, 'MP_STARCAT'));
     $DIST_LIMIT = 1.0;		# 1 arcsec box for ID
 
-    for $i (1 .. 16) {	
-	next if ($c->{"TYPE$i"} eq 'NUL' or $c->{"GS_ID$i"} ne '---');
+    for $i (1 .. 16) {
+	next if ($c->{"TYPE$i"} eq 'NUL');
 	$yag = $c->{"YANG$i"};
 	$zag = $c->{"ZANG$i"};
 	
 	foreach $star (@{$self->{agasc_stars}}) {
 	    if (abs($star->{yag} - $yag) < $DIST_LIMIT
 		&& abs($star->{zag} - $zag) < $DIST_LIMIT) {
+		$c->{"GS_BV$i"} = $star->{bv};
+		$c->{"GS_MAGERR$i"} = $star->{magerr};
+		$c->{"GS_POSERR$i"} = $star->{poserr};
+		$c->{"GS_CLASS$i"} = $star->{class};
+		last unless ($c->{"GS_ID$i"} eq '---');
 		$c->{"GS_ID$i"} = "*$star->{id}";
 		$c->{"GS_RA$i"} = $star->{ra};
 		$c->{"GS_DEC$i"} = $star->{dec};
