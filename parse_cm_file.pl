@@ -25,6 +25,7 @@ sub fidsel {
     $fidsel_file = shift;	# FIDSEL file name
     $bs          = shift;	# Reference to backstop array
     my $error = [];
+    my %time_hash = ();		# Hash of time stamps of fid cmds
 
     my @fs = ();
     foreach (0 .. 14) {
@@ -32,7 +33,14 @@ sub fidsel {
     }
     
     my ($actions, $times) = get_fid_actions($fidsel_file, $bs);
-    
+
+    # Check for duplicate commanding
+    map { $time_hash{$_}++ } @{$times};
+    foreach (sort keys %time_hash) {
+#	push @{$error}, "ERROR - $time_hash{$_} fid hardware commands at time $_\n"
+#	    if ($time_hash{$_} > 1);
+    }
+	
     for ($i = 0; $i <= $#{$times}; $i++) {
 	# If command contains RESET, then turn off (i.e. set tstop) any 
 	# fid light that is on

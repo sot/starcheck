@@ -22,8 +22,7 @@ $par{dir}   = '.';
 $par{plot}  = 1;
 $par{html}  = 1;
 $par{text}  = 1;
-$par{chex}  = ($ENV{USER} =~ /^(aldcroft|rac|emartin|dmorris)$/) ?
-    undef : '/proj/sot/ska/ops/Chex/pred_state.rdb';
+$par{chex}  =  undef;  #  '/proj/sot/ska/ops/Chex/pred_state.rdb' for MP'ers
 
 $log_fh = open_log_file("/proj/sot/ska/ops/Chex/starcheck.log");
 
@@ -64,12 +63,12 @@ require "$dir/parse_cm_file.pl";
 # Find backstop, guide star summary, OR, and maneuver files.  Only backstop is required
 
 $backstop   = get_file("$par{dir}/*.backstop",'backstop', 'required');
-$guide_summ = get_file("$par{dir}/mg*.sum",   'guide summary');
-$or_file    = get_file("$par{dir}/*.or",      'OR');
+$guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
+$or_file    = get_file("$par{dir}/mps/or/*.or",      'OR');
 $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
-$dot_file   = get_file("$par{dir}/md*.dot",     'DOT', 'required');
-$mech_file  = get_file("$par{dir}/TEST_mechcheck.txt", 'mech check');
-$soe_file   = get_file("$par{dir}/ms*.soe", 'SOE');
+$dot_file   = get_file("$par{dir}/mps/md*.dot",     'DOT', 'required');
+$mech_file  = get_file("$par{dir}/output/TEST_mechcheck.txt", 'mech check');
+$soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 $odb_file   = get_file("/proj/sot/ska/ops/SFE/fid_CHARACTERIS_JUL01", 'odb', 'required');
 $manerr_file= get_file("md*dot_man.txt",'manerr');    
@@ -85,7 +84,16 @@ if ($par{plot}) {
 	    die "Cannot find mp_get_agasc to make plots.  Are you in the CXCDS environment?\n";
 	}
     }
+
+    ($mp_agasc_version) = ($ENV{ASCDS_AGASC} =~ /agasc(\dp\d)/);
+    die "Starcheck only supports AGASC 1.4 and 1.5.  Found '$mp_agasc_version'\n"
+	unless ($mp_agasc_version =~ /(1p4|1p5)/);
+    $mp_agasc_version =~ s/p/./;
+    ($ascds_version_name) = ($ENV{ASCDS_BIN} =~ /\/DS\.([^\/]+)/);
+    $ascds_version = $ENV{ASCDS_VERSION};
+    print STDERR "Configuration:  AGASC $mp_agasc_version   ASCDS $ascds_version_name ($ascds_version)\n"
 }
+
 
 unless (-e $STARCHECK) {
     die "Couldn't make directory $STARCHECK\n" unless (mkdir $STARCHECK, 0777);
@@ -213,7 +221,7 @@ foreach (@bs) {
 
 foreach $obsid (@obsid_id) {
     if ($par{plot}) {
-	$obs{$obsid}->get_agasc_stars();
+	$obs{$obsid}->get_agasc_stars($mp_agasc_version);
 	$obs{$obsid}->identify_stars();
 	$obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.gif") ;
     }
@@ -236,7 +244,10 @@ $date = `date`;
 chomp $date;
 
 $out .= "------------  Starcheck V$version    -----------------\n";
-$out .= " Run on $date by $ENV{USER}\n\n";
+$out .= " Run on $date by $ENV{USER}\n";
+$out .= " Configuration:  AGASC $mp_agasc_version  ASCDS $ascds_version_name ($ascds_version)\n"
+    if ($mp_agasc_version and $ascds_version_name);
+$out .= "\n";
 
 if (@global_warn) {
     $out .= "------------  PROCESSING WARNINGS -----------------\n";

@@ -5,6 +5,43 @@ Things to do:
 - Check that the faint mag limit is at least 1.28 more than the star mag
 - Parse SCS107 statement in fidsel history
 
+V4.4	28-Aug-02
+-----------------
+- Changed default value of -chex command line parameter to undefined, to avoid
+  accidentally overwriting the Chandra expected state file (used by snapshot).
+  This requires a corresponding change in the MP script which runs starcheck
+  to specifically include '-chex /proj/sot/ska/Chex/pred_state.rdb'.
+- Changed search locations for 5 input files (guide star summary, OR list,
+  DOT, Mech check file, and SOE) from the SOT MP location to the default
+  location in the backstop distribution tar file. 
+- Added code to determine the AGASC version number and ASCDS version name
+  and number from local environment variables.  These configuration values
+  are printed to the terminal and put in the starcheck output.
+- Added color coding to star plots which matches make_stars scheme: red for
+  bad star, magenta for faint star, and black for good.  Stars with a bad
+  magnitude value (-9999) are plotted as a large 5 point star symbol.
+- Changed default slew error formula from 45 + angle(deg)/2 to
+  35 + angle(deg)/2, with a cap at 85.  This matches the new OFLS slew
+  error.  This default is only used if the more accurate slew error (from
+  Bill Davis' code) is not available.
+- Added support for monitor boxes, including plotting
+- Changed check on total number of guide + fid stars to include monitor boxes
+- Added check that number of ACQ stars is less than or equal to 8
+- Changed warning message for Marginal stars to include detailed information
+  on the star characteristics
+- Changed limit on max search box size from 120 to 200 arcsec
+- Changed code which parses output of mp_get_agasc so that it handles output
+  for both AGASC 1.4 and 1.5.
+- Print a warning if a field star has a magnitude or magnitude error < -10.
+  For AGASC 1.4 this happens when magnitude = -9999 for some stars.
+- For observations with Obsid >= 60000, increase the minimum required
+  guide and acquisition stars to 6 and 5, respectively
+
+Verification
+
+  Re-ran starcheck for AUG0502, AUG1202, AUG1902, AUG2602 and found only
+  expected changes.
+
 V4.1	26-Mar-02
 -----------------
 - Added ability to read maneuver error file

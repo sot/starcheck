@@ -37,7 +37,15 @@ $alarm = ">> WARNING:";
 		  'ACIS-S' => 75620,
 		  'HRC-I'  => -50505,
 		  'HRC-S'  => -99612);
-
+%pg_colors = (white   => 1,
+	      red     => 2,
+	      green   => 3,
+	      blue    => 4,
+	      cyan    => 5,
+	      yellow  => 7,
+	      orange  => 8,
+	      purple  => 12,
+	      magenta => 6);
 
 1;
 
@@ -173,8 +181,9 @@ sub set_maneuver {
 		    $c->{$_} = $m->{$_};
 		}
 
-		# Set the default maneuver error
-		$c->{man_err} = (exists $c->{angle}) ? 45 + $c->{angle}/2. : 120;
+		# Set the default maneuver error (based on WS Davis data) and cap at 85 arcsec
+		$c->{man_err} = (exists $c->{angle}) ? 35 + $c->{angle}/2. : 85;
+		$c->{man_err} = 85 if ($c->{man_err} > 85);
 
 		# Now check for consistency between quaternion from MANUEVER summary
 		# file and the quat from backstop (MP_TARGQUAT cmd)
@@ -245,7 +254,7 @@ sub set_fids {
     my $tstart;
     $self->{fidsel} = [];  # Init to know that fids have been set and should be checked
 
-    # Return unless there is a manuever command and associated tstop value (from manv summ)
+    # Return unless there is a maneuver command and associated tstop value (from manv summ)
 
     return unless ($c = find_command($self, "MP_TARGQUAT", -1));
     return unless ($tstart = $c->{tstop});	# "Start" of observation = end of manuever
@@ -278,12 +287,14 @@ sub set_star_catalog {
     @{$self->{fid}} = ();
     @{$self->{gui}} = ();
     @{$self->{acq}} = ();
+    @{$self->{mon}} = ();
 
     foreach $i (1..16) {
 	$c->{"SIZE$i"} = $sizes[$c->{"IMGSZ$i"}];
 	$c->{"MAG$i"} = ($c->{"MINMAG$i"} + $c->{"MAXMAG$i"})/2;
 	$c->{"TYPE$i"} = ($c->{"TYPE$i"} or $c->{"MINMAG$i"} != 0 or $c->{"MAXMAG$i"} != 0)? 
 	    $types[$c->{"TYPE$i"}] : 'NUL';
+	push @{$self->{mon}},$i if ($c->{"TYPE$i"} eq 'MON');
 	push @{$self->{fid}},$i if ($c->{"TYPE$i"} eq 'FID');
 	push @{$self->{acq}},$i if ($c->{"TYPE$i"} eq 'ACQ' or $c->{"TYPE$i"} eq 'BOT');
 	push @{$self->{gui}},$i if ($c->{"TYPE$i"} eq 'GUI' or $c->{"TYPE$i"} eq 'BOT');
@@ -360,8 +371,9 @@ sub check_star_catalog {
     my $y0           = 33;	# CCD QB coordinates (arcsec)
     my $z0           = -27;
    
-    my $min_guide    = 5;	# Minimum number of each object type
-    my $min_acq      = 4;
+    my $is_science = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} < 60000);
+    my $min_guide    = $is_science ? 5 : 6; # Minimum number of each object type
+    my $min_acq      = $is_science ? 4 : 5;
     my $min_fid      = 3;
     ########################################################################
 
@@ -389,11 +401,11 @@ sub check_star_catalog {
 
     # Global checks on star/fid numbers
 
-    push @warn,"$alarm Too Few Fid Lights\n" if (@{$self->{fid}} < $min_fid && $self->{obsid} =~ /^\d+$/
-						 && $self->{obsid} < 60000);
+    push @warn,"$alarm Too Few Fid Lights\n" if (@{$self->{fid}} < $min_fid && $is_science);
     push @warn,"$alarm Too Few Acquisition Stars\n" if (@{$self->{acq}} < $min_acq);
     push @warn,"$alarm Too Few Guide Stars\n" if (@{$self->{gui}} < $min_guide);
-    push @warn,"$alarm Too many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} > 8);
+    push @warn,"$alarm Too Many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} + @{$self->{mon}} > 8);
+    push @warn,"$alarm Too Many Acquisition Stars\n" if (@{$self->{acq}} > 8);
 
     # Match positions of fids in star catalog with expected, and verify a one to one 
     # correspondance between FIDSEL command and star catalog
@@ -418,13 +430,15 @@ sub check_star_catalog {
 
 	# Set NOTES variable for marginal or bad star based on AGASC info
 	$c->{"GS_NOTES$i"} = '';
+	my $note = '';
 	if (defined $c->{"GS_CLASS$i"}) {
 	    $c->{"GS_NOTES$i"} .= 'b' if ($c->{"GS_CLASS$i"} != 0);
 	    $c->{"GS_NOTES$i"} .= 'c' if ($c->{"GS_BV$i"} == 0.700 or $c->{"GS_BV$i"} == 1.500);
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
-	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 99);
-	    push @yellow_warn, sprintf("$alarm Marginal star. [%2d]\n", $i) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
-	    push @warn, sprintf("$alarm Bad star. [%2d]\n", $i)             if ($c->{"GS_NOTES$i"} =~ /b/);
+	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 199);
+	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",$c->{"GS_BV$i"},($c->{"GS_MAGERR$i"})/100,($c->{"GS_POSERR$i"})/1000) if ($c->{"GS_NOTES$i"} =~ /[cmp]/);
+	    push @yellow_warn, sprintf("$alarm Marginal star. [%2d]: %s\n",$i,$note) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
+	    push @warn, sprintf("$alarm Bad star. [%2d]: Class = %s %s\n", $i,$c->{"GS_CLASS$i"},$note) if ($c->{"GS_NOTES$i"} =~ /b/);
 	}
 
 	# Star/fid outside of CCD boundaries
@@ -434,10 +448,9 @@ sub check_star_catalog {
 	}
 
 	# Quandrant boundary interference
-	if ($type ne 'MON' and abs($yag-$y0) < $qb_dist + $slot_dither
-	     or abs($zag-$z0) < $qb_dist + $slot_dither ) {
-	    push @yellow_warn, sprintf "$alarm Quadrant Boundary. [%2d]\n",$i;
-	}
+	push @yellow_warn, sprintf "$alarm Quadrant Boundary. [%2d]\n",$i 
+	    unless ($type eq 'ACQ' or $type eq 'MON' or 
+		    (abs($yag-$y0) > $qb_dist + $slot_dither and abs($zag-$z0) > $qb_dist + $slot_dither ));
 
 	# Faint and bright limits
 	if ($type ne 'MON' and $mag ne '---') {
@@ -449,7 +462,7 @@ sub check_star_catalog {
 	}
 
 	# Search box too large
-	if ($type ne 'MON' and $c->{"HALFW$i"} > 120) {
+	if ($type ne 'MON' and $c->{"HALFW$i"} > 200) {
 	    push @warn, sprintf "$alarm Search Box Too Large. [%2d]\n",$i;
 	}
 
@@ -782,16 +795,29 @@ sub get_agasc_stars {
 ##***************************************************************************
     # Run mp_get_agasc to get field stars
     $self = shift;
+    my $mp_agasc_version = shift;
 
     $mp_get_agasc = "mp_get_agasc -r $self->{ra} -d $self->{dec} -w 1.0";
     my @stars = `$mp_get_agasc`;
     my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
 
     foreach (@stars) {
-	my ($id, $ra, $dec, $poserr, undef, undef, undef, $mag, $magerr, $bv, $class) = split;
+	s/-/ -/g;
+	my @flds = split;
+	
+	# AGASC 1.4 and 1.5 are related (one-to-one) with different versions of mp_get_agasc
+	# which have different output formats.  Choose the right one based on AGASC version:
+	my ($id, $ra, $dec, $poserr, $mag, $magerr, $bv, $class) =($mp_agasc_version eq '1.4') ?
+	    @flds[0..3,7..10] : @flds[0..3,12,13,19,14];
+
 	my ($yag, $zag) = Quat::radec2yagzag($ra, $dec, $q_aca);
 	$yag *= $r2a;
 	$zag *= $r2a;
+	if ($mag < -10 or $magerr < -10) {
+	    push @{$self->{warn}}, sprintf("$alarm Star with bad mag %.1f or magerr %.1f at (yag,zag)=%.1f,%.1f\n",
+					   $mag, $magerr, $yag, $zag);
+	}
+
 	push @{$self->{agasc_stars}}, { id => $id, class => $class,
 					ra  => $ra,  dec => $dec,
 					mag => $mag, bv  => $bv,
@@ -847,7 +873,8 @@ sub plot_stars {
 		 ACQ => 17,
 		 GUI => 17,
 		 MON => 17,
-		 field_star => 17);
+		 field_star => 17,
+		 bad_mag => 12);
 
     %sym_color = (FID => 2,
 		  BOT => 4,
@@ -876,11 +903,25 @@ sub plot_stars {
     box(0,0,2600,2560);
 
     # Plot field stars from AGASC
-    pgsci($sym_color{field_star});
     foreach $star (@{$self->{agasc_stars}}) {
 	next if ($star->{mag} > $faint_plot_mag);
-	pgsch(sym_size($star->{mag})); # Set character height
-	pgpoint(1, $star->{yag}, $star->{zag}, $sym_type{field_star});
+
+	# First set defaults
+	my $color = $pg_colors{red}; # By default, assume star is bad
+	my $symbol = $sym_type{field_star};
+	my $size = sym_size($star->{mag});
+
+	$color = $pg_colors{magenta} if ($star->{class} == 0 and $star->{mag} >= 10.7);  # faint
+	$color = $pg_colors{white}   if ($star->{class} == 0 and $star->{mag} < 10.7);   # OK
+	if ($star->{mag} < -10) {                                                        # Bad mag
+	    $color=$pg_colors{red};
+	    $size=3.0;
+	    $symbol = $sym_type{bad_mag};
+	}
+	    
+	pgsci($color);
+	pgsch($size); # Set character height
+	pgpoint(1, $star->{yag}, $star->{zag}, $symbol);
     }
 
     # Plot fids/stars in star catalog
@@ -960,7 +1001,9 @@ sub box {
 sub sym_size {
 ##***************************************************************************
     my $mag = shift;
-    return ( (0.5 - 3.0) * ($mag - 6.0) / (12.0 - 6.0) + 2.5);
+    $mag = 10 if ($mag < -10);
+    my $size = ( (0.5 - 3.0) * ($mag - 6.0) / (12.0 - 6.0) + 2.5);
+    return ($size > 0.8) ? $size : 0.8;
 }
 
 ###################################################################################
