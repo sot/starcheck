@@ -273,7 +273,7 @@ sub OR {
 		$obs = '';
 	    }
 	}
-	$in_obs_statement = 1 if (/^OBS,\s*$/);
+	$in_obs_statement = 1 if (/^\s*OBS,\s*$/);
     }
     close OR;
 
