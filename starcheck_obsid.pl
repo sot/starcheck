@@ -35,6 +35,7 @@ $alarm = ">> WARNING:";
 		  'HRC-I'  => -50505,
 		  'HRC-S'  => -99612);
 
+
 1;
 
 sub new {
@@ -57,6 +58,13 @@ sub add_command {
     my $self = shift;
     push @{$self->{commands}}, $_[0];
 }
+
+sub set_odb {
+# Import %odb variable into starcheck_obsid package
+    %odb = @_;
+    $odb{"ODB_TSC_STEPS"}[0] =~ s/D/E/;
+}
+
 
 sub set_bad_agasc {
 # Read bad AGASC ID file
@@ -145,12 +153,13 @@ sub set_maneuver {
 #
     my $self = shift;
     my %mm = @_;
-    for $n (1..5) {
-	last unless ($c = find_command($self, "MP_TARGQUAT", $n));
+    my $n = 1;
+    while ($c = find_command($self, "MP_TARGQUAT", $n++)) {
 #	print "Looking for match for maneuver to $c->{Q1} $c->{Q2} $c->{Q3} for obsid $self->{obsid}\n";
 	$found = 0;
 	foreach $m (values %mm) {
-	    if ($m->{obsid} eq $self->{dot_obsid}
+	    ($manvr_obsid = $m->{obsid}) =~ s/!//g;  # Manvr obsid can have some '!'s attached for uniqness
+	    if ($manvr_obsid eq $self->{dot_obsid}
 		&& abs($m->{q1} - $c->{Q1}) < 1e-7
 		&& abs($m->{q2} - $c->{Q2}) < 1e-7
 		&& abs($m->{q3} - $c->{Q3}) < 1e-7) {
@@ -183,8 +192,38 @@ sub set_maneuver {
 	    }
 	}
 	push @{$self->{yellow_warn}}, sprintf("$alarm Did not find match in MAN summary for MP_TARGQUAT at $c->{date}\n")
-		   unless ($found)
+	    unless ($found);
     }
+}
+
+##################################################################################
+sub set_fids {
+#
+# Find the commanded fids (if any) for this observation.
+# always match those in DOT, etc
+#
+##################################################################################
+    my $self = shift;
+    my @fidsel = @_;
+    $self->{fidsel} = [];  # Init to know that fids have been set and should be checked
+
+    return unless ($c = find_command($self, "MP_TARGQUAT", -1));
+    
+    my $tstart = $c->{tstop};	# "Start" of observation = end of manuever
+    
+    # Loop through fidsel commands for each fid light and find any intervals
+    # where fid is on at time $tstart
+
+    for $fid (1 .. 14) {
+	foreach $fid_interval (@{$fidsel[$fid]}) {
+	    if ($fid_interval->{tstart} <= $tstart &&
+		(! exists $fid_interval->{tstop} || $tstart <= $fid_interval->{tstop}) ) {
+		push @{$self->{fidsel}}, $fid;
+		last;
+	    }
+	}
+    }
+
 }
 
 sub set_star_catalog {
@@ -228,7 +267,13 @@ sub set_star_catalog {
 sub check_sim_position {
     my $self = shift;
     my @sim_trans = @_;		# Remaining values are SIMTRANS backstop cmds
-    my $c = find_command($self, "MP_TARGQUAT", -1);
+    my $c;
+    
+    return unless (exists $self->{SIM_OFFSET_Z});
+    unless ($c = find_command($self, "MP_TARGQUAT", -1)) {
+	push @{$self->{warn}}, "$alarm Missing MP_TARGQUAT cmd\n";
+	return;
+    }
 
     # Set the expected SIM Z position (steps)
     my $sim_z = $Default_SIM_Z{$self->{SI}} + $self->{SIM_OFFSET_Z};
@@ -307,6 +352,10 @@ sub check_star_catalog {
     push @warn,"$alarm Too Few Acquisition Stars\n" if (@{$self->{acq}} < $min_acq);
     push @warn,"$alarm Too Few Guide Stars\n" if (@{$self->{gui}} < $min_guide);
     push @warn,"$alarm Too many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} > 8);
+
+    # Match positions of fids in star catalog with expected, and verify a one to one 
+    # correspondance between FIDSEL command and star catalog
+    check_fids($self, $c, \@warn) if (exists $self->{fidsel});
 
     foreach $i (1..16) {
 	($sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
@@ -394,7 +443,7 @@ sub check_star_catalog {
 		and $dm > -5.0) {
 	        my $warn = sprintf("$alarm Fid spoiler. [%2d]- %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
-		if ($dm > -4.0)  { push @warn, $warn } # Currently all warnings are red, but this could change
+		if ($dm > -4.0)  { push @warn, $warn } 
 		else { push @yellow_warn, $warn }
 	    }
 
@@ -421,6 +470,94 @@ sub check_star_catalog {
     push @{$self->{yellow_warn}}, @yellow_warn;
 }
 
+##*********************************************************************************************
+sub check_fids {
+##*********************************************************************************************
+    my $self = shift;
+    my $c = shift;		# Star catalog command 
+    my $warn = shift;		# Array ref to warnings for this obsid
+
+    my (@fid_ok, @fidsel_ok);
+    my $n = 0;
+    my ($i, $i_fid);
+    
+    # If no star cat fids and no commanded fids, then return
+    return if (@{$self->{fid}} == 0 && @{$self->{fidsel}} == 0);
+
+    # Make sure we have SI and SIM_OFFSET_Z to be able to calculate fid yang and zang
+    unless (defined $self->{SI} && defined $self->{SIM_OFFSET_Z}) {
+	push @{$warn}, "$alarm Unable to check fids because SI or SIM_OFFSET_Z undefined\n";
+	return;
+    }
+    
+    @fid_ok = map { 0 } @{$self->{fid}};
+
+    # Calculate yang and zang for each commanded fid, then cross-correlate with
+    # all commanded fids.
+    foreach $fid (@{$self->{fidsel}}) {
+	my ($yag, $zag) = calc_fid_ang($fid, $self->{SI}, $self->{SIM_OFFSET_Z});
+	$fidsel_ok = 0;
+
+	# Cross-correlate with all star cat fids
+	for $i_fid (0 .. $#fid_ok) {
+	    $i = $self->{fid}[$i_fid]; # Index into star catalog entries
+
+	    # Check if starcat fid matches fidsel fid position to within 10 arcsec
+	    if (abs($yag - $c->{"YANG$i"}) < 10.0 && abs($zag - $c->{"ZANG$i"}) < 10.0) {
+		$fidsel_ok = 1;
+		$fid_ok[$i_fid] = 1;
+		last;
+	    }
+	}
+	push @{$warn}, "$alarm Fid $self->{SI} $fid is turned on with FIDSEL but not found in star catalog\n"
+	    unless ($fidsel_ok);
+	$n++;
+    }
+
+    for $i_fid (0 .. $#fid_ok) {
+	push @{$warn}, "$alarm Fid with IDX=\[$self->{fid}[$i_fid]\] is in star catalog but is not turned on via FIDSEL\n"
+	    unless ($fid_ok[$i_fid]);
+    }
+}
+
+##############################################################################
+sub calc_fid_ang {
+#   From OFLS SDS:
+#   Y_ang = fid position angle measured about the ACA z-axis as shown in 
+#           Fig. 4.3-5.  In that figure, Y_ang corresponds to the ACA 
+#           y angle, or "yag".
+#   Y_S   = Y coordinate of fid light
+#   R_H   = distance from SI fid light point of origin to HRMA nodal point
+#   X_f   = Offset from nominal FA position
+#   
+#   Y_ang = -Y_s / (R_H - X_f)
+#   Z_ang = -(Z_s + Z_f) / (R_H - X_f)
+##############################################################################
+    my ($fid, $si, $sim_z_offset) = @_;
+    my $r2a = 180./3.14159265*3600;
+
+    # Make some variables for accessing ODB elements
+    $si =~ tr/a-z/A-Z/;
+    $si =~ s/[-_]//;
+    
+    ($si2hrma) = ($si =~ /(ACIS|HRCI|HRCS)/);
+    my %offset = (ACIS => 0,
+		  HRCI => 6,
+		  HRCS => 10);
+    my $fid_id = $fid - $offset{$si2hrma};
+    
+    # Calculate fid angles using formula in OFLS
+    my $y_s = $odb{"ODB_${si}_FIDPOS"}[($fid_id-1)*2];
+    my $z_s = $odb{"ODB_${si}_FIDPOS"}[($fid_id-1)*2+1];
+    my $r_h = $odb{"ODB_${si2hrma}_TO_HRMA"}[$fid_id-1];
+    my $z_f = -$sim_z_offset * $odb{"ODB_TSC_STEPS"}[0];
+    my $x_f = 0;
+
+    my $yag = -$y_s / ($r_h - $x_f) * $r2a;
+    my $zag = -($z_s + $z_f) / ($r_h - $x_f) * $r2a;
+    
+    return ($yag, $zag);
+}
 
 ##*********************************************************************************************
 sub print_report {
@@ -444,9 +581,9 @@ sub print_report {
 	$o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f",
 		       $self->{DITHER_Y_AMP}*3600., $self->{DITHER_Z_AMP}*3600.,
 		       360./$self->{DITHER_Y_FREQ}, 360./$self->{DITHER_Z_FREQ})
-	    if ($self->{DITHER_ON} eq 'ON');
+	    if ($self->{DITHER_ON} eq 'ON' && $self->{DITHER_Y_FREQ} && $self->{DITHER_Z_FREQ});
 	$o .= sprintf "\n";
-    }    
+    }
 
 #$file_out = "$STARCHECK/" . basename($file_in) . ".html"
 #    ($self->{backstop}, $self->{guide_summ}, $self->{or_file},
@@ -542,10 +679,10 @@ sub add_guide_summ {
 	    $c->{"GS_ZANG$j"} = $f[6] * $r2a;
 	}
     }
-    unless ($OK) {
-	push @{$self->{yellow_warn}}, ">> WARNING: " .
-	    "$f[0] $f[1] in guide star summary, but not backstop\n" ;
-    }
+#    unless ($OK) {
+#	push @{$self->{yellow_warn}}, ">> WARNING: " .
+#	    "$f[0] $f[1] in guide star summary, but not backstop\n" ;
+#    }
 }
 
 ##***************************************************************************

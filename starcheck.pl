@@ -10,11 +10,12 @@
 #
 ##*******************************************************************************
 
-$version = "3.332";
+$version = "3.4";
 
 # Set defaults and get command line options
 
 use Getopt::Long;
+use Data::Dumper;
 use IO::File;
 $par{dir}   = '.';
 $par{plot}  = 1;
@@ -66,6 +67,9 @@ $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 $dot_file   = get_file("$par{dir}/md*:*.dot",     'DOT', 'required');
 $mech_file  = get_file("$par{dir}/TEST_mechcheck.txt", 'mech check');
 $soe_file   = get_file("$par{dir}/ms*.soe", 'SOE');
+$fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
+$odb_file   = get_file("/proj/sot/ska/ops/SFE/fid_CHARACTERIS_JUL01", 'odb', 'required') if ($fidsel_file);
+
 $bad_agasc_file = "/proj/sot/ska/ops/SFE/agasc.bad";
 
 # If making plots, check for mp_get_agasc, and make a plot directory if required
@@ -73,17 +77,16 @@ $bad_agasc_file = "/proj/sot/ska/ops/SFE/agasc.bad";
 if ($par{plot}) {
     die "Cannot find mp_get_agasc to make plots.  Are you in the CXCDS environment?\n"
 	if (`which mp_get_agasc` =~ /no mp_get_agasc/);
+}
 
-    unless (-e $STARCHECK) {
-	die "Couldn't make directory $STARCHECK\n" unless (mkdir $STARCHECK, 0777);
-	print STDERR "Created plot directory $STARCHECK\n";
-	print $log_fh "Created plot directory $STARCHECK\n" if ($log_fh);
-    }
+unless (-e $STARCHECK) {
+    die "Couldn't make directory $STARCHECK\n" unless (mkdir $STARCHECK, 0777);
+    print STDERR "Created plot directory $STARCHECK\n";
+    print $log_fh "Created plot directory $STARCHECK\n" if ($log_fh);
 }
 
 
 # First read the Backstop file, and split into components
-
 $bogus_obsid = 1;
 @bs = Parse_CM_File::backstop($backstop);
 $i = 0;
@@ -94,20 +97,29 @@ foreach $bs (@bs) {
 }
 
 # Read DOT, which is used to figure the Obsid for each command
-
 %dot = Parse_CM_File::DOT($dot_file) if ($dot_file);
 
 # Read momentum management (maneuvers + SIM move) summary file 
-
 %mm = Parse_CM_File::MM($mm_file) if ($mm_file);
 
 # Read mech check file and parse
-
 @mc  = Parse_CM_File::mechcheck($mech_file) if ($mech_file);
 
-# Read mech check file and parse
-
+# Read SOE file and parse
 %soe  = Parse_CM_File::SOE($soe_file) if ($soe_file);
+
+# Read OR file and integrate into %obs
+%or = Parse_CM_File::OR($or_file) if ($or_file);
+
+# Read FIDSEL (fid light) history file and ODB (for fid
+# characteristics) and parse
+
+if ($fidsel_file) {
+    ($error, @fidsel) = Parse_CM_File::fidsel($fidsel_file) ;
+    map { warning("$_\n") } @{$error};
+    %odb = Parse_CM_File::odb($odb_file);
+    Obsid::set_odb(%odb);
+}
 
 # Read bad AGASC stars
 
@@ -157,6 +169,8 @@ foreach $obsid (@obsid_id) {
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
     $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file);
+    $obs{$obsid}->set_fids(@fidsel) if ($fidsel_file && $mm_file);
+    map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
 }
 
 # Read guide star summary file $guide_summ.
@@ -167,22 +181,11 @@ foreach $obsid (@obsid_id) {
 
 read_guide_summary() if ($guide_summ);
 
-
-# Do checking
-
-foreach $obsid (@obsid_id) {
-    if ($par{plot}) {
-	$obs{$obsid}->get_agasc_stars();
-	$obs{$obsid}->identify_stars();
-	$obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.gif") ;
-    }
-    $obs{$obsid}->check_star_catalog();
-}
-
-# Pull out backstop commands which are a SIM translation command
+# Set up for SIM-Z checking
+# Find SIMTSC continuity statement from mech check file
+# and find SIMTRANS statements in backstop
 
 @sim_trans = ();
-# Find SIMTSC continuity statement from mech check file
 foreach $mc (@mc) {
     if ($mc->{var} eq 'simtsc_continuity') {
 	push @sim_trans, { cmd  => 'SIMTRANS',
@@ -195,22 +198,20 @@ foreach (@bs) {
     push @sim_trans, $_ if ($_->{cmd} eq 'SIMTRANS');
 }
 
-# Read OR file and integrate into %obs, and check SIM positions if possible
-
-%or = Parse_CM_File::OR($or_file) if ($or_file);
+# Do main checking
 
 foreach $obsid (@obsid_id) {
-    if (exists $or{$obsid}) {
-	foreach (keys %{$or{$obsid}}) {
-	    $obs{$obsid}->{$_} = $or{$obsid}{$_};
-	}
-	$obs{$obsid}->check_sim_position(@sim_trans);
+    if ($par{plot}) {
+	$obs{$obsid}->get_agasc_stars();
+	$obs{$obsid}->identify_stars();
+	$obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.gif") ;
     }
-}
 
-# Make sure there is only one star catalog per obsid
+    $obs{$obsid}->check_star_catalog();
 
-foreach $obsid (@obsid_id) {
+    $obs{$obsid}->check_sim_position(@sim_trans);
+
+    # Make sure there is only one star catalog per obsid
     warning ("More than one star catalog assigned to Obsid $obsid\n")
 	if ($obs{$obsid}->find_command('MP_STARCAT',2));
 }

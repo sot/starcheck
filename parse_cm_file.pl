@@ -17,6 +17,57 @@ use Time::Local;
 1;
 
 ###############################################################
+sub fidsel {
+###############################################################
+    $fidsel = shift;
+    my $error = [];
+
+
+    my @fs = ();
+    foreach (0 .. 14) {
+	$fs[$_] = [];
+    }
+    
+    unless (open (FIDSEL, $fidsel)) {
+	push @{$error}, "Couldn't open fidsel file $fidsel for reading";
+	return ($error);
+    }
+
+    while (<FIDSEL>) {
+	# Parse lines like:
+	# 2001211.190730558   | AFLCRSET RESET
+	# 2001211.190731558   | AFLC02D1 FID 02 ON
+	if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
+	    my ($yr, $doy, $hr, $min, $sec, $action) = ($1,$2,$3,$4,$5,$6);
+
+	    # Convert to time, and subtract 10 seconds so that fid lights are
+	    # on slightly before end of manuever.  In actual commanding, they
+	    # come on about 1-2 seconds *after*. 
+	    $time = date2time("$yr:$doy:$hr:$min:$sec") - 10;
+
+	    # If command contains RESET, then turn off (i.e. set tstop) any 
+	    # fid light that is on
+	    if ($action =~ /RESET/) {
+		foreach $fid (1 .. 14) {
+		    foreach $fid_interval (@{$fs[$fid]}) {
+			$fid_interval->{tstop} = $time unless ($fid_interval->{tstop});
+		    }
+		}
+	    }
+	    # Otherwise turn fid on by adding a new entry with tstart=time
+	    elsif (($fid) = ($action =~ /FID\s+(\d+)\s+ON/)) {
+		push @{$fs[$fid]}, { tstart => $time };
+	    } else {
+		push @{$error}, "Parse_cm_file::fidsel: WARNING - Could not parse $_";
+	    }
+	}
+    }
+    close FIDSEL;
+
+    return ($error, @fs);
+}    
+
+###############################################################
 sub backstop {
 ###############################################################
     $backstop = shift;
@@ -148,7 +199,8 @@ sub MM {
     while (<MM>) {
 	chomp;
 	$start_stop = !$start_stop if (/(INITIAL|INTERMEDIATE|FINAL) ATTITUDE/);
-        $obsid = $2 if (/(INITIAL|FINAL) ID:\s+(\S+)\S\S/);
+        $initial_obsid = $1 if (/INITIAL ID:\s+(\S+)\S\S/);
+        $obsid = $1 if (/FINAL ID:\s+(\S+)\S\S/);
 	$start_date = $1 if ($start_stop && /TIME\(GMT\):\s+(\S+)/);
 	$stop_date  = $1 if (! $start_stop && /TIME\(GMT\):\s+(\S+)/);
 	$ra         = $1 if (/RA\(deg\):\s+(\S+)/);
@@ -159,7 +211,22 @@ sub MM {
 	@quat       = ($1,$2,$3,$4) if (/Quaternion:\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/);
 
 	if (/Profile Parameters/) { # Effective end of maneuver statement
+	    # If the FINAL ID was not found (in the case of an intermediate maneuver)
+	    # then look ahead in the file to find it.  If that fails, use the initial obsid
+	    unless ($obsid) {
+		my $pos = tell MM;
+		while (<MM>) {
+		    if (/FINAL ID:\s+(\S+)\S\S/) {
+			$obsid = $1;
+			last;
+		    }
+		}
+		$obsid = $initial_obsid unless ($obsid);
+		seek MM, $pos, 0; # Go back to original spot
+	    }
+		    
 	    while (exists $mm{$obsid}) { $obsid .= "!"; }
+
 	    $mm{$obsid}->{start_date} = $start_date;
 	    $mm{$obsid}->{stop_date}  = $stop_date;
 	    $mm{$obsid}->{ra}         = $ra;
@@ -174,6 +241,7 @@ sub MM {
 	    $mm{$obsid}->{q2}         = $quat[1];
 	    $mm{$obsid}->{q3}         = $quat[2];
 	    $mm{$obsid}->{q4}         = $quat[3];
+	    undef $obsid;
 	}
     }
     close MM;
@@ -293,6 +361,40 @@ sub SOE {
 
     return %SOE;
 }
+
+##***************************************************************************
+sub odb {
+##***************************************************************************
+    use Text::ParseWords;
+
+    my $odb_file = shift;
+    my $odb_var;
+    my @words;
+
+    open (ODB, $odb_file) || die "Couldn't open $odb_file\n";
+    while (<ODB>) {
+	next if (/^C/ || /^\s*\$/);
+	next unless (/\S/);
+	chomp;
+	s/!.*//;
+	s/^\s+//;
+	s/\s+$//;
+	@words = &parse_line(",", 0, $_);
+	foreach (@words) {
+	    next unless ($_);
+	    if (/(\S+)\s*=\s*(\S+)/) {
+		$odb_var = $1;
+		$_ = $2;
+	    }
+	    push @{$odb{$odb_var}}, $_ if ($odb_var);
+	}
+    }
+
+    close ODB;
+
+    return (%odb);
+}		
+
 
 ##***************************************************************************
 sub local_date2time {
