@@ -6,16 +6,19 @@ BIN = starcheck.pl
 SHARE = starcheck_obsid.pl parse_cm_file.pl figure_of_merit.pl
 DATA = ACABadPixels agasc.bad  fid_CHARACTERIS_JUL01
 
-test: AUG0104A share lib data
+test: check_install AUG0104A install
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	env SKA=$(PWD) ./starcheck.pl -dir AUG0104A -out test
+	$(INSTALL_BIN)/starcheck.pl -dir AUG0104A -out test
 
 AUG0104A:
 	ln -s /data/mpcrit1/mplogs/2004/AUG0104/oflsa AUG0104A
 
-regress: $(BIN) $(SHARE) $(DATA) share lib
+regress: $(BIN) $(SHARE) $(DATA)
+	if [ -r regress_diffs ] ; then rm regress_diffs ; fi
+	if [ -r regress_log ] ; then rm regress_log ; fi
+	if [ -d regress ] ; then rm -r regress ; fi
 	run_regress
 
 install:
@@ -27,8 +30,9 @@ ifdef DATA
 	mkdir -p $(INSTALL_DATA)
 	rsync --times --cvs-exclude $(DATA) $(INSTALL_DATA)/
 endif
-ifdef DATA
+ifdef SHARE
 	mkdir -p $(INSTALL_SHARE)
 	rsync --times --cvs-exclude $(SHARE) $(INSTALL_SHARE)/
 endif
 	mkdir -p $(SKA)/ops/Chex
+ 

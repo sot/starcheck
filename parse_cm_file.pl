@@ -22,11 +22,14 @@ $VERSION = '$Id$';  # '
 ###############################################################
 sub dither {
 ###############################################################
+    my $dh_file = shift;        # Dither history file
+    my $bs_arr = shift;		# Backstop array reference
+
     foreach $bs (@{$bs_arr}) {
 	if ($bs->{cmd} eq 'COMMAND_SW') {
 	    my %params = parse_params($bs->{params});
 	    if ($params{TLMSID} =~ 'AO(DS|EN)DITH') {
-		push @bs_state, $dith_cmd{$1};
+		push @bs_state, $1;
 		push @bs_time, $bs->{time};  # see comment below about timing
 	    }
 	}
@@ -42,7 +45,7 @@ sub dither {
 	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (EN|DS) DITH/x) {
 		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
 		$time = date2time("$yr:$doy:$hr:$min:$sec");
-		push @dh_state, $dith_cmd{$state};
+		push @dh_state, $state;
 		push @dh_time, $time;
 	    }
 	}
@@ -276,10 +279,8 @@ sub OR {
 	$in_obs_statement = 1 if (/^\s*OBS,\s*$/);
     }
     close OR;
-
     return %or;
-
-}
+ }
 
 ###############################################################
 sub OR_parse_obs {
@@ -288,7 +289,7 @@ sub OR_parse_obs {
 
     my @obs_columns = qw(obsid TARGET_RA TARGET_DEC TARGET_NAME
 			 SI TARGET_OFFSET_Y TARGET_OFFSET_Z
-			 SIM_OFFSET_X SIM_OFFSET_Z GRATING MON_RA MON_DEC);
+			 SIM_OFFSET_X SIM_OFFSET_Z GRATING MON_RA MON_DEC SS_OBJECT);
     # Init some defaults
     my %obs = ();
     foreach (@obs_columns) {
@@ -305,6 +306,7 @@ sub OR_parse_obs {
 	if (/STAR=\(([^,]+),([^,\)]+)/);
     $obs{TARGET_NAME} = $3
 	if (/TARGET=\(([^,]+),([^,]+),\s*\{([^\}]+)\}\),/);
+    $obs{SS_OBJECT} = $1 if (/SS_OBJECT=([^,\)]+)/);
     $obs{SI} = $1 if (/SI=([^,]+)/);
     ($obs{TARGET_OFFSET_Y}, $obs{TARGET_OFFSET_Z}) = ($1, $2)
 	if (/TARGET_OFFSET=\(([^,]+),([^,]+)\)/);

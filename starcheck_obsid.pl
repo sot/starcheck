@@ -378,11 +378,12 @@ sub set_star_catalog {
 sub check_dither {
 #############################################################################################
     my $self = shift;
-    my $dthr = shift;		# Ref to array of hashes containing dither states
-    my %dthr_cmd = (ON => 'ENAB',   # Translation from OR terminology to dither state term.
-		    OFF => 'DISA');
-    my $dither_time_pad = 8*60; # Check dither status at obs start + 8 minutes to allow 
-				# for disabled dither because of mon star commanding
+    my $dthr = shift;		  # Ref to array of hashes containing dither states
+    my %dthr_cmd = (ON => 'EN',   # Translation from OR terminology to dither state term.
+		    OFF => 'DS');
+    my $obs_beg_pad = 8*60;       # Check dither status at obs start + 8 minutes to allow 
+                                  # for disabled dither because of mon star commanding
+    my $obs_end_pad = 3*60;
     my $c;
 
     return if ($self->{obsid} > 50000); # For eng obs, don't have OR to specify dither
@@ -390,16 +391,22 @@ sub check_dither {
 	push @{$self->{warn}}, "$alarm Dither status not checked\n";
 	return;
     }
+        
     my $obs_tstart = $c->{tstop};
+    my $obs_tstop  = $c->{tstop} + $c->{dur};
 
     # Determine current dither status by finding the last dither commanding before 
     # the start of observation (+ 8 minutes)
+    
     foreach $dither (reverse @{$dthr}) {
-	if ($obs_tstart + $dither_time_pad >= $dither->{time}) {
+	if ($obs_tstart + $obs_beg_pad >= $dither->{time}) {
 	    my ($or_val, $bs_val) = ($dthr_cmd{$self->{DITHER_ON}}, $dither->{state});
 	    push @{$self->{warn}}, "$alarm Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
 	      if ($or_val ne $bs_val);
 	    last;
+	}
+	elsif ( $dither->{time} > ( $obs_tstart + $obs_beg_pad ) && $dither->{time} <= $obs_tstop - $obs_end_pad ) {
+	    push @{$self->{warn}}, "$alarm Dither commanding at $dither->{time}.  During observation.\n";
 	}
     }
 }
@@ -489,6 +496,7 @@ sub check_star_catalog {
 	return;
     }
 
+    
     # Reset the minimum number of guide stars if a monitor window is commanded
     $min_guide -= scalar grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
 
@@ -519,6 +527,11 @@ sub check_star_catalog {
 	next if ($type eq 'NUL');
 	my $slot_dither = ($type =~ /FID/ ? 5.0 : $dither); # Pseudo-dither, depending on star or fid
 
+	# Warn if acquisition star has non-zero aspq1
+	push @yellow_warn, sprintf "$alarm Centroid Perturbation Warning. [%2d]- %s: ASPQ1 = %2d\n", 
+           $i, $sid, $c->{"GS_ASPQ$i"} 
+	   if ($type =~ /BOT|ACQ|GUI/ && defined $c->{"GS_ASPQ$i"} && $c->{"GS_ASPQ$i"} != 0);
+
 	# Bad AGASC ID
 	push @yellow_warn,sprintf "$alarm Non-numeric AGASC ID. [%2d]: %s\n",$i,$sid if ($sid ne '---' && $sid =~ /\D/);
 	push @warn,sprintf "$alarm Bad AGASC ID. [%2d]: %s\n",$i,$sid if ($bad_id{$sid});
@@ -531,7 +544,7 @@ sub check_star_catalog {
 	    $c->{"GS_NOTES$i"} .= 'b' if ($c->{"GS_CLASS$i"} != 0);
 	    $c->{"GS_NOTES$i"} .= 'c' if ($c->{"GS_BV$i"} == 0.700);
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
-	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 199);
+	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 399);
 	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",$c->{"GS_BV$i"},($c->{"GS_MAGERR$i"})/100,($c->{"GS_POSERR$i"})/1000) if ($c->{"GS_NOTES$i"} =~ /[cmp]/);
 	    $marginal_note = sprintf("$alarm Marginal star. [%2d]: %s\n",$i,$note) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
 	    if ( $c->{"GS_NOTES$i"} =~ /c/ && $type =~ /BOT|GUI/ ) { push @warn, $marginal_note }
@@ -671,6 +684,8 @@ sub check_monitor_commanding {
     my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
     my ($yag, $zag) = Quat::radec2yagzag($or->{MON_RA}, $or->{MON_DEC}, $q_aca);
     foreach (@mon_stars) {
+	push @{$self->{warn}}, sprintf("$alarm Monitor Window [%2d] is in slot %2d and should be in slot 7.\n"
+				       , $_, $c->{"IMNUM$_"}) if $c->{"IMNUM$_"} != 7;
 	my $y_sep = $yag*$r2a - $c->{"YANG$_"};
 	my $z_sep = $zag*$r2a - $c->{"ZANG$_"};
 	my $sep = sqrt($y_sep**2 + $z_sep**2);
@@ -679,10 +694,16 @@ sub check_monitor_commanding {
 	my $track = $c->{"RESTRK$_"};
 	push @{$self->{warn}}, sprintf("$alarm Monitor Window [%2d] is set to Convert-to-Track\n"
 				       , $_) if $track == 1;
-	my $dts =  $c->{"DIMDTS$_"};
-	my $type = $c->{"TYPE$dts"};
-	push @{$self->{warn}}, sprintf("$alarm DTS for [%2d] is set to [%2d] which is type %s\n", 
-				       $_, $dts, $type) if $type =~ /FID|MON/; 
+	# Verify the the designated track star is indeed a guide star.
+	my $dts_slot =  $c->{"DIMDTS$_"};
+	my $dts_type = "NULL";
+	foreach my $dts_index (1..16) {
+	    next unless $c->{"IMNUM$dts_index"} == $dts_slot and $c->{"TYPE$dts_index"} =~ /GUI|BOT/;
+	    $dts_type = $c->{"TYPE$dts_index"};
+	    last;
+	}
+	push @{$self->{warn}}, sprintf("$alarm DTS for [%2d] is set to slot %2d which does not contain a guide star.\n", 
+				       $_, $dts_slot) if $dts_type =~ /NULL/;
     }
 
     # Find the associated maneuver command for this obsid.  Need this to get the
@@ -828,17 +849,18 @@ sub print_report {
     my $c;
     my $o = '';			# Output
 
+    my $target_name = ( $self->{TARGET_NAME}) ? $self->{TARGET_NAME} : $self->{SS_OBJECT};
 #    @sizes = qw (4x4 6x6 8x8);
 #    @types = qw (ACQ GUI BOT FID MON);
 
 
     $o .= sprintf "\\target{obsid$self->{obsid}}";
     $o .= sprintf ("\\blue_start OBSID: %-5s  ", $self->{obsid});
-    $o .= sprintf ("%-22s  %-6s  SIM Z offset: %-5d  Grating: %-5s", $self->{TARGET_NAME}, $self->{SI}, 
-		   $self->{SIM_OFFSET_Z}, $self->{GRATING}) if (exists $self->{TARGET_NAME});
+    $o .= sprintf ("%-22s  %-6s  SIM Z offset: %-5d  Grating: %-5s", $target_name, $self->{SI}, 
+		   $self->{SIM_OFFSET_Z}, $self->{GRATING}) if ($target_name);
     $o .= sprintf "\\blue_end     \n";
     $o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
-    if (exists $self->{DITHER_ON}) {
+    if ( defined $self->{DITHER_ON} && $self->{obsid} < 50000 ) {
 	$o .= sprintf "Dither: %-3s ",$self->{DITHER_ON};
 	$o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f",
 		       $self->{DITHER_Y_AMP}*3600., $self->{DITHER_Z_AMP}*3600.,
@@ -853,7 +875,8 @@ sub print_report {
 
     $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{backstop}) . ".html#$self->{obsid},BACKSTOP} ";
     $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{guide_summ}) . ".html#$self->{obsid},GUIDE_SUMM} ";
-    $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{or_file}) . ".html#$self->{obsid},OR} ";
+    $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{or_file}) . ".html#$self->{obsid},OR} " 
+	if ($self->{or_file});
     $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{mm_file}) . ".html#$self->{dot_obsid},MANVR} ";
     $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{dot_file}) . ".html#$self->{obsid},DOT} ";
     $o .= "\\link_target{$self->{STARCHECK}/" . "make_stars.txt"            . ".html#$self->{obsid},MAKE_STARS} ";
@@ -980,8 +1003,9 @@ sub get_agasc_stars {
 	
 	# AGASC 1.4 and 1.5 are related (one-to-one) with different versions of mp_get_agasc
 	# which have different output formats.  Choose the right one based on AGASC version:
-	my ($id, $ra, $dec, $poserr, $mag, $magerr, $bv, $class) =($mp_agasc_version eq '1.4') ?
-	    @flds[0..3,7..10] : @flds[0..3,12,13,19,14];
+	my ($id, $ra, $dec, $poserr, $mag, $magerr, $bv, $class, $aspq) 
+	    =($mp_agasc_version eq '1.4') ?
+	    ( @flds[0..3,7..10], "0") : @flds[0..3,12,13,19,14,30];
 	my ($yag, $zag) = Quat::radec2yagzag($ra, $dec, $q_aca);
 	$yag *= $r2a;
 	$zag *= $r2a;
@@ -989,12 +1013,11 @@ sub get_agasc_stars {
 	    push @{$self->{warn}}, sprintf("$alarm Star with bad mag %.1f or magerr %.1f at (yag,zag)=%.1f,%.1f\n",
 					   $mag, $magerr, $yag, $zag);
 	}
-
 	push @{$self->{agasc_stars}}, { id => $id, class => $class,
 					ra  => $ra,  dec => $dec,
 					mag => $mag, bv  => $bv,
 					magerr => $magerr, poserr  => $poserr,
-					yag => $yag, zag => $zag } ;
+					yag => $yag, zag => $zag, aspq => $aspq } ;
     }
 }
 
@@ -1016,6 +1039,7 @@ sub identify_stars {
 		$c->{"GS_MAGERR$i"} = $star->{magerr};
 		$c->{"GS_POSERR$i"} = $star->{poserr};
 		$c->{"GS_CLASS$i"} = $star->{class};
+		$c->{"GS_ASPQ$i"} = $star->{aspq};
 		last unless ($c->{"GS_ID$i"} eq '---');
 		$c->{"GS_ID$i"} = "*$star->{id}";
 		$c->{"GS_RA$i"} = $star->{ra};

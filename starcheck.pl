@@ -33,10 +33,13 @@ our $SKA = $ENV{SKA} || '/proj/sot/ska';
 our $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
 our $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
+print $SKA, "\n", $Starcheck_Data, "\n", $Starcheck_Share, "\n";
+
 %par = (dir  => '.',
 	plot => 1,
 	html => 1,
 	text => 1,
+	agasc => '1p6',
 	chex => undef);
 
 $log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
@@ -49,6 +52,7 @@ GetOptions( \%par,
 	   'html!',
 	   'text!',
 	   'chex=s',
+	   'agasc=s',
 	   ) ||
     exit( 1 );
 
@@ -62,6 +66,8 @@ require "${Starcheck_Share}/starcheck_obsid.pl";
 require "${Starcheck_Share}/parse_cm_file.pl";
 
 # Find backstop, guide star summary, OR, and maneuver files.  Only backstop is required
+
+my %input_files = ();
 
 $backstop   = get_file("$par{dir}/*.backstop",'backstop', 'required');
 $guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
@@ -88,6 +94,15 @@ if ($par{plot}) {
 	}
     }
 
+    # If agasc parameter is defined (and looks reasonable) then force that version of AGASC.
+    if (defined $par{agasc} and $par{agasc} =~ /\dp\d/) {
+	foreach (keys %ENV) {
+	    next unless /AGASC/;
+	    $ENV{$_} =~ s/agasc(\dp\d)/agasc$par{agasc}/;
+	}
+    }
+
+    # Check that version is acceptable 
     ($mp_agasc_version) = ($ENV{ASCDS_AGASC} =~ /agasc(\dp\d)/);
     die "Starcheck only supports AGASC 1.4, 1.5, and 1.6.  Found '$mp_agasc_version'\n"
 	unless ($mp_agasc_version =~ /(1p4|1p5|1p6)/);
@@ -138,13 +153,12 @@ map { warning("$_\n") } @{$error};
  Obsid::set_odb(%odb);
 
 # Read Maneuver error file containing more accurate maneuver errors
-
-@manerr = Parse_CM_File::man_err($manerr_file) if ($manerr_file);
+if ($manerr_file) { 
+    @manerr = Parse_CM_File::man_err($manerr_file);
+} else { warning("Could not find Maneuver Error file in output/ directory\n") };
 
 # Read DITHER history file and backstop to determine expected dither state
-
 @dither = Parse_CM_File::dither($dither_file, \@bs);
-
 # Read in the ACA bad pixels
 
 warning("Could not open ACA bad pixel file $ACA_bad_pixel_file\n")
@@ -259,8 +273,15 @@ $out .= " Configuration:  AGASC $mp_agasc_version  ASCDS $ascds_version_name ($a
     if ($mp_agasc_version and $ascds_version_name);
 $out .= "\n";
 
+if (%input_files) {
+    $out .= "------------  PROCESSING FILES  -----------------\n\n";
+    for my $name (keys %input_files) { $out .= "Using $name file $input_files{$name}\n" };
+    $out .= "\n";
+}
+
+
 if (@global_warn) {
-    $out .= "------------  PROCESSING WARNINGS -----------------\n";
+    $out .= "------------  PROCESSING WARNING  -----------------\n";
     $out .= "\\red_start\n";
     foreach (@global_warn) {
 	$out .= $_;
@@ -322,7 +343,7 @@ if ($par{html}) {
     make_annotated_file('', 'starcat.dat.', ' -ra ', $make_stars);
     make_annotated_file('', ' ID=\s+', ', ', $backstop);
     make_annotated_file($guide_summ_start, '^\s+ID:\s+', '\S\S', $guide_summ);
-    make_annotated_file('', '^ ID=', ', ', $or_file);
+    make_annotated_file('', '^ ID=', ', ', $or_file) if ($or_file);
     make_annotated_file('', ' ID:\s+', '\S\S', $mm_file);
     make_annotated_file('', 'OBSID,ID=', ',', $dot_file);
 }
@@ -537,7 +558,7 @@ sub get_file {
 	die "\n" if ($required);
 	return undef;
     } 
-
+    $input_files{$name}=$files[0];
     print STDERR "Using $name file $files[0]\n";
     print $log_fh "Using $name file $files[0]\n" if ($log_fh);
     return $files[0];

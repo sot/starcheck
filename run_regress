@@ -9,7 +9,7 @@ log=$home/regress_log
 diffs=$home/regress_diffs
 
 # Change this to /proj/sot/ska/bin after next release
-RELEASE_BIN=/proj/sot/ska/perl  
+RELEASE_BIN=/proj/sot/ska/bin/  
 
 # Remove existing log and diffs files
 for file in $log $diffs
@@ -23,13 +23,16 @@ done
 
 # Go through specified loads and run test and release starcheck versions
 for load in \
+    2004/JAN2104/oflsa \
     2004/MAR0104/oflsb \
     2004/MAR0804/oflsc \
     2004/MAR1504/oflsa \
     2004/MAR1904/oflsa \
     2004/MAR2204/oflsb \
     2004/MAR2904/oflsc \
-    2004/JUL2604/oflsa
+    2004/MAY3104/oflsc \
+    2004/JUL2604/oflsa \
+    2004/DEC2704/oflsb
 do
   echo ""
   echo "***** Running starcheck on load $load *****"
@@ -55,7 +58,6 @@ do
   echo "Running: $home/starcheck.pl -dir $mphome/$load"
   echo "******************** (TEST) $load *******************" >> $log
   env SKA=$home PERL5LIB= $home/starcheck.pl -dir $mphome/$load 2>&1| tee -a $log 
-
   # Now run current release version if not already there
   #
   if [ ! -r $release/starcheck.txt ]
@@ -68,7 +70,7 @@ do
 
     echo "Running: /proj/sot/ska/perl/starcheck.pl -dir $mphome/$load"
     echo "**** (RELEASE) $load ****" >> $log
-    env SKA= PERL5LIB= $RELEASE_BIN/starcheck.pl -dir $mphome/$load 2>&1| tee -a $log 
+    env SKA= PERL5LIB= $RELEASE_BIN/starcheck.pl -dir $mphome/$load 2>&1| tee -a $log
   fi  
 
   # Now compare with release version
