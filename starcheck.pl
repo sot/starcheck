@@ -15,11 +15,15 @@ $version = "3.332";
 # Set defaults and get command line options
 
 use Getopt::Long;
+use IO::File;
 $par{dir}   = '.';
 $par{plot}  = 1;
 $par{html}  = 1;
 $par{text}  = 1;
-$par{chex}  = ($ENV{USER} eq 'aldcroft' or $ENV{USER} eq 'rac')? 0 : 1;
+$par{chex}  = ($ENV{USER} eq 'aldcroft' or $ENV{USER} eq 'rac') ?
+    undef : '/proj/sot/ska/ops/Chex';
+
+$log_fh = open_log_file("/proj/sot/ska/ops/Chex/starcheck.log");
 
 GetOptions( \%par, 
 	   'help', 
@@ -28,7 +32,7 @@ GetOptions( \%par,
 	   'plot!',
 	   'html!',
 	   'text!',
-	   'chex!',
+	   'chex=s',
 	   ) ||
     exit( 1 );
 
@@ -73,6 +77,7 @@ if ($par{plot}) {
     unless (-e $STARCHECK) {
 	die "Couldn't make directory $STARCHECK\n" unless (mkdir $STARCHECK, 0777);
 	print STDERR "Created plot directory $STARCHECK\n";
+	print $log_fh "Created plot directory $STARCHECK\n" if ($log_fh);
     }
 }
 
@@ -299,7 +304,8 @@ if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
 #   use lib '/proj/rad1/ska/dev/Backstop';
    use Chex;
    print STDERR "Updating Chandra expected state file\n";
-   $chex = new Chex;
+   print $log_fh "Updating Chandra expected state file\n" if ($log_fh);
+   $chex = new Chex $par{chex};
    $chex->update(mman         => \%mm,
 		 mech_check   => \@mc, 
 		 dot          => \%dot,
@@ -497,6 +503,7 @@ sub get_file {
     } 
 
     print STDERR "Using $name file $files[0]\n";
+    print $log_fh "Using $name file $files[0]\n" if ($log_fh);
     return $files[0];
 }
 
@@ -519,6 +526,24 @@ sub warning {
     my $text = shift;
     push @global_warn, $text;
     print STDERR $text;
+}
+
+##***************************************************************************
+sub open_log_file {
+##***************************************************************************
+    my $log_file = shift;
+    my $log_fh;
+
+    if ($log_fh = new IO::File ">> $log_file") {
+	my $date = `date`;
+	chomp $date;
+	print $log_fh "\nStarcheck run at $date by $ENV{USER}\n";
+	print $log_fh "DIR: $ENV{PWD}\n";
+	print $log_fh "CMD: $0 @ARGV\n\n";
+    } else {
+	warn "Couldn't open $log_file for appending\n";
+    }
+    return $log_fh;
 }
 
 ##***************************************************************************
