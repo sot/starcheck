@@ -268,6 +268,7 @@ sub set_fids {
 sub set_star_catalog {
     my $self = shift;
     my @sizes = qw (4x4 6x6 8x8);
+    my @monhalfw = qw (10 15 20);
     my @types = qw (ACQ GUI BOT FID MON);
     my $r2a = 180. * 3600. / 3.14159265;
     my $c;
@@ -290,6 +291,7 @@ sub set_star_catalog {
 	$c->{"ZANG$i"} *= $r2a;
 	$c->{"HALFW$i"} = ($c->{"TYPE$i"} ne 'NUL')? 
 	    ( 40 - 35*$c->{"RESTRK$i"} ) * $c->{"DIMDTS$i"} + 20 : 0;
+	$c->{"HALFW$i"} = $monhalfw[$c->{"IMGSZ$i"}] if ($c->{"TYPE$i"} eq 'MON');
 	$c->{"YMAX$i"} = $c->{"YANG$i"} + $c->{"HALFW$i"};
 	$c->{"YMIN$i"} = $c->{"YANG$i"} - $c->{"HALFW$i"};
 	$c->{"ZMAX$i"} = $c->{"ZANG$i"} + $c->{"HALFW$i"};
@@ -870,7 +872,8 @@ sub plot_stars {
     pgswin (-2900,2900,-2900,2900);
     pgbox  ('BCNST', 0.0, 0, 'BCNST', 0.0, 0);
     pglabel("Yag (arcsec)","Zag (arcsec)","Stars at RA=$self->{ra} Dec=$self->{dec} Roll=$self->{roll}");	# Labels
-    box(0,0,2560);
+    box(0,0,2560,2560);
+    box(0,0,2600,2560);
 
     # Plot field stars from AGASC
     pgsci($sym_color{field_star});
@@ -889,8 +892,11 @@ sub plot_stars {
 	$y = $c->{"ZANG$i"};
 	pgsci($sym_color{$c->{"TYPE$i"}});             # Change colour
 	pgpoint(1, $x, $y, $sym_type{$c->{"TYPE$i"}}) if ($c->{"TYPE$i"} eq 'FID'); # Make open (fid)
-	if ($c->{"TYPE$i"} =~ /(BOT|ACQ|MON)/) {       # Plot search box
-	    box($x, $y, $c->{"HALFW$i"});
+	if ($c->{"TYPE$i"} =~ /(BOT|ACQ)/) {           # Plot search box
+	    box($x, $y, $c->{"HALFW$i"}, $c->{"HALFW$i"});
+	}
+	if ($c->{"TYPE$i"} =~ /MON/) {             # Plot monitor windows double size for visibility
+	    box($x, $y, $c->{"HALFW$i"}*2, $c->{"HALFW$i"}*2);
 	}
 	if ($c->{"TYPE$i"} =~ /(BOT|GUI)/) {           # Larger open circle for guide stars
 	    pgpoint(1, $x, $y, 24);
@@ -941,13 +947,12 @@ sub quat2radecroll {
     return ($ra, $dec, $roll);
 }
 
-
 ##***************************************************************************
 sub box {
 ##***************************************************************************
-    my ($x, $y, $s) = @_;
-    my @x = ($x-$s, $x-$s, $x+$s, $x+$s, $x-$s);
-    my @y = ($y-$s, $y+$s, $y+$s, $y-$s, $y-$s);
+    my ($x, $y, $xs, $ys) = @_;
+    my @x = ($x-$xs, $x-$xs, $x+$xs, $x+$xs, $x-$xs);
+    my @y = ($y-$ys, $y+$ys, $y+$ys, $y-$ys, $y-$ys);
     pgline(5, \@x, \@y);
 }
 
