@@ -33,8 +33,6 @@ our $SKA = $ENV{SKA} || '/proj/sot/ska';
 our $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
 our $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
-print $SKA, "\n", $Starcheck_Data, "\n", $Starcheck_Share, "\n";
-
 %par = (dir  => '.',
 	plot => 1,
 	html => 1,
