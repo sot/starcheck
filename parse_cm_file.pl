@@ -16,7 +16,6 @@ use Time::Local;
 use IO::File;
 
 $VERSION = '$Id$';  # '
-
 1;
 
 ###############################################################
@@ -147,6 +146,8 @@ sub man_err {
 	    my %data = map { $cols[$_], $vals[$_] } (0 .. $#cols);
 	    $data{Seg} = 1 if ($data{Seg} == 0); # Make it easier later on to match the segment number
 				# with the MP_TARGQUAT commands
+	    $data{obsid} = sprintf "%d", $data{obsid};  # Clip leading zeros
+
 	    push @me, \%data;
 	}
 	if (/^\s*obsid\s+maxerryz\s+seg/i) {

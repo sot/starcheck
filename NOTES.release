@@ -5,6 +5,18 @@ Things to do:
 - Check that the faint mag limit is at least 1.28 more than the star mag
 - Parse SCS107 statement in fidsel history
 
+V4.5    26-Sep-02
+-----------------
+- Changed parse_cm_file::manerr so that it strips leading zeroes from the
+  obsid in the ManErr file
+
+- Changed starcheck.pl so that it looks for a ManErr file with the
+  name "$dir/output/*_ManErr.txt".  This is the new naming convention
+  for the maneuver error file in the backstop distribution
+
+- Made some null changes (e.g. in comments) to force CVS to go to
+  a new version.
+
 V4.4	28-Aug-02
 -----------------
 - Changed default value of -chex command line parameter to undefined, to avoid

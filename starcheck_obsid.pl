@@ -12,11 +12,6 @@ package Obsid;
 #  target_cmd: Shortcut to 'MP_TARGQUAT' $command[]
 #  @fid, @acq, @gui: Lists of fid, acq, guide star indices
 #
-# History:
-#   9-May-00: Added catalog index label, changed plot order of catalog
-#             and field stars
-#  11-May-01: Added bad AGASCID check (RAC)
-# 
 ##***************************************************************************
 
 # Library dependencies

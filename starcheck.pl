@@ -5,9 +5,6 @@
 #  Starcheck.pl - Check for problems in command load star catalogs, and maintain
 #                 the expected state of Chandra file
 #
-#  HISTORY  (See NOTES.release)
-#     Jul 3, 2001:  Put under CVS
-#
 ##*******************************************************************************
 
 $VERSION = '$Id$';  # '
@@ -71,7 +68,7 @@ $mech_file  = get_file("$par{dir}/output/TEST_mechcheck.txt", 'mech check');
 $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 $odb_file   = get_file("/proj/sot/ska/ops/SFE/fid_CHARACTERIS_JUL01", 'odb', 'required');
-$manerr_file= get_file("md*dot_man.txt",'manerr');    
+$manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 
 $bad_agasc_file = "/proj/sot/ska/ops/SFE/agasc.bad";
 
