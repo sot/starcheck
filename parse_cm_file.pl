@@ -260,7 +260,7 @@ sub OR_parse_obs {
     ($obs{TARGET_RA}, $obs{TARGET_DEC}) = ($1, $2)
 	if (/TARGET=\(([^,]+),([^,\)]+)/);
     $obs{TARGET_NAME} = $3
-	if (/TARGET=\(([^,]+),([^,]+),\{([^\}]+)\}\),/);
+	if (/TARGET=\(([^,]+),([^,]+),\s*\{([^\}]+)\}\),/);
     $obs{SI} = $1 if (/SI=([^,]+)/);
     ($obs{TARGET_OFFSET_Y}, $obs{TARGET_OFFSET_Z}) = ($1, $2)
 	if (/TARGET_OFFSET=\(([^,]+),([^,]+)\)/);

@@ -374,7 +374,7 @@ sub check_star_catalog {
     ########################################################################
 
     my $dither;			# Global dither for observation
-    if (exists $self->{DITHER_Y_AMP} and exists $self->{DITHER_Z_AMP}) {
+    if (defined $self->{DITHER_Y_AMP} and defined $self->{DITHER_Z_AMP}) {
 	$dither = ($self->{DITHER_Y_AMP} > $self->{DITHER_Z_AMP} ?
 		       $self->{DITHER_Y_AMP} : $self->{DITHER_Z_AMP}) * 3600.0;
     } else {
@@ -429,7 +429,7 @@ sub check_star_catalog {
 	my $note = '';
 	if (defined $c->{"GS_CLASS$i"}) {
 	    $c->{"GS_NOTES$i"} .= 'b' if ($c->{"GS_CLASS$i"} != 0);
-	    $c->{"GS_NOTES$i"} .= 'c' if ($c->{"GS_BV$i"} == 0.700 or $c->{"GS_BV$i"} == 1.500);
+	    $c->{"GS_NOTES$i"} .= 'c' if ($c->{"GS_BV$i"} == 0.700);
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
 	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 199);
 	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",$c->{"GS_BV$i"},($c->{"GS_MAGERR$i"})/100,($c->{"GS_POSERR$i"})/1000) if ($c->{"GS_NOTES$i"} =~ /[cmp]/);
