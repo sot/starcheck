@@ -81,9 +81,9 @@ $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');
 
 $bad_agasc_file = "$Starcheck_Data/agasc.bad";
 $ACA_bad_pixel_file = "$Starcheck_Data/ACABadPixels";
+$bad_acqs_file = $ENV{'SKA_DATA'}."/acq_stats/bad_acq_stars.rdb";
 
 # If making plots, check for mp_get_agasc, and make a plot directory if required
-
 if ($par{plot}) {
     if (`which mp_get_agasc` =~ /no mp_get_agasc/) {
 	%ENV = grabenv("tcsh", "source /home/ascds/.ascrc -r release");
@@ -157,13 +157,16 @@ if ($manerr_file) {
 
 # Read DITHER history file and backstop to determine expected dither state
 @dither = Parse_CM_File::dither($dither_file, \@bs);
-# Read in the ACA bad pixels
 
+# Read in the failed acquisition stars
+warning("Could not open ACA bad acquisition stars file $bad_acqs_file\n")
+    unless (Obsid::set_bad_acqs($bad_acqs_file));
+
+# Read in the ACA bad pixels
 warning("Could not open ACA bad pixel file $ACA_bad_pixel_file\n")
     unless (Obsid::set_ACA_bad_pixels($ACA_bad_pixel_file));
 
 # Read bad AGASC stars
-
 warning("Could not open bad AGASC file $bad_agasc_file\n")
     unless (Obsid::set_bad_agasc($bad_agasc_file));
 

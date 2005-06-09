@@ -108,7 +108,7 @@ sub cum_prob {
 
 
     return {expected => substr($exp,0,4),
-	    cum_prob => substr($cum_prob[2],0,5),
+	    cum_prob => [ @cum_prob ],
 	    cum_prob_bad => ($cum_prob[2] > $CUM_PROB_LIMIT)
 	    };
 }

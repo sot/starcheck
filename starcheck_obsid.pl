@@ -115,6 +115,24 @@ sub set_ACA_bad_pixels {
 }
 
 ##################################################################################
+sub set_bad_acqs {
+##################################################################################
+    use RDB;
+    my $rdb_file = shift;
+    my $rdb = new RDB $rdb_file or warn "$rdb_file\n";
+
+    
+    while($rdb && $rdb->read( \%data )) { 
+	$bad_acqs{ $data{'agasc_id'} }{'n_noids'} = $data{'n_noids'};
+	$bad_acqs{ $data{'agasc_id'} }{'n_obs'} = $data{'n_obs'};
+    }
+
+    undef $rdb;
+    return 1;
+
+}
+
+##################################################################################
 sub set_bad_agasc {
 # Read bad AGASC ID file
 # one object per line: numeric id followed by commentary.
@@ -455,11 +473,14 @@ sub check_star_catalog {
     my $z_ang_min    =-2504;
     my $z_ang_max    = 2450;
 
+    my $min_y_side = 2500; # Minimum rectangle size for all acquisition stars
+    my $min_z_side = 2500;
+
     my $col_sep_dist = 50;	# Common column pixel separation
     my $col_sep_mag  = 4.5;	# Common column mag separation (from ODB_MIN_COL_MAG_G)
 
-    my $mag_faint_red   = 10.7;	# Faint mag limit (red)
-    my $mag_faint_yellow= 10.2;	# Faint mag limit (yellow)
+    my $mag_faint_red   = 10.6;	# Faint mag limit (red)
+    my $mag_faint_yellow= 10.3;	# Faint mag limit (yellow)
     my $mag_bright      = 6.0;	# Bright mag limit 
 
     my $spoil_dist   = 140;	# Min separation of star from other star within $sep_mag mags
@@ -471,10 +492,17 @@ sub check_star_catalog {
     my $z0           = -27;
    
     my $is_science = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} < 50000);
+    my $is_er      = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} >= 50000);
     my $min_guide    = $is_science ? 5 : 6; # Minimum number of each object type
     my $min_acq      = $is_science ? 4 : 5;
     my $min_fid      = 3;
     ########################################################################
+
+    # Set smallest maximums and largest minimums for rectangle edges
+    my $max_y = $y_ang_min;
+    my $min_y = $y_ang_max;
+    my $max_z = $z_ang_min;
+    my $min_z = $z_ang_max;
 
     my $dither;			# Global dither for observation
     if (defined $self->{DITHER_Y_AMP} and defined $self->{DITHER_Z_AMP}) {
@@ -505,6 +533,8 @@ sub check_star_catalog {
     # Global checks on star/fid numbers
 
     push @warn,"$alarm Too Few Fid Lights\n" if (@{$self->{fid}} < $min_fid && $is_science);
+    push @warn,"$alarm Too Many Fid Lights\n" if ( (@{$self->{fid}} > 0 && $is_er) ||
+						   (@{$self->{fid}} > $min_fid && $is_science) ) ;
     push @warn,"$alarm Too Few Acquisition Stars\n" if (@{$self->{acq}} < $min_acq);
     push @warn,"$alarm Too Few Guide Stars\n" if (@{$self->{gui}} < $min_guide);
     push @warn,"$alarm Too Many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} + @{$self->{mon}} > 8);
@@ -513,6 +543,7 @@ sub check_star_catalog {
     # Match positions of fids in star catalog with expected, and verify a one to one 
     # correspondance between FIDSEL command and star catalog
     check_fids($self, $c, \@warn);
+    
 
     foreach $i (1..16) {
 	($sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
@@ -524,6 +555,13 @@ sub check_star_catalog {
 	# Search error for ACQ is the slew error, for fid, guide or mon it is about 4 arcsec
 	$search_err = ($type =~ /BOT|ACQ/) ? $slew_err : 4.0;
 
+	# Find position extrema for smallest rectangle check
+	if ( $type =~ /BOT|GUI/ ) {
+	    $max_y = ($max_y > $yag ) ? $max_y : $yag;
+	    $min_y = ($min_y < $yag ) ? $min_y : $yag;
+	    $max_z = ($max_z > $zag ) ? $max_z : $zag;
+	    $min_z = ($min_z < $zag ) ? $min_z : $zag;
+	}
 	next if ($type eq 'NUL');
 	my $slot_dither = ($type =~ /FID/ ? 5.0 : $dither); # Pseudo-dither, depending on star or fid
 
@@ -531,6 +569,13 @@ sub check_star_catalog {
 	push @yellow_warn, sprintf "$alarm Centroid Perturbation Warning. [%2d]- %s: ASPQ1 = %2d\n", 
            $i, $sid, $c->{"GS_ASPQ$i"} 
 	   if ($type =~ /BOT|ACQ|GUI/ && defined $c->{"GS_ASPQ$i"} && $c->{"GS_ASPQ$i"} != 0);
+	
+	# Bad Acquisition Star
+	push @yellow_warn, sprintf 
+	    "$alarm Bad Acquisition Star. [%2d]: %s has %2d failed out of %2d attempts\n",
+	    $i, $sid, $bad_acqs{$sid}{'n_noids'}, $bad_acqs{$sid}{'n_obs'} 
+	    if ($bad_acqs{$sid}{'n_noids'} && $bad_acqs{$sid}{'n_obs'} > 2  
+		&& $bad_acqs{$sid}{'n_noids'}/$bad_acqs{$sid}{'n_obs'} > 0.3);	
 
 	# Bad AGASC ID
 	push @yellow_warn,sprintf "$alarm Non-numeric AGASC ID. [%2d]: %s\n",$i,$sid if ($sid ne '---' && $sid =~ /\D/);
@@ -653,6 +698,13 @@ sub check_star_catalog {
 
     }
 
+    # Find the smallest rectangle size that all acq stars fit in
+    my $y_side = sprintf( "%.0f", $max_y - $min_y );
+    my $z_side = sprintf( "%.0f", $max_z - $min_z );
+    push @yellow_warn, "$alarm Guide stars fit in $y_side x $z_side square arc-second box\n"
+	if $y_side < $min_y_side && $z_side < $min_z_side;
+
+    # Collect warnings
     push @{$self->{warn}}, @warn;
     push @{$self->{yellow_warn}}, @yellow_warn;
 }
@@ -690,7 +742,7 @@ sub check_monitor_commanding {
 	my $z_sep = $zag*$r2a - $c->{"ZANG$_"};
 	my $sep = sqrt($y_sep**2 + $z_sep**2);
 	push @{$self->{warn}}, sprintf("$alarm Monitor Window [%2d] is %6.2f arc-seconds off of OR specification\n"
-				       , $_, $sep) if $sep > 20.;
+				       , $_, $sep) if $sep > 2.5;
 	my $track = $c->{"RESTRK$_"};
 	push @{$self->{warn}}, sprintf("$alarm Monitor Window [%2d] is set to Convert-to-Track\n"
 				       , $_) if $track == 1;
@@ -737,7 +789,7 @@ sub check_monitor_commanding {
 	$cnt{$cmd} = 'no' if ($cnt{$cmd} == 0);
 	push @{$self->{warn}}, "$alarm Found $cnt{$cmd} $cmd commands near " . time2date($t_manv+$dt{$cmd}) . "\n";
     }
-}
+}	
 
 #############################################################################################
 sub check_fids {
@@ -750,7 +802,8 @@ sub check_fids {
     my ($i, $i_fid);
     
     # If no star cat fids and no commanded fids, then return
-    return if (@{$self->{fid}} == 0 && @{$self->{fidsel}} == 0);
+    my $fid_number = @{$self->{fid}};
+    return if ($fid_number == 0 && @{$self->{fidsel}} == 0);
 
     # Make sure we have SI and SIM_OFFSET_Z to be able to calculate fid yang and zang
     unless (defined $self->{SI} && defined $self->{SIM_OFFSET_Z}) {
@@ -935,9 +988,12 @@ sub print_report {
     }
     $o .= "\n";
     if (exists $self->{figure_of_merit}) {
+	my @probs = @{ $self->{figure_of_merit}->{cum_prob}};
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
 	$o .= "\\red_start " if $bad_FOM;
-	$o .= "Acquisition Figure of Merit : $self->{figure_of_merit}->{cum_prob}\n";
+	$o .= "Probability of acquiring 2,3, and 4 or fewer stars (10^x):\t";
+	foreach (2..4) { $o .= "$probs[$_]\t" };
+	$o .= "\n";
 	$o .= "\\red_end " if $bad_FOM;
 	$o .= "Acquisition Stars Expected  : $self->{figure_of_merit}->{expected}\n";
     }

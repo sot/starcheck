@@ -6,6 +6,8 @@ BIN = starcheck.pl
 SHARE = starcheck_obsid.pl parse_cm_file.pl figure_of_merit.pl
 DATA = ACABadPixels agasc.bad  fid_CHARACTERIS_JUL01
 
+TEST_DEPS = data/acq_stats/bad_acq_stars.rdb
+
 test: check_install AUG0104A install
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
@@ -21,7 +23,7 @@ regress: $(BIN) $(SHARE) $(DATA)
 	if [ -d regress ] ; then rm -r regress ; fi
 	run_regress
 
-install:
+install: $(TEST_DEPS)
 ifdef BIN
 	mkdir -p $(INSTALL_BIN)
 	rsync --times --cvs-exclude $(BIN) $(INSTALL_BIN)/
