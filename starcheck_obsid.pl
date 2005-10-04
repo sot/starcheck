@@ -626,10 +626,23 @@ sub check_star_catalog {
 	if (($type =~ /BOT|ACQ/) and $c->{"HALFW$i"} < $slew_err) {
 	    push @warn, sprintf "$alarm Search Box smaller than slew error [%2d]\n",$i;
 	}
-	
+
 	# Check that readout sizes are all 6x6 for science observations
 	push @warn, sprintf("$alarm Readout Size. [%2d]: %s Should be 6x6\n", $i, $c->{"SIZE$i"})
 	    if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6");
+
+	# Check that readout sizes are all 8x8 for engineering observations
+	push @warn, sprintf("$alarm Readout Size. [%2d]: %s Should be 8x8\n", $i, $c->{"SIZE$i"})
+	    if ($is_er && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "8x8");
+
+	# Check that readout sizes are all 8x8 for FID lights
+	push @warn, sprintf("$alarm Readout Size. [%2d]: %s Should be 8x8\n", $i, $c->{"SIZE$i"})
+	    if ($type =~ /FID/  && $c->{"SIZE$i"} ne "8x8");
+
+	# Check that readout size is 8x8 for monitor windows
+	push @warn, sprintf("$alarm Readout Size. [%2d]: %s Should be 8x8\n", $i, $c->{"SIZE$i"})
+	    if ($type =~ /MON/  && $c->{"SIZE$i"} ne "8x8");
+
 
 	# Bad Pixels
         my @close_pixels;
@@ -909,8 +922,8 @@ sub print_report {
 
     $o .= sprintf "\\target{obsid$self->{obsid}}";
     $o .= sprintf ("\\blue_start OBSID: %-5s  ", $self->{obsid});
-    $o .= sprintf ("%-22s  %-6s  SIM Z offset: %-5d  Grating: %-5s", $target_name, $self->{SI}, 
-		   $self->{SIM_OFFSET_Z}, $self->{GRATING}) if ($target_name);
+    $o .= sprintf ("%-22s %-6s SIM Z offset:%-5d (%-.2fmm) Grating: %-5s", $target_name, $self->{SI}, 
+		   $self->{SIM_OFFSET_Z},  ($self->{SIM_OFFSET_Z})*($odb{"ODB_TSC_STEPS"}[0]), $self->{GRATING}) if ($target_name);
     $o .= sprintf "\\blue_end     \n";
     $o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     if ( defined $self->{DITHER_ON} && $self->{obsid} < 50000 ) {

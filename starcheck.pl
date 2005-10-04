@@ -223,6 +223,14 @@ foreach $obsid (@obsid_id) {
 # has star id's and magnitudes.  The results are stored in the
 # MP_STARCAT cmd, so this processing has to occur after set_star_catalog
 
+
+%guidesumm = Parse_CM_File::GUIDE($guide_summ) if ($guide_summ);
+foreach $obsid (@obsid_id){
+	unless (exists $guidesumm{$obsid}){
+	warning ("No GS Summary for $obsid \n");			
+	}
+}
+
 read_guide_summary() if ($guide_summ);
 
 # Set up for SIM-Z checking
@@ -471,8 +479,10 @@ sub get_obsid {
 	$tolerance = $dot_tolerance{$cmd_identifier}   || $TIME_TOLERANCE ;
 	if ($dot_cmd{$cmd_identifier} eq $cmd
 	    && abs($dot{$obsid_index}{time} + $dt - $time) < $tolerance) {
-	    return $1 if ($obsid_index =~ /\S0*(.+)\d\d\d\d/);
-	    die "Couldn't parse obsid_index = '$obsid_index' in get_obsid()\n";
+	   if ($obsid_index =~ /\S0*(.+)\d\d\d\d/){
+		    return $1; 
+	   }
+	     die "Couldn't parse obsid_index = '$obsid_index' in get_obsid()\n";
 	}
     }
 
@@ -486,7 +496,6 @@ sub get_obsid {
 	warning("Creating bogus obsid $obsid\n") unless ($obs{$obsid});
 	$bogus_obsid++ if ($cmd eq 'MP_STARCAT');
     }
-	
     return ($obsid);
 }    
 
@@ -521,6 +530,7 @@ sub read_guide_summary {
     while (<GUIDE_SUMM>) {
 	# Look for an obsid, ra, dec, or roll
 	if (/\s+ID:\s+(\w{5})/) {
+#	if (/\s+ID:\s+([[:ascii:]]{5})/) {
 	    ($obsid = $1) =~ s/^0*//;
 	    $first = 0;
 	}
