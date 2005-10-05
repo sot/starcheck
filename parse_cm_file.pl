@@ -15,6 +15,7 @@ use Time::JulianDay;
 use Time::DayOfYear;
 use Time::Local;
 use IO::File;
+use IO::All;
 
 $VERSION = '$Id$';  # '
 1;
@@ -272,51 +273,40 @@ sub DOT {
 sub GUIDE{
 ##***************************************************************************
 
-# **** PROCESSING REQUEST ****
-#      ID:         0008700
-#      TARGET RA:  326.184708 DEG.
-#      TARGET DEC: 38.300091 DEG.
-# 
-# ROLL (DEG):  85.6468               FOM (ARCSEC^2):  0.597854E-03
-# 
-# STARS/FIDUCIAL LIGHTS                           AC COORDINATES (RAD)
-# TYPE      ID       RA (DEG)  DEC (DEG)  MAG     Y-ANGLE       Z-ANGLE
-# **************************************************************************
-# FID             8  --------  --------    7.083   0.41300E-02  -0.58742E-02
-# FID             9  --------  --------    7.116  -0.57631E-02   0.53086E-02
-# FID            10  --------  --------    7.081   0.62139E-02   0.52960E-02
-# BOT     417339000  325.7338   37.9049    7.595  -0.73335E-02   0.56697E-02
-# BOT     417348280  327.0051   38.9013    8.814   0.11358E-01  -0.10312E-01
-# BOT     417343224  325.3579   37.7705    9.047  -0.10033E-01   0.10677E-01
-# BOT     417334592  326.0789   38.8836    9.645   0.10047E-01   0.22062E-02
-# BOT     417347416  326.6022   38.0951    9.671  -0.31185E-02  -0.59885E-02
 
     $guide_file = shift;
 
     undef %guidesumm;
-    
-    open (GUIDE_SUMM, $guide_file) || die "Couldn't open guide star summary file $guide_file for reading\n";
 
-    while (<GUIDE_SUMM>) {
+    open (GUIDESUMM, $guide_file) || die "Couldn't open GUIDE file $guide_file\n";
+    while (<GUIDESUMM>) {
+
 	# Look for an obsid, ra, dec, or roll
-	if (/\s+ID:\s+(\w{5})/) {
-#	if (/\s+ID:\s+([[:ascii:]]{5})/) {
+#	if (/\s+ID:\s+(\w{5})/) {
+	if (/\s+ID:\s+([[:ascii:]]{5})/) {
 	    ($obsid = $1) =~ s/^0*//;
-	    $first = 0;
+	     $first = 0;
 	}
-	$ra = $1 if (/\s+TARGET RA:\s*([^ ]+) DEG/);
-	$dec = $1 if (/\s+TARGET DEC:\s*([^ ]+) DEG/);
-	$roll = $1 if (/ROLL \(DEG\):\s*([^ ]+) /);
+	if (/\s+RA:\s*([^ ]+) DEG/){
+		$ra = $1;
+	}		
+	if (/\s+DEC:\s*([^ ]+) DEG/){
+		$dec = $1;
+	}
+	if (/\s+ROLL \(DEG\):\s*([^ ]+)/){
+		$roll = $1;
+	}
 
 	# Look for a star catalog entry, which must have been preceeded by obsid, ra, dec, and roll
 	if (/^(FID|ACQ|GUI|BOT)/) {
-		$guidesumm{$obsid}{ra} = $ra,
-		$guidesumm{$obsid}{dec} = $dec,
-		$guidesumm{$obsid}{roll} = $roll,
-		$guidesumm{$obsid}{info} = $_,
+		$guidesumm{$obsid}= { ra => $ra,
+				      dec => $dec,
+				      roll => $roll,
+				      info => $_,
+				};
 	}
     }
-    close GUIDE_SUMM;
+    close GUIDESUMM;
     return %guidesumm;    
 }
 

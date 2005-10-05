@@ -16,6 +16,7 @@ package Obsid;
 
 # Library dependencies
 
+use strict;
 use warnings;
 use lib '/proj/sot/ska/lib/site_perl';
 use Quat;
@@ -33,16 +34,16 @@ require  "${Starcheck_Share}/figure_of_merit.pl";
 
 # Constants
 
-$VERSION = '$Id$';  # '
-$ACA_MANERR_PAD = 20;		# Maneuver error pad for ACA effects (arcsec)
-$r2a = 3600. * 180. / 3.14159265;
-$faint_plot_mag = 11.0;
-$alarm = ">> WARNING:";
-%Default_SIM_Z = ('ACIS-I' => 92905,
+our $VERSION = '$Id$';  # '
+our $ACA_MANERR_PAD = 20;		# Maneuver error pad for ACA effects (arcsec)
+our $r2a = 3600. * 180. / 3.14159265;
+our $faint_plot_mag = 11.0;
+our $alarm = ">> WARNING:";
+our %Default_SIM_Z = ('ACIS-I' => 92905,
 		  'ACIS-S' => 75620,
 		  'HRC-I'  => -50505,
 		  'HRC-S'  => -99612);
-%pg_colors = (white   => 1,
+our %pg_colors = (white   => 1,
 	      red     => 2,
 	      green   => 3,
 	      blue    => 4,
@@ -52,7 +53,7 @@ $alarm = ">> WARNING:";
 	      purple  => 12,
 	      magenta => 6);
 
-$ID_DIST_LIMIT = 1.5;		# 1.5 arcsec box for ID'ing a star
+our$ID_DIST_LIMIT = 1.5;		# 1.5 arcsec box for ID'ing a star
 
 1;
 
@@ -923,7 +924,7 @@ sub print_report {
     $o .= sprintf "\\target{obsid$self->{obsid}}";
     $o .= sprintf ("\\blue_start OBSID: %-5s  ", $self->{obsid});
     $o .= sprintf ("%-22s %-6s SIM Z offset:%-5d (%-.2fmm) Grating: %-5s", $target_name, $self->{SI}, 
-		   $self->{SIM_OFFSET_Z},  ($self->{SIM_OFFSET_Z})*($odb{"ODB_TSC_STEPS"}[0]), $self->{GRATING}) if ($target_name);
+		   $self->{SIM_OFFSET_Z},  ($self->{SIM_OFFSET_Z})*1000*($odb{"ODB_TSC_STEPS"}[0]), $self->{GRATING}) if ($target_name);
     $o .= sprintf "\\blue_end     \n";
     $o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     if ( defined $self->{DITHER_ON} && $self->{obsid} < 50000 ) {
@@ -1018,6 +1019,7 @@ sub add_guide_summ {
 #############################################################################################
     my $self = shift;
     ($ra, $dec, $roll, $info) = @_;
+
 
     unless ($c = find_command($self, 'MP_STARCAT')) {
 	if ($self->{n_guide_summ}++ == 0) {

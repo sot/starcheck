@@ -226,9 +226,13 @@ foreach $obsid (@obsid_id) {
 
 %guidesumm = Parse_CM_File::GUIDE($guide_summ) if ($guide_summ);
 foreach $obsid (@obsid_id){
-	unless (exists $guidesumm{$obsid}){
-	warning ("No GS Summary for $obsid \n");			
+	if (exists $guidesumm{$obsid}){
+#		$obs{$obsid}->add_guide_summ($guidesumm{$obsid}{ra}, $guidesumm{$obsid}{dec}, $guidesumm{$obsid}{roll}, $guidesumm{$obsid}{info});
 	}
+	else {
+		push @{$obs{$obsid}->{warn}}, sprintf("No Guide Star Summary for $obsid \n");			
+	}
+	
 }
 
 read_guide_summary() if ($guide_summ);
@@ -529,8 +533,8 @@ sub read_guide_summary {
 
     while (<GUIDE_SUMM>) {
 	# Look for an obsid, ra, dec, or roll
-	if (/\s+ID:\s+(\w{5})/) {
-#	if (/\s+ID:\s+([[:ascii:]]{5})/) {
+#	if (/\s+ID:\s+(\w{5})/) {
+	if (/\s+ID:\s+([[:ascii:]]{5})/) {
 	    ($obsid = $1) =~ s/^0*//;
 	    $first = 0;
 	}
@@ -540,7 +544,7 @@ sub read_guide_summary {
 
 	# Look for a star catalog entry, which must have been preceeded by obsid, ra, dec, and roll
 	if (/^(FID|ACQ|GUI|BOT)/) {
-	    if (exists $obs{$obsid}) {  # Make sure there is a corresponding obsid object from backstop
+	    if (exists $obs{$obsid}) {  # Make sure there is a corresponding obsid object from backstop		
 		$obs{$obsid}->add_guide_summ($ra, $dec, $roll, $_);
 	    } else {
 		if ($first++ == 0) {
