@@ -223,18 +223,6 @@ foreach $obsid (@obsid_id) {
 # has star id's and magnitudes.  The results are stored in the
 # MP_STARCAT cmd, so this processing has to occur after set_star_catalog
 
-
-%guidesumm = Parse_CM_File::GUIDE($guide_summ) if ($guide_summ);
-foreach $obsid (@obsid_id){
-	if (exists $guidesumm{$obsid}){
-#		$obs{$obsid}->add_guide_summ($guidesumm{$obsid}{ra}, $guidesumm{$obsid}{dec}, $guidesumm{$obsid}{roll}, $guidesumm{$obsid}{info});
-	}
-	else {
-		push @{$obs{$obsid}->{warn}}, sprintf("No Guide Star Summary for $obsid \n");			
-	}
-	
-}
-
 read_guide_summary() if ($guide_summ);
 
 # Set up for SIM-Z checking
@@ -483,10 +471,8 @@ sub get_obsid {
 	$tolerance = $dot_tolerance{$cmd_identifier}   || $TIME_TOLERANCE ;
 	if ($dot_cmd{$cmd_identifier} eq $cmd
 	    && abs($dot{$obsid_index}{time} + $dt - $time) < $tolerance) {
-	   if ($obsid_index =~ /\S0*(.+)\d\d\d\d/){
-		    return $1; 
-	   }
-	     die "Couldn't parse obsid_index = '$obsid_index' in get_obsid()\n";
+	    return $1 if ($obsid_index =~ /\S0*(.+)\d\d\d\d/);
+	    die "Couldn't parse obsid_index = '$obsid_index' in get_obsid()\n";
 	}
     }
 
@@ -500,6 +486,7 @@ sub get_obsid {
 	warning("Creating bogus obsid $obsid\n") unless ($obs{$obsid});
 	$bogus_obsid++ if ($cmd eq 'MP_STARCAT');
     }
+	
     return ($obsid);
 }    
 
@@ -533,8 +520,7 @@ sub read_guide_summary {
 
     while (<GUIDE_SUMM>) {
 	# Look for an obsid, ra, dec, or roll
-#	if (/\s+ID:\s+(\w{5})/) {
-	if (/\s+ID:\s+([[:ascii:]]{5})/) {
+	if (/\s+ID:\s+(\w{5})/) {
 	    ($obsid = $1) =~ s/^0*//;
 	    $first = 0;
 	}
@@ -544,7 +530,7 @@ sub read_guide_summary {
 
 	# Look for a star catalog entry, which must have been preceeded by obsid, ra, dec, and roll
 	if (/^(FID|ACQ|GUI|BOT)/) {
-	    if (exists $obs{$obsid}) {  # Make sure there is a corresponding obsid object from backstop		
+	    if (exists $obs{$obsid}) {  # Make sure there is a corresponding obsid object from backstop
 		$obs{$obsid}->add_guide_summ($ra, $dec, $roll, $_);
 	    } else {
 		if ($first++ == 0) {

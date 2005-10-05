@@ -16,7 +16,6 @@ package Obsid;
 
 # Library dependencies
 
-use strict;
 use warnings;
 use lib '/proj/sot/ska/lib/site_perl';
 use Quat;
@@ -34,16 +33,16 @@ require  "${Starcheck_Share}/figure_of_merit.pl";
 
 # Constants
 
-our $VERSION = '$Id$';  # '
-our $ACA_MANERR_PAD = 20;		# Maneuver error pad for ACA effects (arcsec)
-our $r2a = 3600. * 180. / 3.14159265;
-our $faint_plot_mag = 11.0;
-our $alarm = ">> WARNING:";
-our %Default_SIM_Z = ('ACIS-I' => 92905,
+$VERSION = '$Id$';  # '
+$ACA_MANERR_PAD = 20;		# Maneuver error pad for ACA effects (arcsec)
+$r2a = 3600. * 180. / 3.14159265;
+$faint_plot_mag = 11.0;
+$alarm = ">> WARNING:";
+%Default_SIM_Z = ('ACIS-I' => 92905,
 		  'ACIS-S' => 75620,
 		  'HRC-I'  => -50505,
 		  'HRC-S'  => -99612);
-our %pg_colors = (white   => 1,
+%pg_colors = (white   => 1,
 	      red     => 2,
 	      green   => 3,
 	      blue    => 4,
@@ -53,7 +52,7 @@ our %pg_colors = (white   => 1,
 	      purple  => 12,
 	      magenta => 6);
 
-our$ID_DIST_LIMIT = 1.5;		# 1.5 arcsec box for ID'ing a star
+$ID_DIST_LIMIT = 1.5;		# 1.5 arcsec box for ID'ing a star
 
 1;
 
@@ -627,23 +626,10 @@ sub check_star_catalog {
 	if (($type =~ /BOT|ACQ/) and $c->{"HALFW$i"} < $slew_err) {
 	    push @warn, sprintf "$alarm Search Box smaller than slew error [%2d]\n",$i;
 	}
-
+	
 	# Check that readout sizes are all 6x6 for science observations
 	push @warn, sprintf("$alarm Readout Size. [%2d]: %s Should be 6x6\n", $i, $c->{"SIZE$i"})
 	    if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6");
-
-	# Check that readout sizes are all 8x8 for engineering observations
-	push @warn, sprintf("$alarm Readout Size. [%2d]: %s Should be 8x8\n", $i, $c->{"SIZE$i"})
-	    if ($is_er && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "8x8");
-
-	# Check that readout sizes are all 8x8 for FID lights
-	push @warn, sprintf("$alarm Readout Size. [%2d]: %s Should be 8x8\n", $i, $c->{"SIZE$i"})
-	    if ($type =~ /FID/  && $c->{"SIZE$i"} ne "8x8");
-
-	# Check that readout size is 8x8 for monitor windows
-	push @warn, sprintf("$alarm Readout Size. [%2d]: %s Should be 8x8\n", $i, $c->{"SIZE$i"})
-	    if ($type =~ /MON/  && $c->{"SIZE$i"} ne "8x8");
-
 
 	# Bad Pixels
         my @close_pixels;
@@ -923,8 +909,8 @@ sub print_report {
 
     $o .= sprintf "\\target{obsid$self->{obsid}}";
     $o .= sprintf ("\\blue_start OBSID: %-5s  ", $self->{obsid});
-    $o .= sprintf ("%-22s %-6s SIM Z offset:%-5d (%-.2fmm) Grating: %-5s", $target_name, $self->{SI}, 
-		   $self->{SIM_OFFSET_Z},  ($self->{SIM_OFFSET_Z})*1000*($odb{"ODB_TSC_STEPS"}[0]), $self->{GRATING}) if ($target_name);
+    $o .= sprintf ("%-22s  %-6s  SIM Z offset: %-5d  Grating: %-5s", $target_name, $self->{SI}, 
+		   $self->{SIM_OFFSET_Z}, $self->{GRATING}) if ($target_name);
     $o .= sprintf "\\blue_end     \n";
     $o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     if ( defined $self->{DITHER_ON} && $self->{obsid} < 50000 ) {
@@ -1019,7 +1005,6 @@ sub add_guide_summ {
 #############################################################################################
     my $self = shift;
     ($ra, $dec, $roll, $info) = @_;
-
 
     unless ($c = find_command($self, 'MP_STARCAT')) {
 	if ($self->{n_guide_summ}++ == 0) {

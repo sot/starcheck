@@ -15,7 +15,6 @@ use Time::JulianDay;
 use Time::DayOfYear;
 use Time::Local;
 use IO::File;
-use IO::All;
 
 $VERSION = '$Id$';  # '
 1;
@@ -266,51 +265,6 @@ sub DOT {
     } 
     return %dot;
 }
-
-
-
-##***************************************************************************
-sub GUIDE{
-##***************************************************************************
-
-
-    $guide_file = shift;
-
-    undef %guidesumm;
-
-    open (GUIDESUMM, $guide_file) || die "Couldn't open GUIDE file $guide_file\n";
-    while (<GUIDESUMM>) {
-
-	# Look for an obsid, ra, dec, or roll
-#	if (/\s+ID:\s+(\w{5})/) {
-	if (/\s+ID:\s+([[:ascii:]]{5})/) {
-	    ($obsid = $1) =~ s/^0*//;
-	     $first = 0;
-	}
-	if (/\s+RA:\s*([^ ]+) DEG/){
-		$ra = $1;
-	}		
-	if (/\s+DEC:\s*([^ ]+) DEG/){
-		$dec = $1;
-	}
-	if (/\s+ROLL \(DEG\):\s*([^ ]+)/){
-		$roll = $1;
-	}
-
-	# Look for a star catalog entry, which must have been preceeded by obsid, ra, dec, and roll
-	if (/^(FID|ACQ|GUI|BOT)/) {
-		$guidesumm{$obsid}= { ra => $ra,
-				      dec => $dec,
-				      roll => $roll,
-				      info => $_,
-				};
-	}
-    }
-    close GUIDESUMM;
-    return %guidesumm;    
-}
-
-
 
 ###############################################################
 sub OR {

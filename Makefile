@@ -8,11 +8,11 @@ DATA = ACABadPixels agasc.bad  fid_CHARACTERIS_JUL01
 
 TEST_DEPS = data/acq_stats/bad_acq_stars.rdb
 
-test: check_install AUG0805A install
+test: check_install AUG0104A install
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -dir AUG0805A -out test
+	$(INSTALL_BIN)/starcheck.pl -dir AUG0104A -out test
 
 AUG0104A:
 	ln -s /data/mpcrit1/mplogs/2004/AUG0104/oflsa AUG0104A
