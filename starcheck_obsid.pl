@@ -17,7 +17,7 @@ package Obsid;
 # Library dependencies
 
 use warnings;
-use lib '/proj/sot/ska/lib/site_perl';
+#use lib '/proj/sot/ska/lib/site_perl';
 use Quat;
 use swapACACoords;
 use File::Basename;
