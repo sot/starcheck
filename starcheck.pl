@@ -25,7 +25,7 @@ use Time::Local;
 use PoorTextFormat;
 use Chex;
 
-#use lib '/proj/axaf/simul/lib/perl';
+use lib '/proj/axaf/simul/lib/perl';
 use GrabEnv qw( grabenv );
 
 # Set some global vars with directory locations
