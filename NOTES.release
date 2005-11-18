@@ -1,11 +1,24 @@
-Things to do:
+Nov-2005
+---------
+Use of NOTES.release is deprecated.
+See http://jeeves.cfa.harvard.edu/Murk/Chandra/StarcheckDevelopment
+for current notes, or use "cvs log"
 
+
+Testing Branch Nov-2005
+-----------------------
+- Check that the faint mag limit is at least 1.4 more than the star mag
+- Fix guide star summary parsing so it won't just keep adding stars to a catalog
+	if it fails to recognize the beginning of the next one.
 - Change CCD edge limits to match /proj/sot/ska/acaflt/quad_limits_sausage.dat
+- Global warn if DOT not updated by SAUSAGE
+- Added SIM-Z offset in mm
+- Added checks for 6x6 and 8x8 for all cases per review docs
+- Modified parsing to allow ASCII ids
+- Modified main routines to "use strict"
+- Removed bareword filehandles
+- New guide star summary parsing and handling
 
-- Check for ACIS-I-6 bad pixel problem
-- Make sure DOT was updated by automatic post-OFLS scripts
-- Check that the faint mag limit is at least 1.28 more than the star mag
-- Parse SCS107 statement in fidsel history
 
 V4.14   10-Mar-2004
 -------------------

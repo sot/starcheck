@@ -7,11 +7,12 @@
 #
 ##*******************************************************************************
 
-$VERSION = '$Id$';  # '
-($version) = ($VERSION =~ /starcheck.pl,v\s+(\S+)/);
+my $VERSION = '$Id$';  # '
+my ($version) = ($VERSION =~ /starcheck.pl,v\s+(\S+)/);
 
 # Set defaults and get command line options
 
+use strict;
 use warnings;
 use Getopt::Long;
 use IO::File;
@@ -25,22 +26,22 @@ use Time::Local;
 use PoorTextFormat;
 use Chex;
 
-use lib '/proj/axaf/simul/lib/perl';
+#use lib '/proj/axaf/simul/lib/perl';
 use GrabEnv qw( grabenv );
 
 # Set some global vars with directory locations
-our $SKA = $ENV{SKA} || '/proj/sot/ska';
-our $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
-our $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
+my $SKA = $ENV{SKA} || '/proj/sot/ska';
+my $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
+my $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
-%par = (dir  => '.',
+my %par = (dir  => '.',
 	plot => 1,
 	html => 1,
 	text => 1,
 	agasc => '1p6',
 	chex => undef);
 
-$log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
+my $log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
 
 GetOptions( \%par, 
 	   'help', 
@@ -54,7 +55,7 @@ GetOptions( \%par,
 	   ) ||
     exit( 1 );
 
-$STARCHECK   = $par{out} || 'starcheck';
+my $STARCHECK   = $par{out} || 'starcheck';
 
 usage( 1 )
     if $par{help};
@@ -67,23 +68,26 @@ require "${Starcheck_Share}/parse_cm_file.pl";
 
 my %input_files = ();
 
-$backstop   = get_file("$par{dir}/*.backstop",'backstop', 'required');
-$guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
-$or_file    = get_file("$par{dir}/mps/or/*.or",      'OR');
-$mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
-$dot_file   = get_file("$par{dir}/mps/md*.dot",     'DOT', 'required');
-$mech_file  = get_file("$par{dir}/output/TEST_mechcheck.txt", 'mech check');
-$soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
-$fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
-$dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');    
-$odb_file   = get_file("$Starcheck_Data/fid_CHARACTERIS_JUL01", 'odb', 'required');
-$manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
+my $backstop   = get_file("$par{dir}/*.backstop",'backstop', 'required');
+my $guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
+my $or_file    = get_file("$par{dir}/mps/or/*.or",      'OR');
+my $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
+my $dot_file   = get_file("$par{dir}/mps/md*.dot",     'DOT', 'required');
+my $mech_file  = get_file("$par{dir}/output/TEST_mechcheck.txt", 'mech check');
+my $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
+my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
+my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');    
+my $odb_file   = get_file("$Starcheck_Data/fid_CHARACTERIS_JUL01", 'odb', 'required');
+my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 
-$bad_agasc_file = "$Starcheck_Data/agasc.bad";
-$ACA_bad_pixel_file = "$Starcheck_Data/ACABadPixels";
-$bad_acqs_file = $ENV{'SKA_DATA'}."/acq_stats/bad_acq_stars.rdb";
+my $bad_agasc_file = "$Starcheck_Data/agasc.bad";
+my $ACA_bad_pixel_file = "$Starcheck_Data/ACABadPixels";
+my $bad_acqs_file = $ENV{'SKA_DATA'}."/acq_stats/bad_acq_stars.rdb";
+
+my ($mp_agasc_version, $ascds_version, $ascds_version_name);
 
 # If making plots, check for mp_get_agasc, and make a plot directory if required
+
 if ($par{plot}) {
     if (`which mp_get_agasc` =~ /no mp_get_agasc/) {
 	%ENV = grabenv("tcsh", "source /home/ascds/.ascrc -r release");
@@ -91,7 +95,7 @@ if ($par{plot}) {
 	    die "Cannot find mp_get_agasc to make plots.  Are you in the CXCDS environment?\n";
 	}
     }
-
+    
     # If agasc parameter is defined (and looks reasonable) then force that version of AGASC.
     if (defined $par{agasc} and $par{agasc} =~ /\dp\d/) {
 	foreach (keys %ENV) {
@@ -119,44 +123,76 @@ unless (-e $STARCHECK) {
 
 
 # First read the Backstop file, and split into components
-$bogus_obsid = 1;
-@bs = Parse_CM_File::backstop($backstop);
-$i = 0;
-foreach $bs (@bs) {
+my $bogus_obsid = 1;
+my @bs = Parse_CM_File::backstop($backstop);
+
+my $i = 0;
+my (@date, @vcdu, @cmd, @params, @time);
+foreach my $bs (@bs) {
     ( $date[$i], $vcdu[$i], $cmd[$i], $params[$i], $time[$i] ) =
 	( $bs->{date}, $bs->{vcdu}, $bs->{cmd}, $bs->{params}, $bs->{time} );
     $i++;
+#    print STDERR "BS TIME = $bs->{time} \n";
 }
 
 # Read DOT, which is used to figure the Obsid for each command
-%dot = Parse_CM_File::DOT($dot_file) if ($dot_file);
+my ($dot_ref, $dot_touched_by_sausage) = Parse_CM_File::DOT($dot_file) if ($dot_file);
+my %dot = %$dot_ref;
+
+#foreach my $dotkey (keys  %dot){
+#	print STDERR "$dotkey $dot{$dotkey}{cmd_identifier} $dot{$dotkey}{anon_param3} $dot{$dotkey}{anon_param4} \n";
+#}
+
 # Read momentum management (maneuvers + SIM move) summary file 
-%mm = Parse_CM_File::MM($mm_file) if ($mm_file);
+my %mm = Parse_CM_File::MM($mm_file) if ($mm_file);
 
 # Read mech check file and parse
-@mc  = Parse_CM_File::mechcheck($mech_file) if ($mech_file);
+my @mc  = Parse_CM_File::mechcheck($mech_file) if ($mech_file);
 
 # Read SOE file and parse
-%soe  = Parse_CM_File::SOE($soe_file) if ($soe_file);
+my %soe  = Parse_CM_File::SOE($soe_file) if ($soe_file);
 
 # Read OR file and integrate into %obs
-%or = Parse_CM_File::OR($or_file) if ($or_file);
+my %or = Parse_CM_File::OR($or_file) if ($or_file);
 
 # Read FIDSEL (fid light) history file and ODB (for fid
-# characteristics) and parse
+# characteristics) and parse; use fid_time_violation later (when global_warn set up
 
-($error, @fidsel) = Parse_CM_File::fidsel($fidsel_file, \@bs) ;
+my ($fid_time_violation, $error, @fidsel) = Parse_CM_File::fidsel($fidsel_file, \@bs) ;
+
+# Set up for global warnings
+my @global_warn;
 map { warning("$_\n") } @{$error};
-%odb = Parse_CM_File::odb($odb_file);
- Obsid::set_odb(%odb);
+
+# Now that global_warn exists, if the DOT wasn't made/modified by SAUSAGE
+# throw an error
+if ($dot_touched_by_sausage == 0 ){
+	warning("DOT file not modified by SAUSAGE! \n");
+}
+
+
+my %odb = Parse_CM_File::odb($odb_file);
+Obsid::set_odb(%odb);
 
 # Read Maneuver error file containing more accurate maneuver errors
+my @manerr;
 if ($manerr_file) { 
     @manerr = Parse_CM_File::man_err($manerr_file);
 } else { warning("Could not find Maneuver Error file in output/ directory\n") };
 
 # Read DITHER history file and backstop to determine expected dither state
-@dither = Parse_CM_File::dither($dither_file, \@bs);
+my ($dither_time_violation, @dither) = Parse_CM_File::dither($dither_file, \@bs);
+
+# if dither history runs into load
+if ($dither_time_violation){
+    warning("Dither History runs into load!\n");
+} 
+
+# if fidsel history runs into load
+if ($fid_time_violation){
+    warning("Fidsel History runs into load!\n");
+}
+
 
 # Read in the failed acquisition stars
 warning("Could not open ACA bad acquisition stars file $bad_acqs_file\n")
@@ -172,6 +208,7 @@ warning("Could not open bad AGASC file $bad_agasc_file\n")
 
 # Initialize list of "interesting" commands
 
+my (%dot_cmd, %dot_time_offset, %dot_tolerance);
 set_dot_cmd();  
 
 # Go through records and set the time of MP_TARGQUAT commands to
@@ -182,11 +219,14 @@ fix_targquat_time();
 # Now go through records, pull out the interesting things, and assemble
 # into structures based on obsid. 
 
-for $i (0 .. $#cmd) {
+my $obsid;
+my %obs;
+my @obsid_id;
+for my $i (0 .. $#cmd) {
     # Get obsid for this cmd by matching up with corresponding commands
     # from DOT.   Returns undef if it isn't "interesting"
     next unless ($obsid = get_obsid ($time[$i], $cmd[$i], $date[$i]));
-
+    
     # If obsid hasn't been seen before, create obsid object
 
     unless ($obs{$obsid}) {
@@ -206,7 +246,7 @@ for $i (0 .. $#cmd) {
 # After all commands have been added to each obsid, set some global
 # object parameters based on commands
 
-foreach $obsid (@obsid_id) {
+foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_obsid(); # Commanded obsid
     $obs{$obsid}->set_target();
     $obs{$obsid}->set_star_catalog();
@@ -223,14 +263,32 @@ foreach $obsid (@obsid_id) {
 # has star id's and magnitudes.  The results are stored in the
 # MP_STARCAT cmd, so this processing has to occur after set_star_catalog
 
-read_guide_summary() if ($guide_summ);
+my %guidesumm = Parse_CM_File::guide($guide_summ) if (defined $guide_summ);
+
+foreach my $oflsid (keys %guidesumm){
+    unless (defined $obs{$oflsid}){
+	push @global_warn, sprintf("WARNING: OFLS ID $oflsid in Guide Summ but not in DOT! \n");
+    }
+}
+
+
+foreach my $oflsid (@obsid_id){
+    if (defined $guidesumm{$oflsid}){
+	$obs{$oflsid}->add_guide_summ($oflsid, \%guidesumm);
+    }
+    else {
+	push @{$obs{$oflsid}->{warn}}, sprintf("WARNING: No Guide Star Summary for :$oflsid: \n");			
+    }
+	
+}
+
 
 # Set up for SIM-Z checking
 # Find SIMTSC continuity statement from mech check file
 # and find SIMTRANS statements in backstop
 
-@sim_trans = ();
-foreach $mc (@mc) {
+my @sim_trans = ();
+foreach my $mc (@mc) {
     if ($mc->{var} eq 'simtsc_continuity') {
 	push @sim_trans, { cmd  => 'SIMTRANS',
 			   time => $mc->{time},
@@ -244,7 +302,7 @@ foreach (@bs) {
 
 # Do main checking
 
-foreach $obsid (@obsid_id) {
+foreach my $obsid (@obsid_id) {
     if ($par{plot}) {
 	$obs{$obsid}->get_agasc_stars($mp_agasc_version);
 	$obs{$obsid}->identify_stars();
@@ -264,8 +322,8 @@ foreach $obsid (@obsid_id) {
 
 # Produce final report
 
-$out = '\fixed_start ';
-$date = `date`;
+my $out = '\fixed_start ';
+my $date = `date`;
 chomp $date;
 
 $out .= "------------  Starcheck V$version    -----------------\n";
@@ -316,27 +374,27 @@ foreach $obsid (@obsid_id) {
 # Finish up and format it
 
 $out .= '\fixed_end ';
-$ptf = PoorTextFormat->new();
+my $ptf = PoorTextFormat->new();
 
 # Write make_stars file
-$make_stars = "$STARCHECK/make_stars.txt";
-open (OUT, "> $make_stars") or die "Couldn't open $make_stars for writing\n";
-foreach $obsid (@obsid_id) {
+my $make_stars = "$STARCHECK/make_stars.txt";
+open (my $OUT, "> $make_stars") or die "Couldn't open $make_stars for writing\n";
+foreach my $obsid (@obsid_id) {
     my $c = $obs{$obsid};
     my $format = ($c->{obsid} =~ /^[0-9]+$/) ? "%05d" : "%s";
-    printf OUT "../make_stars.pl -starcat starcat.dat.$format", $c->{obsid};
-    print OUT " -ra $c->{ra} -dec $c->{dec} -roll $c->{roll} ";
-    print OUT "-sim_z $c->{SIM_OFFSET_Z} " if ($c->{SIM_OFFSET_Z});
-    print OUT "-si $c->{SI} " if ($c->{SI});
-    print OUT "\n";
+    printf $OUT "../make_stars.pl -starcat starcat.dat.$format", $c->{obsid};
+    print $OUT " -ra $c->{ra} -dec $c->{dec} -roll $c->{roll} ";
+    print $OUT "-sim_z $c->{SIM_OFFSET_Z} " if ($c->{SIM_OFFSET_Z});
+    print $OUT "-si $c->{SI} " if ($c->{SI});
+    print $OUT "\n";
 }
 
 # Write the HTML
 
 if ($par{html}) {
-    open (OUT, "> $STARCHECK.html") or die "Couldn't open $STARCHECK.html for writing\n";
-    print OUT $ptf->ptf2any('html', $out);
-    close OUT;
+    open (my $OUT, "> $STARCHECK.html") or die "Couldn't open $STARCHECK.html for writing\n";
+    print $OUT $ptf->ptf2any('html', $out);
+    close $OUT;
     print STDERR "Wrote HTML report to $STARCHECK.html\n";
 
     my $guide_summ_start = (defined $mp_agasc_version and $mp_agasc_version eq '1.4') ? 
@@ -352,9 +410,9 @@ if ($par{html}) {
 # Write the TEXT
 
 if ($par{text}) {
-    open (OUT, "> $STARCHECK.txt") or die "Couldn't open $STARCHECK.txt for writing\n";
-    print OUT $ptf->ptf2any('text', $out);
-    close OUT;
+    open (my $OUT, "> $STARCHECK.txt") or die "Couldn't open $STARCHECK.txt for writing\n";
+    print $OUT $ptf->ptf2any('text', $out);
+    close $OUT;
     print STDERR "Wrote text report to $STARCHECK.txt\n";
 }
 
@@ -363,7 +421,7 @@ if ($par{text}) {
 if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
    print STDERR "Updating Chandra expected state file\n";
    print $log_fh "Updating Chandra expected state file\n" if ($log_fh);
-   $chex = new Chex $par{chex};
+   my $chex = new Chex $par{chex};
    $chex->update(mman         => \%mm,
 		 mech_check   => \@mc, 
 		 dot          => \%dot,
@@ -383,10 +441,10 @@ sub make_annotated_file {
 # $mm_file    = get_file("$par{dir}/*/mm*.sum", 'maneuver');
 # $dot_file   = get_file("$par{dir}/*.dot",     'DOT', 'required');
 
-    ($start_rexp, $id_pre, $id_post, $file_in) = @_;
-    open(FILE, $file_in) or return;
-    my @lines = <FILE>;
-    close FILE;
+    my ($start_rexp, $id_pre, $id_post, $file_in) = @_;
+    open(my $FILE1, $file_in) or return;
+    my @lines = <$FILE1>;
+    close $FILE1;
 
     my $obsid;
     my $start = $start_rexp ? 1 : 0;
@@ -402,11 +460,11 @@ sub make_annotated_file {
 	}
     }
 
-    $file_out = "$STARCHECK/" . basename($file_in) . ".html";
+    my $file_out = "$STARCHECK/" . basename($file_in) . ".html";
 
-    open(FILE, "> $file_out") or die "Couldn't open $file_out for writing\n";
-    print FILE $ptf->ptf2any('html', "\\fixed_start \n" . join('',@lines));
-    close FILE;
+    open(my $FILE2, "> $file_out") or die "Couldn't open $file_out for writing\n";
+    print $FILE2 $ptf->ptf2any('html', "\\fixed_start \n" . join('',@lines));
+    close $FILE2;
 }
 
 ##***************************************************************************
@@ -414,14 +472,21 @@ sub fix_targquat_time {
 ##***************************************************************************
 # Go through records and set the time of MP_TARGQUAT commands to
 # the time of the subsequent cmd with COMMAND_SW | TLMSID= AOMANUVR
-    for $i (reverse (0 .. $#cmd)) {
-	if ($cmd[$i] eq 'COMMAND_SW' and $params[$i] =~ /AOMANUVR/) {
+    my $manv_time;
+    my $set = 0;
+
+    for my $i (reverse (0 .. $#cmd)) {
+        if ($cmd[$i] eq 'COMMAND_SW' and $params[$i] =~ /AOMANUVR/) {
+#	    print STDERR "First: $cmd[$i], $time[$i], $date[$i] \n";
 	    $manv_time = $time[$i];
+	    $set = 1;
 	}
 	if ($cmd[$i] eq 'MP_TARGQUAT') {
-	    if ($manv_time) {
+#	    print STDERR "Second: $cmd[$i], $time[$i], $date[$i] \n";
+	    if ($set eq 1) {
 		$time[$i] = $manv_time;
-		undef $manv_time;	# Make sure that each TARGQUAT gets a unique AOMANUVR time
+#		undef $manv_time;	# Make sure that each TARGQUAT gets a unique AOMANUVR time
+	        $set = 0;   
 	    } else {
 		warning ("Found MP_TARGQUAT at $date[$i] without corresponding AOMANUVR\n");
 	    }
@@ -464,15 +529,17 @@ sub get_obsid {
 
     # Match (by time) the input command to corresponding command in the DOT
 
-    foreach $obsid_index (keys %dot) {
+    foreach my $obsid_index (keys %dot) {
 	next unless ($dot_cmd{ $dot{$obsid_index}{cmd_identifier}});
-	$cmd_identifier = $dot{$obsid_index}{cmd_identifier};
-	$dt        = $dot_time_offset{$cmd_identifier} || 0.0;
-	$tolerance = $dot_tolerance{$cmd_identifier}   || $TIME_TOLERANCE ;
+	my $cmd_identifier = $dot{$obsid_index}{cmd_identifier};
+	my $dt        = $dot_time_offset{$cmd_identifier} || 0.0;
+	my $tolerance = $dot_tolerance{$cmd_identifier}   || $TIME_TOLERANCE ;
 	if ($dot_cmd{$cmd_identifier} eq $cmd
 	    && abs($dot{$obsid_index}{time} + $dt - $time) < $tolerance) {
-	    return $1 if ($obsid_index =~ /\S0*(.+)\d\d\d\d/);
-	    die "Couldn't parse obsid_index = '$obsid_index' in get_obsid()\n";
+	   if ($obsid_index =~ /\S0*(.+)\d\d\d\d/){
+		    return $1; 
+	   }
+	     die "Couldn't parse obsid_index = '$obsid_index' in get_obsid()\n";
 	}
     }
 
@@ -486,62 +553,9 @@ sub get_obsid {
 	warning("Creating bogus obsid $obsid\n") unless ($obs{$obsid});
 	$bogus_obsid++ if ($cmd eq 'MP_STARCAT');
     }
-	
     return ($obsid);
 }    
 
-
-##***************************************************************************
-sub read_guide_summary {
-##***************************************************************************
-
-# **** PROCESSING REQUEST ****
-#      ID:         0008700
-#      TARGET RA:  326.184708 DEG.
-#      TARGET DEC: 38.300091 DEG.
-# 
-# ROLL (DEG):  85.6468               FOM (ARCSEC^2):  0.597854E-03
-# 
-# STARS/FIDUCIAL LIGHTS                           AC COORDINATES (RAD)
-# TYPE      ID       RA (DEG)  DEC (DEG)  MAG     Y-ANGLE       Z-ANGLE
-# **************************************************************************
-# FID             8  --------  --------    7.083   0.41300E-02  -0.58742E-02
-# FID             9  --------  --------    7.116  -0.57631E-02   0.53086E-02
-# FID            10  --------  --------    7.081   0.62139E-02   0.52960E-02
-# BOT     417339000  325.7338   37.9049    7.595  -0.73335E-02   0.56697E-02
-# BOT     417348280  327.0051   38.9013    8.814   0.11358E-01  -0.10312E-01
-# BOT     417343224  325.3579   37.7705    9.047  -0.10033E-01   0.10677E-01
-# BOT     417334592  326.0789   38.8836    9.645   0.10047E-01   0.22062E-02
-# BOT     417347416  326.6022   38.0951    9.671  -0.31185E-02  -0.59885E-02
-
-    return unless ($guide_summ);
-
-    open (GUIDE_SUMM, $guide_summ) || die "Couldn't open guide star summary file $guide_summ for reading\n";
-
-    while (<GUIDE_SUMM>) {
-	# Look for an obsid, ra, dec, or roll
-	if (/\s+ID:\s+(\w{5})/) {
-	    ($obsid = $1) =~ s/^0*//;
-	    $first = 0;
-	}
-	$ra = $1 if (/\s+TARGET RA:\s*([^ ]+) DEG/);
-	$dec = $1 if (/\s+TARGET DEC:\s*([^ ]+) DEG/);
-	$roll = $1 if (/ROLL \(DEG\):\s*([^ ]+) /);
-
-	# Look for a star catalog entry, which must have been preceeded by obsid, ra, dec, and roll
-	if (/^(FID|ACQ|GUI|BOT)/) {
-	    if (exists $obs{$obsid}) {  # Make sure there is a corresponding obsid object from backstop
-		$obs{$obsid}->add_guide_summ($ra, $dec, $roll, $_);
-	    } else {
-		if ($first++ == 0) {
-		    warning ("Obsid $obsid is in guide star summary but not backstop\n")
-			unless ($obsid =~ /[^\d]/);
-		}
-	    }
-	}
-    }
-    close GUIDE_SUMM;
-}
 
 ##***************************************************************************
 sub get_file {
@@ -551,7 +565,7 @@ sub get_file {
     my $required = shift;
     my $warning = ($required ? "ERROR" : "WARNING");
 
-    @files = glob($glob);
+    my @files = glob($glob);
     if (@files != 1) {
 	print STDERR ((@files == 0) ?
 		      "$warning: No $name file matching $glob\n"
@@ -566,16 +580,16 @@ sub get_file {
 }
 
 ##***************************************************************************
-sub insert_bogus_obsid {
+#sub insert_bogus_obsid {
 ##***************************************************************************
-    @date = (@date[0..$i-1], $date[$i_last_starcat], @date[$i..$#date]);
-    @vcdu = (@vcdu[0..$i-1], $vcdu[$i_last_starcat]+4, @vcdu[$i..$#vcdu]);
-    @cmd = (@cmd[0..$i-1], 'MP_OBSID', @cmd[$i..$#cmd]);
-    @params = (@params[0..$i-1], "ID= NONE$bogus_obsid", @params[$i..$#params]);
-    warning ("A star catalog does not have an associated obsid, " 
-	. "using bogus obsid NONE$bogus_obsid\n");
-    $bogus_obsid++;
-}
+#    @date = (@date[0..$i-1], $date[$i_last_starcat], @date[$i..$#date]);
+#    @vcdu = (@vcdu[0..$i-1], $vcdu[$i_last_starcat]+4, @vcdu[$i..$#vcdu]);
+#    @cmd = (@cmd[0..$i-1], 'MP_OBSID', @cmd[$i..$#cmd]);
+#    @params = (@params[0..$i-1], "ID= NONE$bogus_obsid", @params[$i..$#params]);
+#    warning ("A star catalog does not have an associated obsid, " 
+#	. "using bogus obsid NONE$bogus_obsid\n");
+#    $bogus_obsid++;
+#}
     
 
 ##***************************************************************************

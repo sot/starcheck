@@ -30,11 +30,16 @@ sub make_figure_of_merit {
 	    push @probs, star_prob($acq);
 	}
     }
+#    push @{$self->{yellow_warn}}, "Probs = " .  join(" ",  map{ sprintf("%.4f",$_) } @probs) . "\n";
+
     #calculate the probability of acquiring n stars
     my $n_slot = $#probs+1;
     my @nacq_probs = prob_nstars($n_slot, @probs);
     #calculate the probability of acquiring at least n stars
     $self->{figure_of_merit} = cum_prob($n_slot, @nacq_probs);
+
+
+
 }
 	        
 ##*****************************************************************************************
@@ -44,7 +49,8 @@ sub star_prob {
     my @warnings = @{ $acq->{warnings} };
     my $mag = $acq->{magnitude};
 
-    my $prob = 1.0; #initialize the probability
+    my $prob; #initialize the probability   
+ 
     my $p_normal = .9846; #probability of acquiring any star
     my $p_marsta = .4846; #probability of acquiring a B-V = 0.700 star
     my $p_seaspo = .9241; #probability of acquiring a search spoiled star
@@ -52,20 +58,29 @@ sub star_prob {
 
     my $j = 0;
 
-    return $p_normal if $#warnings lt 0;
+    $prob = $p_normal;
+
+    if ($mag > 9.5) {
+	my $coeff = ($c_mag[0]+$c_mag[1]*($mag)+$c_mag[2]*($mag**2))/100.0;
+	$coeff = 0.0 if ($coeff < 0.0);
+        $prob *= $coeff;
+    }
+
     
     foreach $warning (@warnings) {
-	if ($mag > 9.5) {
-	    $prob *= ($c_mag[0]+$c_mag[1]*($mag)+$c_mag[2]*($mag**2))/100.0;
-	}
-	elsif ($warning =~ /B-V = 0.700/) {
+	if ($warning =~ /B-V = 0.700/) {
 	    $prob *= $p_marsta;
 	}
-	elsif ($warning =~ /Search Spoiler/) {
+	if ($warning =~ /Search Spoiler/) {
 	    $prob *= $p_seaspo;
 	}
-	else { $prob *= $p_normal };
+	if ($warning =~ /Bad Acquisition Star/){
+	    my ($failed, $total) = parse_bad_acq_warning($warning);
+	    $prob = ($total - $failed) / $total;
+            last;
+	}
     }
+
     return $prob;
 }
 
@@ -112,3 +127,18 @@ sub cum_prob {
 	    cum_prob_bad => ($cum_prob[2] > $CUM_PROB_LIMIT)
 	    };
 }
+
+
+##*****************************************************************************************
+sub parse_bad_acq_warning {
+##*****************************************************************************************
+    my $warning = shift;
+
+# Example of text to parse    
+#>> WARNING: Bad Acquisition Star. [13]: 367673952 has  1 failed out of  3 attempts         
+
+   $warning =~ /Bad Acquisition Star.+has\s*(\d{1,2})\sfailed out of\s*(\d{1,2})\sattempts.*/;
+   	my ($failed, $total) = ($1, $2);
+	return ($failed,$total);	
+}	
+    
