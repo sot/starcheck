@@ -16,6 +16,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use IO::File;
+use IO::All;
 
 use English;
 use File::Basename;
@@ -83,6 +84,18 @@ my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');
 my $bad_agasc_file = "$Starcheck_Data/agasc.bad";
 my $ACA_bad_pixel_file = "$Starcheck_Data/ACABadPixels";
 my $bad_acqs_file = $ENV{'SKA_DATA'}."/acq_stats/bad_acq_stars.rdb";
+
+# Let's find which dark current made the current bad pixel file
+
+my $ACA_badpix_date;
+my $ACA_badpix_firstline =  io($ACA_bad_pixel_file)->getline;
+
+if ($ACA_badpix_firstline =~ /Bad Pixel.*\d{7}\s+\d{7}\s+(\d{7}).*/ ){
+    $ACA_badpix_date = $1;
+    print STDERR "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
+    print $log_fh "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n" if ($log_fh);
+}
+
 
 my ($mp_agasc_version, $ascds_version, $ascds_version_name);
 
@@ -316,7 +329,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_sim_position(@sim_trans);
     $obs{$obsid}->check_dither(\@dither);
 
-    # Make sure there is only one star catalog per obsid
+# Make sure there is only one star catalog per obsid
     warning ("More than one star catalog assigned to Obsid $obsid\n")
 	if ($obs{$obsid}->find_command('MP_STARCAT',2));
 }
@@ -336,9 +349,14 @@ $out .= "\n";
 if (%input_files) {
     $out .= "------------  PROCESSING FILES  -----------------\n\n";
     for my $name (keys %input_files) { $out .= "Using $name file $input_files{$name}\n" };
+
+# Add info about which bad pixel file is being used:
+    if (defined $ACA_badpix_date){
+	$out .= "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
+    }
+
     $out .= "\n";
 }
-
 
 if (@global_warn) {
     $out .= "------------  PROCESSING WARNING  -----------------\n";
@@ -368,8 +386,15 @@ $out .= "\\page_break\n";
 
 foreach $obsid (@obsid_id) {
     $out .= $obs{$obsid}->print_report();
-    $out .= "\\image $obs{$obsid}->{plot_file}\n" if ($obs{$obsid}->{plot_file});
-    $out .= "\\image $obs{$obsid}->{plot_field_file}\n" if ($obs{$obsid}->{plot_field_file});
+    my $pict1 = qq{};
+    my $pict2 = qq{};
+    if ($obs{$obsid}->{plot_file}){
+	$pict1 = qq{ <img src="$obs{$obsid}->{plot_file}"> };
+    }
+    if ($obs{$obsid}->{plot_field_file}){
+	$pict2 = qq{ <img align="top" src="$obs{$obsid}->{plot_field_file}" > };
+    }
+    $out .= "\\html $pict1 $pict2 \n" ;
     $out .= "\\page_break\n";
 }
 
