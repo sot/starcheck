@@ -307,6 +307,7 @@ foreach my $obsid (@obsid_id) {
 	$obs{$obsid}->get_agasc_stars($mp_agasc_version);
 	$obs{$obsid}->identify_stars();
 	$obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.gif") ;
+	$obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.gif") ;
     }
 
     $obs{$obsid}->check_star_catalog();
@@ -368,6 +369,7 @@ $out .= "\\page_break\n";
 foreach $obsid (@obsid_id) {
     $out .= $obs{$obsid}->print_report();
     $out .= "\\image $obs{$obsid}->{plot_file}\n" if ($obs{$obsid}->{plot_file});
+    $out .= "\\image $obs{$obsid}->{plot_field_file}\n" if ($obs{$obsid}->{plot_field_file});
     $out .= "\\page_break\n";
 }
 
@@ -388,6 +390,7 @@ foreach my $obsid (@obsid_id) {
     print $OUT "-si $c->{SI} " if ($c->{SI});
     print $OUT "\n";
 }
+close($OUT);
 
 # Write the HTML
 

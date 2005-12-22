@@ -1346,6 +1346,68 @@ sub plot_stars {
 }
 
 #############################################################################################
+sub plot_star_field {
+##  Make a plot of the field 
+##  for quick examination
+#############################################################################################
+
+    use PGPLOT;
+
+    my $self = shift;
+    my $c;
+    return unless ($c = find_command($self, 'MP_STARCAT'));
+    $self->{plot_field_file} = shift;
+
+    my %sym_type = (
+		    very_faint => -1,
+		    field_star => 17,
+		    bad_mag => 12);
+
+    # Setup pgplot
+    my $dev = "/vgif"; # unless defined $dev;  # "?" will prompt for device
+    pgbegin(0,$dev,1,1);  # Open plot device 
+    pgpap(2.7, 1.0);
+    pgscf(1);             # Set character font
+    pgscr(0, 1.0, 1.0, 1.0);
+    pgscr(1, 0.0, 0.0, 0.0);
+#   pgslw(2);
+    
+    # Define data limits and plot axes
+    pgpage();
+    pgsch(1.2);
+    pgvsiz (0.2, 2.5, 0.2, 2.5);
+    pgswin (-2900,2900,-2900,2900);
+    pgbox  ('BCNST', 0.0, 0, 'BCNST', 0.0, 0);
+#    pglabel("Yag (arcsec)","Zag (arcsec)","Stars at RA=$self->{ra} Dec=$self->{dec} Roll=$self->{roll}");	# Labels
+#    box(0,0,2560,2560);
+#    box(0,0,2600,2560);
+
+    # Plot field stars from AGASC
+    foreach my $star (@{$self->{agasc_stars}}) {
+	
+	# First set defaults
+	my $color = $pg_colors{white};
+	my $symbol = $sym_type{field_star};
+	my $size = sym_size($star->{mag});
+
+	pgsci($color);
+	pgsch($size); # Set character height
+
+	if ( $star->{mag} > $faint_plot_mag ){
+	    $symbol = $sym_type{very_faint};
+	}
+#	pgpoint(1, $star->{yag}, $star->{zag}, $symbol);
+	
+	pgpoint(1, $star->{yag}, $star->{zag}, $symbol);
+    }
+
+    pgend();				# Close plot
+    
+    rename "pgplot.gif", $self->{plot_field_file};
+#    print STDERR "Created star chart $self->{plot_file}\n";
+}
+
+#############################################################################################
 sub quat2radecroll {
 #############################################################################################
     my $r2d = 180./3.14159265;
