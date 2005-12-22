@@ -649,7 +649,7 @@ sub check_star_catalog {
 	    };
 	
 	# toPixels throws exception if angle off the CCD altogether
-	# respond to that one and die on all others
+	# respond to that one and warn on all others
 	if ($@) {
 	    if ($@ =~ /.*Coordinate off of CCD.*/ ){
 		push @warn, sprintf "$alarm Angle Off CCD. [%2d]\n",$i;
