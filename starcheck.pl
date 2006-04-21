@@ -80,6 +80,7 @@ my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');
 my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');    
 my $odb_file   = get_file("$Starcheck_Data/fid_CHARACTERIS_JUL01", 'odb', 'required');
 my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
+my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
 
 my $bad_agasc_file = "$Starcheck_Data/agasc.bad";
 my $ACA_bad_pixel_file = "$Starcheck_Data/ACABadPixels";
@@ -158,6 +159,9 @@ my %dot = %$dot_ref;
 
 # Read momentum management (maneuvers + SIM move) summary file 
 my %mm = Parse_CM_File::MM($mm_file) if ($mm_file);
+
+# Read maneuver management summary for handy obsid time checks
+my @ps = Parse_CM_File::PS($ps_file) if ($ps_file);
 
 # Read mech check file and parse
 my @mc  = Parse_CM_File::mechcheck($mech_file) if ($mech_file);
@@ -243,8 +247,7 @@ for my $i (0 .. $#cmd) {
     # If obsid hasn't been seen before, create obsid object
 
     unless ($obs{$obsid}) {
-	push @obsid_id, $obsid;
-	$obs{$obsid} = Obsid->new($obsid, $date[$i]);
+	push @obsid_id, $obsid;	$obs{$obsid} = Obsid->new($obsid, $date[$i]);
     }
 
     # Add the command to the correct obs object
@@ -267,8 +270,23 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_manerr(@manerr) if (@manerr);
     $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file);
     $obs{$obsid}->set_fids(@fidsel);
+    $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
 }
+
+
+# we don't presently need this information, but it is easy to add
+# create pointers from each obsid to the previous obsid (except the first one)
+#for my $obsid_idx (1 .. ($#obsid_id)){
+#    $obs{$obsid_id[$obsid_idx]}->{prev} = $obs{$obsid_id[$obsid_idx-1]};
+#}
+
+# this will be handy to find the start of the next maneuver
+# create pointers from each obsid to the next obsid (except the last one)
+for my $obsid_idx (0 .. ($#obsid_id - 1)){
+    $obs{$obsid_id[$obsid_idx]}->{next} = $obs{$obsid_id[$obsid_idx+1]};
+}
+
 
 # Read guide star summary file $guide_summ.
 # This file is the OFLS summary of guide/acq/fid star catalogs for
@@ -316,6 +334,7 @@ foreach (@bs) {
 # Do main checking
 
 foreach my $obsid (@obsid_id) {
+
     if ($par{plot}) {
 	$obs{$obsid}->get_agasc_stars($mp_agasc_version);
 	$obs{$obsid}->identify_stars();
@@ -328,6 +347,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_sim_position(@sim_trans);
     $obs{$obsid}->check_dither(\@dither);
+    $obs{$obsid}->count_good_stars();
 
 # Make sure there is only one star catalog per obsid
     warning ("More than one star catalog assigned to Obsid $obsid\n")
@@ -373,10 +393,61 @@ $out .= "------------  SUMMARY OF OBSIDS -----------------\n\n";
 foreach $obsid (@obsid_id) {
     $out .= sprintf "\\link_target{#obsid$obs{$obsid}->{obsid},OBSID = %5s}", $obs{$obsid}->{obsid};
     $out .= sprintf " at $obs{$obsid}->{date}   ";
+
+    my $good_guide_count = $obs{$obsid}->{count_nowarn_stars}{GUI};
+    my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};
+
+    my $min_num_er_acq = 5;
+    my $min_num_er_gui = 6;
+    my $min_num_or_acq = 4;
+    my $min_num_or_gui = 4;
+
+    # For ERs
+    if ( $obs{$obsid}->{obsid} > 50000 ){
+	if ($good_acq_count < $min_num_er_acq){
+	    $out .= sprintf("\\red_start ");
+	}
+	$out .= sprintf "$good_acq_count clean ACQ | ";
+	if ($good_acq_count < $min_num_er_acq){
+	    $out .= sprintf("\\red_end ");
+	}
+	if ($good_guide_count < $min_num_er_gui){
+	    $out .= sprintf("\\red_start ");
+	}
+	$out .= sprintf "$good_guide_count clean GUI | ";
+	if ($good_guide_count < $min_num_er_gui){
+	    $out .= sprintf("\\red_end ");
+	}
+    }
+    # For ORs
+    else {
+	if ($good_acq_count < $min_num_or_acq){
+	    $out .= sprintf("\\red_start ");
+	}
+	$out .= sprintf "$good_acq_count clean ACQ | ";
+	if ($good_acq_count < $min_num_or_acq){
+	    $out .= sprintf("\\red_end ");
+	}
+	if ($good_guide_count < $min_num_or_gui){
+	    $out .= sprintf("\\red_start ");
+	}
+	$out .= sprintf "$good_guide_count clean GUI | ";
+	if ($good_guide_count < $min_num_or_gui){
+	    $out .= sprintf("\\red_end ");
+	}   
+
+    }
+	
+    
+
+
+
     if (@{$obs{$obsid}->{warn}}) {
-	$out .= "\\red_start WARNINGS \\red_end";
+	my $count_red_warn = $#{$obs{$obsid}->{warn}}+1;
+	$out .= sprintf("\\red_start WARNINGS [%2d] \\red_end", $count_red_warn);
     } elsif (@{$obs{$obsid}->{yellow_warn}}) {
-	$out .= "\\yellow_start WARNINGS \\yellow_end";
+	my $count_yellow_warn = $#{$obs{$obsid}->{yellow_warn}}+1;
+	$out .= sprintf("\\yellow_start WARNINGS [%2d] \\yellow_end", $count_yellow_warn);
     }
     $out .= "\n";
 }

@@ -102,7 +102,7 @@ install: $(TEST_DEPS)
 ifdef DOC_PHP
 	mkdir -p $(ICXC_DOC_FOLDER)
 	if [ -r $(INSTALL_DOC)/$(DOC_HTML) ] ; then rm $(INSTALL_DOC)/$(DOC_HTML); fi
-	rsync --times --cvs-exclude $(DOC_PHP) $(ICXC_DOC_FOLDER)
+	rsync --times --cvs-exclude $(DOC_PHP) $(ICXC_DOC_FOLDER)/
 	wget $(ICXC_STARCHECK)/$(DOC_PHP) -O $(INSTALL_DOC)/$(DOC_HTML)
 endif
 ifdef BIN

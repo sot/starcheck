@@ -36,7 +36,6 @@ sub dither {
     my %dith_cmd = ('DS' => 'DISA', 'EN' => 'ENAB');
     my %obs;
     my $dither_time_violation = 0;
-
     # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
 	if ($bs->{cmd} eq 'COMMAND_SW') {
@@ -452,7 +451,41 @@ sub OR_parse_obs {
     return %obs;
 }
 
-	    
+###############################################################
+sub PS {
+# Parse processing summary
+# Actually, just read in the juicy lines in the middle  
+#   which are maneuvers or observations and store them
+#   to a line array
+###############################################################
+    my $ps_file = shift;
+    my @ps;
+
+    my @ps_all_lines = io($ps_file)->slurp;
+
+    my $beg_block = 0;
+
+    for my $ps_line (@ps_all_lines){
+        my @tmp = split ' ', $ps_line;
+        next unless scalar(@tmp) >= 4;
+        if ($tmp[1] eq 'MANVR') {
+            $beg_block = 1;
+	    push @ps, $ps_line;
+        }
+        if ($tmp[1] eq 'OBS'  && ($beg_block)) {
+	    push @ps, $ps_line;
+        } 
+	if (($ps_line =~ /OBSID\s=\s(\d\d\d\d\d)/) && (scalar(@tmp) >= 8 && ($beg_block))) {
+	    push @ps, $ps_line;
+        }
+	last if (($beg_block) && ($ps_line =~ /^\s*$/));
+    }
+    
+    return @ps;
+}
+
+    
+
 ###############################################################
 sub MM {
 # Parse maneuver management (?) file
@@ -503,8 +536,8 @@ sub MM {
 	    $mm{$obsid}->{roll}       = $roll;
 	    $mm{$obsid}->{dur}        = $dur;
 	    $mm{$obsid}->{angle}      = $angle;
-	    $mm{$obsid}->{tstart}     = date2time($start_date);
-	    $mm{$obsid}->{tstop}      = date2time($stop_date);
+	    $mm{$obsid}->{tstart} = date2time($start_date);
+	    $mm{$obsid}->{tstop}  = date2time($stop_date);
 	    ($mm{$obsid}->{obsid}     = $obsid) =~ s/^0+//;
 	    $mm{$obsid}->{q1}         = $quat[0];
 	    $mm{$obsid}->{q2}         = $quat[1];
