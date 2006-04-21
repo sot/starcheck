@@ -1,13 +1,21 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<?php $VERSION= '$Id$' ?>
+<?php $VERSION= '$Id$'; 
+      preg_match("/.*aca_load_review_cl.php,v\s+(\S+)\s+(\S+)/", $VERSION, $matches);
+      $cvs_version = $matches[1];
+      $cvs_date = $matches[2];
+?>
+
 <HTML>
-<!-- Please make all changes in the PHP version of this file -->
+<!-- Please make all changes to the PHP version of this file in starcheck CVS -->
+<?php echo "<!-- CVS INFO: $VERSION  -->" ?>
+
 <HEAD>
 	<TITLE>ACA Load Review Checklist</TITLE>
 </HEAD>
+<BODY>
+
 <H2 ALIGN=CENTER>ACA Load Review Checklist</H2>
-<P><BR>Date: 26 Nov 2005<BR>Author: E. Martin, S. Bucher, T.
-Aldcroft, J. Connelly</P>
+<P><BR>Date: <?php echo $cvs_date ?> <BR>Author: E. Martin, S. Bucher, T. Aldcroft, J. Connelly</P>
 <P>The following software and data files are installed in the HEAD
 LAN environment.</P>
 <P><B>Software Packages</B></P>
