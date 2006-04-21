@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<?php $VERSION= '$Id: starcheck.pl,v 4.27 2005/12/22 19:02:31 jeanconn
-Exp $' ?>
+<?php $VERSION= '$Id$' ?>
 <HTML>
 <!-- Please make all changes in the PHP version of this file -->
 <HEAD>
