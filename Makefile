@@ -14,26 +14,8 @@ DOC_HTML = aca_load_review_cl.html
 BADPIXELS = ACABadPixels.new
 TEST_DEPS = data/acq_stats/bad_acq_stars.rdb
 
-FEB2706A:
-	ln -s /data/mpcrit1/mplogs/2006/FEB2706/oflsa FEB2706A
-
-APR1006A:
-	ln -s /data/mpcrit1/mplogs/2006/APR1006/oflsa APR1006A
-
 AUG0104A:
 	ln -s /data/mpcrit1/mplogs/2004/AUG0104/oflsa AUG0104A
-
-MAR0705B:
-	ln -s /data/mpcrit1/mplogs/2005/MAR0705/oflsb MAR0705B
-
-OCT1005B:
-	ln -s /data/mpcrit1/mplogs/2005/OCT1005/oflsb OCT1005B
-
-NOV0705B:
-	ln -s /data/mpcrit1/mplogs/2005/NOV0705/oflsb NOV0705B
-
-APR2103C:
-	ln -s /data/mpcrit1/mplogs/2003/APR2103/oflsc APR2103C
 
 test: check_install AUG0104A install
 	if [ -r test.html ] ; then rm test.html ; fi
@@ -41,43 +23,6 @@ test: check_install AUG0104A install
 	if [ -d test ] ; then rm -r test ; fi
 	$(INSTALL_BIN)/starcheck.pl -agasc 1p5 -dir AUG0104A -out test
 
-test_dither: check_install APR2103C install
-	if [ -r test.html ] ; then rm test.html ; fi
-	if [ -r test.txt ] ; then rm test.txt ; fi
-	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -agasc 1p6 -dir APR2103C -out test
-
-
-test_new: check_install APR1006A install
-	if [ -r test.html ] ; then rm test.html ; fi
-	if [ -r test.txt ] ; then rm test.txt ; fi
-	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -agasc 1p6 -dir APR1006A -out test
-
-test_mar: check_install MAR0705B install
-	if [ -r test.html ] ; then rm test.html ; fi
-	if [ -r test.txt ] ; then rm test.txt ; fi
-	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -dir MAR0705B -out test
-
-test_oct: check_install OCT1005B install
-	if [ -r test.html ] ; then rm test.html ; fi
-	if [ -r test.txt ] ; then rm test.txt ; fi
-	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -dir OCT1005B -out test
-
-test_feb: check_install FEB2706A install
-	if [ -r test.html ] ; then rm test.html ; fi
-	if [ -r test.txt ] ; then rm test.txt ; fi
-	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -agasc 1p6 -dir FEB2706A -out test
-
-
-test_nov: check_install NOV0705B install
-	if [ -r test.html ] ; then rm test.html ; fi
-	if [ -r test.txt ] ; then rm test.txt ; fi
-	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -dir NOV0705B -out test
 
 regress: $(BIN) $(SHARE) $(DATA)
 	if [ -r regress_diffs ] ; then rm regress_diffs ; fi
@@ -98,6 +43,11 @@ test_badpixels: check_install $(BIN) $(SHARE) $(DATA) $(BADPIXELS) install
 	diff test_newbadpix.txt test_oldbadpix.txt > test_badpix.diff
 	rsync --times --cvs-exclude $(DATA) $(INSTALL_DATA)/
 
+
+starcheck_parser: $(RELATED_LIB)
+	mkdir -p $(INSTALL_PERLLIB)
+	rsync --times --cvs-exclude $(RELATED_LIB) $(INSTALL_PERLLIB)/
+
 install: $(TEST_DEPS)
 ifdef DOC_PHP
 	mkdir -p $(ICXC_DOC_FOLDER)
@@ -108,6 +58,7 @@ endif
 ifdef BIN
 	mkdir -p $(INSTALL_BIN)
 	rsync --times --cvs-exclude $(BIN) $(INSTALL_BIN)/
+	pod2html starcheck.pl > $(INSTALL_DOC)/starcheck.html
 endif
 ifdef DATA
 	mkdir -p $(INSTALL_DATA)
