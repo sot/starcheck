@@ -1052,6 +1052,52 @@ LAN environment.</P>
 			<P >AGASC requirements</P>
 		</TD>
 		<TD COLSPAN=5 WIDTH=400>
+			<P >An AGASC star exists within ID_DIST_LIMIT
+		(1.5as) of the center of each search box</P>
+		</TD>
+		<TD WIDTH=92>
+			<P ALIGN=CENTER>n/a</P>
+		</TD>
+		<TD WIDTH=144>
+			<P>Failure to track star</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=52>
+			<P>ACA-<?php 
+			$aca_count_string = sprintf("%03d",$aca_count);
+			echo $aca_count_string;  
+			$aca_count++;
+			?>
+			</P>
+		</TD>
+		<TD WIDTH=127>
+			<P >AGASC requirements</P>
+		</TD>
+		<TD COLSPAN=5 WIDTH=400>
+			<P >The assigned AGASC stars exist and are
+		at the correct YAG and ZAG</P>
+		</TD>
+		<TD WIDTH=92>
+			<P ALIGN=CENTER>n/a</P>
+		</TD>
+		<TD WIDTH=144>
+			<P>Failure to track star</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=52>
+			<P>ACA-<?php 
+			$aca_count_string = sprintf("%03d",$aca_count);
+			echo $aca_count_string;  
+			$aca_count++;
+			?>
+			</P>
+		</TD>
+		<TD WIDTH=127>
+			<P >AGASC requirements</P>
+		</TD>
+		<TD COLSPAN=5 WIDTH=400>
 			<P >Stars have a measured AGASC
 			magnitude and magnitude error</P>
 		</TD>

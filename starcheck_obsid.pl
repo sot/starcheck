@@ -1108,10 +1108,10 @@ sub print_report {
     for my $n (1 .. 10) {		# Allow for multiple TARGQUAT cmds, though 2 is the typical limit
 	if ($c = find_command($self, "MP_TARGQUAT", $n)) {
 	    $o .= sprintf "MP_TARGQUAT at $c->{date} (VCDU count = $c->{vcdu})\n";
-	    $o .= sprintf "  Q1,Q2,Q3,Q4: %.8f  %.8f  %.8f  %.8f\n", $c->{Q1}, $c->{Q2}, $c->{Q3}, $c->{Q4};
+	    $o .= sprintf("  Q1,Q2,Q3,Q4: %.8f  %.8f  %.8f  %.8f\n", $c->{Q1}, $c->{Q2}, $c->{Q3}, $c->{Q4});
 	    $o .= sprintf("  MANVR: Angle= %6.2f deg  Duration= %.0f sec  Slew err= %.1f arcsec\n",
-			  $c->{angle}, $c->{man_dur}, $c->{man_err})
-		if (exists $c->{man_err} and exists $c->{man_dur} and exists $c->{angle});
+			  $c->{angle}, $c->{dur}, $c->{man_err})
+		if (exists $c->{man_err} and exists $c->{dur} and exists $c->{angle});
 	    $o .= "\n";
 	}
     }
