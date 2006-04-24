@@ -771,6 +771,10 @@ Enable (or disable) generation of report in HTML format.  Default is HTML enable
 
 Enable (or disable) generation of report in TEXT format.  Default is TEXT enabled.
 
+=item B<-agasc <agasc>>
+
+Specify version of agasc ( 1p4, 1p5, or 1p6 ).  Default is 1p6 .
+
 =back
 
 =head1 DESCRIPTION
