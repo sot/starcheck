@@ -127,18 +127,31 @@ sub get_warnings {
     my @tmp = grep /^\>\>\s+WARNING:/, @block;
     my @warnings;
     for my $i (0.. $#tmp) {
-
-	next unless $tmp[$i] =~ /.*WARNING.*\[ *(\d+)\]((\w|\s)*)\.(.*)$/;
-	next unless $1 == $index;
-	my $type = $2;
-	my $warn_index = $1;
-	my $details = $4;
-	$details =~ s/^\s*//;
-	push @warnings, {
-	    TYPE    => $type,
-	    INDEX   => $warn_index,
-	    DETAILS => $details,
-	};
+	
+	if ($tmp[$i] =~ /.*WARNING.*\[ *(\d+)\]((\w|\s)*)\.(.*)$/){
+	    if ($1 == $index){
+		my $type = $2;
+		my $warn_index = $1;
+		my $details = $4;
+		$details =~ s/^\s*//;
+		push @warnings, {
+		    TYPE    => $type,
+		    INDEX   => $warn_index,
+		    DETAILS => $details,
+		};
+	    }
+	}
+	else{
+	    if ($tmp[$i] =~ /^\>\>\s+WARNING:\s+(.+)\.\s+(?:\[ |\[)(\d+)\].\s(.+)/){
+		if ($2 == $index){
+		    push @warnings, {
+			TYPE    => $1,
+			INDEX   => $2,
+			DETAILS => $3,
+		    };
+		}
+	    }
+	}
     }
     return @warnings;
 }	
