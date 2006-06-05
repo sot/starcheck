@@ -2,6 +2,8 @@
 ##Brett Unks                      
 ##Jan 2003                        
 
+# Used by /proj/sot/ska/bin/new_obs.pl
+
 
 ##***************************************************************************
 ##***************************************************************************
@@ -10,11 +12,13 @@ package StarcheckParser;
 ##***************************************************************************
 
 use Carp;
+use strict;
 
-@EXPORT = qw(new_starcheck
-	     get_obsids
-             get_obsdata);
+#@EXPORT = qw(new_starcheck
+#	     get_obsids
+#             get_obsdata);
 
+1;
 ##***************************************************************************
 sub new_starcheck {
 ##***************************************************************************
@@ -54,14 +58,22 @@ package ObsidParser;
 ##***************************************************************************
 ##***************************************************************************
 
+use strict;
 use Carp;
 
-@EXPORT = qw(new_obsid
-	     get_coords
-	     get_quat
-	     get_stars
-	     get_warnings
-	     get_star_type);
+1;
+#@EXPORT = qw(new_obsid
+#	     get_full_record
+#	     get_target
+#	     get_manvr
+#	     get_times
+#	     get_coords
+#	     get_quat
+#	     get_stars
+#	     get_warnings
+#	     get_star_type
+#	     get_all_warnings
+#	     get_dither_info);
 
 ##***************************************************************************
 sub new_obsid {
@@ -69,6 +81,45 @@ sub new_obsid {
     my ($class, $obs_data) = @_;
     bless \$obs_data, $class;
 }
+
+##***************************************************************************
+sub get_full_record{
+##***************************************************************************
+    my $obs_data = shift;
+    my $obsid = shift;
+    return StarcheckRecord->new_record($obs_data,$obsid)
+}
+
+##***************************************************************************
+sub get_target{
+##***************************************************************************
+    my $data = shift;
+    my @block = split "\n", $$data;
+    my $topline = $block[0];
+    my %target;
+    if ($topline =~ /OBSID:\s(\S{5})\s*/){
+    }
+    else{
+
+	if ($topline =~ /OBSID:\s*(\S{4})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(\d+)\s.*\sGrating:\s*(\S+)\s*/ ){
+	    %target = (
+		       'obsid' => $1,
+		       'target' => $2,
+		       'sci_instr' => $3,
+		       'sim_z_offset_steps' => $4,
+		       'grating' => $5
+		       );
+	    $target{'target'} =~ s/\s+$//;
+
+	}
+	else{
+	    %target = ();
+	}
+    }
+    return %target;
+}
+
+
 
 ##***************************************************************************
 sub get_coords {
@@ -150,7 +201,7 @@ sub get_warnings {
 			DETAILS => $3,
 		    };
 		}
-	    }
+	   }
 	}
     }
     return @warnings;
@@ -168,8 +219,103 @@ sub get_star_type {
 }
 
 ##***************************************************************************
+sub get_all_warnings {
+##***************************************************************************
+    my $data = shift;
+    my @block = split "\n", $$data;
+    my @warnings = grep /^\>\>\s+WARNING:/, @block;
+    map { s/^\>\>\s+WARNING:\s+// } @warnings;
+    return @warnings;
+}
+
+##***************************************************************************
+sub get_dither_info {
+##***************************************************************************
+    my $data = shift;
+    my %dither;
+
+    if ($$data =~ /Dither:\s(\S+)\s+Y_amp=\s*(\S+)\s+Z_amp=\s*(\S+)\s+Y_period=\s*(\S+)\s+Z_period=\s*(\S+)\s*\n/){
+	%dither = (
+		      'state' => $1,
+		      'y_amp' => $2,
+		      'z_amp' => $3,
+		      'y_period' => $4,
+		      'z_period' => $5
+		      );
+    }
+    return %dither;
+}
+
+##***************************************************************************
+sub get_times{
+##***************************************************************************
+    my $data = shift;
+#MP_TARGQUAT at 2006:156:06:36:46.768 (VCDU count = 3473057)
+    my %times;
+    if ($$data =~ /MP_TARGQUAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)\n/){
+	$times{'MP_TARGQUAT'} = $1;
+    }
+#MP_STARCAT at 2006:156:06:36:48.411 (VCDU count = 3473063)
+    if ($$data =~ /MP_STARCAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)\n/){
+	$times{'MP_STARCAT'} = $1;
+    }
+    return %times;
+}
+
+##***************************************************************************
+sub get_manvr{
+##***************************************************************************
+    my $data = shift;
+    my %manvr;
+#  MANVR: Angle=  91.35 deg  Duration= 1878 sec  Slew err= 62.7 arcsec
+    if ($$data =~ /\s+MANVR:\sAngle=\s+(\S+)\sdeg\s+Duration=\s+(\S+)\ssec\s+Slew\serr=\s+(\S+)\sarcsec\s*\n/){
+	%manvr = (
+		  'angle_deg' => $1,
+		  'duration_sec' => $2,
+		  'slew_err_arcsec' => $3
+		  );
+    }
+    return %manvr;
+}
+
+
+##***************************************************************************
 sub print {
 ##***************************************************************************
     my ($data, $handle) = (@_, *STDOUT{IO});
     print $handle $$data;
+}
+
+
+package StarcheckRecord;
+
+use strict;
+use Carp;
+
+#@EXPORT = qw(new_record);
+
+1;
+
+##***************************************************************************
+sub new_record{
+##***************************************************************************
+    my $classname = shift;
+    my $obs_data = shift;
+
+    my $self = {};
+    bless ($self);
+
+    $self->{obsid} = shift;
+
+    %{$self->{coords}} = $obs_data->get_coords();
+    %{$self->{quat}} = $obs_data->get_quat();
+    @{$self->{warnings}} = $obs_data->get_all_warnings();
+    @{$self->{stars}} = $obs_data->get_stars();
+    %{$self->{dither}} = $obs_data->get_dither_info();
+    %{$self->{target}} = $obs_data->get_target();
+    %{$self->{times}} = $obs_data->get_times();
+    %{$self->{manvr}} = $obs_data->get_manvr();
+
+    return $self;
+    
 }
