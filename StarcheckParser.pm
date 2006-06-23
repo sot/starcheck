@@ -43,11 +43,87 @@ sub get_obsdata {
 ##***************************************************************************
     my ($starcheck, $obsid) = @_;
     my @tmp = split /\={84}\n\n/, $$starcheck;
-    my @tmp1 = grep /OBSID: $obsid/, @tmp;
-    my $obs_data = shift @tmp1;
-    return ObsidParser->new_obsid($obs_data);
+    my @tmp1 = grep /OBSID:\s+0*$obsid(\s|\n)/, @tmp;
+    my $obs_data;
+    if (scalar(@tmp1) == 1){
+	$obs_data = shift @tmp1;
+	return ObsidParser->new_obsid($obs_data);
+    }
+    else{
+	croak("Error. Obsid not found in starcheck file for load.\n");
+    }
+
+
 }
 
+##***************************************************************************
+sub get_load_record{
+##***************************************************************************
+    my $starcheck = shift;
+    my $mp_path = shift;
+    my $ap_date = shift;
+    return LoadRecord->new_record($starcheck, $mp_path, $ap_date);
+}
+
+##***************************************************************************
+sub get_header_lines{
+##***************************************************************************
+    my $starcheck = shift;
+    my @tmp = split /\={84}\n\n/, $$starcheck;
+    my $header_text = $tmp[0];
+
+    my %header;
+
+    $header_text =~ s/\n------------/\nPARSEBREAK\n------------/g;
+    my @tmp1 = split /PARSEBREAK\n/, $header_text;
+
+    my @top_match = grep /Starcheck/, @tmp1;
+    if ( scalar(@top_match) == 1){
+	my $very_top = $top_match[0];
+	my @top_lines = split /\n/, $very_top;
+	$header{very_top} = \@top_lines;
+    }
+
+    my @proc_match = grep /PROCESSING\sWARNINGS\s/, @tmp1;
+    if (scalar(@proc_match) == 1){
+	my $processing_warnings = $proc_match[0];
+	#remove header
+	$processing_warnings =~ s/^------------.*\n//g;
+	# remove blank lines
+	$processing_warnings =~ s/^\n//g;
+	my @warning_lines = split /\n/, $processing_warnings;
+	$header{processing_warnings} = \@warning_lines;
+    }
+
+    my @file_match = grep /PROCESSING\sFILES/, @tmp1;
+    if (scalar(@file_match) == 1){
+	my $proc_files = $file_match[0];
+	#remove header
+        $proc_files =~ s/^------------.*\n//g;
+        #remove blank lines
+        $proc_files =~ s/^\n//g;
+	my @file_lines = split /\n/, $proc_files;
+	$header{processing_files} = \@file_lines;
+    }
+
+
+    my @summ_match = grep /SUMMARY\sOF\sOBSIDS\s/, @tmp1;
+    if (scalar(@summ_match) == 1){
+	my $obsid_summary = $summ_match[0];
+	#remove header
+	$obsid_summary =~ s/^------------.*\n//g;
+	#remove blank lines
+	$obsid_summary =~ s/^\n//g;
+	my @summary_lines = split /\n/, $obsid_summary;
+	$header{obsid_summary} = \@summary_lines;
+    }
+
+
+    
+    return %header;
+
+}
+##***************************************************************************
 
 
 
@@ -318,4 +394,31 @@ sub new_record{
 
     return $self;
     
+}
+
+package LoadRecord;
+
+use strict;
+use Carp;
+
+1;
+
+##***************************************************************************
+sub new_record{
+##***************************************************************************
+    my $classname = shift;
+    my $starcheck_data = shift;
+    my $mp_path = shift;
+    my $last_ap_date = shift;
+
+    my $self = {};
+    bless ($self);
+
+    $self->{mp_path} = $mp_path;
+    $self->{last_ap_date} = $last_ap_date;
+#    @{$self->{lines}} = $starcheck_data->get_header_lines();
+    %{$self->{lines}}= $starcheck_data->get_header_lines();
+
+    return $self;
+
 }
