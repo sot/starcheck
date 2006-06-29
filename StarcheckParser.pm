@@ -177,7 +177,6 @@ sub get_target{
     }
     else{
 	if ($topline =~ /OBSID:\s*(\S{4})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s.*\sGrating:\s*(\S+)\s*/ ){
-	    print "in loop \n";
 	    if ($topline =~ /OBSID:\s*(\S{4})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+Grating:\s*(\S+)\s*/ ){
 		%target = (
 			   'obsid' => $1,
