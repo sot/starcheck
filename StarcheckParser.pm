@@ -176,17 +176,31 @@ sub get_target{
     if ($topline =~ /OBSID:\s(\S{5})\s*/){
     }
     else{
+	if ($topline =~ /OBSID:\s*(\S{4})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s.*\sGrating:\s*(\S+)\s*/ ){
+	    print "in loop \n";
+	    if ($topline =~ /OBSID:\s*(\S{4})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+Grating:\s*(\S+)\s*/ ){
+		%target = (
+			   'obsid' => $1,
+			   'target' => $2,
+			   'sci_instr' => $3,
+			   'sim_z_offset_steps' => $4,
+			   'grating' => $5
+			   );
+		$target{'target'} =~ s/\s+$//;
 
-	if ($topline =~ /OBSID:\s*(\S{4})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(\d+)\s.*\sGrating:\s*(\S+)\s*/ ){
-	    %target = (
-		       'obsid' => $1,
-		       'target' => $2,
-		       'sci_instr' => $3,
-		       'sim_z_offset_steps' => $4,
-		       'grating' => $5
-		       );
-	    $target{'target'} =~ s/\s+$//;
+	    }
+	    if ($topline =~ /OBSID:\s*(\S{4})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+\((-*.+)mm\)\s+Grating:\s*(\S+)\s*/ ){
+		%target = (
+			   'obsid' => $1,
+			   'target' => $2,
+			   'sci_instr' => $3,
+			   'sim_z_offset_steps' => $4,
+			   'sim_z_offset_mm' => $5,
+			   'grating' => $6
+			   );
+		$target{'target'} =~ s/\s+$//;
 
+	    }
 	}
 	else{
 	    %target = ();
@@ -214,18 +228,20 @@ sub get_coords {
 ##***************************************************************************
 sub get_quat {
 ##***************************************************************************
+##***************************************************************************
     my ($data) = @_;
     $$data =~ /(Q1,Q2,Q3,Q4):\s+(.+)\n/;
     my @tmp = split ",", $1;
     my @tmp1 = split " ", $2;
     my %quat = (
-		  $tmp[0] => $tmp1[0],
-		  $tmp[1] => $tmp1[1],
-		  $tmp[2] => $tmp1[2],
-		  $tmp[3] => $tmp1[3]
-		  );
+                  $tmp[0] => $tmp1[0],
+                  $tmp[1] => $tmp1[1],
+                  $tmp[2] => $tmp1[2],
+                  $tmp[3] => $tmp1[3]
+		);
     return %quat;
 }
+
 
 ##***************************************************************************
 sub get_stars {
@@ -328,12 +344,10 @@ sub get_times{
     my $data = shift;
 #MP_TARGQUAT at 2006:156:06:36:46.768 (VCDU count = 3473057)
     my %times;
-    if ($$data =~ /MP_TARGQUAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)\n/){
-	$times{'MP_TARGQUAT'} = $1;
-    }
 #MP_STARCAT at 2006:156:06:36:48.411 (VCDU count = 3473063)
-    if ($$data =~ /MP_STARCAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)\n/){
+    if ($$data =~ /MP_STARCAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)\n/g){
 	$times{'MP_STARCAT'} = $1;
+	$times{'VCDU_cnt'} = $2;
     }
     return %times;
 }
@@ -342,16 +356,71 @@ sub get_times{
 sub get_manvr{
 ##***************************************************************************
     my $data = shift;
-    my %manvr;
-#  MANVR: Angle=  91.35 deg  Duration= 1878 sec  Slew err= 62.7 arcsec
-    if ($$data =~ /\s+MANVR:\sAngle=\s+(\S+)\sdeg\s+Duration=\s+(\S+)\ssec\s+Slew\serr=\s+(\S+)\sarcsec\s*\n/){
-	%manvr = (
-		  'angle_deg' => $1,
-		  'duration_sec' => $2,
-		  'slew_err_arcsec' => $3
-		  );
+    my @data_array = split( /\n/, $$data);
+#    use Data::Dumper;
+#    print Dumper @data_array;
+    my @new_man;
+    foreach my $i (0 .. $#data_array){
+	next unless ($data_array[$i] =~ /\AMP_TARGQUAT/);
+	my %temp_manvr;
+	if ($data_array[$i] =~ /MP_TARGQUAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)/){
+	    $temp_manvr{'MP_TARGQUAT'} = $1;
+	    $temp_manvr{'VCDU_cnt'} = $2;
+	}	
+	if ($data_array[$i + 1] =~ /(Q1,Q2,Q3,Q4):\s+(.+)/){
+	    my @tmp = split ",", $1;
+	    my @tmp1 = split " ", $2;
+	    my %quat = (
+			$tmp[0] => $tmp1[0],
+			$tmp[1] => $tmp1[1],
+			$tmp[2] => $tmp1[2],
+			$tmp[3] => $tmp1[3]
+			);
+	    $temp_manvr{Q1}=$quat{Q1};
+	    $temp_manvr{Q2}=$quat{Q2};
+	    $temp_manvr{Q3}=$quat{Q3};
+	    $temp_manvr{Q4}=$quat{Q4};
+	}
+	if ($data_array[$i + 2] =~ /\s+MANVR:\sAngle=\s+(\S+)\sdeg\s+Duration=\s+(\S+)\ssec\s+Slew\serr=\s+(\S+)\sarcsec\s*/){
+	    $temp_manvr{'angle_deg'} = $1;
+	    $temp_manvr{'duration_sec'} = $2;
+	    $temp_manvr{'slew_err_arcsec'} = $3;
+	}
+	push @new_man, \%temp_manvr;
     }
-    return %manvr;
+
+    return @new_man;
+
+#    my %manvr;
+##  MANVR: Angle=  91.35 deg  Duration= 1878 sec  Slew err= 62.7 arcsec
+#    if ($$data =~ /\s+MANVR:\sAngle=\s+(\S+)\sdeg\s+Duration=\s+(\S+)\ssec\s+Slew\serr=\s+(\S+)\sarcsec\s*\n/){
+#	%manvr = (
+#		  'angle_deg' => $1,
+#		  'duration_sec' => $2,
+#		  'slew_err_arcsec' => $3
+#		  );
+#    }
+#    if ($$data =~ /MP_TARGQUAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)\n/){
+#	$manvr{'MP_TARGQUAT'} = $1;
+#    }
+#
+#    if ($$data =~ /(Q1,Q2,Q3,Q4):\s+(.+)\n/){
+#	my @tmp = split ",", $1;
+#	my @tmp1 = split " ", $2;
+#	my %quat = (
+#		    $tmp[0] => $tmp1[0],
+#		    $tmp[1] => $tmp1[1],
+#		    $tmp[2] => $tmp1[2],
+#		    $tmp[3] => $tmp1[3]
+#		    );
+#	$manvr{Q1}=$quat{Q1};
+#	$manvr{Q2}=$quat{Q2};
+#	$manvr{Q3}=$quat{Q3};
+#	$manvr{Q4}=$quat{Q4};
+#    }
+#
+#
+#    return %manvr;
 }
 
 
@@ -384,13 +453,13 @@ sub new_record{
     $self->{obsid} = shift;
 
     %{$self->{coords}} = $obs_data->get_coords();
-    %{$self->{quat}} = $obs_data->get_quat();
+#    %{$self->{quat}} = $obs_data->get_quat();
     @{$self->{warnings}} = $obs_data->get_all_warnings();
     @{$self->{stars}} = $obs_data->get_stars();
     %{$self->{dither}} = $obs_data->get_dither_info();
     %{$self->{target}} = $obs_data->get_target();
     %{$self->{times}} = $obs_data->get_times();
-    %{$self->{manvr}} = $obs_data->get_manvr();
+    @{$self->{manvr}} = $obs_data->get_manvr();
 
     return $self;
     
