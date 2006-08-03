@@ -81,6 +81,7 @@ my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');
 my $odb_file   = get_file("$Starcheck_Data/fid_CHARACTERIS_JUL01", 'odb', 'required');
 my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
+my $tlr_file   = get_file("$par{dir}/*.tlr", 'TLR', 'required');
 
 my $bad_agasc_file = "$Starcheck_Data/agasc.bad";
 my $ACA_bad_pixel_file = "$Starcheck_Data/ACABadPixels";
@@ -268,7 +269,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
     $obs{$obsid}->set_manerr(@manerr) if (@manerr);
-    $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file);
+    $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file, $tlr_file);
     $obs{$obsid}->set_fids(@fidsel);
     $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
@@ -504,6 +505,8 @@ if ($par{html}) {
     make_annotated_file('', '^ ID=', ', ', $or_file) if ($or_file);
     make_annotated_file('', ' ID:\s+', '\S\S', $mm_file);
     make_annotated_file('', 'OBSID,ID=', ',', $dot_file);
+    my $tlr_lines = add_obsid_to_tlr(\@bs, $tlr_file);
+    make_annotated_file('', 'OBSERVATION ID\s*', '\s*\(', $tlr_file, $tlr_lines);
 }
 
 # Write the TEXT
@@ -532,6 +535,31 @@ if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
 }
 
 ##***************************************************************************
+sub add_obsid_to_tlr {
+##***************************************************************************
+    my ($bs, $file_in) = @_;
+
+    open(my $FILE1, $file_in) or return;
+    my @lines = <$FILE1>;
+    close $FILE1;
+
+    # Cross correlate obsid command in TLR with backstop
+    foreach (@lines) {
+	next unless /COAOSQID \s+ ASSIGN \s OBSERVATION/x;
+	my ($date) = split;
+	print "Date = $date\n";
+	my ($bs_obsid) = grep { $_->{date} eq $date and $_->{cmd} eq 'MP_OBSID' } @{$bs};
+	next unless defined $bs_obsid;
+	my %params = Parse_CM_File::parse_params($bs_obsid->{params});
+	my $obsid = sprintf("%6d", $params{ID});
+	s/OBSERVATION ID NUMBER/OBSERVATION ID $obsid/;
+	print "Assigned obsid $obsid\n";
+    }
+
+    return \@lines;
+}
+
+##***************************************************************************
 sub make_annotated_file {
 ##***************************************************************************
 # $backstop   = get_file("$par{dir}/*.backstop",'backstop', 'required');
@@ -540,15 +568,18 @@ sub make_annotated_file {
 # $mm_file    = get_file("$par{dir}/*/mm*.sum", 'maneuver');
 # $dot_file   = get_file("$par{dir}/*.dot",     'DOT', 'required');
 
-    my ($start_rexp, $id_pre, $id_post, $file_in) = @_;
-    open(my $FILE1, $file_in) or return;
-    my @lines = <$FILE1>;
-    close $FILE1;
+    my ($start_rexp, $id_pre, $id_post, $file_in, $lines) = @_;
+
+    if (not defined $lines) {
+	open(my $FILE1, $file_in) or return;
+	$lines = [ <$FILE1> ];
+	close $FILE1;
+    }
 
     my $obsid;
     my $start = $start_rexp ? 1 : 0;
 
-    foreach (@lines) {
+    foreach (@{$lines}) {
 	$start = 0 if ($start && /$start_rexp/);
 	next if ($start);
 	if (/$id_pre(\S+)$id_post/) {
@@ -562,7 +593,7 @@ sub make_annotated_file {
     my $file_out = "$STARCHECK/" . basename($file_in) . ".html";
 
     open(my $FILE2, "> $file_out") or die "Couldn't open $file_out for writing\n";
-    print $FILE2 $ptf->ptf2any('html', "\\fixed_start \n" . join('',@lines));
+    print $FILE2 $ptf->ptf2any('html', "\\fixed_start \n" . join('',@{$lines}));
     close $FILE2;
 }
 

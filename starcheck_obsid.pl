@@ -187,7 +187,7 @@ sub set_files {
 ##################################################################################
     my $self = shift;
     ($self->{STARCHECK}, $self->{backstop}, $self->{guide_summ}, $self->{or_file},
-     $self->{mm_file}, $self->{dot_file}) = @_;
+     $self->{mm_file}, $self->{dot_file}, $self->{tlr_file}) = @_;
 }
 
 ##################################################################################
@@ -1104,6 +1104,7 @@ sub print_report {
     $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{mm_file}) . ".html#$self->{dot_obsid},MANVR} ";
     $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{dot_file}) . ".html#$self->{obsid},DOT} ";
     $o .= "\\link_target{$self->{STARCHECK}/" . "make_stars.txt"            . ".html#$self->{obsid},MAKE_STARS} ";
+    $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{tlr_file}) . ".html#$self->{obsid},TLR} ";
     $o .= sprintf "\n\n";
     for my $n (1 .. 10) {		# Allow for multiple TARGQUAT cmds, though 2 is the typical limit
 	if ($c = find_command($self, "MP_TARGQUAT", $n)) {
