@@ -547,13 +547,11 @@ sub add_obsid_to_tlr {
     foreach (@lines) {
 	next unless /COAOSQID \s+ ASSIGN \s OBSERVATION/x;
 	my ($date) = split;
-	print "Date = $date\n";
 	my ($bs_obsid) = grep { $_->{date} eq $date and $_->{cmd} eq 'MP_OBSID' } @{$bs};
 	next unless defined $bs_obsid;
 	my %params = Parse_CM_File::parse_params($bs_obsid->{params});
 	my $obsid = sprintf("%6d", $params{ID});
 	s/OBSERVATION ID NUMBER/OBSERVATION ID $obsid/;
-	print "Assigned obsid $obsid\n";
     }
 
     return \@lines;
