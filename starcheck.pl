@@ -30,6 +30,9 @@ use Chex;
 #use lib '/proj/axaf/simul/lib/perl';
 use GrabEnv qw( grabenv );
 
+use Ska::Starcheck::Obsid;
+use Ska::Parse_CM_File;
+
 # Set some global vars with directory locations
 my $SKA = $ENV{SKA} || '/proj/sot/ska';
 my $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
@@ -60,10 +63,6 @@ my $STARCHECK   = $par{out} || 'starcheck';
 
 usage( 1 )
     if $par{help};
-
-# If non-trivial run, then load rest of routines
-require "${Starcheck_Share}/starcheck_obsid.pl";
-require "${Starcheck_Share}/parse_cm_file.pl";
 
 # Find backstop, guide star summary, OR, and maneuver files.  Only backstop is required
 
@@ -98,7 +97,11 @@ if ($ACA_badpix_firstline =~ /Bad Pixel.*\d{7}\s+\d{7}\s+(\d{7}).*/ ){
     print $log_fh "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n" if ($log_fh);
 }
 
+# Dark Cal Checker Section
+use Ska::Starcheck::Dark_Cal_Checker;
+my $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir} });
 
+    
 my ($mp_agasc_version, $ascds_version, $ascds_version_name);
 
 # If making plots, check for mp_get_agasc, and make a plot directory if required
@@ -139,7 +142,7 @@ unless (-e $STARCHECK) {
 
 # First read the Backstop file, and split into components
 my $bogus_obsid = 1;
-my @bs = Parse_CM_File::backstop($backstop);
+my @bs = Ska::Parse_CM_File::backstop($backstop);
 
 my $i = 0;
 my (@date, @vcdu, @cmd, @params, @time);
@@ -151,7 +154,7 @@ foreach my $bs (@bs) {
 }
 
 # Read DOT, which is used to figure the Obsid for each command
-my ($dot_ref, $dot_touched_by_sausage) = Parse_CM_File::DOT($dot_file) if ($dot_file);
+my ($dot_ref, $dot_touched_by_sausage) = Ska::Parse_CM_File::DOT($dot_file) if ($dot_file);
 my %dot = %$dot_ref;
 
 #foreach my $dotkey (keys  %dot){
@@ -159,24 +162,24 @@ my %dot = %$dot_ref;
 #}
 
 # Read momentum management (maneuvers + SIM move) summary file 
-my %mm = Parse_CM_File::MM($mm_file) if ($mm_file);
+my %mm = Ska::Parse_CM_File::MM({file => $mm_file, ret_type => 'hash'}) if ($mm_file);
 
 # Read maneuver management summary for handy obsid time checks
-my @ps = Parse_CM_File::PS($ps_file) if ($ps_file);
+my @ps = Ska::Parse_CM_File::PS($ps_file) if ($ps_file);
 
 # Read mech check file and parse
-my @mc  = Parse_CM_File::mechcheck($mech_file) if ($mech_file);
+my @mc  = Ska::Parse_CM_File::mechcheck($mech_file) if ($mech_file);
 
 # Read SOE file and parse
-my %soe  = Parse_CM_File::SOE($soe_file) if ($soe_file);
+my %soe  = Ska::Parse_CM_File::SOE($soe_file) if ($soe_file);
 
 # Read OR file and integrate into %obs
-my %or = Parse_CM_File::OR($or_file) if ($or_file);
+my %or = Ska::Parse_CM_File::OR($or_file) if ($or_file);
 
 # Read FIDSEL (fid light) history file and ODB (for fid
 # characteristics) and parse; use fid_time_violation later (when global_warn set up
 
-my ($fid_time_violation, $error, @fidsel) = Parse_CM_File::fidsel($fidsel_file, \@bs) ;
+my ($fid_time_violation, $error, @fidsel) = Ska::Parse_CM_File::fidsel($fidsel_file, \@bs) ;
 
 # Set up for global warnings
 my @global_warn;
@@ -189,17 +192,17 @@ if ($dot_touched_by_sausage == 0 ){
 }
 
 
-my %odb = Parse_CM_File::odb($odb_file);
-Obsid::set_odb(%odb);
+my %odb = Ska::Parse_CM_File::odb($odb_file);
+Ska::Starcheck::Obsid::set_odb(%odb);
 
 # Read Maneuver error file containing more accurate maneuver errors
 my @manerr;
 if ($manerr_file) { 
-    @manerr = Parse_CM_File::man_err($manerr_file);
+    @manerr = Ska::Parse_CM_File::man_err($manerr_file);
 } else { warning("Could not find Maneuver Error file in output/ directory\n") };
 
 # Read DITHER history file and backstop to determine expected dither state
-my ($dither_time_violation, @dither) = Parse_CM_File::dither($dither_file, \@bs);
+my ($dither_time_violation, @dither) = Ska::Parse_CM_File::dither($dither_file, \@bs);
 
 # if dither history runs into load
 if ($dither_time_violation){
@@ -214,15 +217,15 @@ if ($fid_time_violation){
 
 # Read in the failed acquisition stars
 warning("Could not open ACA bad acquisition stars file $bad_acqs_file\n")
-    unless (Obsid::set_bad_acqs($bad_acqs_file));
+    unless (Ska::Starcheck::Obsid::set_bad_acqs($bad_acqs_file));
 
 # Read in the ACA bad pixels
 warning("Could not open ACA bad pixel file $ACA_bad_pixel_file\n")
-    unless (Obsid::set_ACA_bad_pixels($ACA_bad_pixel_file));
+    unless (Ska::Starcheck::Obsid::set_ACA_bad_pixels($ACA_bad_pixel_file));
 
 # Read bad AGASC stars
 warning("Could not open bad AGASC file $bad_agasc_file\n")
-    unless (Obsid::set_bad_agasc($bad_agasc_file));
+    unless (Ska::Starcheck::Obsid::set_bad_agasc($bad_agasc_file));
 
 # Initialize list of "interesting" commands
 
@@ -248,12 +251,12 @@ for my $i (0 .. $#cmd) {
     # If obsid hasn't been seen before, create obsid object
 
     unless ($obs{$obsid}) {
-	push @obsid_id, $obsid;	$obs{$obsid} = Obsid->new($obsid, $date[$i]);
+	push @obsid_id, $obsid;	$obs{$obsid} = Ska::Starcheck::Obsid->new($obsid, $date[$i]);
     }
 
     # Add the command to the correct obs object
 
-    $obs{$obsid}->add_command( { Parse_CM_File::parse_params($params[$i]),
+    $obs{$obsid}->add_command( { Ska::Parse_CM_File::parse_params($params[$i]),
 				 vcdu => $vcdu[$i],
 				 date => $date[$i],
 				 time => $time[$i],
@@ -295,7 +298,7 @@ for my $obsid_idx (0 .. ($#obsid_id - 1)){
 # has star id's and magnitudes.  The results are stored in the
 # MP_STARCAT cmd, so this processing has to occur after set_star_catalog
 
-my %guidesumm = Parse_CM_File::guide($guide_summ) if (defined $guide_summ);
+my %guidesumm = Ska::Parse_CM_File::guide($guide_summ) if (defined $guide_summ);
 
 foreach my $oflsid (keys %guidesumm){
     unless (defined $obs{$oflsid}){
@@ -388,6 +391,13 @@ if (@global_warn) {
     $out .= "\\red_end\n";
 }
 
+# Dark Cal Checker
+if ($dark_cal_checker->{dark_cal_present}){
+    $out .= "------------  DARK CURRENT CALIBRATION CHECKS  -----------------\n";
+    $out .= dark_cal_print($dark_cal_checker, $par{out});
+    $out .= "\n";
+}
+
 # Summary of obsids
 
 $out .= "------------  SUMMARY OF OBSIDS -----------------\n\n";
@@ -445,10 +455,11 @@ foreach $obsid (@obsid_id) {
 
     if (@{$obs{$obsid}->{warn}}) {
 	my $count_red_warn = $#{$obs{$obsid}->{warn}}+1;
-	$out .= sprintf("\\red_start WARNINGS [%2d] \\red_end", $count_red_warn);
-    } elsif (@{$obs{$obsid}->{yellow_warn}}) {
+	$out .= sprintf("\\red_start WARNINGS [%2d] \\red_end ", $count_red_warn);
+    } 
+    if (@{$obs{$obsid}->{yellow_warn}}) {
 	my $count_yellow_warn = $#{$obs{$obsid}->{yellow_warn}}+1;
-	$out .= sprintf("\\yellow_start WARNINGS [%2d] \\yellow_end", $count_yellow_warn);
+	$out .= sprintf("\\yellow_start WARNINGS [%2d] \\yellow_end ", $count_yellow_warn);
     }
     $out .= "\n";
 }
@@ -535,6 +546,166 @@ if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
 }
 
 ##***************************************************************************
+sub dark_cal_print{
+##***************************************************************************
+
+    my $dark_cal_checker = shift;
+    my $out_dir = shift;
+
+    my %run_options;
+    %run_options = ( dark_cal_checker => $dark_cal_checker,
+		     verbose => 1,
+		     criteria => 0,
+		     html => 1,
+		     );
+
+    io("$out_dir/dark_cal_verbose.html")->print(format_dark_cal_out( \%run_options ));
+
+    %run_options = ( dark_cal_checker => $dark_cal_checker,
+		     verbose => 1,
+		     criteria => 1,
+		     html => 1,
+		     );
+
+
+    io("$out_dir/dark_cal_super_verbose.html")->print(format_dark_cal_out( \%run_options ));
+
+    %run_options = ( dark_cal_checker => $dark_cal_checker,
+		     verbose => 0,
+		     criteria => 0,
+		     html => 0,
+		     );
+
+    my $out;
+    $out .= "\\link_target{$out_dir/dark_cal_verbose.html,VERBOSE} ";
+    $out .= "\\link_target{$out_dir/dark_cal_super_verbose.html,SUPERVERBOSE}\n";
+    $out .= format_dark_cal_out( \%run_options );
+
+    return $out;
+}
+
+##***************************************************************************
+sub format_dark_cal_out{
+##***************************************************************************
+
+    my $opt = shift;
+    my $dark_cal_checker = $opt->{dark_cal_checker};
+
+    my $out;
+
+    my @checks = qw(
+		    check_mm_vs_backstop
+		    transponder
+		    check_tlr_sequence
+		    check_transponder
+		    check_dither_disable_before_replica_0
+		    check_dither_param_before_replica_0
+		    check_for_dither_during
+		    check_dither_enable_at_end
+		    check_dither_param_at_end
+	 	    compare_timingncommanding
+		    check_manvr
+		    check_dwell
+		    check_manvr_point
+		    );
+    
+    
+    for my $file (@{$dark_cal_checker->{input_files}}){
+	$out .= "$file \n";
+    }
+    
+    for my $check (@checks){
+	$out .= format_dark_cal_check($dark_cal_checker->{$check}, $opt->{verbose}, $opt->{criteria});
+	if ($opt->{html}){
+	    $out .= "\n";
+	}
+    }
+    
+    $out .= "\n\n";
+    $out .= "ACA Dark Cal Checker Report:\n";
+    $out .= sprintf( "[" . is_ok($dark_cal_checker->{check_mm_vs_backstop}->{status}) . "]\tManeuver Summary agrees with Backstop\n");
+    $out .= sprintf( "[" . is_ok($dark_cal_checker->{check_transponder}->{status}) . "]\ttransponder = " . $dark_cal_checker->{transponder}{transponder} . " and no transponder commands through end of track.\n");
+    $out .= sprintf("[" . is_ok($dark_cal_checker->{compare_timingncommanding}->{status}) . "]\tACA Calibration Commanding (hex, sequence, and timing of ACA/OBC commands).\n");
+    $out .= sprintf("[". is_ok($dark_cal_checker->{check_manvr}->{status} and $dark_cal_checker->{check_dwell}->{status}) . "]\tManeuver and Dwell timing.\n");
+    $out .= sprintf("[" . is_ok($dark_cal_checker->{check_manvr_point}->{status}) . "]\tManeuver targets.\n");
+    $out .= sprintf("[" . is_ok($dark_cal_checker->{check_dither_disable_before_replica_0}->{status}
+				and $dark_cal_checker->{check_dither_param_before_replica_0}->{status}
+				and $dark_cal_checker->{check_for_dither_during}->{status}
+				and $dark_cal_checker->{check_dither_enable_at_end}->{status}
+				and $dark_cal_checker->{check_dither_param_at_end}->{status}) . "]\tDither enable/disable and parameter commands\n");
+    
+    $out .= "\n";
+
+    if ($opt->{html}){
+	my $ptf = PoorTextFormat->new();
+	my $html = $ptf->ptf2any('html', "\\fixed_start \n" . $out);
+	return $html;
+    }
+
+    return $out;
+}
+
+
+##***************************************************************************
+sub is_ok{
+##***************************************************************************
+    my $check = shift;
+    if ($check){
+        return "ok";
+    }
+    else{
+        return "\\red_start NO\\red_end ";
+    }
+}
+
+
+
+##***************************************************************************
+sub format_dark_cal_check{
+# Run check controls the printing of all information passed back from the
+# checking subroutines
+##***************************************************************************
+
+    my $feedback = shift;
+    my $verbose = shift;
+    my $criteria = shift;
+
+    my $return_string;
+
+    $return_string .= sprintf("[" . is_ok($feedback->{status}). "]\t". $feedback->{comment}[0] . "\n");
+
+    # if verbose or there's an error
+    if ($criteria){
+        for my $line (@{$feedback->{criteria}}){
+	    $return_string .= "\\blue_start         $line \\blue_end \n";
+        }	
+    }
+    if ($verbose or !$feedback->{status}){
+        # if just an error, not verbose
+        if (!$verbose and !$feedback->{status}){
+            for my $line (@{$feedback->{error}}){
+	        $return_string .= "\\red_start --->>>  $line \\red_end \n";
+            }
+        }
+        # if verbose and error
+	else{
+	    for my $line (@{$feedback->{info}}){
+		$return_string .= " \t$line \n";
+	    }
+	    for my $line (@{$feedback->{error}}){
+		$return_string .= "\\red_start --->>>  $line \\red_end \n";
+	    }
+	    
+	}
+    }
+
+    return $return_string;
+    
+}
+
+
+
+##***************************************************************************
 sub add_obsid_to_tlr {
 ##***************************************************************************
     my ($bs, $file_in) = @_;
@@ -549,7 +720,7 @@ sub add_obsid_to_tlr {
 	my ($date) = split;
 	my ($bs_obsid) = grep { $_->{date} eq $date and $_->{cmd} eq 'MP_OBSID' } @{$bs};
 	next unless defined $bs_obsid;
-	my %params = Parse_CM_File::parse_params($bs_obsid->{params});
+	my %params = Ska::Parse_CM_File::parse_params($bs_obsid->{params});
 	my $obsid = sprintf("%6d", $params{ID});
 	s/OBSERVATION ID NUMBER/OBSERVATION ID $obsid/;
     }
