@@ -394,7 +394,7 @@ if (@global_warn) {
 # Dark Cal Checker
 if ($dark_cal_checker->{dark_cal_present}){
     $out .= "------------  DARK CURRENT CALIBRATION CHECKS  -----------------\n";
-    $out .= dark_cal_print($dark_cal_checker, $par{out});
+    $out .= dark_cal_print($dark_cal_checker, $STARCHECK);
     $out .= "\n";
 }
 
