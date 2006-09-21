@@ -1,5 +1,7 @@
 
 TASK = starcheck
+PERLTASK = Ska/Starcheck
+PERLGEN = Ska/
 
 include /proj/sot/ska/include/Makefile.FLIGHT
 
@@ -7,30 +9,40 @@ ICXC_STARCHECK = "https://icxc.harvard.edu/mta/ASPECT/tool_doc/starcheck_php_doc
 ICXC_DOC_FOLDER = "/proj/sot/ska/doc/starcheck_php_doc_tmp/"
 RELATED_LIB = StarcheckParser.pm
 BIN = starcheck.pl 
-SHARE = starcheck_obsid.pl parse_cm_file.pl figure_of_merit.pl
+GEN_LIB = Parse_CM_File.pm
+LIB = Obsid.pm FigureOfMerit.pm
 DATA = ACABadPixels agasc.bad  fid_CHARACTERIS_JUL01
 DOC_PHP = aca_load_review_cl.php
 DOC_HTML = aca_load_review_cl.html
 BADPIXELS = ACABadPixels.new
 TEST_DEPS = data/acq_stats/bad_acq_stars.rdb
 
-AUG0104A:
-	ln -s /data/mpcrit1/mplogs/2004/AUG0104/oflsa AUG0104A
 
-test: check_install AUG0104A install
+#AUG0104A:
+#	ln -s /data/mpcrit1/mplogs/2004/AUG0104/oflsa AUG0104A
+
+
+#JAN2104A:
+#	ln -s /data/mpcrit1/mplogs/2004/JAN2104/oflsa/ JAN2104A
+
+
+MAR0104B:
+	ln -s /data/mpcrit1/mplogs/2004/MAR0104/oflsb MAR0104B
+
+test: check_install MAR0104B install
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -agasc 1p5 -dir AUG0104A -out test
+	$(INSTALL_BIN)/starcheck.pl -agasc 1p5 -dir MAR0104B -out test
 
 
-regress: $(BIN) $(SHARE) $(DATA)
+regress: $(BIN) $(LIB) $(DATA)
 	if [ -r regress_diffs ] ; then rm regress_diffs ; fi
 	if [ -r regress_log ] ; then rm regress_log ; fi
 	if [ -d regress ] ; then rm -r regress ; fi
 	run_regress
 
-test_badpixels: check_install $(BIN) $(SHARE) $(DATA) $(BADPIXELS) install
+test_badpixels: check_install AUG0104A $(BIN) $(LIB) $(DATA) $(BADPIXELS) install
 	if [ -r test_badpix.diff ] ; then rm test_badpix.diff ; fi
 	if [ -r test_oldbadpix.html ] ; then rm test_oldbadpix.html ; fi          
 	if [ -r test_oldbadpix.txt ] ; then rm test_oldbadpix.txt ; fi          
@@ -40,8 +52,8 @@ test_badpixels: check_install $(BIN) $(SHARE) $(DATA) $(BADPIXELS) install
 	if [ -r test_newbadpix.txt ] ; then rm test_newbadpix.txt ; fi          
 	$(INSTALL_BIN)/starcheck.pl -agasc 1p5 -dir AUG0104A -out test_newbadpix
 	if [ -r test_badpix.diff ] ; then rm test_badpix.diff ; fi
-	diff test_newbadpix.txt test_oldbadpix.txt > test_badpix.diff
-	rsync --times --cvs-exclude $(DATA) $(INSTALL_DATA)/
+	- diff test_newbadpix.txt test_oldbadpix.txt > test_badpix.diff
+#	rsync --times --cvs-exclude $(DATA) $(INSTALL_DATA)/
 
 
 starcheck_parser: $(RELATED_LIB)
@@ -65,13 +77,14 @@ ifdef DATA
 	mkdir -p $(INSTALL_DATA)
 	rsync --times --cvs-exclude $(DATA) $(INSTALL_DATA)/
 endif
-ifdef SHARE
-	mkdir -p $(INSTALL_SHARE)
-	rsync --times --cvs-exclude $(SHARE) $(INSTALL_SHARE)/
+ifdef LIB
+	mkdir -p $(INSTALL_PERLLIB)/$(PERLTASK)
+	rsync --times --cvs-exclude $(LIB) $(INSTALL_PERLLIB)/$(PERLTASK)/
 endif
-ifdef RELATED_LIB
-	mkdir -p $(INSTALL_PERLLIB)
-	rsync --times --cvs-exclude $(RELATED_LIB) $(INSTALL_PERLLIB)/
+ifdef GEN_LIB
+	mkdir -p $(INSTALL_PERLLIB)/$(PERLGEN)
+	rsync --times --cvs-exclude $(GEN_LIB) $(INSTALL_PERLLIB)/$(PERLGEN)/
 endif
+
 	mkdir -p $(SKA)/ops/Chex
  
