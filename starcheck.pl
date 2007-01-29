@@ -77,7 +77,10 @@ my $mech_file  = get_file("$par{dir}/output/TEST_mechcheck.txt", 'mech check');
 my $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');    
-my $odb_file   = get_file("$Starcheck_Data/fid_CHARACTERIS_JUL01", 'odb', 'required');
+
+# asterisk only include to make glob work correctly
+my $odb_file   = get_file("$Starcheck_Data/fid_CHARACTERISTICS*", 'odb', 'required'); 
+
 my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
 my $tlr_file   = get_file("$par{dir}/*.tlr", 'TLR', 'required');

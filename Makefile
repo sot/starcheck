@@ -5,13 +5,16 @@ PERLGEN = Ska/
 
 include /proj/sot/ska/include/Makefile.FLIGHT
 
+FID_CHARACTERISTICS = fid_CHARACTERIS_JAN07
+FID_LINK_NAME = fid_CHARACTERISTICS
+
 ICXC_STARCHECK = "https://icxc.harvard.edu/mta/ASPECT/tool_doc/starcheck_php_doc_tmp"
 ICXC_DOC_FOLDER = "/proj/sot/ska/doc/starcheck_php_doc_tmp/"
 RELATED_LIB = StarcheckParser.pm
 BIN = starcheck.pl 
 GEN_LIB = Parse_CM_File.pm
 LIB = Obsid.pm FigureOfMerit.pm
-DATA = ACABadPixels agasc.bad  fid_CHARACTERIS_JUL01
+DATA = ACABadPixels agasc.bad $(FID_CHARACTERISTICS)
 DOC_PHP = aca_load_review_cl.php
 DOC_HTML = aca_load_review_cl.html
 BADPIXELS = ACABadPixels.new
@@ -61,6 +64,7 @@ starcheck_parser: $(RELATED_LIB)
 	rsync --times --cvs-exclude $(RELATED_LIB) $(INSTALL_PERLLIB)/
 
 install: $(TEST_DEPS)
+
 ifdef DOC_PHP
 	mkdir -p $(ICXC_DOC_FOLDER)
 	mkdir -p $(INSTALL_DOC)
@@ -85,6 +89,10 @@ ifdef GEN_LIB
 	mkdir -p $(INSTALL_PERLLIB)/$(PERLGEN)
 	rsync --times --cvs-exclude $(GEN_LIB) $(INSTALL_PERLLIB)/$(PERLGEN)/
 endif
+ifdef FID_LINK_NAME
+	if [ -r $(INSTALL_DATA)/$(FID_LINK_NAME) ]; then rm $(INSTALL_DATA)/$(FID_LINK_NAME); fi
+	ln -s $(INSTALL_DATA)/$(FID_CHARACTERISTICS) $(INSTALL_DATA)/$(FID_LINK_NAME)
+endif
 
-	mkdir -p $(SKA)/ops/Chex
+mkdir -p $(SKA)/ops/Chex
  
