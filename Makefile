@@ -64,7 +64,6 @@ starcheck_parser: $(RELATED_LIB)
 	rsync --times --cvs-exclude $(RELATED_LIB) $(INSTALL_PERLLIB)/
 
 install: $(TEST_DEPS)
-
 ifdef DOC_PHP
 	mkdir -p $(ICXC_DOC_FOLDER)
 	mkdir -p $(INSTALL_DOC)
@@ -93,6 +92,5 @@ ifdef FID_LINK_NAME
 	if [ -r $(INSTALL_DATA)/$(FID_LINK_NAME) ]; then rm $(INSTALL_DATA)/$(FID_LINK_NAME); fi
 	ln -s $(INSTALL_DATA)/$(FID_CHARACTERISTICS) $(INSTALL_DATA)/$(FID_LINK_NAME)
 endif
-
-mkdir -p $(SKA)/ops/Chex
+	mkdir -p $(SKA)/ops/Chex
  
