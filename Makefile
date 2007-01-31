@@ -36,7 +36,7 @@ test: check_install MAR0104B install
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -fid_char="fid_CHARACTERIS_JUL01" -dir JAN0607A -out test
+	$(INSTALL_BIN)/starcheck.pl -fid_char="fid_CHARACTERIS_JUL01" -dir MAR0104B -out test
 
 
 regress: $(BIN) $(LIB) $(DATA)
