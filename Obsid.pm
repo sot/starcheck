@@ -20,7 +20,7 @@ package Ska::Starcheck::Obsid;
 
 use strict;
 use warnings;
-use diagnostics;
+
 #use lib '/proj/sot/ska/lib/site_perl';
 use Quat;
 use Ska::ACACoordConvert;

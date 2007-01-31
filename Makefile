@@ -14,7 +14,7 @@ RELATED_LIB = StarcheckParser.pm
 BIN = starcheck.pl 
 GEN_LIB = Parse_CM_File.pm
 LIB = Obsid.pm FigureOfMerit.pm
-DATA = ACABadPixels agasc.bad $(FID_CHARACTERISTICS)
+DATA = ACABadPixels agasc.bad fid_CHARACTERIS_JUL01 $(FID_CHARACTERISTICS)
 DOC_PHP = aca_load_review_cl.php
 DOC_HTML = aca_load_review_cl.html
 BADPIXELS = ACABadPixels.new
@@ -36,7 +36,7 @@ test: check_install MAR0104B install
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -agasc 1p5 -dir MAR0104B -out test
+	$(INSTALL_BIN)/starcheck.pl -fid_char="fid_CHARACTERIS_JUL01" -dir JAN0607A -out test
 
 
 regress: $(BIN) $(LIB) $(DATA)

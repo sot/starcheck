@@ -56,6 +56,7 @@ GetOptions( \%par,
 	   'text!',
 	   'chex=s',
 	   'agasc=s',
+	   'fid_char=s',
 	   ) ||
     exit( 1 );
 
@@ -79,7 +80,14 @@ my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');
 my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');    
 
 # asterisk only include to make glob work correctly
-my $odb_file   = get_file("$Starcheck_Data/fid_CHARACTERISTICS*", 'odb', 'required'); 
+my $odb_file; 
+# Override fid characteristics if present at command line
+if (defined $par{fid_char}){
+    $odb_file = get_file("$Starcheck_Data/$par{fid_char}*", 'odb', 'required');
+}
+else{
+    $odb_file = get_file("$Starcheck_Data/fid_CHARACTERISTICS*", 'odb', 'required'); 
+}
 
 my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
@@ -99,10 +107,6 @@ if ($ACA_badpix_firstline =~ /Bad Pixel.*\d{7}\s+\d{7}\s+(\d{7}).*/ ){
     print STDERR "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
     print $log_fh "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n" if ($log_fh);
 }
-
-# Dark Cal Checker Section
-use Ska::Starcheck::Dark_Cal_Checker;
-my $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir} });
 
     
 my ($mp_agasc_version, $ascds_version, $ascds_version_name);
@@ -187,6 +191,18 @@ my ($fid_time_violation, $error, @fidsel) = Ska::Parse_CM_File::fidsel($fidsel_f
 # Set up for global warnings
 my @global_warn;
 map { warning("$_\n") } @{$error};
+
+# Dark Cal Checker Section
+use Ska::Starcheck::Dark_Cal_Checker;
+my $dark_cal_checker;
+eval{
+    $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir} });
+};
+if ($@){
+    warning("Dark Cal Checker Failed $@ \n");
+}
+
+
 
 # Now that global_warn exists, if the DOT wasn't made/modified by SAUSAGE
 # throw an error
@@ -977,6 +993,10 @@ Enable (or disable) generation of report in TEXT format.  Default is TEXT enable
 =item B<-agasc <agasc>>
 
 Specify version of agasc ( 1p4, 1p5, or 1p6 ).  Default is 1p6 .
+
+=item B<-fid_char <fid characteristics file>>
+
+Specify file name of the fid characteristics file to use.  This must be in the SKA/data/starcheck/ directory.
 
 =back
 
