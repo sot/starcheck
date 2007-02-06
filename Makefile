@@ -5,7 +5,7 @@ PERLGEN = Ska/
 
 include /proj/sot/ska/include/Makefile.FLIGHT
 
-FID_CHARACTERISTICS = fid_CHARACTERIS_JAN07
+FID_CHARACTERISTICS = fid_CHARACTERIS_FEB07
 FID_LINK_NAME = fid_CHARACTERISTICS
 
 ICXC_STARCHECK = "https://icxc.harvard.edu/mta/ASPECT/tool_doc/starcheck_php_doc_tmp"
@@ -29,14 +29,18 @@ TEST_DEPS = data/acq_stats/bad_acq_stars.rdb
 #	ln -s /data/mpcrit1/mplogs/2004/JAN2104/oflsa/ JAN2104A
 
 
-MAR0104B:
-	ln -s /data/mpcrit1/mplogs/2004/MAR0104/oflsb MAR0104B
+#MAR0104B:
+#	ln -s /data/mpcrit1/mplogs/2004/MAR0104/oflsb MAR0104B
 
-test: check_install MAR0104B install
+FEB1207A:
+	ln -s /data/mpcrit1/mplogs/2007/FEB1207/oflsa FEB1207A
+
+test: check_install FEB1207A install
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck.pl -fid_char="fid_CHARACTERIS_JUL01" -dir MAR0104B -out test
+	$(INSTALL_BIN)/starcheck.pl -dir FEB1207A -out test_newfid
+
 
 
 regress: $(BIN) $(LIB) $(DATA)
