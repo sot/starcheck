@@ -1330,6 +1330,8 @@ sub get_agasc_stars {
 
     my $agasc_region;
     eval{
+	my $LD_LIBRARY_PATH = $ENV{LD_LIBRARY_PATH};
+	$ENV{LD_LIBRARY_PATH} = qq{};
 	$agasc_region = Ska::AGASC->new({
 	    agasc_dir => $AGASC_DIR,
 	    ra => $self->{ra},
@@ -1338,6 +1340,7 @@ sub get_agasc_stars {
 	    mag_limit => 12,
 	    datetime => $self->{date},
 	});
+	$ENV{LD_LIBRARY_PATH} = $LD_LIBRARY_PATH;
     };
     if( $@ ){
 	croak("Could not use AGASC: $@");

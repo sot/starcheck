@@ -48,6 +48,9 @@ standalone:
 standalone_install: standalone install
 	rsync --times --cvs-exclude $(STANDALONE_BIN) $(INSTALL_BIN)/
 
+sot:
+	$(SRC)/make_sot_starcheck.pl --ska=$(PREFIX) --destdir=$(SRC)
+	chmod 775 $(SRC)/starcheck
 
 bad_acq_install:
 	mkdir -p $(INSTALL_BAD_ACQS)
@@ -79,7 +82,7 @@ standalone_regress: install
 
 
 
-install: 
+install: sot
 #ifdef DOC_PHP
 #	mkdir -p $(ICXC_DOC_FOLDER)
 #	mkdir -p $(INSTALL_DOC)
