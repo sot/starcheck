@@ -32,6 +32,10 @@ use GrabEnv qw( grabenv );
 
 use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
+use Carp;
+use YAML;
+
+use Ska::Convert qw( date2time );
 
 # Set some global vars with directory locations
 my $SKA = $ENV{SKA} || '/proj/sot/ska';
@@ -39,13 +43,15 @@ my $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
 my $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
 my %par = (dir  => '.',
-	plot => 1,
-	html => 1,
-	text => 1,
-	agasc => '1p6',
-	chex => undef);
+	   plot => 1,
+	   html => 1,
+	   text => 1,
+	   chex => undef);
 
 my $log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
+
+my $agasc_parent_dir = '/data/agasc';
+my $default_agasc_dir = '/data/agasc1p6/';
 
 GetOptions( \%par, 
 	   'help', 
@@ -54,9 +60,11 @@ GetOptions( \%par,
 	   'plot!',
 	   'html!',
 	   'text!',
-	   'chex=s',
 	   'agasc=s',
+	   'agasc_dir=s',
+	   'chex=s',
 	   'fid_char=s',
+	   'config_file=s',
 	   ) ||
     exit( 1 );
 
@@ -78,8 +86,17 @@ my $mech_file  = get_file("$par{dir}/output/TEST_mechcheck.txt", 'mech check');
 my $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');    
-
 # asterisk only include to make glob work correctly
+
+my $config_file;
+if (defined $par{config_file}){
+    $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
+}
+else{
+    $config_file = get_file("$Starcheck_Data/characteristics.yaml*", 'config', 'required');
+}
+
+
 my $odb_file; 
 # Override fid characteristics if present at command line
 if (defined $par{fid_char}){
@@ -88,6 +105,33 @@ if (defined $par{fid_char}){
 else{
     $odb_file = get_file("$Starcheck_Data/fid_CHARACTERISTICS*", 'odb', 'required'); 
 }
+
+my $agasc_dir;
+if ( defined $par{agasc} or defined $par{agasc_dir}){
+    if ( defined $par{agasc} and defined $par{agasc_dir}){
+	print STDERR "Option 'agasc_dir' overrides 'agasc' \n";
+	$agasc_dir = $par{agasc_dir};
+    }
+    else{
+	if ( defined $par{agasc} ){
+	    if ( $par{agasc} =~ /^(1p4|1p5|1p6)$/ ){
+		$agasc_dir = $agasc_parent_dir . $par{agasc} . '/';
+	    }
+	    else{
+		croak("Problem with command line: if 'agasc' specified, choice must be '1p4', '1p5', or '1p6'");
+	    }
+	}
+	if ( defined $par{agasc_dir} ){
+	    $agasc_dir = $par{agasc_dir};
+	}
+    }
+}
+else{
+    $agasc_dir = $default_agasc_dir;
+}
+print STDERR "Using AGASC from $agasc_dir \n";
+print $log_fh "Using AGASC from $agasc_dir \n" if ($log_fh);
+
 
 my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
@@ -106,37 +150,6 @@ if ($ACA_badpix_firstline =~ /Bad Pixel.*\d{7}\s+\d{7}\s+(\d{7}).*/ ){
     $ACA_badpix_date = $1;
     print STDERR "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
     print $log_fh "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n" if ($log_fh);
-}
-
-    
-my ($mp_agasc_version, $ascds_version, $ascds_version_name);
-
-# If making plots, check for mp_get_agasc, and make a plot directory if required
-
-if ($par{plot}) {
-    if (`which mp_get_agasc` =~ /no mp_get_agasc/) {
-	%ENV = grabenv("tcsh", "source /home/ascds/.ascrc -r release");
-	if (`which mp_get_agasc` =~ /no mp_get_agasc/) {
-	    die "Cannot find mp_get_agasc to make plots.  Are you in the CXCDS environment?\n";
-	}
-    }
-    
-    # If agasc parameter is defined (and looks reasonable) then force that version of AGASC.
-    if (defined $par{agasc} and $par{agasc} =~ /\dp\d/) {
-	foreach (keys %ENV) {
-	    next unless /AGASC/;
-	    $ENV{$_} =~ s/agasc(\dp\d)/agasc$par{agasc}/;
-	}
-    }
-
-    # Check that version is acceptable 
-    ($mp_agasc_version) = ($ENV{ASCDS_AGASC} =~ /agasc(\dp\d)/);
-    die "Starcheck only supports AGASC 1.4, 1.5, and 1.6.  Found '$mp_agasc_version'\n"
-	unless ($mp_agasc_version =~ /(1p4|1p5|1p6)/);
-    $mp_agasc_version =~ s/p/./;
-    ($ascds_version_name) = ($ENV{ASCDS_BIN} =~ /\/DS\.([^\/]+)/);
-    $ascds_version = $ENV{ASCDS_VERSION};
-    print STDERR "Configuration:  AGASC $mp_agasc_version   ASCDS $ascds_version_name ($ascds_version)\n"
 }
 
 
@@ -167,6 +180,8 @@ my %dot = %$dot_ref;
 #foreach my $dotkey (keys  %dot){
 #	print STDERR "$dotkey $dot{$dotkey}{cmd_identifier} $dot{$dotkey}{anon_param3} $dot{$dotkey}{anon_param4} \n";
 #}
+
+my @load_seg_starts = Ska::Parse_CM_File::TLR_load_segments($tlr_file);
 
 # Read momentum management (maneuvers + SIM move) summary file 
 my %mm = Ska::Parse_CM_File::MM({file => $mm_file, ret_type => 'hash'}) if ($mm_file);
@@ -213,6 +228,9 @@ if ($dot_touched_by_sausage == 0 ){
 
 my %odb = Ska::Parse_CM_File::odb($odb_file);
 Ska::Starcheck::Obsid::set_odb(%odb);
+
+my $config_ref = YAML::LoadFile($config_file);
+Ska::Starcheck::Obsid::set_config($config_ref);
 
 # Read Maneuver error file containing more accurate maneuver errors
 my @manerr;
@@ -359,10 +377,15 @@ foreach (@bs) {
 foreach my $obsid (@obsid_id) {
 
     if ($par{plot}) {
-	$obs{$obsid}->get_agasc_stars($mp_agasc_version);
-	$obs{$obsid}->identify_stars();
-	$obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.gif") ;
-	$obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.gif") ;
+	eval{
+	    $obs{$obsid}->get_agasc_stars($agasc_dir);
+	    $obs{$obsid}->identify_stars();
+	    $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.gif") ;
+	    $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.gif") ;
+	};
+	if ($@){
+	    warning ("Could not create plots for Obsid $obsid:\n $@ \n");
+	}
     }
 
     $obs{$obsid}->check_star_catalog();
@@ -383,10 +406,11 @@ my $out = '\fixed_start ';
 my $date = `date`;
 chomp $date;
 
-$out .= "------------  Starcheck V$version    -----------------\n";
+$out .= "------------  Standalone-Compatible Starcheck V$version    -----------------\n";
 $out .= " Run on $date by $ENV{USER}\n";
-$out .= " Configuration:  AGASC $mp_agasc_version  ASCDS $ascds_version_name ($ascds_version)\n"
-    if ($mp_agasc_version and $ascds_version_name);
+$out .= " Configuration:  Using AGASC at $agasc_dir\n";
+# ASCDS $ascds_version_name ($ascds_version)\n"
+#    if ($mp_agasc_version and $ascds_version_name);
 $out .= "\n";
 
 if (%input_files) {
@@ -420,7 +444,24 @@ if ($dark_cal_checker->{dark_cal_present}){
 # Summary of obsids
 
 $out .= "------------  SUMMARY OF OBSIDS -----------------\n\n";
-foreach $obsid (@obsid_id) {
+
+# keep track of which load segment we're in
+my $load_seg_idx = 0;
+
+for my $obs_idx (0 .. $#obsid_id) {    
+    $obsid = $obsid_id[$obs_idx];
+
+    # mark the OBC load segment starts
+    my $load_seg_time = date2time( $load_seg_starts[$load_seg_idx]);
+    my $obsid_time = date2time($obs{$obsid}->{date});
+    if ($load_seg_idx <= $#load_seg_starts ){
+	if ($load_seg_time < $obsid_time){
+	    $out .= "         ------  $load_seg_starts[$load_seg_idx]   OBC Load Segment Begins\n";
+	    $load_seg_idx++;
+	}
+	
+    }
+
     $out .= sprintf "\\link_target{#obsid$obs{$obsid}->{obsid},OBSID = %5s}", $obs{$obsid}->{obsid};
     $out .= sprintf " at $obs{$obsid}->{date}   ";
 
@@ -525,10 +566,13 @@ if ($par{html}) {
     open (my $OUT, "> $STARCHECK.html") or die "Couldn't open $STARCHECK.html for writing\n";
     print $OUT $ptf->ptf2any('html', $out);
     close $OUT;
+#    open (my $DBGOUT, "> $STARCHECK.ptf");
+#    print $DBGOUT $out;
+#    close $DBGOUT;
+
     print STDERR "Wrote HTML report to $STARCHECK.html\n";
 
-    my $guide_summ_start = (defined $mp_agasc_version and $mp_agasc_version eq '1.4') ? 
-      'PROCESSING SOCKET REQUESTS' : '';
+    my $guide_summ_start = 'PROCESSING SOCKET REQUESTS';
     make_annotated_file('', 'starcat.dat.', ' -ra ', $make_stars);
     make_annotated_file('', ' ID=\s+', ', ', $backstop);
     make_annotated_file($guide_summ_start, '^\s+ID:\s+', '\S\S', $guide_summ);
@@ -702,19 +746,25 @@ sub format_dark_cal_check{
     if ($verbose or !$feedback->{status}){
         # if just an error, not verbose
         if (!$verbose and !$feedback->{status}){
-            for my $line (@{$feedback->{error}}){
-	        $return_string .= "\\red_start --->>>  $line \\red_end \n";
+	    for my $entry (@{$feedback->{info}}){
+		if ($entry->{type} eq 'error'){
+		    my $line = $entry->{text};
+		    $return_string .= "\\red_start --->>>  $line \\red_end \n";
+		}
             }
         }
         # if verbose and error
 	else{
-	    for my $line (@{$feedback->{info}}){
-		$return_string .= " \t$line \n";
-	    }
-	    for my $line (@{$feedback->{error}}){
-		$return_string .= "\\red_start --->>>  $line \\red_end \n";
-	    }
-	    
+	    for my $entry (@{$feedback->{info}}){
+		my $line = $entry->{text};
+		my $type = $entry->{type};
+		if ($type eq 'info'){
+		    $return_string .= " \t$line \n";
+		}
+		if ($type eq 'error'){
+		    $return_string .= "\\red_start --->>>  $line \\red_end \n";
+		}
+	    }	    
 	}
     }
 
@@ -948,6 +998,9 @@ sub usage
   exit($exit) if ($exit);
 }
 
+
+
+
 =pod
 
 =head1 NAME
@@ -994,9 +1047,17 @@ Enable (or disable) generation of report in TEXT format.  Default is TEXT enable
 
 Specify version of agasc ( 1p4, 1p5, or 1p6 ).  Default is 1p6 .
 
+=item B<-agasc_dir <agasc directory>>
+
+Specify directory path to agasc.  Default is /data/agasc1p6 . Overrides -agasc option.
+
 =item B<-fid_char <fid characteristics file>>
 
 Specify file name of the fid characteristics file to use.  This must be in the SKA/data/starcheck/ directory.
+
+=item B<-config_file <config file>>
+
+Specify YAML configuration file in starcheck data directory.  Default is SKA/data/starcheck/characteristics.yaml
 
 =back
 

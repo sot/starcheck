@@ -31,7 +31,9 @@ use IO::All;
 use Ska::Convert qw(date2time);
 
 use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit );
-
+use RDB;
+use Ska::AGASC;
+use Carp;
 
 
 # use FigureOfMerit;
@@ -66,6 +68,7 @@ my @bad_pixels;
 my %odb;
 my %bad_acqs;
 my %bad_id;
+my %config;
 
 1;
 
@@ -95,6 +98,16 @@ sub add_command {
     my $self = shift;
     push @{$self->{commands}}, $_[0];
 }
+
+
+##################################################################################
+sub set_config {
+# Import characteristics from characteristics file
+##################################################################################
+    my $config_ref = shift;
+    %config = %{$config_ref};
+}
+
 
 ##################################################################################
 sub set_odb {
@@ -131,18 +144,23 @@ sub set_ACA_bad_pixels {
 ##################################################################################
 sub set_bad_acqs {
 ##################################################################################
-    use RDB;
-    my $rdb_file = shift;
-    my $rdb = new RDB $rdb_file or warn "$rdb_file\n";
-    
-    my %data;
-    while($rdb && $rdb->read( \%data )) { 
-	$bad_acqs{ $data{'agasc_id'} }{'n_noids'} = $data{'n_noids'};
-	$bad_acqs{ $data{'agasc_id'} }{'n_obs'} = $data{'n_obs'};
-    }
 
-    undef $rdb;
-    return 1;
+    my $rdb_file = shift;
+    if ( -r $rdb_file ){
+	my $rdb = new RDB $rdb_file or warn "Problem Loading $rdb_file\n";
+	
+	my %data;
+	while($rdb && $rdb->read( \%data )) { 
+	    $bad_acqs{ $data{'agasc_id'} }{'n_noids'} = $data{'n_noids'};
+	    $bad_acqs{ $data{'agasc_id'} }{'n_obs'} = $data{'n_obs'};
+	}
+	
+	undef $rdb;
+	return 1;
+    }
+    else{
+	return 0;
+    }
 
 }
 
@@ -711,7 +729,10 @@ sub check_star_catalog {
 	my $marginal_note = '';
 	if (defined $c->{"GS_CLASS$i"}) {
 	    $c->{"GS_NOTES$i"} .= 'b' if ($c->{"GS_CLASS$i"} != 0);
-	    $c->{"GS_NOTES$i"} .= 'c' if ($c->{"GS_BV$i"} == 0.700);
+#	    $c->{"GS_NOTES$i"} .= 'c' if ($c->{"GS_BV$i"} == 0.700);
+	    # ignore precision errors in color
+	    my $color = sprintf('%.7f', $c->{"GS_BV$i"});
+	    $c->{"GS_NOTES$i"} .= 'c' if ($color eq '0.7000000');
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
 	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 399);
 	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",$c->{"GS_BV$i"},($c->{"GS_MAGERR$i"})/100,($c->{"GS_POSERR$i"})/1000) if ($c->{"GS_NOTES$i"} =~ /[cmp]/);
@@ -1002,7 +1023,9 @@ sub check_fids {
     # Calculate yang and zang for each commanded fid, then cross-correlate with
     # all commanded fids.
     foreach my $fid (@{$self->{fidsel}}) {
+
 	my ($yag, $zag, $error) = calc_fid_ang($fid, $self->{SI}, $self->{SIM_OFFSET_Z}, $self->{obsid});
+
 	if ($error) {
 	    push @{$warn}, "$alarm $error\n";
 	    next;
@@ -1021,6 +1044,7 @@ sub check_fids {
 	    }
 	}
 
+       
 	push @{$warn}, "$alarm Fid $self->{SI} $fid is turned on with FIDSEL but not found in star catalog\n"
 	    unless ($fidsel_ok);
     }
@@ -1133,34 +1157,71 @@ sub print_report {
 	    $o .= "\n";
 	}
     }
-    if ($c = find_command($self, "MP_STARCAT")) {
-	my @cat_fields = qw (IMNUM GS_ID    TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
-	my @cat_format = qw (  %3d  %12s     %6s   %5s  %8.3f    %8s  %8.3f  %7d  %7d    %4d    %4d   %5d     %6s  %4s);
 
-	$o .= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu})\n";
-	$o .= sprintf "----------------------------------------------------------------------------------------\n";
-	$o .= sprintf " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW NOTES\n";
+    my $acq_stat_lookup = "$config{paths}->{acq_stat_query}?agasc_id=";
+
+    if ($c = find_command($self, "MP_STARCAT")) {
+
+	my $table;
+
+	my @fid_fields = qw (IMNUM GS_ID   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+	my @fid_format = ( '%3d', '%12s',     '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
+	my @star_fields = qw (IMNUM GS_ID GS_ID   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+	my @star_format = ( '%3d', "\\link_target{${acq_stat_lookup}%s,", '%12s}',     '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
+
+	$table.= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu})\n";
+	$table.= sprintf "----------------------------------------------------------------------------------------\n";
+	$table.= sprintf " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW NOTES\n";
 #                      [ 4]  3   971113176   GUI  6x6   5.797   7.314   8.844  -2329  -2242   1   1   25  bcmp
-	$o .= sprintf "----------------------------------------------------------------------------------------\n";
+	$table.= sprintf "----------------------------------------------------------------------------------------\n";
 	
 	
 	foreach my $i (1..16) {
+	    my @fields = @star_fields;
+	    my @format = @star_format;
 	    next if ($c->{"TYPE$i"} eq 'NUL');
-
+	    if ($c->{"TYPE$i"} eq 'FID'){
+		@fields = @fid_fields;
+		@format = @fid_format;
+	    }
 	    # Define the color of output star catalog line based on NOTES:
 	    #   Yellow if NOTES is non-trivial. 
 	    #   Red if NOTES has a 'b' for bad class or if a guide star has bad color.
 	    my $color = ($c->{"GS_NOTES$i"} =~ /\S/) ? 'yellow' : '';
 	    $color = 'red' if ($c->{"GS_NOTES$i"} =~ /b/ || ($c->{"GS_NOTES$i"} =~ /c/ && $c->{"TYPE$i"} =~ /GUI|BOT/));
 	    
-	    $o .= "\\${color}_start " if ($color);
-	    $o .= sprintf "[%2d]",$i;
-	    map { $o .= sprintf "$cat_format[$_]", $c->{"$cat_fields[$_]$i"} } (0 .. $#cat_fields);
-	    $o .= "\\${color}_end " if ($color);
-	    $o .= sprintf "\n";
+#	    $table.= "\\${color}_start " if ($color);
+	    $table.= sprintf "[%2d]",$i;
+#	    map { $table.= sprintf "$format[$_]", $c->{"$fields[$_]$i"} } (0 .. $#fields);
+	    # change from a map to a loop to get some conditional control, since PoorTextFormat can't seem to 
+	    # take nested \link_target when the line is colored green or red
+	    for my $field_idx (0 .. $#fields){
+		my $curr_format = $format[$field_idx];
+#		if (($curr_format =~ /link_target/) and ($color)){
+#		    # turn off the color before the link
+#		    $curr_format = " \\${color}_end " . $curr_format;
+#		}
+		if (($curr_format eq '%12s}') and ($color)){
+		    # turn the color back on after the link
+		    $curr_format = $curr_format . "\\${color}_start ";
+		}
+		$table .= sprintf($curr_format, $c->{"$fields[$field_idx]$i"});
+	    }
+	    $table.= "\\${color}_end " if ($color);
+	    $table.= sprintf "\n";
 	}
+
+
+    $o .= $table;
+
     }
+
+
+    
     $o .= "\n" if (@{$self->{warn}} || @{$self->{yellow_warn}});
+
+
+
     if (@{$self->{warn}}) {
 	$o .= "\\red_start\n";
 	foreach (@{$self->{warn}}) {
@@ -1259,57 +1320,59 @@ sub add_guide_summ {
 #############################################################################################
 sub get_agasc_stars {
 #############################################################################################
-    # Run mp_get_agasc to get field stars
+
     my $self = shift;
-    my $mp_agasc_version = shift;
+    my $AGASC_DIR = shift;
     my $c = find_command($self, "MP_TARGQUAT");
     
-    my $mp_get_agasc = "mp_get_agasc -r $self->{ra} -d $self->{dec} -w 1.3";
-    my @stars = `$mp_get_agasc`;
+
+
+
+    my $agasc_region;
+    eval{
+	$agasc_region = Ska::AGASC->new({
+	    agasc_dir => $AGASC_DIR,
+	    ra => $self->{ra},
+	    dec => $self->{dec},
+	    radius => 1.3,
+	    mag_limit => 12,
+	    datetime => $self->{date},
+	});
+    };
+    if( $@ ){
+	croak("Could not use AGASC: $@");
+    }
+
     my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
-    
-#    my $q4_obc = sqrt(1.0 - $c->{Q1}**2 - $c->{Q2}**2 - $c->{Q3}**2);
-#    my $q_aca = Quat->new($c->{Q1}, $c->{Q2}, $c->{Q3}, $q4_obc); 
 
-    foreach (@stars) {
-	s/-/ -/g;
-	my @flds = split;
+
+    for my $id ($agasc_region->list_ids() )  {
+
+	my $star = $agasc_region->get_star($id);
 	
-	# AGASC 1.4 and 1.5 are related (one-to-one) with different versions of mp_get_agasc
-	# which have different output formats.  Choose the right one based on AGASC version:
-
-	# I'm not sure where the proper motion bits are set in agasc 1.4, so we'll just set 
-	# them to 0 - Jean
-
-	my ($id, $ra, $dec, $poserr, $pm_ra, $pm_dec, $mag, $magerr, $bv, $class, $aspq) 
-	    =($mp_agasc_version eq '1.4') ?
-	    ( @flds[0..3], "0", "0", @flds[7..10], "0") : @flds[0..3,6,7,12,13,19,14,30];
-	
-# let's correct the agasc star positions for proper motion
-	my $seconds_per_day = 86400;
-	my $days_per_year = 365.25;
-	my $years = (date2time($self->{date}) - date2time($agasc_start_date)) / ( $seconds_per_day * $days_per_year);
-	# ignore those with proper motion of -9999
-	$pm_ra = ($pm_ra == -9999) ? 0 : $pm_ra;
-	$pm_dec = ($pm_dec == -9999) ? 0 : $pm_dec;
-
-	my $milliarcsecs_per_degree = 3600 * 1000;
-	# proper motion in milliarcsecs per year
-	my $star_ra = $ra + ( $pm_ra * ( $years / $milliarcsecs_per_degree ));
-	my $star_dec = $dec + ( $pm_dec * ( $years / $milliarcsecs_per_degree ));
-
-	my ($yag, $zag) = Quat::radec2yagzag($star_ra, $star_dec, $q_aca);
+	my ($yag, $zag) = Quat::radec2yagzag(
+					     $star->ra_pmcorrected(), 
+					     $star->dec_pmcorrected(), 
+					     $q_aca);
 	$yag *= $r2a;
 	$zag *= $r2a;
-	if ($mag < -10 or $magerr < -10) {
+	if ($star->mag_aca() < -10 or $star->mag_aca_err() < -10) {
 	    push @{$self->{warn}}, sprintf("$alarm Star with bad mag %.1f or magerr %.1f at (yag,zag)=%.1f,%.1f\n",
-					   $mag, $magerr, $yag, $zag);
+					   $star->mag_aca(), $star->mag_aca_err(), $yag, $zag);
 	}
-	$self->{agasc_hash}{$id} = { id=> $id, class => $class,
-				     ra  => $star_ra,  dec => $star_dec,
-				     mag => $mag, bv  => $bv,
-				     magerr => $magerr, poserr  => $poserr,
-				     yag => $yag, zag => $zag, aspq => $aspq } ;
+	$self->{agasc_hash}{$id} = { 
+	    id=> $id, 
+	    class => $star->class(),
+	    ra  => $star->ra_pmcorrected(),
+	    dec => $star->dec_pmcorrected(),
+	    mag => $star->mag_aca(), 
+	    bv  => $star->color1(),
+	    magerr => $star->mag_aca_err(), 
+	    poserr  => $star->pos_err(),
+	    yag => $yag, 
+	    zag => $zag, 
+	    aspq => $star->aspq1() 
+	    } ;
 	
 #	push @{$self->{agasc_stars}} , { id=> $id, class => $class,
 #					ra  => $ra,  dec => $dec,
@@ -1318,10 +1381,7 @@ sub get_agasc_stars {
 #					yag => $yag, zag => $zag, aspq => $aspq } ;
     }
 
-#    use Data::Dumper;
-#    for my $a_star (values %{$self->{agasc_hash}}){
-#	print Dumper $a_star;
-#    }
+
 }
 
 #############################################################################################
@@ -1418,7 +1478,12 @@ sub identify_stars {
 sub plot_stars {
 ##  Make a plot of the field
 #############################################################################################
-    use PGPLOT;
+    
+    eval 'use PGPLOT';
+    if ($@){
+        croak(__PACKAGE__ .": !$@");
+    }
+    # it is OK to croak, because I catch the exception in starcheck.pl
 
     my $self = shift;
     my $c;
@@ -1524,7 +1589,12 @@ sub plot_star_field {
 ##  for quick examination
 #############################################################################################
 
-    use PGPLOT;
+    
+    eval 'use PGPLOT';
+    if ($@){
+        croak(__PACKAGE__ .": !$@");
+    }
+    # it is OK to croak, because I catch the exception in starcheck.pl
 
     my $self = shift;
     my $c;

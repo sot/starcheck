@@ -10,7 +10,7 @@ package Ska::Parse_CM_File;
 ###############################################################
 
 use strict;
-#use warnings; 
+use warnings; 
 #use diagnostics;
 use POSIX qw( ceil);
 #use lib '/proj/sot/ska/lib/site_perl';
@@ -36,6 +36,28 @@ our @EXPORT_OK = qw( );
 %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 
+###############################################################
+sub TLR_load_segments{
+###############################################################
+    my $tlr_file = shift;
+
+    my @segment_times;
+    my @tlr = io($tlr_file)->slurp;
+
+    my @segment_start_lines = grep /START\sOF\sNEW\sOBC\sLOAD,\sCL\d{3}:\d{4}/, @tlr;
+    
+    for my $line (@segment_start_lines){
+	if ( $line =~ /(\d{4}:\d{3}:\d{2}:\d{2}:\d{2}\.\d{3})/ ){
+	    my $time = $1;
+	    push @segment_times, $time;
+	}
+    }
+
+
+    return @segment_times;
+
+}
+    
 
 
 ###############################################################
@@ -173,28 +195,39 @@ sub get_fid_actions {
 	}
     }
 
+#    printf("first bs entry at %s, last entry at %s \n", $bs_time[0], $bs_time[-1]);
+
     # Now get everything from FIDSEL
     # Parse lines like:
     # 2001211.190730558   | AFLCRSET RESET
     # 2001211.190731558   | AFLC02D1 FID 02 ON
-    if ($fs_file && ($fidsel_fh = new IO::File $fs_file, "r")) {
-	while (<$fidsel_fh>) {
-	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
+    if (defined $fs_file){
+	my @fidsel_text = io($fs_file)->slurp;
+	# take the last thousand entries
+#	my @reduced_fidsel_text = @fidsel_text;
+	my @reduced_fidsel_text = @fidsel_text[($#fidsel_text-1000) ... $#fidsel_text];
+#    if ($fs_file && ($fidsel_fh = new IO::File $fs_file, "r")) {
+	for my $fidsel_line (@reduced_fidsel_text){
+	    if ($fidsel_line =~ /(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
 		my ($yr, $doy, $hr, $min, $sec, $action) = ($1,$2,$3,$4,$5,$6);
-		
+		my $time = date2time("$yr:$doy:$hr:$min:$sec") - 10;
+
 		if ($action =~ /(RESET|FID.+ON)/) {
 		    # Convert to time, and subtract 10 seconds so that fid lights are
 		    # on slightly before end of manuever.  In actual commanding, they
 		    # come on about 1-2 seconds *after*. 
-		    my $time = date2time("$yr:$doy:$hr:$min:$sec") - 10;
+
 		    push @fs_action, $action;
 		    push @fs_time, $time;
 		}
 	    }
 	}
-
-	$fidsel_fh->close();
+	
+#	$fidsel_fh->close();
     }
+
+#    printf("count of fid entries is %s \n", scalar(@fs_time));
+#    printf("first fs entry at %s, last entry at %s \n", $fs_time[0], $fs_time[-1]);
 
     my @ok = grep { $fs_time[$_] < $bs_arr->[0]->{time} } (0 .. $#fs_time);
     my @action = (@fs_action[@ok], @bs_action);
@@ -526,6 +559,7 @@ sub verifyMM{
 
     my @bsmm;
 
+    my @errors;
 
     my $last_aonmmode;
     my %quat;
@@ -558,8 +592,9 @@ sub verifyMM{
 		my $dtime = $manvr{aomanuvr_time} - $manvr{tstart};
 		# Check to confirm that the time between AONMMODE and AOMANUVR is reasonable
 		if (( $dtime > $mmode_to_manvr + $mtime_slop) or ($dtime < $mmode_to_manvr - $mtime_slop)){
-		    croak("Maneuver at $bs_entry->{date} has non-standard timing (AONMMODE VS AOMANUVR)\n");
-		}
+		    push @errors, "Maneuver at $bs_entry->{date} has non-standard timing, \n ( time from AONMMODE to AOMANUVR is $dtime instead of $mmode_to_manvr )\n";
+		}   
+		
 		push @bsmm, \%manvr;
 		%quat = ();
 	    }
@@ -569,13 +604,13 @@ sub verifyMM{
 
 
     if (scalar(@mm) != scalar(@bsmm)){
-	croak("Backstop and Maneuver Summary have different number of maneuvers, $#bsmm:bs vs $#mm:ms \n") ;
+	push @errors, "Backstop and Maneuver Summary have different number of maneuvers, $#bsmm:bs vs $#mm:ms \n";
     }
 
     for my $i (0 .. $#mm){
 
 	if ( $mm[$i]->{tstart} != $bsmm[$i]->{tstart} ){
-	    croak("Time mismatch at maneuver at $mm[$i]->{start_date} in maneuver summary\n");
+	    push @errors, "Time mismatch at maneuver at $mm[$i]->{start_date} in maneuver summary\n";
 	}
 
 	my $mm_quat = Quat->new( $mm[$i]->{q1}, $mm[$i]->{q2}, $mm[$i]->{q3}, $mm[$i]->{q4});
@@ -584,12 +619,17 @@ sub verifyMM{
 	my $radial_dist = $delta->radial_dist();
 
 	if ( $radial_dist > $radial_dist_thresh ){
-	    croak("Quaternion mismatch of $radial_dist arcseconds between backstop and maneuver summary \n at maneuver at $mm[$i]->{start_date}  \n") ;
+	    push @errors, "Quaternion mismatch of $radial_dist arcseconds between backstop and maneuver summary \n at maneuver at $mm[$i]->{start_date}  \n";
 	} 
 
 
     }
-	
+
+    if (scalar(@errors)){
+	my $string_errors = join( '', @errors);
+	croak("$string_errors");
+    }
+
     return 0;
 }
 

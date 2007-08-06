@@ -8,6 +8,9 @@ mphome=/data/mpcrit1/mplogs
 log=$home/regress_log
 diffs=$home/regress_diffs
 
+TESTING_SKA=$1
+TESTING_BIN=${TESTING_SKA}/bin
+
 # Change this to /proj/sot/ska/bin after next release
 RELEASE_BIN=/proj/sot/ska/bin/  
 
@@ -24,10 +27,11 @@ done
 
 # Go through specified loads and run test and release starcheck versions
 for load in \
+    2004/AUG0104/oflsa \
+    2004/MAR0804/oflsc \
     2003/MAR3103/oflsc \
     2004/JAN2104/oflsa \
     2004/MAR0104/oflsb \
-    2004/MAR0804/oflsc \
     2004/MAR1504/oflsa \
     2004/MAR1904/oflsa \
     2004/MAR2204/oflsb \
@@ -57,9 +61,9 @@ for load in \
 
   # Run test version
   #
-  echo "Running: $home/starcheck.pl -agasc 1p5 -dir $mphome/$load"
+  echo "Running:   $TESTING_BIN/starcheck -agasc 1p5 -fid_char fid_CHARACTERIS_JUL01 -dir $mphome/$load"
   echo "******************** (TEST) $load *******************" >> $log
-  env SKA=$SKA PERL5LIB= $home/starcheck.pl -agasc 1p5 -dir $mphome/$load 2>&1| tee -a $log 
+  $TESTING_BIN/starcheck -agasc 1p5 -fid_char fid_CHARACTERIS_JUL01 -dir $mphome/$load 2>&1| tee -a $log 
   # Now run current release version if not already there
   #
   if [ ! -r $release/starcheck.txt ]
@@ -70,9 +74,9 @@ for load in \
     echo "cd $release"
     cd $release
 
-    echo "Running: /proj/sot/ska/perl/starcheck.pl -agasc 1p5 -dir $mphome/$load"
+    echo "Running: $RELEASE_BIN/starcheck.pl -agasc 1p5 -fid_char fid_CHARACTERIS_JUL01 -dir $mphome/$load"
     echo "**** (RELEASE) $load ****" >> $log
-    env SKA=/proj/sot/ska PERL5LIB= $RELEASE_BIN/starcheck.pl -agasc 1p5 -dir $mphome/$load 2>&1| tee -a $log
+    env SKA=/proj/sot/ska PERL5LIB= $RELEASE_BIN/starcheck.pl -agasc 1p5 -fid_char fid_CHARACTERIS_JUL01 -dir $mphome/$load  2>&1| tee -a $log
   fi  
 
   # Now compare with release version
@@ -112,9 +116,9 @@ for load in \
 
   # Run test version
   #
-  echo "Running: $home/starcheck.pl -agasc 1p6 -dir $mphome/$load"
+  echo "Running: $home/starcheck -agasc 1p6 -fid_CHARACTERIS_JUL01 -dir $mphome/$load"
   echo "******************** (TEST) $load *******************" >> $log
-  env SKA=$SKA PERL5LIB= $home/starcheck.pl -agasc 1p6 -dir $mphome/$load 2>&1| tee -a $log 
+  $TESTING_BIN/starcheck -agasc 1p6 -fid_char fid_CHARACTERIS_JUL01 -dir $mphome/$load 2>&1| tee -a $log 
   # Now run current release version if not already there
   #
   if [ ! -r $release/starcheck.txt ]
@@ -125,10 +129,11 @@ for load in \
     echo "cd $release"
     cd $release
 
-    echo "Running: /proj/sot/ska/perl/starcheck.pl -agasc 1p6 -dir $mphome/$load"
+    echo "Running: /proj/sot/ska/perl/starcheck.pl -agasc 1p6 -fid_char fid_CHARACTERIS_JUL01 -dir $mphome/$load"
     echo "**** (RELEASE) $load ****" >> $log
-    env SKA=/proj/sot/ska PERL5LIB= $RELEASE_BIN/starcheck.pl -agasc 1p6 -dir $mphome/$load 2>&1| tee -a $log
+    env SKA=/proj/sot/ska PERL5LIB= $RELEASE_BIN/starcheck.pl -agasc 1p6 -fid_char fid_CHARACTERIS_JUL01 -dir $mphome/$load 2>&1| tee -a $log
   fi  
+
 
   # Now compare with release version
 

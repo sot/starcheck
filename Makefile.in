@@ -1,0 +1,117 @@
+
+PREFIX = @prefix@
+
+TASK = starcheck
+
+SRC = $(PWD)/src
+
+PERLTASK = Ska/Starcheck
+PERLGEN = Ska/
+
+# include /proj/sot/ska/include/Makefile.FLIGHT
+
+FID_CHARACTERISTICS = fid_CHARACTERIS_FEB07
+FID_LINK_NAME = fid_CHARACTERISTICS
+
+RELATED_LIB = $(SRC)/StarcheckParser.pm
+BIN = $(SRC)/starcheck.pl 
+STANDALONE_BIN = $(SRC)/starcheck
+GEN_LIB = $(SRC)/Parse_CM_File.pm
+LIB = $(SRC)/Obsid.pm $(SRC)/FigureOfMerit.pm $(SRC)/Dark_Cal_Checker.pm
+DATA = $(SRC)/ACABadPixels $(SRC)/agasc.bad $(SRC)/fid_CHARACTERIS_JUL01 $(SRC)/$(FID_CHARACTERISTICS) $(SRC)/characteristics.yaml $(SRC)/A.tlr $(SRC)/B.tlr $(SRC)/tlr.cfg
+
+
+#ICXC_STARCHECK = "https://icxc.harvard.edu/mta/ASPECT/tool_doc/starcheck_php_doc_tmp"
+#ICXC_DOC_FOLDER = "/proj/sot/ska/doc/starcheck_php_doc_tmp/"
+#DOC_PHP = aca_load_review_cl.php
+#DOC_HTML = aca_load_review_cl.html
+#BADPIXELS = ACABadPixels.new
+#TEST_DEPS = data/acq_stats/bad_acq_stars.rdb data/aca_dark_cal_checker/A.tlr data/aca_dark_cal_checker/B.tlr data/aca_dark_cal_checker/tlr.cfg
+
+
+SKA = $(PREFIX)
+INSTALL= $(SKA)
+INSTALL_DOC = $(PREFIX)/doc
+INSTALL_BIN = $(PREFIX)/bin
+INSTALL_PERLLIB = $(PREFIX)/lib/perl
+INSTALL_DATA = $(PREFIX)/data/$(TASK)
+ROOT_FLIGHT = /proj/sot/ska
+BAD_ACQS = $(ROOT_FLIGHT)/data/acq_stats/bad_acq_stars.rdb
+INSTALL_BAD_ACQS = $(SKA)/data/acq_stats/
+
+all: install
+
+standalone:
+	$(SRC)/make_starcheck.pl --ska=$(PREFIX) --destdir=$(SRC) 
+	chmod 775 $(SRC)/starcheck
+
+standalone_install: standalone install
+	rsync --times --cvs-exclude $(STANDALONE_BIN) $(INSTALL_BIN)/
+
+
+bad_acq_install:
+	mkdir -p $(INSTALL_BAD_ACQS)
+	rsync -arvuz $(BAD_ACQS) $(INSTALL_BAD_ACQS)
+
+check: check_install all install
+	if [ -r test.html ] ; then rm test.html ; fi
+	if [ -r test.txt ] ; then rm test.txt ; fi
+	if [ -d test ] ; then rm -r test ; fi
+	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
+
+# only for use in /proj/sot/ska checking
+test: check_install install bad_acq_install
+	if [ -r test.html ] ; then rm test.html ; fi
+	if [ -r test.txt ] ; then rm test.txt ; fi
+	if [ -d test ] ; then rm -r test ; fi
+	$(SRC)/starcheck.pl -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
+
+# again, not for use with standalone
+regress: check_install install bad_acq_install
+	if [ -r regress_diffs ] ; then rm regress_diffs ; fi
+	if [ -r regress_log ] ; then rm regress_log ; fi
+	if [ -d regress ] ; then rm -r regress ; fi
+	$(SRC)/run_regress
+
+
+standalone_regress: install
+	$(SRC)/standalone_regress $(PREFIX)
+
+
+
+install: 
+#ifdef DOC_PHP
+#	mkdir -p $(ICXC_DOC_FOLDER)
+#	mkdir -p $(INSTALL_DOC)
+#	if [ -r $(INSTALL_DOC)/$(DOC_HTML) ] ; then rm $(INSTALL_DOC)/$(DOC_HTML); fi
+#	rsync --times --cvs-exclude $(DOC_PHP) $(ICXC_DOC_FOLDER)/
+#	wget $(ICXC_STARCHECK)/$(DOC_PHP) -O $(INSTALL_DOC)/$(DOC_HTML)
+#endif
+ifdef BIN
+	mkdir -p $(INSTALL_BIN)
+	rsync --times --cvs-exclude $(BIN) $(INSTALL_BIN)/
+#	pod2html starcheck.pl > $(INSTALL_DOC)/starcheck.html
+endif
+ifdef DATA
+	mkdir -p $(INSTALL_DATA)
+	rsync --times --cvs-exclude $(DATA) $(INSTALL_DATA)/
+endif
+ifdef LIB
+	mkdir -p $(INSTALL_PERLLIB)/$(PERLTASK)
+	rsync --times --cvs-exclude $(LIB) $(INSTALL_PERLLIB)/$(PERLTASK)/
+endif
+ifdef GEN_LIB
+	mkdir -p $(INSTALL_PERLLIB)/$(PERLGEN)
+	rsync --times --cvs-exclude $(GEN_LIB) $(INSTALL_PERLLIB)/$(PERLGEN)/
+endif
+ifdef FID_LINK_NAME
+	rm -f $(INSTALL_DATA)/$(FID_LINK_NAME)
+	ln -s $(INSTALL_DATA)/$(FID_CHARACTERISTICS) $(INSTALL_DATA)/$(FID_LINK_NAME)
+endif
+	mkdir -p $(SKA)/ops/Chex
+
+# Make sure install dir is not flight.  (This doesn't resolve links etc)
+check_install:
+        test "$(INSTALL)" != "$(ROOT_FLIGHT)"
+ 
+

@@ -2,7 +2,8 @@
 ##Brett Unks                      
 ##Jan 2003                        
 
-# Used by /proj/sot/ska/bin/new_obs.pl
+# Used by /proj/sot/ska/bin/new_obs.pl - which is no longer running
+# Used by /proj/sot/ska/database/star_parse.pl
 # part of the starcheck cvs project
 
 ##***************************************************************************
@@ -176,8 +177,8 @@ sub get_target{
     if ($topline =~ /OBSID:\s(\S{5})\s*/){
     }
     else{
-	if ($topline =~ /OBSID:\s*(\S{4})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s.*\sGrating:\s*(\S+)\s*/ ){
-	    if ($topline =~ /OBSID:\s*(\S{4})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+Grating:\s*(\S+)\s*/ ){
+	if ($topline =~ /OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s.*\sGrating:\s*(\S+)\s*/ ){
+	    if ($topline =~ /OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+Grating:\s*(\S+)\s*/ ){
 		%target = (
 			   'obsid' => $1,
 			   'target' => $2,
@@ -188,7 +189,7 @@ sub get_target{
 		$target{'target'} =~ s/\s+$//;
 
 	    }
-	    if ($topline =~ /OBSID:\s*(\S{4})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+\((-*.+)mm\)\s+Grating:\s*(\S+)\s*/ ){
+	    if ($topline =~ /OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+\((-*.+)mm\)\s+Grating:\s*(\S+)\s*/ ){
 		%target = (
 			   'obsid' => $1,
 			   'target' => $2,
