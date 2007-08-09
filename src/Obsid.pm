@@ -32,9 +32,9 @@ use Ska::Convert qw(date2time);
 
 use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit );
 use RDB;
-use Ska::AGASC;
-use Carp;
 
+use Carp;
+use YAML;
 
 # use FigureOfMerit;
 
@@ -855,12 +855,12 @@ sub check_star_catalog {
 	# Spoiler star (for search) and common column
 	
 	foreach my $star (values %{$self->{agasc_hash}}) {
-	    # Skip tests if $star is the same as the catalog star
+            # Skip tests if $star is the same as the catalog star
 	    # print STDERR "SID = $sid \n";
 	    next if (  $star->{id} eq $sid || 	
-			   ( abs($star->{yag} - $yag) < $ID_DIST_LIMIT 
-			     && abs($star->{zag} - $zag) < $ID_DIST_LIMIT 
-			     && abs($star->{mag} - $mag) < 0.1 ) );	
+		       ( abs($star->{yag} - $yag) < $ID_DIST_LIMIT 
+			 && abs($star->{zag} - $zag) < $ID_DIST_LIMIT 
+			 && abs($star->{mag} - $mag) < 0.1 ) );	
 	    my $dy = abs($yag-$star->{yag});
 	    my $dz = abs($zag-$star->{zag});
 	    my $dr = sqrt($dz**2 + $dy**2);
@@ -1325,22 +1325,18 @@ sub get_agasc_stars {
     my $AGASC_DIR = shift;
     my $c = find_command($self, "MP_TARGQUAT");
     
-
-
-
+    use Ska::AGASC;
     my $agasc_region;
+
     eval{
-	my $LD_LIBRARY_PATH = $ENV{LD_LIBRARY_PATH};
-	$ENV{LD_LIBRARY_PATH} = qq{};
 	$agasc_region = Ska::AGASC->new({
 	    agasc_dir => $AGASC_DIR,
 	    ra => $self->{ra},
 	    dec => $self->{dec},
 	    radius => 1.3,
-	    mag_limit => 12,
 	    datetime => $self->{date},
+	    prefer_mp_get_agasc => 1,
 	});
-	$ENV{LD_LIBRARY_PATH} = $LD_LIBRARY_PATH;
     };
     if( $@ ){
 	croak("Could not use AGASC: $@");

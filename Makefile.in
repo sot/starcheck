@@ -82,7 +82,7 @@ standalone_regress: install
 
 
 
-install: sot
+install: 
 #ifdef DOC_PHP
 #	mkdir -p $(ICXC_DOC_FOLDER)
 #	mkdir -p $(INSTALL_DOC)

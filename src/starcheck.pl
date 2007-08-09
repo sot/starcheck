@@ -1,4 +1,4 @@
-#! /usr/bin/env /proj/sot/ska/bin/perlska
+#!/usr/bin/env /proj/sot/ska/bin/perlska
 
 ##*******************************************************************************
 #
@@ -8,7 +8,8 @@
 ##*******************************************************************************
 
 my $VERSION = '$Id$';  # '
-my ($version) = ($VERSION =~ /starcheck.pl,v\s+(\S+)/);
+my $REVISION = '$LastChangedRevision$;
+my ($version) = ($VERSION =~ /starcheck.pl\s+(\S+)/);
 
 # Set defaults and get command line options
 
@@ -36,6 +37,11 @@ use Carp;
 use YAML;
 
 use Ska::Convert qw( date2time );
+
+# cheat to get the OS (major)
+my $OS = `uname`;
+chomp($OS);
+
 
 # Set some global vars with directory locations
 my $SKA = $ENV{SKA} || '/proj/sot/ska';
@@ -206,6 +212,11 @@ my ($fid_time_violation, $error, @fidsel) = Ska::Parse_CM_File::fidsel($fidsel_f
 # Set up for global warnings
 my @global_warn;
 map { warning("$_\n") } @{$error};
+
+# Warn if we aren't on Solaris
+if ($OS ne 'SunOS'){
+    warning("uname != SunOS; starcheck is only approved on Solaris/SunOS \n");
+}
 
 # Dark Cal Checker Section
 use Ska::Starcheck::Dark_Cal_Checker;
@@ -406,7 +417,7 @@ my $out = '\fixed_start ';
 my $date = `date`;
 chomp $date;
 
-$out .= "------------  Standalone-Compatible Starcheck V$version    -----------------\n";
+$out .= "------------  Standalone-Compatible Starcheck SVN:$version    -----------------\n";
 $out .= " Run on $date by $ENV{USER}\n";
 $out .= " Configuration:  Using AGASC at $agasc_dir\n";
 # ASCDS $ascds_version_name ($ascds_version)\n"
