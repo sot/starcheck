@@ -8,8 +8,9 @@
 ##*******************************************************************************
 
 my $VERSION = '$Id$';  # '
-my $REVISION = '$LastChangedRevision$;
-my ($version) = ($VERSION =~ /starcheck.pl\s+(\S+)/);
+my $REVISION = '$LastChangedRevision$';
+#my ($version) = ($VERSION =~ /starcheck.pl\s+(\S+)/);
+my ($version) = ($REVISION =~ / (\d*) /);
 
 # Set defaults and get command line options
 
