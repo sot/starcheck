@@ -492,7 +492,9 @@ sub check_dither {
     my $obs_end_pad = 3*60;
     my $manvr;
 
-    return if ($self->{obsid} > 50000); # For eng obs, don't have OR to specify dither
+    if ( $self->{obsid} =~ /^\d*$/){
+	return if ($self->{obsid} > 50000); # For eng obs, don't have OR to specify dither
+    }
     unless ($manvr = find_command($self, "MP_TARGQUAT", -1) and defined $self->{DITHER_ON} and defined $manvr->{tstart}) {
 	push @{$self->{warn}}, "$alarm Dither status not checked\n";
 	return;
@@ -923,8 +925,14 @@ sub check_monitor_commanding {
 
     my $r2a = 180./3.14159265*3600;
 
-    # Don't worry about monitor commanding for non-science observations
-    return if ($self->{obsid} > 50000);
+
+    # if this is a real numeric obsid
+    if ( $self->{obsid} =~ /^\d*$/ ){
+
+	# Don't worry about monitor commanding for non-science observations
+	return if ($self->{obsid} > 50000);
+
+    }
 
     # Check for existence of a star catalog
     return unless ($c = find_command($self, "MP_STARCAT"));

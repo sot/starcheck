@@ -7,19 +7,20 @@
 #
 ##*******************************************************************************
 
+
 my $VERSION = '$Id$';  # '
-#my $REVISION = '$LastChangedRevision$';
+my $REVISION = '$LastChangedRevision$';
 #my ($version) = ($VERSION =~ /starcheck.pl\s+(\S+)/);
 
 # Because my release tag will be part of my directory, I'm going to use the
 # URL svn:keyword to retrieve it.  This will be testing or trunk in development
 # and set to the right tag after the final copy and checkout
 my $source_url = '$HeadURL$'; 
-my $version_name = ($source_url =~ /'/proj/sot/ska/svn/starcheck/'(\W*)'/src/starcheck.pl'/);
-my ($version_num) = ($REVISION =~ / (\d*) /);
+$source_url =~ /\/proj\/sot\/ska\/svn\/starcheck\/(\w*)\/src\/starcheck.pl/;
+my $version_name = $1;
+$REVISION =~ / (\d*) /;
+$version_num = $1;
 my $version = $version_name . ' @svn:' . $version_num;
-
-
 
 # Set defaults and get command line options
 
@@ -360,7 +361,7 @@ my %guidesumm = Ska::Parse_CM_File::guide($guide_summ) if (defined $guide_summ);
 
 foreach my $oflsid (keys %guidesumm){
     unless (defined $obs{$oflsid}){
-	push @global_warn, sprintf("WARNING: OFLS ID $oflsid in Guide Summ but not in DOT! \n");
+	warning("OFLS ID $oflsid in Guide Summ but not in DOT! \n");
     }
 }
 
@@ -370,7 +371,7 @@ foreach my $oflsid (@obsid_id){
 	$obs{$oflsid}->add_guide_summ($oflsid, \%guidesumm);
     }
     else {
-	push @{$obs{$oflsid}->{warn}}, sprintf("WARNING: No Guide Star Summary for :$oflsid: \n");			
+	push @{$obs{$oflsid}->{warn}}, sprintf(">> WARNING: No Guide Star Summary for :$oflsid: \n");			
     }
 	
 }
@@ -427,7 +428,7 @@ my $out = '\fixed_start ';
 my $date = `date`;
 chomp $date;
 
-$out .= "------------  Standalone-Compatible Starcheck SVN:$version    -----------------\n";
+$out .= "------------  Starcheck $version    -----------------\n";
 $out .= " Run on $date by $ENV{USER}\n";
 $out .= " Configuration:  Using AGASC at $agasc_dir\n";
 # ASCDS $ascds_version_name ($ascds_version)\n"
@@ -494,44 +495,50 @@ for my $obs_idx (0 .. $#obsid_id) {
     my $min_num_or_acq = 4;
     my $min_num_or_gui = 4;
 
-    # For ERs
-    if ( $obs{$obsid}->{obsid} > 50000 ){
-	if ($good_acq_count < $min_num_er_acq){
-	    $out .= sprintf("\\red_start ");
-	}
-	$out .= sprintf "$good_acq_count clean ACQ | ";
-	if ($good_acq_count < $min_num_er_acq){
-	    $out .= sprintf("\\red_end ");
-	}
-	if ($good_guide_count < $min_num_er_gui){
-	    $out .= sprintf("\\red_start ");
-	}
-	$out .= sprintf "$good_guide_count clean GUI | ";
-	if ($good_guide_count < $min_num_er_gui){
-	    $out .= sprintf("\\red_end ");
-	}
-    }
-    # For ORs
-    else {
-	if ($good_acq_count < $min_num_or_acq){
-	    $out .= sprintf("\\red_start ");
-	}
-	$out .= sprintf "$good_acq_count clean ACQ | ";
-	if ($good_acq_count < $min_num_or_acq){
-	    $out .= sprintf("\\red_end ");
-	}
-	if ($good_guide_count < $min_num_or_gui){
-	    $out .= sprintf("\\red_start ");
-	}
-	$out .= sprintf "$good_guide_count clean GUI | ";
-	if ($good_guide_count < $min_num_or_gui){
-	    $out .= sprintf("\\red_end ");
-	}   
+    # if Obsid is numeric, print tally info
+    if ($obs{$obsid}->{obsid} =~ /^\d*$/ ){
 
-    }
+	# For ERs
+	if ( $obs{$obsid}->{obsid} > 50000 ){
+	    if ($good_acq_count < $min_num_er_acq){
+		$out .= sprintf("\\red_start ");
+	    }
+	    $out .= sprintf "$good_acq_count clean ACQ | ";
+	    if ($good_acq_count < $min_num_er_acq){
+		$out .= sprintf("\\red_end ");
+	    }
+	    if ($good_guide_count < $min_num_er_gui){
+		$out .= sprintf("\\red_start ");
+	    }
+	    $out .= sprintf "$good_guide_count clean GUI | ";
+	    if ($good_guide_count < $min_num_er_gui){
+		$out .= sprintf("\\red_end ");
+	    }
+	}
+	# For ORs
+	else {
+	    if ($good_acq_count < $min_num_or_acq){
+		$out .= sprintf("\\red_start ");
+	    }
+	    $out .= sprintf "$good_acq_count clean ACQ | ";
+	    if ($good_acq_count < $min_num_or_acq){
+		$out .= sprintf("\\red_end ");
+	    }
+	    if ($good_guide_count < $min_num_or_gui){
+		$out .= sprintf("\\red_start ");
+	    }
+	    $out .= sprintf "$good_guide_count clean GUI | ";
+	    if ($good_guide_count < $min_num_or_gui){
+		$out .= sprintf("\\red_end ");
+	    }   
+	    
+	}
 	
-    
-
+    }
+    # if Obsid is non-numeric, print "Unknown"
+    else{
+	$out .= sprintf("Undefined Obsid; ER? OR?  | ");
+    }
 
 
     if (@{$obs{$obsid}->{warn}}) {
