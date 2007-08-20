@@ -10,8 +10,14 @@
 my $VERSION = '$Id$';  # '
 #my $REVISION = '$LastChangedRevision$';
 #my ($version) = ($VERSION =~ /starcheck.pl\s+(\S+)/);
+
+# Because my release tag will be part of my directory, I'm going to use the
+# URL svn:keyword to retrieve it.  This will be testing or trunk in development
+# and set to the right tag after the final copy and checkout
 my $source_url = '$HeadURL$'; 
-my ($version) = ($REVISION =~ / (\d*) /);
+my $version_name = ($source_url =~ /'/proj/sot/ska/svn/starcheck/'(\W*)'/src/starcheck.pl'/);
+my ($version_num) = ($REVISION =~ / (\d*) /);
+my $version = $version_name . ' @svn:' . $version_num;
 
 
 
