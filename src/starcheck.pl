@@ -10,7 +10,7 @@
 my $VERSION = '$Id$';  # '
 #my $REVISION = '$LastChangedRevision$';
 #my ($version) = ($VERSION =~ /starcheck.pl\s+(\S+)/);
-my $source_url = '$HeadURL: $'; 
+my $source_url = '$HeadURL$'; 
 my ($version) = ($REVISION =~ / (\d*) /);
 
 
