@@ -26,6 +26,7 @@ done
 
 # JAN2105A is the first AGASC 1.6 load
 
+# First a bunch of agasc 1.5 loads
 
 # Go through specified loads and run test and release starcheck versions
 for load in \
@@ -90,7 +91,7 @@ for load in \
   cd $home
 done
 
-
+# Then a bunch of agasc 1.6 loads
 
 # Go through specified loads and run test and release starcheck versions
 for load in \
@@ -151,10 +152,12 @@ for load in \
   cd $home
 done
 
+# Then, a bunch of agasc 1.6 loads with the updated fid characteristics
 
 # Go through specified loads and run test and release starcheck versions
 for load in \
-    2007/MAR0507/oflsa 
+    2007/MAR0507/oflsa \
+    2007/AUG1407/oflsa
   do
   echo ""
   echo "***** Running starcheck on load $load *****"

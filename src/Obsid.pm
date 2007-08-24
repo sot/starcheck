@@ -33,8 +33,9 @@ use Ska::Convert qw(date2time);
 use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit );
 use RDB;
 
+use Ska::AGASC;
 use Carp;
-use YAML;
+
 
 # use FigureOfMerit;
 
@@ -1333,7 +1334,7 @@ sub get_agasc_stars {
     my $AGASC_DIR = shift;
     my $c = find_command($self, "MP_TARGQUAT");
     
-    use Ska::AGASC;
+
     my $agasc_region;
 
     eval{
