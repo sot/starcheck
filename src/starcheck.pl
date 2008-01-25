@@ -16,7 +16,7 @@ my $REVISION = '$LastChangedRevision$';
 # URL svn:keyword to retrieve it.  This will be testing or trunk in development
 # and set to the right tag after the final copy and checkout
 my $source_url = '$HeadURL$'; 
-$source_url =~ /\/proj\/sot\/ska\/svn\/starcheck(\/tags)?\/(\S*)\/src\/starcheck.pl/;
+$source_url =~ /starcheck(\/tags)?\/(\S*)\/src\/starcheck.pl/;
 my $version_name = $2;
 $REVISION =~ / (\d*) /;
 $version_num = $1;
