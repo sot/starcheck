@@ -157,7 +157,8 @@ done
 # Go through specified loads and run test and release starcheck versions
 for load in \
     2007/MAR0507/oflsa \
-    2007/AUG1407/oflsa
+    2007/AUG1407/oflsa \
+    2008/MAY0508/oflsa
   do
   echo ""
   echo "***** Running starcheck on load $load *****"

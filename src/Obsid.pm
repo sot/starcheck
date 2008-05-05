@@ -47,9 +47,9 @@ my $r2a = 3600. * 180. / 3.14159265;
 my $faint_plot_mag = 11.0;
 my $alarm = ">> WARNING:";
 my %Default_SIM_Z = ('ACIS-I' => 92905,
-		  'ACIS-S' => 75620,
-		  'HRC-I'  => -50505,
-		  'HRC-S'  => -99612);
+		     'ACIS-S' => 75620,
+		     'HRC-I'  => -50505,
+		     'HRC-S'  => -99612);
 my %pg_colors = (white   => 1,
 	      red     => 2,
 	      green   => 3,
@@ -60,6 +60,10 @@ my %pg_colors = (white   => 1,
 	      purple  => 12,
 	      magenta => 6);
 
+
+my $font_stop = qq{</font>};
+my ($red_font_start, $blue_font_start, $yellow_font_start);
+
 my $ID_DIST_LIMIT = 1.5;		# 1.5 arcsec box for ID'ing a star
 
 my $agasc_start_date = '2000:001:00:00:00.000';
@@ -68,8 +72,11 @@ my $agasc_start_date = '2000:001:00:00:00.000';
 my @bad_pixels;
 my %odb;
 my %bad_acqs;
+my %bad_gui;
 my %bad_id;
 my %config;
+my $db_handle;
+my $db_unavailable = 0;
 
 1;
 
@@ -92,6 +99,17 @@ sub new {
     %{$self->{count_nowarn_stars}} = ();
     return $self;
 }
+
+##################################################################################
+sub setcolors {
+##################################################################################
+    my $colorref = shift;
+    $red_font_start = $colorref->{red};
+    $blue_font_start = $colorref->{blue};
+    $yellow_font_start = $colorref->{yellow};
+}
+
+
 
 ##################################################################################
 sub add_command {
@@ -164,6 +182,31 @@ sub set_bad_acqs {
     }
 
 }
+
+
+##################################################################################
+sub set_bad_gui {
+##################################################################################
+
+    my $rdb_file = shift;
+    if ( -r $rdb_file ){
+	my $rdb = new RDB $rdb_file or warn "Problem Loading $rdb_file\n";
+	
+	my %data;
+	while($rdb && $rdb->read( \%data )) { 
+	    $bad_gui{ $data{'agasc_id'} }{'n_nbad'} = $data{'n_nbad'};
+	    $bad_gui{ $data{'agasc_id'} }{'n_obs'} = $data{'n_obs'};
+	}
+	
+	undef $rdb;
+	return 1;
+    }
+    else{
+	return 0;
+    }
+
+}
+
 
 ##################################################################################
 sub set_bad_agasc {
@@ -716,12 +759,23 @@ sub check_star_catalog {
 	if ($type =~ /BOT|ACQ|GUI/ && defined $c->{"GS_ASPQ$i"} && $c->{"GS_ASPQ$i"} != 0);
 	
 	# Bad Acquisition Star
-	push @yellow_warn, sprintf 
-	    "$alarm [%2d] Bad Acquisition Star. %s has %2d failed out of %2d attempts\n",
-	    $i, $sid, $bad_acqs{$sid}{'n_noids'}, $bad_acqs{$sid}{'n_obs'} 
-	if ($bad_acqs{$sid}{'n_noids'} && $bad_acqs{$sid}{'n_obs'} > 2  
-	    && $bad_acqs{$sid}{'n_noids'}/$bad_acqs{$sid}{'n_obs'} > 0.3);	
-	
+	if ( ($type =~ /BOT|ACQ|GUI/)
+	     && ($bad_acqs{$sid}{'n_noids'} && $bad_acqs{$sid}{'n_obs'} > 2  
+		 && $bad_acqs{$sid}{'n_noids'}/$bad_acqs{$sid}{'n_obs'} > 0.3)){	
+	    push @yellow_warn, sprintf 
+		"$alarm [%2d] Bad Acquisition Star. %s has %2d failed out of %2d attempts\n",
+		$i, $sid, $bad_acqs{$sid}{'n_noids'}, $bad_acqs{$sid}{'n_obs'};
+	}
+	 
+	# Bad Guide Star
+	if ( ($type =~ /BOT|GUI/)
+	     && ( $bad_gui{$sid}{'n_nbad'} && $bad_gui{$sid}{'n_obs'} > 2  
+		  && $bad_gui{$sid}{'n_nbad'}/$bad_gui{$sid}{'n_obs'} > 0.3)){	
+	    push @yellow_warn, sprintf 
+		"$alarm [%2d] Bad Guide Star. %s has bad data %2d of %2d attempts\n",
+		$i, $sid, $bad_gui{$sid}{'n_nbad'}, $bad_gui{$sid}{'n_obs'};
+	}
+	    
 	# Bad AGASC ID
 	push @yellow_warn,sprintf "$alarm [%2d] Non-numeric AGASC ID.  %s\n",$i,$sid if ($sid ne '---' && $sid =~ /\D/);
 	push @warn,sprintf "$alarm [%2d] Bad AGASC ID.  %s\n",$i,$sid if ($bad_id{$sid});
@@ -1123,15 +1177,12 @@ sub print_report {
     my $o = '';			# Output
 
     my $target_name = ( $self->{TARGET_NAME}) ? $self->{TARGET_NAME} : $self->{SS_OBJECT};
-#    @sizes = qw (4x4 6x6 8x8);
-#    @types = qw (ACQ GUI BOT FID MON);
 
-
-    $o .= sprintf "\\target{obsid$self->{obsid}}";
-    $o .= sprintf ("\\blue_start OBSID: %-5s  ", $self->{obsid});
+    $o .= sprintf( "<TABLE WIDTH=850 CELLPADDING=0><TD VALIGN=TOP><PRE><A NAME=\"obsid%s\"></A>", $self->{obsid});
+    $o .= sprintf ("${blue_font_start}OBSID: %-5s  ", $self->{obsid});
     $o .= sprintf ("%-22s %-6s SIM Z offset:%-5d (%-.2fmm) Grating: %-5s", $target_name, $self->{SI}, 
 		   $self->{SIM_OFFSET_Z},  ($self->{SIM_OFFSET_Z})*1000*($odb{"ODB_TSC_STEPS"}[0]), $self->{GRATING}) if ($target_name);
-    $o .= sprintf "\\blue_end     \n";
+    $o .= sprintf "${font_stop}\n";
     $o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     if ( defined $self->{DITHER_ON} && $self->{obsid} < 50000 ) {
 	$o .= sprintf "Dither: %-3s ",$self->{DITHER_ON};
@@ -1139,21 +1190,24 @@ sub print_report {
 		       $self->{DITHER_Y_AMP}*3600., $self->{DITHER_Z_AMP}*3600.,
 		       360./$self->{DITHER_Y_FREQ}, 360./$self->{DITHER_Z_FREQ})
 	    if ($self->{DITHER_ON} eq 'ON' && $self->{DITHER_Y_FREQ} && $self->{DITHER_Z_FREQ});
-	$o .= sprintf "\n";
+	$o .= "\n";
+    }
+    else {
+#	$o .= "\n";
     }
 
 #$file_out = "$STARCHECK/" . basename($file_in) . ".html"
 #    ($self->{backstop}, $self->{guide_summ}, $self->{or_file},
 #     $self->{mm_file}, $self->{dot_file}) = @_;
 
-    $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{backstop}) . ".html#$self->{obsid},BACKSTOP} ";
-    $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{guide_summ}) . ".html#$self->{obsid},GUIDE_SUMM} ";
-    $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{or_file}) . ".html#$self->{obsid},OR} " 
+    $o .= sprintf("<A HREF=\"%s/%s.html#%s\">BACKSTOP</A> ", $self->{STARCHECK}, basename($self->{backstop}), $self->{obsid});
+    $o .= sprintf("<A HREF=\"%s/%s.html#%s\">GUIDE_SUMM</A> ", $self->{STARCHECK}, basename($self->{guide_summ}), $self->{obsid});
+    $o .= sprintf("<A HREF=\"%s/%s.html#%s\">OR</A> ", $self->{STARCHECK}, basename($self->{or_file}), $self->{obsid}) 
 	if ($self->{or_file});
-    $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{mm_file}) . ".html#$self->{dot_obsid},MANVR} ";
-    $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{dot_file}) . ".html#$self->{obsid},DOT} ";
-    $o .= "\\link_target{$self->{STARCHECK}/" . "make_stars.txt"            . ".html#$self->{obsid},MAKE_STARS} ";
-    $o .= "\\link_target{$self->{STARCHECK}/" . basename($self->{tlr_file}) . ".html#$self->{obsid},TLR} ";
+    $o .= sprintf("<A HREF=\"%s/%s.html#%s\">MANVR</A> ", $self->{STARCHECK}, basename($self->{mm_file}), $self->{dot_obsid});
+    $o .= sprintf("<A HREF=\"%s/%s.html#%s\">DOT</A> ", $self->{STARCHECK}, basename($self->{dot_file}), $self->{obsid});
+    $o .= sprintf("<A HREF=\"%s/%s.html#%s\">MAKE_STARS</A> ", $self->{STARCHECK}, "make_stars.txt" , $self->{obsid});
+    $o .= sprintf("<A HREF=\"%s/%s.html#%s\">TLR</A> ", $self->{STARCHECK}, basename($self->{tlr_file}) , $self->{obsid});
     $o .= sprintf "\n\n";
     for my $n (1 .. 10) {		# Allow for multiple TARGQUAT cmds, though 2 is the typical limit
 	if ($c = find_command($self, "MP_TARGQUAT", $n)) {
@@ -1167,22 +1221,29 @@ sub print_report {
 	}
     }
 
-    my $acq_stat_lookup = "$config{paths}->{acq_stat_query}?agasc_id=";
+    my $acq_stat_lookup = "$config{paths}->{acq_stat_query}?id=";
+
 
     if ($c = find_command($self, "MP_STARCAT")) {
 
+
+
 	my $table;
 
-	my @fid_fields = qw (IMNUM GS_ID   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
-	my @fid_format = ( '%3d', '%12s',     '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
-	my @star_fields = qw (IMNUM GS_ID GS_ID   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
-	my @star_format = ( '%3d', "\\link_target{${acq_stat_lookup}%s,", '%12s}',     '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
+#	my @fid_fields = qw (IMNUM GS_ID   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+#	my @fid_format = ( '%3d', '%12s',     '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
+	my @fid_fields = qw (TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+	my @fid_format = ( '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
+#	my @star_fields = qw (IMNUM GS_ID GS_ID   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+#	my @star_format = ( '%3d', "\\link_target{${acq_stat_lookup}%s,", '%12s}',     '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
+	my @star_fields = qw (   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+	my @star_format = ( '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
 
 	$table.= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu})\n";
-	$table.= sprintf "----------------------------------------------------------------------------------------\n";
-	$table.= sprintf " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW NOTES\n";
+	$table.= sprintf "---------------------------------------------------------------------------------------------\n";
+	$table.= sprintf " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES\n";
 #                      [ 4]  3   971113176   GUI  6x6   5.797   7.314   8.844  -2329  -2242   1   1   25  bcmp
-	$table.= sprintf "----------------------------------------------------------------------------------------\n";
+	$table.= sprintf "---------------------------------------------------------------------------------------------\n";
 	
 	
 	foreach my $i (1..16) {
@@ -1198,25 +1259,45 @@ sub print_report {
 	    #   Red if NOTES has a 'b' for bad class or if a guide star has bad color.
 	    my $color = ($c->{"GS_NOTES$i"} =~ /\S/) ? 'yellow' : '';
 	    $color = 'red' if ($c->{"GS_NOTES$i"} =~ /b/ || ($c->{"GS_NOTES$i"} =~ /c/ && $c->{"TYPE$i"} =~ /GUI|BOT/));
-	    
+
+	    if ($color){
+		$table .= ( $color eq 'red') ? $red_font_start :
+		    ( $color eq 'yellow') ? $yellow_font_start : qq{};
+	    }
 #	    $table.= "\\${color}_start " if ($color);
 	    $table.= sprintf "[%2d]",$i;
 #	    map { $table.= sprintf "$format[$_]", $c->{"$fields[$_]$i"} } (0 .. $#fields);
 	    # change from a map to a loop to get some conditional control, since PoorTextFormat can't seem to 
 	    # take nested \link_target when the line is colored green or red
+	    $table .= sprintf('%3d', $c->{"IMNUM${i}"});
+	    if ($c->{"GS_USEDBEFORE${i}"}){
+		my $idlength = length($c->{"GS_ID${i}"});
+		my $idpad_n = 12 - $idlength;
+		my $idpad;
+		while ($idpad_n > 0 ){
+		    $idpad .= " ";
+		    $idpad_n --;
+		}
+		$table .= sprintf("${idpad}<A HREF=\"%s%s\">%s</A>", $acq_stat_lookup, $c->{"GS_ID${i}"}, $c->{"GS_ID${i}"});
+#		$table .= sprintf("\\link_target{${acq_stat_lookup}%s,%12s}", $c->{"GS_ID${i}"}, $c->{"GS_ID${i}"});
+	    }
+	    else{
+		$table .= sprintf('%12s', $c->{"GS_ID${i}"});
+	    }
+	    
 	    for my $field_idx (0 .. $#fields){
 		my $curr_format = $format[$field_idx];
 #		if (($curr_format =~ /link_target/) and ($color)){
 #		    # turn off the color before the link
 #		    $curr_format = " \\${color}_end " . $curr_format;
 #		}
-		if (($curr_format eq '%12s}') and ($color)){
+#		if (($curr_format eq '%12s}') and ($color)){
 		    # turn the color back on after the link
-		    $curr_format = $curr_format . "\\${color}_start ";
-		}
+#		    $curr_format = $curr_format . "\\${color}_start ";
+#		}
 		$table .= sprintf($curr_format, $c->{"$fields[$field_idx]$i"});
 	    }
-	    $table.= "\\${color}_end " if ($color);
+	    $table.= $font_stop if ($color);
 	    $table.= sprintf "\n";
 	}
 
@@ -1232,30 +1313,68 @@ sub print_report {
 
 
     if (@{$self->{warn}}) {
-	$o .= "\\red_start\n";
+	$o .= "${red_font_start}";
 	foreach (@{$self->{warn}}) {
 	    $o .= $_;
 	}
-	$o .= "\\red_end ";
+	$o .= "${font_stop}";
     }
     if (@{$self->{yellow_warn}}) {
-	$o .= "\\yellow_start ";
+	$o .= "${yellow_font_start}";
 	foreach (@{$self->{yellow_warn}}) {
 	    $o .= $_;
 	}
-	$o .= "\\yellow_end\n";
+	$o .= "${font_stop}";
     }
     $o .= "\n";
+
     if (exists $self->{figure_of_merit}) {
 	my @probs = @{ $self->{figure_of_merit}->{cum_prob}};
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
-	$o .= "\\red_start " if $bad_FOM;
+	$o .= "$red_font_start" if $bad_FOM;
 	$o .= "Probability of acquiring 2,3, and 4 or fewer stars (10^x):\t";
-	foreach (2..4) { $o .= "$probs[$_]\t" };
+	foreach (2..4) { $o .= "$probs[$_]\t" }
+	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
-	$o .= "\\red_end " if $bad_FOM;
 	$o .= "Acquisition Stars Expected  : $self->{figure_of_merit}->{expected}\n";
     }
+
+    # cut little table for buttons for previous and next obsid
+    $o .= "</PRE></TD><TD VALIGN=TOP>\n";
+    if (defined $self->{prev}->{obsid} or defined $self->{next}->{obsid}){
+	$o .= " <TABLE WIDTH=43><TR>";
+	if (defined $self->{prev}->{obsid}){
+	    $o .= sprintf("<TD><A HREF=\"#obsid%s\"><img align=\"top\" src=\"%s/up.gif\" ></A></TD>", 
+			  $self->{prev}->{obsid},
+			  $self->{STARCHECK} );
+	    $o .= sprintf("<TD><A HREF=\"#obsid%s\">PREV</A> </TD>", $self->{prev}->{obsid});
+	}
+	else{
+	    $o .= sprintf("<TD><img align=\"top\" src=\"%s/up.gif\" ></TD>", 
+			  $self->{STARCHECK} );
+	    $o .= sprintf("<TD>PREV</TD>");
+	}
+	$o .= sprintf("<TD>&nbsp; &nbsp;</TD>");
+	if (defined $self->{next}->{obsid}){
+	    $o .= sprintf("<TD><A HREF=\"#obsid%s\"><img align=\"top\" src=\"%s/down.gif\" ></A></TD>", 
+			  $self->{next}->{obsid},
+			  $self->{STARCHECK} );
+	    $o .= sprintf("<TD><A HREF=\"#obsid%s\">NEXT</A> </TD>", $self->{next}->{obsid});
+	}
+	else{
+	    $o .= sprintf("<TD><img align=\"top\" src=\"%s/down.gif\" ></TD>", 
+			  $self->{STARCHECK} );
+	    $o .= sprintf("<TD>NEXT </TD>", $self->{next}->{obsid});
+	}
+	$o .= " </TR></TABLE>";
+
+    }
+ 
+    # end of whole obsid table
+    $o .= " </TD></TABLE>";
+
+
+
     return $o;
 }
 
@@ -1426,7 +1545,6 @@ sub identify_stars {
 	if (defined $self->{agasc_hash}{$gs_id}){
 	    my $star = $self->{agasc_hash}{$gs_id};
 
-
 	    # let's still confirm that the backstop yag zag is what we expect
 	    # from agasc and ra,dec,roll
 
@@ -1454,14 +1572,16 @@ sub identify_stars {
 	    $c->{"GS_POSERR$i"} = $star->{poserr};
 	    $c->{"GS_CLASS$i"} = $star->{class};
 	    $c->{"GS_ASPQ$i"} = $star->{aspq};
-	
+	    my $used_before = star_used_before( "$gs_id" );
+	    $c->{"GS_USEDBEFORE$i"} =  $used_before;
+#	    print "$gs_id has used_before = $used_before \n";
+
 	}
 	else{
 	    # This loop should just get the $gs_id eq '---' cases
 	    foreach my $star (values %{$self->{agasc_hash}}) {
 		if (abs($star->{yag} - $yag) < $ID_DIST_LIMIT
 		    && abs($star->{zag} - $zag) < $ID_DIST_LIMIT) {
-		    
 		    $c->{"GS_IDENTIFIED$i"} = 1;
 		    $c->{"GS_BV$i"} = $star->{bv};
 		    $c->{"GS_MAGERR$i"} = $star->{magerr};
@@ -1474,6 +1594,7 @@ sub identify_stars {
 		    $c->{"GS_MAG$i"} = sprintf "%8.3f", $star->{mag};
 		    $c->{"GS_YANG$i"} = $star->{yag};
 		    $c->{"GS_ZANG$i"} = $star->{zag};
+		    $c->{"GS_USEDBEFORE$i"} =  star_used_before( $star->{id} );
 		    last;
 		}
 	    }
@@ -1482,6 +1603,52 @@ sub identify_stars {
 	}
     }
 }
+
+#############################################################################################
+sub star_used_before {
+#############################################################################################
+    my $star_id = shift;
+
+ #   print "id is $star_id ";
+
+    use Ska::DatabaseUtil qw{ sql_connect };
+
+    my %config = ( 'db_connect_info' => 'sybase-aca-aca_read');
+
+    # by default, use the link
+    my $used_before = 1;
+    
+  #  return $used_before if ($db_unavailable);
+
+    eval{
+	if (not defined $db_handle){
+	    $db_handle = sql_connect( $config{db_connect_info} );
+	}    
+	my $query = qq{ select count(id) from starcheck_catalog where type != 'FID' and id = $star_id };
+	my $sqlh = $db_handle->prepare($query);
+	$sqlh->execute();
+	my $id_count = $sqlh->fetchrow_array;
+	if ($id_count > 0){
+	    $used_before = 1;
+	}
+	else{
+	    $used_before = 0;
+	}
+    };
+    if ($@){
+	# if we get db errors, let's stop trying
+	$db_unavailable = 1;
+    }
+
+
+    return $used_before;
+
+
+}
+
+
+
+
 #############################################################################################
 sub plot_stars {
 ##  Make a plot of the field
@@ -1526,9 +1693,10 @@ sub plot_stars {
     pgpage();
     pgsch(1.2);
     pgvsiz (0.5, 4.5, 0.5, 4.5);
-    pgswin (-2900,2900,-2900,2900);
+    pgswin (2900,-2900,-2900,2900);
     pgbox  ('BCNST', 0.0, 0, 'BCNST', 0.0, 0);
     pglabel("Yag (arcsec)","Zag (arcsec)","Stars at RA=$self->{ra} Dec=$self->{dec} Roll=$self->{roll}");	# Labels
+    pgtext(1900, 2975, "Yag Axis now matches SAUSAGE/SKY");
     box(0,0,2560,2560);
     box(0,0,2600,2560);
 
@@ -1562,8 +1730,10 @@ sub plot_stars {
 	my $x = $c->{"YANG$i"};
 	my $y = $c->{"ZANG$i"};
 	pgsci($sym_color{$c->{"TYPE$i"}});             # Change colour
-	pgpoint(1, $x, $y, $sym_type{$c->{"TYPE$i"}}) if ($c->{"TYPE$i"} eq 'FID'); # Make open (fid)
-	if ($c->{"TYPE$i"} =~ /(BOT|ACQ)/) {           # Plot search box
+	if ($c->{"TYPE$i"} eq 'FID'){ # Make open (fid)
+	    pgpoint(1, $x, $y, $sym_type{$c->{"TYPE$i"}});
+	}
+       	if ($c->{"TYPE$i"} =~ /(BOT|ACQ)/) {           # Plot search box
 	    box($x, $y, $c->{"HALFW$i"}, $c->{"HALFW$i"});
 	}
 	if ($c->{"TYPE$i"} =~ /MON/) {             # Plot monitor windows double size for visibility
@@ -1574,7 +1744,7 @@ sub plot_stars {
 	}
 	pgsch(1.2);
 	pgsci(2);
-	pgtext($x+150, $y, "$i");
+	pgtext($x-150, $y, "$i");
     }
 
     pgsci(8);			# Orange for size key
@@ -1590,6 +1760,8 @@ sub plot_stars {
     rename "pgplot.gif", $self->{plot_file};
 #    print STDERR "Created star chart $self->{plot_file}\n";
 }
+
+
 
 #############################################################################################
 sub plot_star_field {
@@ -1627,7 +1799,7 @@ sub plot_star_field {
     pgpage();
     pgsch(1.2);
     pgvsiz (0.2, 2.5, 0.2, 2.5);
-    pgswin (-2900,2900,-2900,2900);
+    pgswin (2900,-2900,-2900,2900);
     pgbox  ('BCNST', 0.0, 0, 'BCNST', 0.0, 0);
 #    pglabel("Yag (arcsec)","Zag (arcsec)","Stars at RA=$self->{ra} Dec=$self->{dec} Roll=$self->{roll}");	# Labels
 #    box(0,0,2560,2560);
@@ -1657,6 +1829,107 @@ sub plot_star_field {
     rename "pgplot.gif", $self->{plot_field_file};
 #    print STDERR "Created star chart $self->{plot_file}\n";
 }
+
+#############################################################################################
+sub plot_compass{
+#############################################################################################
+
+    eval 'use PGPLOT';
+    if ($@){
+        croak(__PACKAGE__ .": !$@");
+    }
+
+    my $self = shift;
+    $self->{compass_file} = shift;
+    
+    # Setup pgplot
+    my $dev = "/vgif"; # unless defined $dev;  # "?" will prompt for device
+    pgbegin(0,$dev,1,1);  # Open plot device 
+    pgpap(1.8, 1.0);
+    pgscf(1);             # Set character font
+    pgscr(0, 1.0, 1.0, 1.0);
+    pgscr(1, 0.0, 0.0, 0.0);
+#   pgslw(2);
+
+
+    # Define data limits and plot axes
+    pgpage();
+    pgsch(1.2);
+    pgvsiz (0.1, 1.7, 0.1, 1.7);
+    pgswin (2900,-2900,-2900,2900);
+    pgbox  ('BCNST', 0.0, 0, 'BCNST', 0.0, 0);
+
+
+
+    my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
+#    use Data::Dumper;
+#    print Dumper $q_aca;
+
+    my $plotrad = 1750/3600.;
+    my $testrad = 1/3600;
+
+    my ($ra_angle, $dec_angle);
+    my ($ra_diff, $dec_diff);
+
+    # Let's walk around a circle and find the points that have the biggest decrease in
+    # RA and Dec from the focus of the circle
+    for my $point ( 0 ... 360){
+	my $rad = ($point/360) * (2* 3.14159);
+	$ra_angle = $rad if not defined $ra_angle;
+	$dec_angle = $rad if not defined $dec_angle;
+	my $yag = $testrad * -1 * sin($rad);
+	my $zag = $testrad * cos($rad);
+#	print "(yag= $yag,zag= $zag ) \n";
+	my ($point_ra, $point_dec) = Quat::yagzag2radec( $yag, $zag, $q_aca);
+#	print "(ra=$point_ra, dec=$point_dec) \n";
+	my $point_ra_diff = $point_ra - $self->{ra};
+	my $point_dec_diff = $point_dec - $self->{dec};
+	$ra_diff = $point_ra_diff if not defined $ra_diff;
+	$dec_diff = $point_dec_diff if not defined $dec_diff;
+	if ( $point_ra_diff > $ra_diff ){
+	    $ra_diff = $point_ra_diff;
+	    $ra_angle = $rad;
+	}
+	if ($point_dec_diff > $dec_diff ){
+	    $dec_diff = $point_dec_diff;
+	    $dec_angle = $rad;
+	}
+    }
+
+#    print "$ra_angle $dec_angle \n";
+    pgarro( 0, 0, $plotrad * 3600 * -1 * sin($ra_angle), $plotrad * 3600 * cos($ra_angle) );
+    pgarro( 0, 0, $plotrad * 3600 * -1 * sin($dec_angle),  $plotrad * 3600 * cos($dec_angle) );
+
+    # pgptxt has angle increasing counter-clockwise, so let's convert to deg and flip it around
+    my $text_angle = ( 360 - (( $dec_angle / (2 * 3.14159)) * 360))  ;
+    my $text_offset = 200/3600.;
+
+    pgsch(3);             # Set character font
+
+    pgptxt( ($plotrad + $text_offset ) * 3600 * -1 * sin($ra_angle), 
+	    ($plotrad + $text_offset ) * 3600 * cos($ra_angle), $text_angle, 0.5, 
+	    'E' );
+    pgptxt( ($plotrad + $text_offset ) * 3600 * -1 * sin($dec_angle), 
+	    ($plotrad + $text_offset ) * 3600 * cos($dec_angle), $text_angle, 0.5, 
+	    'N' );
+
+#    pgline( 2, [@Nx], [@Ny] );
+#    pgline( 2, @Ex, @Ey );
+
+#    use Data::Dumper;
+#    print Dumper @Nx;
+#    print Dumper @Ex;
+
+
+
+
+    pgend();				# Close plot
+    
+    rename "pgplot.gif", $self->{compass_file};
+
+
+}
+
 
 #############################################################################################
 sub quat2radecroll {
@@ -1709,7 +1982,7 @@ sub time2date {
 # Date format:  1999:260:03:30:01.542
     my $time = shift;
     my $t1998 = @_ ? 0.0 : 883612736.816; # 2nd argument implies Unix time not CXC time
-    my $floor_time = floor($time+$t1998);
+    my $floor_time = POSIX::floor($time+$t1998);
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($floor_time);
 
     return sprintf ("%04d:%03d:%02d:%02d:%06.3f",

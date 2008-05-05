@@ -18,7 +18,7 @@ BIN = $(SRC)/starcheck.pl
 STANDALONE_BIN = $(SRC)/starcheck
 GEN_LIB = $(SRC)/Parse_CM_File.pm
 LIB = $(SRC)/Obsid.pm $(SRC)/FigureOfMerit.pm $(SRC)/Dark_Cal_Checker.pm
-DATA = $(SRC)/ACABadPixels $(SRC)/agasc.bad $(SRC)/fid_CHARACTERIS_JUL01 $(SRC)/$(FID_CHARACTERISTICS) $(SRC)/characteristics.yaml $(SRC)/A.tlr $(SRC)/B.tlr $(SRC)/tlr.cfg
+DATA = $(SRC)/ACABadPixels $(SRC)/agasc.bad $(SRC)/fid_CHARACTERIS_JUL01 $(SRC)/$(FID_CHARACTERISTICS) $(SRC)/characteristics.yaml $(SRC)/A.tlr $(SRC)/B.tlr $(SRC)/tlr.cfg $(ROOT_FLIGHT)/data/starcheck/bad_gui_stars.rdb $(SRC)/up.gif $(SRC)/down.gif
 
 
 #ICXC_STARCHECK = "https://icxc.harvard.edu/mta/ASPECT/tool_doc/starcheck_php_doc_tmp"
