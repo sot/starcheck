@@ -105,7 +105,7 @@ usage( 1 )
 
 # Find backstop, guide star summary, OR, and maneuver files.  Only backstop is required
 
-my $mp_top_link = guess_mp_toplevel(abs_path($par{dir}));
+
 
 my %input_files = ();
 
@@ -130,9 +130,9 @@ else{
     $config_file = get_file("$Starcheck_Data/characteristics.yaml*", 'config', 'required');
 }
 
-
-
-
+my $config_ref = YAML::LoadFile($config_file);
+my $mp_top_link = guess_mp_toplevel({ path => abs_path($par{dir}), 
+				      config => $config_ref });
 
 
 my $odb_file; 
@@ -285,7 +285,7 @@ Ska::Starcheck::Obsid::setcolors({ red => $red_font_start,
 my %odb = Ska::Parse_CM_File::odb($odb_file);
 Ska::Starcheck::Obsid::set_odb(%odb);
 
-my $config_ref = YAML::LoadFile($config_file);
+
 Ska::Starcheck::Obsid::set_config($config_ref);
 
 # Read Maneuver error file containing more accurate maneuver errors
@@ -350,7 +350,8 @@ for my $i (0 .. $#cmd) {
     # If obsid hasn't been seen before, create obsid object
 
     unless ($obs{$obsid}) {
-	push @obsid_id, $obsid;	$obs{$obsid} = Ska::Starcheck::Obsid->new($obsid, $date[$i]);
+	push @obsid_id, $obsid;	
+	$obs{$obsid} = Ska::Starcheck::Obsid->new($obsid, $date[$i]);
     }
 
     # Add the command to the correct obs object
@@ -402,12 +403,24 @@ foreach my $oflsid (keys %guidesumm){
 }
 
 
+HAS_GUIDE:
 foreach my $oflsid (@obsid_id){
+
     if (defined $guidesumm{$oflsid}){
 	$obs{$oflsid}->add_guide_summ($oflsid, \%guidesumm);
     }
     else {
-	push @{$obs{$oflsid}->{warn}}, sprintf(">> WARNING: No Guide Star Summary for :$oflsid: \n");			
+	my $obsid = $obs{$oflsid}->{obsid};
+	if (defined $config_ref->{no_starcat_oflsid}){
+            my @no_starcats = @{$config_ref->{no_starcat_oflsid}};
+            for my $ofls_string (@no_starcats){
+                if ( $oflsid =~ /$ofls_string/){
+		    push @{$obs{$oflsid}->{yellow_warn}}, sprintf(">> WARNING: No Guide Star Summary for obsid $obsid ($oflsid). OK for '$ofls_string' ER. \n");
+		    next HAS_GUIDE;
+		}
+            }
+        }
+	push @{$obs{$oflsid}->{warn}}, sprintf(">> WARNING: No Guide Star Summary for obsid $obsid ($oflsid). \n");			
     }
 	
 }
@@ -636,11 +649,13 @@ open (my $OUT, "> $make_stars") or die "Couldn't open $make_stars for writing\n"
 foreach my $obsid (@obsid_id) {
     my $c = $obs{$obsid};
     my $format = ($c->{obsid} =~ /^[0-9]+$/) ? "%05d" : "%s";
-    printf $OUT "../make_stars.pl -starcat starcat.dat.$format", $c->{obsid};
-    print $OUT " -ra $c->{ra} -dec $c->{dec} -roll $c->{roll} ";
-    print $OUT "-sim_z $c->{SIM_OFFSET_Z} " if ($c->{SIM_OFFSET_Z});
-    print $OUT "-si $c->{SI} " if ($c->{SI});
-    print $OUT "\n";
+    if ( (defined $c->{ra}) and (defined $c->{dec}) and (defined $c->{roll})){
+	printf $OUT "../make_stars.pl -starcat starcat.dat.$format", $c->{obsid};
+	print $OUT " -ra $c->{ra} -dec $c->{dec} -roll $c->{roll} ";
+	print $OUT "-sim_z $c->{SIM_OFFSET_Z} " if ($c->{SIM_OFFSET_Z});
+	print $OUT "-si $c->{SI} " if ($c->{SI});
+	print $OUT "\n";
+    }
 }
 close($OUT);
 
@@ -736,7 +751,7 @@ sub dark_cal_print{
 		     html => 1,
 		     );
 
-    io("$out_dir/dark_cal_verbose.html")->print(format_dark_cal_out( \%run_options ));
+    io("${out_dir}/dark_cal_verbose.html")->print(format_dark_cal_out( \%run_options ));
 
     %run_options = ( dark_cal_checker => $dark_cal_checker,
 		     verbose => 1,
@@ -745,7 +760,7 @@ sub dark_cal_print{
 		     );
 
 
-    io("$out_dir/dark_cal_super_verbose.html")->print(format_dark_cal_out( \%run_options ));
+    io("${out_dir}/dark_cal_super_verbose.html")->print(format_dark_cal_out( \%run_options ));
 
     %run_options = ( dark_cal_checker => $dark_cal_checker,
 		     verbose => 0,
@@ -754,8 +769,8 @@ sub dark_cal_print{
 		     );
 
     my $out;
-    $out .= "<A HREF=\"$out_dir/dark_cal_verbose.html\">VERBOSE</A> ";
-    $out .= "<A HREF=\"link_target{$out_dir/dark_cal_super_verbose.html\">SUPERVERBOSE</A>\n";
+    $out .= "<A HREF=\"${out_dir}/dark_cal_verbose.html\">VERBOSE</A> ";
+    $out .= "<A HREF=\"${out_dir}/dark_cal_super_verbose.html\">SUPERVERBOSE</A>\n";
     $out .= format_dark_cal_out( \%run_options );
 
     return $out;
@@ -825,9 +840,21 @@ sub format_dark_cal_out{
 sub guess_mp_toplevel{
 ##***************************************************************************
 
-    my $source_dir = shift;
+    # figure out the "week" based on the path, and make a URL to point to the 
+    # lookup cgi as defined in the config at paths->week_lookup
 
-    my $lookup_cgi = 'https://icxc.harvard.edu/cgi-bin/aspect/starcheck/find_shortterm.cgi';
+    my $arg_ref = shift;
+    my $source_dir = $arg_ref->{path};
+    my $config = $arg_ref->{config};
+
+    my $lookup_cgi;
+    if (defined $config->{paths}->{week_lookup}){
+	$lookup_cgi = $config->{paths}->{week_lookup};
+    }
+    else{
+	return undef;
+    }
+
 
     if ($source_dir =~ /.*\/\d{4}\/(\w{3}\d{4})\/ofls(\w+)/){
 	my $week = $1;

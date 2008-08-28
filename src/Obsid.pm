@@ -266,11 +266,11 @@ sub set_target {
     my $manvr = find_command($self, "MP_TARGQUAT", -1); # Find LAST TARGQUAT cmd
     ($self->{ra}, $self->{dec}, $self->{roll}) = 
 	$manvr ? quat2radecroll($manvr->{Q1}, $manvr->{Q2}, $manvr->{Q3}, $manvr->{Q4})
-	    : (0.0, 0.0, 0.0);	   
+	    : (undef, undef, undef);	   
 
-    $self->{ra} = sprintf("%.6f", $self->{ra});
-    $self->{dec} = sprintf("%.6f", $self->{dec});
-    $self->{roll} = sprintf("%.6f", $self->{roll});
+    $self->{ra} = defined $self->{ra} ? sprintf("%.6f", $self->{ra}) : undef;
+    $self->{dec} = defined $self->{dec} ? sprintf("%.6f", $self->{dec}) : undef;
+    $self->{roll} = defined $self->{roll} ? sprintf("%.6f", $self->{roll}) : undef;
 
 }
 
@@ -692,15 +692,56 @@ sub check_star_catalog {
 	$dither = 20.0;
     }
 
-    # Set slew error (arcsec) for this obsid, or 120 if not available
-    my $targquat = find_command($self, "MP_TARGQUAT", -1);
-    my $slew_err = $targquat->{man_err} || 120;
+ 
+#    my $targquat = find_command($self, "MP_TARGQUAT", -1);
+#    my $slew_err = $targquat->{man_err} || 120;
 
     my @warn = ();
     my @yellow_warn = ();
     
+   # Set slew error (arcsec) for this obsid, or 120 if not available 
+    my $slew_err;
+    my $targquat;
+    if ($targquat = find_command($self, "MP_TARGQUAT", -1)){
+	$slew_err = $targquat->{man_err};
+    }
+    else{
+	$slew_err = 120;
+	
+	my $oflsid = $self->{dot_obsid};
+	my $obsid = $self->{obsid};
+	my $ok_bad_string;
+	if (defined $config{no_starcat_oflsid}){
+	    my @no_starcats = @{$config{no_starcat_oflsid}};
+	    for my $ofls_string (@no_starcats){
+		if ( $oflsid =~ /$ofls_string/){
+		    $ok_bad_string = $ofls_string;
+		}
+	    }
+	}
+	if (defined $ok_bad_string){
+	    push @{$self->{yellow_warn}}, "$alarm No target/maneuver for obsid $obsid ($oflsid). OK for '$ok_bad_string' ER. \n";		    
+	}
+	else{
+	    push @{$self->{warn}}, "$alarm No target/maneuver for obsid $obsid ($oflsid). \n";		    
+	}
+    }
+
+	    
+
     unless ($c = find_command($self, "MP_STARCAT")) {
-	push @{$self->{warn}}, "$alarm No star catalog\n";
+	my $oflsid = $self->{dot_obsid};
+	my $obsid = $self->{obsid};
+	if (defined $config{no_starcat_oflsid}){
+	    my @no_starcats = @{$config{no_starcat_oflsid}};
+	    for my $ofls_string (@no_starcats){
+		if ( $oflsid =~ /$ofls_string/){
+		    push @{$self->{yellow_warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). OK for '$ofls_string' ER. \n";		    
+		    return;
+		}
+	    }
+	}
+	push @{$self->{warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). \n";		    
 	return;
     }
 
@@ -1183,7 +1224,9 @@ sub print_report {
     $o .= sprintf ("%-22s %-6s SIM Z offset:%-5d (%-.2fmm) Grating: %-5s", $target_name, $self->{SI}, 
 		   $self->{SIM_OFFSET_Z},  ($self->{SIM_OFFSET_Z})*1000*($odb{"ODB_TSC_STEPS"}[0]), $self->{GRATING}) if ($target_name);
     $o .= sprintf "${font_stop}\n";
-    $o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
+    if ( ( defined $self->{ra} ) and (defined $self->{dec}) and (defined $self->{roll})){
+	$o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
+    }
     if ( defined $self->{DITHER_ON} && $self->{obsid} < 50000 ) {
 	$o .= sprintf "Dither: %-3s ",$self->{DITHER_ON};
 	$o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f",
@@ -1451,9 +1494,9 @@ sub get_agasc_stars {
 
     my $self = shift;
     my $AGASC_DIR = shift;
-    my $c = find_command($self, "MP_TARGQUAT");
+    my $c;
+    return unless ($c = find_command($self, "MP_TARGQUAT"));
     
-
     my $agasc_region;
 
     eval{
@@ -1840,6 +1883,8 @@ sub plot_compass{
     }
 
     my $self = shift;
+    my $c;
+    return unless ($c = find_command($self, 'MP_STARCAT'));
     $self->{compass_file} = shift;
     
     # Setup pgplot

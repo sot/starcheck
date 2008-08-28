@@ -548,7 +548,7 @@ sub verifyMM{
 
     # seconds
     my $mtime_slop = 1;
-    my $mmode_to_manvr = 10;
+#    my $mmode_to_manvr = 10;
 
     my $mm_file = shift;
     my $bs_file = shift;
@@ -585,15 +585,20 @@ sub verifyMM{
 	    # I suppose I don't need to store the AOMANUVR times in the hash... 
 	    if ($params{TLMSID} eq 'AOMANUVR'){
 		my %manvr = %quat;
-		$manvr{start_date} = $last_aonmmode->{date};
-		$manvr{tstart} = date2time($last_aonmmode->{date});
-		$manvr{aomanuvr_date} = $bs_entry->{date};
-		$manvr{aomanuvr_time} = date2time($bs_entry->{date});
-		my $dtime = $manvr{aomanuvr_time} - $manvr{tstart};
-		# Check to confirm that the time between AONMMODE and AOMANUVR is reasonable
-		if (( $dtime > $mmode_to_manvr + $mtime_slop) or ($dtime < $mmode_to_manvr - $mtime_slop)){
-		    push @errors, "Maneuver at $bs_entry->{date} has non-standard timing, \n ( time from AONMMODE to AOMANUVR is $dtime instead of $mmode_to_manvr )\n";
-		}   
+		$manvr{start_date} = $bs_entry->{date};
+		$manvr{tstart} = date2time($bs_entry->{date});
+#		$manvr{start_date} = $last_aonmmode->{date};
+#		$manvr{tstart} = date2time($last_aonmmode->{date});
+#		$manvr{aomanuvr_date} = $bs_entry->{date};
+#		$manvr{aomanuvr_time} = date2time($bs_entry->{date});
+#		my $dtime = $manvr{aomanuvr_time} - $manvr{tstart};
+
+# cut this check because it is no longer reasonable
+
+#		# Check to confirm that the time between AONMMODE and AOMANUVR is reasonable
+#		if (( $dtime > $mmode_to_manvr + $mtime_slop) or ($dtime < $mmode_to_manvr - $mtime_slop)){
+#		    push @errors, "Maneuver at $bs_entry->{date} has non-standard timing, \n ( time from AONMMODE to AOMANUVR is $dtime instead of $mmode_to_manvr )\n";
+#		}   
 		
 		push @bsmm, \%manvr;
 		%quat = ();
@@ -609,8 +614,8 @@ sub verifyMM{
 
     for my $i (0 .. $#mm){
 
-	if ( $mm[$i]->{tstart} != $bsmm[$i]->{tstart} ){
-	    push @errors, "Time mismatch at maneuver at $mm[$i]->{start_date} in maneuver summary\n";
+	if ( abs($mm[$i]->{tstart} - $bsmm[$i]->{tstart}) > $mtime_slop ){
+	    push @errors, "Parse_CM_File::verifyMM; backstop mtstart $bsmm[$i]->{start_date} vs maneuver summary mtstart $mm[$i]->{start_date} \n";
 	}
 
 	my $mm_quat = Quat->new( $mm[$i]->{q1}, $mm[$i]->{q2}, $mm[$i]->{q3}, $mm[$i]->{q4});
@@ -653,6 +658,7 @@ sub MM {
         $ret_type = $arg_ref->{ret_type};
     }
 
+    my $manvr_padding = 10; # seconds
 
     my @mm_array;
 
@@ -695,6 +701,12 @@ sub MM {
         $manvr_hash{tstart} = date2time($manvr_hash{start_date});
         $manvr_hash{tstop} = date2time($manvr_hash{stop_date});
 
+	# let's edit those times to get rid of the arbitrary 10 sec padding
+	$manvr_hash{tstart} += $manvr_padding;
+	$manvr_hash{start_date} = time2date($manvr_hash{tstart});
+	$manvr_hash{tstop} += $manvr_padding;
+	$manvr_hash{stop_date} = time2date($manvr_hash{tstop});
+	
 
         # clean up obsids
         if (defined $manvr_hash{initial_obsid}){
@@ -876,7 +888,7 @@ sub SOE {
 	    }
 	    $p += $rlen{$typ};
 	} else {
-	    die "Parse_CM_File::SOE: Cannot identify record of type $typ\n";
+	    die "Parse_CM_File::SOE: Cannot identify record of type $typ\n ";
 	}
     }
     
@@ -1112,3 +1124,11 @@ CMT odb_comment_file 80 1 1
 ERR odb_rec_type 3 1 1
 ERR odb_obs_id 8 1 1
 ERR odb_comment_file 80 1 1
+SIR odb_rec_type 3 1 1
+SIR odb_instance_num 2 1 1
+SIR odb_req_id 8 1 1
+SIR odb_obs_id 5 1 1
+SIR odb_obs_start_time 21 1 1
+SIR odb_obs_end_time 21 1 1
+SIR odb_obs_dur 17 1 1
+SIR odb_obs_dur_extra 17 1 1
