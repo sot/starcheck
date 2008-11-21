@@ -1192,7 +1192,7 @@ LAN environment.</P>
 		</TD>
 		<TD COLSPAN=5 WIDTH=400>
 			<P >Monitor window is not set to
-			convert-to-track</P>
+			convert-to-track (unless flickering pixel ER)</P>
 		</TD>
 		<TD WIDTH=92>
 			<P ALIGN=CENTER>n/a</P>
@@ -1215,7 +1215,9 @@ LAN environment.</P>
 		</TD>
 		<TD COLSPAN=5 WIDTH=400>
 			<P >Designated Tracked Star
-			(DTS) image slot must contain a guide star</P>
+			(DTS) image slot must contain a guide star
+                        (unless flickering pixel ER)
+                </P>
 		</TD>
 		<TD WIDTH=92>
 			<P ALIGN=CENTER>n/a</P>
@@ -1245,6 +1247,29 @@ LAN environment.</P>
 		</TD>
 		<TD WIDTH=144>
 			<P>Failure to track</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=52>
+			<P>ACA-<?php 
+			$aca_count_string = sprintf("%03d",$aca_count);
+			echo $aca_count_string;  
+			$aca_count++;
+			?>
+			</P>
+		</TD>
+		<TD WIDTH=127>
+			<P >Monitor commanding</P>
+		</TD>
+		<TD COLSPAN=5 WIDTH=400>
+			<P >Requested monitor star in OR exists in star catalog
+		</P>
+		</TD>
+		<TD WIDTH=92>
+			<P ALIGN=CENTER>n/a</P>
+		</TD>
+		<TD WIDTH=144>
+			<P>Failure to meet science goal</P>
 		</TD>
 	</TR>
 	<TR>

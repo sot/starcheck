@@ -11,15 +11,12 @@ package Ska::Parse_CM_File;
 
 use strict;
 use warnings; 
-#use diagnostics;
 use POSIX qw( ceil);
-#use lib '/proj/sot/ska/lib/site_perl';
 use Ska::Convert qw(date2time time2date);
 
 use Time::JulianDay;
 use Time::DayOfYear;
 use Time::Local;
-#use IO::File;
 use IO::All;
 use Carp;
 
@@ -45,15 +42,17 @@ sub TLR_load_segments{
     my @tlr = io($tlr_file)->slurp;
 
     my @segment_start_lines = grep /START\sOF\sNEW\sOBC\sLOAD,\sCL\d{3}:\d{4}/, @tlr;
-    
+
     for my $line (@segment_start_lines){
-	if ( $line =~ /(\d{4}:\d{3}:\d{2}:\d{2}:\d{2}\.\d{3})/ ){
-	    my $time = $1;
-	    push @segment_times, $time;
-	}
+        if ( $line =~ /(\d{4}:\d{3}:\d{2}:\d{2}:\d{2}\.\d{3})\s+START\sOF\sNEW\sOBC\sLOAD,\s(CL\d{3}\:\d{4})/ ){
+            my $time = $1;
+            my $seg_id = $2;
+            push @segment_times, { date => $time, seg_id => $seg_id };
+        }
+
     }
 
-
+    
     return @segment_times;
 
 }
@@ -76,7 +75,7 @@ sub dither {
     # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
 	if ($bs->{cmd} eq 'COMMAND_SW') {
-	    my %params = parse_params($bs->{params});
+	    my %params = %{$bs->{command}};
 	    if ($params{TLMSID} =~ 'AO(DS|EN)DITH') {
 		push @bs_state, $dith_cmd{$1};
 		push @bs_time, $bs->{time};  # see comment below about timing
@@ -185,7 +184,7 @@ sub get_fid_actions {
     # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
 	if ($bs->{cmd} eq 'COMMAND_HW') {
-	    my %params = parse_params($bs->{params});
+	    my %params = %{$bs->{command}};
 	    if ($params{TLMSID} eq 'AFIDP') {
 		my $msid = $params{MSID};
 		push @bs_action, "$msid FID $1 ON" if ($msid =~ /AFLC(\d+)/);
@@ -298,16 +297,20 @@ sub backstop {
     while (<$BACKSTOP>) {
 	my ($date, $vcdu, $cmd, $params) = split '\s*\|\s*', $_;
 	$vcdu =~ s/ +.*//; # Get rid of second field in vcdu
+	my %command = parse_params($params);
 	push @bs, { date => $date,
 		    vcdu => $vcdu,
 		    cmd  => $cmd,
 		    params => $params,
-		    time => date2time($date) };
+		    time => date2time($date),
+		    command => \%command,
+		};
     }
     close $BACKSTOP;
     
     return @bs;
 }
+
 
 ###############################################################
 sub DOT {
@@ -315,37 +318,55 @@ sub DOT {
     my $dot_file = shift;
 
     # Break DOT down into commands, each with a unique ID (with index)
-    
+
     my %command;
     my %index;
     my %dot;
-    my $touched_by_sausage = 0; 
+    my %linenum;
+    my $touched_by_sausage = 0;
+
 
     open (my $DOT, $dot_file) || die "Couldn't open DOT file $dot_file\n";
-    while (<$DOT>) {
-	chomp;
-	next unless (/\S/);
-	if ( /MTLB/ ){
-	    $touched_by_sausage = 1;
-	}
-	my ($cmd, $id) = /(.+) +(\S+)....$/;
-	$index{$id} = "0001" unless (exists $index{$id});
-	$cmd =~ s/\s+$//;
-	$command{"$id$index{$id}"} .= $cmd;
-	$index{$id} = sprintf("%04d", $index{$id}+1) unless ($cmd =~ /,$/);
+    while ( <$DOT> ) {
+        chomp;
+        next unless (/\S/);
+        if ( /MTLB/ ){
+            $touched_by_sausage = 1;
+        }
+        my ($cmd, $id) = /(.+) +(\S+)....$/;
+        $index{$id} = "0001" unless (exists $index{$id});
+        $cmd =~ s/\s+$//;
+        my $id_index = "$id$index{$id}";
+        $command{$id_index} .= $cmd;
+        $linenum{$id_index} = $. unless exists $linenum{$id_index}; # Perl file line number for <..>
+
+        # If there is no continuation character "," then DOT command is complete
+        $index{$id} = sprintf("%04d", $index{$id}+1) unless ($cmd =~ /,$/);
+
     }
     close $DOT;
 
     foreach (keys %command) {
-	%{$dot{$_}} = parse_params($command{$_});
-	$dot{$_}{time}  = date2time($dot{$_}{TIME})     if ($dot{$_}{TIME});
-	$dot{$_}{time} += date2time($dot{$_}{MANSTART}) if ($dot{$_}{TIME} && $dot{$_}{MANSTART});
-	$dot{$_}{cmd_identifier} = "$dot{$_}{anon_param1}_$dot{$_}{anon_param2}"
-	    if ($dot{$_}{anon_param1} and $dot{$_}{anon_param2});
-    } 
-    return (\%dot, $touched_by_sausage);
+        %{$dot{$_}} = parse_params($command{$_});
+        $dot{$_}{time}  = date2time($dot{$_}{TIME})     if ($dot{$_}{TIME});
+        $dot{$_}{time} += date2time($dot{$_}{MANSTART}) if ($dot{$_}{TIME} && $dot{$_}{MANSTART});
+        $dot{$_}{cmd_identifier} = "$dot{$_}{anon_param1}_$dot{$_}{anon_param2}"
+            if ($dot{$_}{anon_param1} and $dot{$_}{anon_param2});
+        $dot{$_}{linenum} = $linenum{$_};
+        ($dot{$_}{oflsid}) = /^\S0*(\S+)\S{4}/;  # This will always succeed
+        $dot{$_}{id} = $_;
+        $dot{$_}{command} = $command{$_};
+    }
+
+    # Generate list of DOT cmd structures ordered by line number
+    my @ordered_dot = sort { $a->{linenum} <=> $b->{linenum} } values %dot;
+
+    return (\%dot, $touched_by_sausage, \@ordered_dot);
+
 
 }
+
+
 
 
 ##***************************************************************************
@@ -477,7 +498,7 @@ sub OR_parse_obs {
     $obs{obsid} = 0+$1 if (/ID=(\d+),/);
     ($obs{TARGET_RA}, $obs{TARGET_DEC}) = ($1, $2)
 	if (/TARGET=\(([^,]+),([^,\)]+)/);
-    ($obs{MON_RA}, $obs{MON_DEC}) = ($1, $2)
+    ($obs{MON_RA}, $obs{MON_DEC}, $obs{HAS_MON}) = ($1, $2, 1)
 	if (/STAR=\(([^,]+),([^,\)]+)/);
     $obs{TARGET_NAME} = $3
 	if (/TARGET=\(([^,]+),([^,]+),\s*\{([^\}]+)\}\),/);
@@ -533,110 +554,6 @@ sub PS {
 }
 
     
-###############################################################
-sub verifyMM{
-###############################################################
-# use the backstop to confirm the times and quaternions in the 
-# maneuver summary
-
-# Only load Quat if needed
-    eval 'use Quat';
-
-
-    # arcseconds
-    my $radial_dist_thresh = .1;
-
-    # seconds
-    my $mtime_slop = 1;
-#    my $mmode_to_manvr = 10;
-
-    my $mm_file = shift;
-    my $bs_file = shift;
-
-    my @mm = MM({ file => $mm_file, ret_type => 'array'});
-
-    my @bs = backstop($bs_file);
-
-    my @bsmm;
-
-    my @errors;
-
-    my $last_aonmmode;
-    my %quat;
-
-    for my $bs_entry (@bs){
-	my %params = Ska::Parse_CM_File::parse_params($bs_entry->{params});
-	if (defined $params{TLMSID}){
-	    # times in the maneuver summary seem to be keyed off the AONMMODE backstop times
-	    # so we'll save those entries.
-	    if ($params{TLMSID} eq 'AONMMODE'){
-		$last_aonmmode = $bs_entry;
-	    }
-	    if ($bs_entry->{cmd} eq 'MP_TARGQUAT'){
-		%quat = (
-			  q1 => $params{Q1},
-			  q2 => $params{Q2},
-			  q3 => $params{Q3},
-			  q4 => $params{Q4},
-			  );
-	    }
-	    # I store the most recent quat and the times of the most recent AONMMODE
-	    # when I hit the actual maneuver
-	    # I suppose I don't need to store the AOMANUVR times in the hash... 
-	    if ($params{TLMSID} eq 'AOMANUVR'){
-		my %manvr = %quat;
-		$manvr{start_date} = $bs_entry->{date};
-		$manvr{tstart} = date2time($bs_entry->{date});
-#		$manvr{start_date} = $last_aonmmode->{date};
-#		$manvr{tstart} = date2time($last_aonmmode->{date});
-#		$manvr{aomanuvr_date} = $bs_entry->{date};
-#		$manvr{aomanuvr_time} = date2time($bs_entry->{date});
-#		my $dtime = $manvr{aomanuvr_time} - $manvr{tstart};
-
-# cut this check because it is no longer reasonable
-
-#		# Check to confirm that the time between AONMMODE and AOMANUVR is reasonable
-#		if (( $dtime > $mmode_to_manvr + $mtime_slop) or ($dtime < $mmode_to_manvr - $mtime_slop)){
-#		    push @errors, "Maneuver at $bs_entry->{date} has non-standard timing, \n ( time from AONMMODE to AOMANUVR is $dtime instead of $mmode_to_manvr )\n";
-#		}   
-		
-		push @bsmm, \%manvr;
-		%quat = ();
-	    }
-	}
-	
-    }
-
-
-    if (scalar(@mm) != scalar(@bsmm)){
-	push @errors, "Backstop and Maneuver Summary have different number of maneuvers, $#bsmm:bs vs $#mm:ms \n";
-    }
-
-    for my $i (0 .. $#mm){
-
-	if ( abs($mm[$i]->{tstart} - $bsmm[$i]->{tstart}) > $mtime_slop ){
-	    push @errors, "Parse_CM_File::verifyMM; backstop mtstart $bsmm[$i]->{start_date} vs maneuver summary mtstart $mm[$i]->{start_date} \n";
-	}
-
-	my $mm_quat = Quat->new( $mm[$i]->{q1}, $mm[$i]->{q2}, $mm[$i]->{q3}, $mm[$i]->{q4});
-	my $bs_quat = Quat->new( $bsmm[$i]->{q1}, $bsmm[$i]->{q2}, $bsmm[$i]->{q3}, $bsmm[$i]->{q4});
-	my $delta = $bs_quat->divide($mm_quat);
-	my $radial_dist = $delta->radial_dist();
-
-	if ( $radial_dist > $radial_dist_thresh ){
-	    push @errors, "Quaternion mismatch of $radial_dist arcseconds between backstop and maneuver summary \n at maneuver at $mm[$i]->{start_date}  \n";
-	} 
-
-
-    }
-
-    if (scalar(@errors)){
-	my $string_errors = join( '', @errors);
-	croak("$string_errors");
-    }
-
-    return 0;
-}
 
 
 
@@ -658,7 +575,7 @@ sub MM {
         $ret_type = $arg_ref->{ret_type};
     }
 
-    my $manvr_padding = 10; # seconds
+    my $manvr_offset = 10; # seconds expected from AONMMODE to AOMANUVR
 
     my @mm_array;
 
@@ -667,7 +584,6 @@ sub MM {
     my @sections = split(/MANEUVER\sDATA\sSUMMARY\n/, $mm_text);
     # ignore pieces of the file without ATTITUDES
     my @good_sect = grep {/INITIAL|FINAL/} @sections;
-
 
     my $int_obsid = 'IN_IA';
     for my $entry (@good_sect){
@@ -701,22 +617,21 @@ sub MM {
         $manvr_hash{tstart} = date2time($manvr_hash{start_date});
         $manvr_hash{tstop} = date2time($manvr_hash{stop_date});
 
-	# let's edit those times to get rid of the arbitrary 10 sec padding
-	$manvr_hash{tstart} += $manvr_padding;
+	# let's just add those 10 seconds to the summary tstart so it lines up with
+	# AOMANUVR in backstop 
+	$manvr_hash{tstart} += $manvr_offset;
 	$manvr_hash{start_date} = time2date($manvr_hash{tstart});
-	$manvr_hash{tstop} += $manvr_padding;
-	$manvr_hash{stop_date} = time2date($manvr_hash{tstop});
 	
-
-        # clean up obsids
-        if (defined $manvr_hash{initial_obsid}){
+        # clean up obsids (remove prepended 0s)
+        if (defined $manvr_hash{initial_obsid}) {
             $manvr_hash{initial_obsid} =~ s/^0+//;
         }
         # use a dummy or the last initial attitude if there isn't one
-        else{
+        else {
             $manvr_hash{initial_obsid} = $int_obsid;
         }
-        if (defined $manvr_hash{final_obsid}){
+
+        if (defined $manvr_hash{final_obsid}) {
             $manvr_hash{final_obsid} =~ s/^0+//;
         }
         else{
@@ -729,10 +644,14 @@ sub MM {
 
     }
 
-    # loop through and record eventual destination of segmented manvr
-    # other maneuvers have manvr_dest = final_obsid
+    # create a manvr_dest key to record the eventual destination of
+    # all manvrs. 
     for my $i (0 .. $#mm_array){
+	# by default the destination is just the final_obsid
 	$mm_array[$i]->{manvr_dest} = $mm_array[$i]->{final_obsid};
+	# but if the final_obsid has the string that indicates it is
+	# an intermediate attitude, loop through the rest of the manvrs
+	# until we hit one that isn't an intermediate attitude
 	next unless ($mm_array[$i]->{final_obsid} =~ /_IA/);
 	for my $j ($i .. $#mm_array){
 	    next if ($mm_array[$j]->{final_obsid} =~ /_IA/);
@@ -746,33 +665,9 @@ sub MM {
     }
 
     my %mm_hash;
-    for my $manvr (0 .. scalar(@mm_array)-1 ){
+    for my $manvr (0 ... $#mm_array ){
         my $obsid = $mm_array[$manvr]->{final_obsid};
-
-        # if the start of the maneuver is at an intermediate attitude,
-        # set the start times and the obsid to the last initial obsid
-        # attitude that *wasn't* an intermediate attitude
-
-#        if ($mm_array[$manvr]->{initial_obsid} =~ /_IA/){
-#            $mm_hash{$obsid} = $mm_array[$manvr];
-            # step back through the array
-#            for my $prev_manvr (reverse (0 .. $manvr-1)){
-#                my $old_obsid = $mm_array[$prev_manvr]->{initial_obsid};
-#                next if ($old_obsid =~ /_IA/);
-#                $mm_hash{$obsid}->{tstart} = $mm_array[$prev_manvr]->{tstart};
-#                $mm_hash{$obsid}->{start_date} = $mm_array[$prev_manvr]->{start_date};
-#                $mm_hash{$obsid}->{initial_obsid} = $old_obsid;
-#                last;
-#            }
-	    # and if the week starts with an intermediate attitude, then
-	    # the initial obsid/tstart/start_date will not be complete for
-	    # the first maneuver in the hash
-#        }
-#        else{
-            $mm_hash{$obsid} = $mm_array[$manvr];
-#        }
-
-	
+	$mm_hash{$obsid} = $mm_array[$manvr];
     }
 
     return %mm_hash;
@@ -959,6 +854,7 @@ sub rel_date2time {
 ##***************************************************************************
 sub parse_params{
 ##***************************************************************************
+
     my @fields = split '\s*,\s*', shift;
     my %param = ();
     my $pindex = 1;

@@ -29,6 +29,7 @@ sub new{
 	       tlr => 'CR*.tlr',
 	       mm => '/mps/mm*.sum',
 	       backstop => 'CR*.backstop',
+	       dot => "/mps/md*.dot",
 	       );
     
     # Override Defaults as needed from passed parameter hash
@@ -83,16 +84,16 @@ sub new{
     }
     
     my $mm_file = get_file("$par{dir}/$par{mm}", 'Maneuver Management', 'required', \@{$feedback{input_files}});
+    my $dot_file = get_file("$par{dir}/$par{dot}", 'DOT', 'required', \@{$feedback{input_files}});
     my @mm = Ska::Parse_CM_File::MM({file => $mm_file, ret_type => 'array'});
-    
+    my ($dot_href, $s_touched, $dot_aref) = Ska::Parse_CM_File::DOT($dot_file);
     my $bs_file = get_file("$par{dir}/$par{backstop}", 'Backstop', 'required', \@{$feedback{input_files}});
+    my @bs = Ska::Parse_CM_File::backstop($bs_file);
     
-
-
     my $template_file = get_file("$par{app_data}/$config{file}{template}{$transponder}", 'template', 'required', \@{$feedback{input_files}} );
     my $template = TLR->new($template_file, 'template', \%config);
 
-    $feedback{check_mm_vs_backstop} = check_mm_vs_backstop( $mm_file, $bs_file );
+#    $feedback{check_mm_vs_backstop} = check_mm_vs_backstop( $mm_file, $bs_file );
     $feedback{check_tlr_sequence} = check_tlr_sequence($tlr);
     $feedback{check_transponder} = check_transponder($tlr, \%config); 
     $feedback{check_dither_disable_before_replica_0} = check_dither_disable_before_replica_0($tlr, \%config);
@@ -123,40 +124,42 @@ sub new{
 	    
 	}
     }
-    $feedback{check_manvr} = check_manvr( \%config, \@mm);
-    $feedback{check_dwell} = check_dwell(\%config, \@mm);
-    $feedback{check_manvr_point} = check_manvr_point( \%config, \@mm);
+    $feedback{check_manvr} = check_manvr( \%config, \@bs, $dot_aref);
+    $feedback{check_dwell} = check_dwell(\%config, \@bs, $dot_aref);
+    $feedback{check_manvr_point} = check_manvr_point( \%config, \@bs, $dot_aref);
 
     bless \%feedback, $class;
     return \%feedback;
 
 }
 
-##***************************************************************************
-sub check_mm_vs_backstop{
-##***************************************************************************
-# confirm that that maneuver summary times and quaternions match the backstop
-    use Data::Dumper;
+# Phasing out use of maneuver processing summary in Jun 2008.
+# Eliminating this routine
 
-    my $ms_file = shift;
-    my $bs_file = shift;
-
-    my %output = (
-		  status => 1,
-		  comment => ['Comparing Backstop maneuvers to those in Maneuver Summary'],
-		  criteria => ['Confirms that each backstop maneuver has a match in maneuver summary',
-			       'Matches start of maneuver at AONMMODE and target quaternion MP_TARGQUAT'],
-		  );
-    eval{
-	Ska::Parse_CM_File::verifyMM($ms_file, $bs_file);
-      };
-    if ($@){
-	print "$@ \n";
-	$output{status} = 0;
-	$output{info} = [{ text =>"$@", type => 'error' }];
-    }
-    return \%output;
-}		      
+###***************************************************************************
+#sub check_mm_vs_backstop{
+###***************************************************************************
+## confirm that that maneuver summary times and quaternions match the backstop
+#
+#    my $ms_file = shift;
+#    my $bs_file = shift;
+#
+#    my %output = (
+#		  status => 1,
+#		  comment => ['Comparing Backstop maneuvers to those in Maneuver Summary'],
+#		  criteria => ['Confirms that each backstop maneuver has a match in maneuver summary',
+#			       'Matches start of maneuver at AONMMODE and target quaternion MP_TARGQUAT'],
+#		  );
+#    eval{
+#	Ska::Parse_CM_File::verifyMM($ms_file, $bs_file);
+#      };
+#    if ($@){
+#	print "$@ \n";
+#	$output{status} = 0;
+#	$output{info} = [{ text =>"$@", type => 'error' }];
+#    }
+#    return \%output;
+#}		      
 	    
 
  
@@ -703,11 +706,14 @@ sub check_dither_param_at_end{
 
 
 ##***************************************************************************
-sub check_manvr{
+sub check_manvr {
 ##***************************************************************************
 
-    my ($config, $mm) = @_;
+    my ($config, $bs, $dot) = @_;
     my @templ_manvr = @{$config->{template}{manvr}{manvr}};
+
+#    use Data::Dumper;
+#    print Dumper $dot;
 
     my %output = (
 		  status => 1,
@@ -715,27 +721,43 @@ sub check_manvr{
 		  );
     
 
-    push @{$output{criteria}}, "Compares the maneuver times from the maneuver summary to the config file times";
-    push @{$output{criteria}}, "Uses oflsids in maneuver summary to determine which maneuvers to examine";
+    push @{$output{criteria}}, "Compares the maneuver times from the dot to the config file times";
 
+
+
+    my @manvrs;
+    for my $dot_entry (@{$dot}){
+	if ($dot_entry->{cmd_identifier} =~ /ATS_MANVR/){
+	    push @manvrs, $dot_entry;
+	}
+    }
+
+
+
+#
     my $start_m_check = 0;
     my $j = 0;
     my $end_m_check = 1;
 
-    for my $mm_manvr (@{$mm}){
+    my $templ_n_manvr = scalar(@templ_manvr);
 
-	if ($mm_manvr->{initial_obsid} eq $templ_manvr[0]{init}){
+    for my $manvr_idx (1 ... $#manvrs){
+	
+	my $manvr = $manvrs[$manvr_idx];
+
+	if ($manvr->{oflsid} eq $templ_manvr[0]{final}){
 	    $start_m_check = 1;
 	}
-
+	
 	next unless ($start_m_check and $end_m_check);
-	my $t_manvr_sec = $mm_manvr->{tstop} - $mm_manvr->{tstart};
-	my $t_manvr_min = $t_manvr_sec / 60.;
+	my $t_manvr_min = timestring_to_mins($manvr->{DURATION});
+
 	my $templ_t_manvr = $templ_manvr[$j]{time};
 	
-	push @{$output{info}}, { text => "Maneuver to $mm_manvr->{obsid} : time = $t_manvr_min min  ; expected time = $templ_t_manvr min",
+	push @{$output{info}}, { text => "Maneuver to $manvr->{oflsid} : time = $t_manvr_min min  ; expected time = $templ_t_manvr min",
 				 type => 'info' };
-	
+		
+
 	if ($templ_t_manvr != $t_manvr_min){
 	    push @{$output{info}}, { text => "Maneuver Time incorrect",
 				     type => 'error'};
@@ -745,10 +767,15 @@ sub check_manvr{
 	
 	$j++;
 
-	if ($mm_manvr->{initial_obsid} eq $templ_manvr[-1]{init}){
+	if ($manvrs[$manvr_idx]->{oflsid} eq $templ_manvr[-1]{final}){
 	    $end_m_check = 0;
 	}
 
+    }
+
+    if ($templ_n_manvr != $j){
+	push @{$output{info}}, { text => "$j maneuvers checked ; expected $templ_n_manvr maneuvers",
+				 type => 'error'};
     }
     
     
@@ -762,53 +789,73 @@ sub check_manvr{
 sub check_dwell{
 ##***************************************************************************
 
-    my ($config, $mm) = @_;
+    my ($config, $bs, $dot) = @_;
+
+    my @templ_manvr = @{$config->{template}{manvr}{manvr}};
+    my @templ_dwell = @{$config->{template}{manvr}{dwell}};
 
     my %output = (
 		  status => 1,
 		  comment => ['Dwell Timing'],
 		  );
 
-    push @{$output{criteria}}, "Compares the time between maneuvers in the maneuver summary to the config file dwell times";
-    push @{$output{criteria}}, "Uses oflsids in maneuver summary to determine which maneuvers to examine";
+    push @{$output{criteria}}, "Compares the time between maneuvers in the DOT to the config file dwell times";
 
-    my @templ_manvr = @{$config->{template}{manvr}{manvr}};
+    my @manvrs;
+    for my $dot_entry (@{$dot}){
+	if ($dot_entry->{cmd_identifier} =~ /ATS_MANVR/){
+	    push @manvrs, $dot_entry;
+	}
+    }
+
     
     my $j = 0;
-    my @templ_dwell = @{$config->{template}{manvr}{dwell}};
     my $start_d_check = 0;
     my $end_d_check = 1;
 
-    for my $i (0 .. scalar(@{$mm})-1){
+    for my $manvr_idx (0 .. $#manvrs ){
 	
-	if ($mm->[$i]->{obsid} eq $templ_dwell[0]{final}){
-	    $start_d_check = 1;
+	my $manvr = $manvrs[$manvr_idx];
 
+	if ($manvr->{oflsid} eq $templ_dwell[0]{final}){
+	    $start_d_check = 1;
 	}
 
 	next unless ($start_d_check and $end_d_check);
 	
-	if ($mm->[$i+1]->{initial_obsid} ne $templ_dwell[$j]{init}){
+	if ($manvr->{oflsid} ne $templ_dwell[$j]{init}){
 	    $output{info} = [{ text => "Dwell Sequence Problem", type => 'error' }];
 	    $output{status} = 0;
 	    return \%output;
 	}
-	
-	my $t_dwell_sec = $mm->[$i+1]->{tstart} - $mm->[$i]->{tstop};
-	my $t_dwell_min = $t_dwell_sec/60.;
-	my $templ_t_dwell = $templ_dwell[$j]{time};
 
-	push @{$output{info}}, { text => "Dwell at $mm->[$i]->{obsid} : time = $t_dwell_min min  ; expected time = $templ_t_dwell min",
-				 type => 'info' };
+	# how many secs before man start?
+	my $t_manvr_delay = timestring_to_secs($manvr->{MANSTART});
+	# how long is the maneuver?
+	my $t_manvr_dur = timestring_to_secs($manvr->{DURATION});
+
+	# so, we get there at:
+	my $t_manvr_stop = $manvr->{time} + $t_manvr_delay + $t_manvr_dur;
+
+	# the next maneuver starts at
+	my $t_manvr_next = $manvrs[ $manvr_idx + 1]->{time};
+
+	# dwell time is then
+	my $t_dwell_sec = $t_manvr_next - $t_manvr_stop;
+	my $templ_t_dwell_sec = $templ_dwell[$j]{time} * 60; # template has minutes
 	
-	if ($templ_t_dwell != $t_dwell_min){
+	push @{$output{info}}, { text => "Dwell at $manvr->{oflsid} : time = $t_dwell_sec secs  ; expected time = $templ_t_dwell_sec secs",
+				 type => 'info' };
+
+	my $dwell_tolerance = 1; # second
+	if (abs($t_dwell_sec - $templ_t_dwell_sec) > $dwell_tolerance ){
 	    push @{$output{info}}, { text => "Dwell Time incorrect", type => 'error' };
 	    $output{status} = 0;
 	}
 	
 	$j++;
 
-	if ($mm->[$i]{obsid} eq $templ_manvr[-1]{final}){
+	if ($manvrs[$manvr_idx]{oflsid} eq $templ_manvr[-1]{final}){
 	    $end_d_check = 0;
 	}
 
@@ -818,13 +865,40 @@ sub check_dwell{
     
     
 }
+
+
+sub timestring_to_secs {
+    my $timestring = shift;
+    my %timehash;
+    ($timehash{days}, $timehash{hours}, $timehash{min}, $timehash{sec}) = split(":", $timestring);
+    my $secs = 0;
+    $secs += $timehash{days} * 24 * 60 * 60; # secs per day
+    $secs += $timehash{hours} * 60 * 60; # secs per hour
+    $secs += $timehash{min} * 60; # secs per minute
+    $secs += $timehash{sec}; 
+    return $secs;
+
+}
+
+sub timestring_to_mins {
+    my $timestring = shift;
+    my %timehash;
+    ($timehash{days}, $timehash{hours}, $timehash{min}, $timehash{sec}) = split(":", $timestring);
+    my $mins = 0;
+    $mins += $timehash{days} * 24 * 60; # minutes per day
+    $mins += $timehash{hours} * 60; # minutes per hour
+    $mins += $timehash{min};
+    $mins += $timehash{sec} / 60.; # minutes per second
+    return $mins;
+}
+
     
 
 ##***************************************************************************
 sub check_manvr_point{
 ##***************************************************************************
     
-    my ($config, $mm) = @_;
+    my ($config, $bs, $dot) = @_;
 
     my %output = (
 		  comment => ['Maneuver Pointing'],
@@ -832,10 +906,19 @@ sub check_manvr_point{
 		  );
 
     push @{$output{criteria}}, "Confirms that the delta positions for each of the dark cal pointings",
-    "match the expected delta positions listed in the config file";
+                               "match the expected delta positions listed in the config file";
 
     my @point_order = @{$config->{template}{manvr}{point_order}{oflsid}};
     my %point_delta = %{$config->{template}{manvr}{point_delta_pos}};
+
+    # grab just the maneuvers from the dot
+    my @manvrs;
+    for my $dot_entry (@{$dot}){
+	if ($dot_entry->{cmd_identifier} =~ /ATS_MANVR/){
+	    push @manvrs, $dot_entry;
+	}
+    }
+
 
     my @points;
     my $center;
@@ -844,11 +927,13 @@ sub check_manvr_point{
     my $start_check;
     my $as_slop = $config->{template}{manvr}{arcsec_slop};
 
-    # Step through the maneuver summary and grab the chunk of consecutive maneuvers involved
+    # Step through the dot maneuvers until we reach ones that match the template
+    # check the maneuver quaternions on those to make sure the offsets are the same
+    # as the template
 
-    for my $manvr (@{$mm}){
-	
-	my $dest_obsid = $manvr->{final_obsid};
+    for my $manvr (@manvrs){
+
+	my $dest_obsid = $manvr->{oflsid};
 
 	if ($dest_obsid eq $point_order[0]){
 	    $start_check = 1;
@@ -856,7 +941,22 @@ sub check_manvr_point{
 
 	next unless ($start_check);
 
-	my $targ_quat = Quat->new($manvr->{q1}, $manvr->{q2}, $manvr->{q3}, $manvr->{q4});
+	# find the first matching backstop target quaternion after the maneuver command
+	# time
+	my $bs_match;
+	for my $bs_entry (@{$bs}) {
+	    next unless ($bs_entry->{time} > $manvr->{time});
+	    next unless ($bs_entry->{cmd} =~ /MP_TARGQUAT/);
+	    $bs_match = $bs_entry;
+	    last;
+	}
+	    
+       
+	my $targ_quat = Quat->new($bs_match->{command}->{Q1}, 
+				  $bs_match->{command}->{Q2}, 
+				  $bs_match->{command}->{Q3},
+				  $bs_match->{command}->{Q4});
+	
 	my %target = ( 
 		       obsid => $dest_obsid,
 		       quat => $targ_quat,

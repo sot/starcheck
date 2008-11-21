@@ -70,6 +70,7 @@ my %par = (dir  => '.',
 	   plot => 1,
 	   html => 1,
 	   text => 1,
+	   yaml => 1,
 	   chex => undef);
 
 my $log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
@@ -84,6 +85,7 @@ GetOptions( \%par,
 	   'plot!',
 	   'html!',
 	   'text!',
+	   'yaml!',
 	   'agasc=s',
 	   'agasc_dir=s',
 	   'chex=s',
@@ -171,6 +173,9 @@ print STDERR "Using AGASC from $agasc_dir \n";
 print $log_fh "Using AGASC from $agasc_dir \n" if ($log_fh);
 
 
+
+
+
 my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
 my $tlr_file   = get_file("$par{dir}/*.tlr", 'TLR', 'required');
@@ -179,6 +184,8 @@ my $bad_agasc_file = get_file("$Starcheck_Data/agasc.bad", 'banned_agasc');
 my $ACA_bad_pixel_file = get_file("$Starcheck_Data/ACABadPixels", 'bad_pixel');
 my $bad_acqs_file = get_file( $ENV{'SKA_DATA'}."/acq_stats/bad_acq_stars.rdb", 'acq_star_rdb');
 my $bad_gui_file = get_file( "$Starcheck_Data/bad_gui_stars.rdb", 'gui_star_rdb');
+
+
 
 
 # Let's find which dark current made the current bad pixel file
@@ -219,15 +226,16 @@ foreach my $bs (@bs) {
 #    print STDERR "BS TIME = $bs->{time} \n";
 }
 
-# Read DOT, which is used to figure the Obsid for each command
+# Read DOT, which is used to figure out the Obsid for each command
 my ($dot_ref, $dot_touched_by_sausage) = Ska::Parse_CM_File::DOT($dot_file) if ($dot_file);
-my %dot = %$dot_ref;
+my %dot = %{$dot_ref};
+
 
 #foreach my $dotkey (keys  %dot){
 #	print STDERR "$dotkey $dot{$dotkey}{cmd_identifier} $dot{$dotkey}{anon_param3} $dot{$dotkey}{anon_param4} \n";
 #}
 
-my @load_seg_starts = Ska::Parse_CM_File::TLR_load_segments($tlr_file);
+my @load_segments = Ska::Parse_CM_File::TLR_load_segments($tlr_file);
 
 # Read momentum management (maneuvers + SIM move) summary file 
 my %mm = Ska::Parse_CM_File::MM({file => $mm_file, ret_type => 'hash'}) if ($mm_file);
@@ -253,10 +261,27 @@ my ($fid_time_violation, $error, @fidsel) = Ska::Parse_CM_File::fidsel($fidsel_f
 my @global_warn;
 map { warning("$_\n") } @{$error};
 
+
+
 # Warn if we aren't on Solaris
 if ($OS ne 'SunOS'){
     warning("uname != SunOS; starcheck is only approved on Solaris/SunOS \n");
 }
+
+
+# See if we have database access
+my $db_handle;
+eval{
+    eval 'use Ska::DatabaseUtil';
+    $db_handle = Ska::DatabaseUtil::sql_connect( 'sybase-aca-aca_read' );
+
+};
+if (($@) or (not defined $db_handle)){
+    warning("Unable to connect to Sybase server; links generated for all AGASC ids by default \n");
+}
+else{
+    Ska::Starcheck::Obsid::set_db_handle($db_handle);
+  }
 
 # Dark Cal Checker Section
 use Ska::Starcheck::Dark_Cal_Checker;
@@ -287,6 +312,9 @@ Ska::Starcheck::Obsid::set_odb(%odb);
 
 
 Ska::Starcheck::Obsid::set_config($config_ref);
+
+
+
 
 # Read Maneuver error file containing more accurate maneuver errors
 my @manerr;
@@ -445,6 +473,8 @@ foreach (@bs) {
 
 # Do main checking
 
+
+
 foreach my $obsid (@obsid_id) {
 
 
@@ -460,10 +490,10 @@ foreach my $obsid (@obsid_id) {
 	    warning ("Could not create plots for Obsid $obsid:\n $@ \n");
 	}
     }
-
     $obs{$obsid}->check_star_catalog();
     $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
+    $obs{$obsid}->check_flick_pix_mon();
     $obs{$obsid}->check_sim_position(@sim_trans);
     $obs{$obsid}->check_dither(\@dither);
     $obs{$obsid}->count_good_stars();
@@ -473,20 +503,26 @@ foreach my $obsid (@obsid_id) {
 	if ($obs{$obsid}->find_command('MP_STARCAT',2));
 }
 
-# Produce final report
 
+# Produce final report
+my %save_hash;
 
 my $out = '<TABLE><TD><PRE> ';
 my $date = `date`;
 chomp $date;
 
+$save_hash{run}{date} = $date;
+
 $out .= "------------  Starcheck $version    -----------------\n";
-$out .= " Run on $date by $ENV{USER}\n";
+$out .= " Run on $date by $ENV{USER} from $ENV{HOST}\n";
 $out .= " Configuration:  Using AGASC at $agasc_dir\n";
 # ASCDS $ascds_version_name ($ascds_version)\n"
 #    if ($mp_agasc_version and $ascds_version_name);
 $out .= "\n";
 
+$save_hash{run}{user} = $ENV{USER};
+$save_hash{run}{host} = $ENV{HOST};
+$save_hash{run}{agasc} = $agasc_dir;
 
 if ($mp_top_link){
     $out .= sprintf("<A HREF=\"%s\">Short Term Schedule: %s</A>", $mp_top_link->{url}, $mp_top_link->{week});
@@ -494,13 +530,18 @@ if ($mp_top_link){
 }
 
 
+
 if (%input_files) {
     $out .= "------------  PROCESSING FILES  -----------------\n\n";
-    for my $name (sort (keys %input_files)) { $out .= "Using $name file $input_files{$name}\n" };
-
+    for my $name (sort (keys %input_files)) { 
+	$out .= "Using $name file $input_files{$name}\n";
+	push @{$save_hash{files}}, $input_files{$name};
+    };
+     
 # Add info about which bad pixel file is being used:
     if (defined $ACA_badpix_date){
 	$out .= "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
+	$save_hash{run}{badpix} = $ACA_badpix_date;
     }
 
     $out .= "\n";
@@ -511,6 +552,7 @@ if (@global_warn) {
     $out .= $red_font_start;
     foreach (@global_warn) {
 	$out .= $_;
+        push @{$save_hash{processing_warning}}, $_;
     }
     $out .= qq{${font_stop}\n};
 }
@@ -533,12 +575,13 @@ for my $obs_idx (0 .. $#obsid_id) {
     $obsid = $obsid_id[$obs_idx];
 
     # mark the OBC load segment starts
-    my $load_seg_time = date2time( $load_seg_starts[$load_seg_idx]);
-    my $obsid_time = date2time($obs{$obsid}->{date});
-    if ($load_seg_idx <= $#load_seg_starts ){
-	if ($load_seg_time < $obsid_time){
-	    $out .= "         ------  $load_seg_starts[$load_seg_idx]   OBC Load Segment Begins\n";
+    if ($load_seg_idx <= $#load_segments ){
+	my $load_seg_time = date2time( $load_segments[$load_seg_idx]->{date});
+	my $obsid_time = date2time($obs{$obsid}->{date});
+    	if ($load_seg_time < $obsid_time){
+	    $out .= "         ------  $load_segments[$load_seg_idx]->{date}   OBC Load Segment Begins     $load_segments[$load_seg_idx]->{seg_id} \n";
 	    $load_seg_idx++;
+	    
 	}
 	
     }
@@ -635,6 +678,8 @@ foreach $obsid (@obsid_id) {
     $out .= "<TABLE CELLPADDING=0><TR><TD ROWSPAN=2>$pict1</TD><TD ALIGN=CENTER>$pict2</TD></TR><TR><TD ALIGN=CENTER>$pict3</TD></TR></TABLE>\n" ;
 }
 
+
+
 # Finish up and format it
 
 $out .= '</PRE></TD></TABLE> ';
@@ -721,6 +766,7 @@ if ($par{text}) {
 
 }
 
+  
 # Update the Chandra expected state file, if desired and possible
 
 if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
@@ -786,7 +832,7 @@ sub format_dark_cal_out{
     my $out;
 
     my @checks = qw(
-		    check_mm_vs_backstop
+
 		    transponder
 		    check_tlr_sequence
 		    check_transponder
@@ -815,7 +861,7 @@ sub format_dark_cal_out{
     
     $out .= "\n\n";
     $out .= "ACA Dark Cal Checker Report:\n";
-    $out .= sprintf( "[" . is_ok($dark_cal_checker->{check_mm_vs_backstop}->{status}) . "]\tManeuver Summary agrees with Backstop\n");
+#    $out .= sprintf( "[" . is_ok($dark_cal_checker->{check_mm_vs_backstop}->{status}) . "]\tManeuver Summary agrees with Backstop\n");
     $out .= sprintf( "[" . is_ok($dark_cal_checker->{check_transponder}->{status}) . "]\ttransponder = " . $dark_cal_checker->{transponder}{transponder} . " and no transponder commands through end of track.\n");
     $out .= sprintf("[" . is_ok($dark_cal_checker->{compare_timingncommanding}->{status}) . "]\tACA Calibration Commanding (hex, sequence, and timing of ACA/OBC commands).\n");
     $out .= sprintf("[". is_ok($dark_cal_checker->{check_manvr}->{status} and $dark_cal_checker->{check_dwell}->{status}) . "]\tManeuver and Dwell timing.\n");
@@ -1063,16 +1109,25 @@ sub get_obsid {
     # Match (by time) the input command to corresponding command in the DOT
 
     foreach my $obsid_index (keys %dot) {
-	next unless ($dot_cmd{ $dot{$obsid_index}{cmd_identifier}});
+	next unless (defined $dot_cmd{ $dot{$obsid_index}{cmd_identifier}});
+
 	my $cmd_identifier = $dot{$obsid_index}{cmd_identifier};
 	my $dt        = $dot_time_offset{$cmd_identifier} || 0.0;
 	my $tolerance = $dot_tolerance{$cmd_identifier}   || $TIME_TOLERANCE ;
-	if ($dot_cmd{$cmd_identifier} eq $cmd
-	    && abs($dot{$obsid_index}{time} + $dt - $time) < $tolerance) {
-	   if ($obsid_index =~ /\S0*(.+)\d\d\d\d/){
+	
+
+	if ($dot_cmd{$cmd_identifier} eq $cmd ){
+	    if ( abs($dot{$obsid_index}{time} + $dt - $time) < $tolerance) {
+		if ($obsid_index =~ /\S0*(\S+)\d{4}/){
 		    return $1; 
-	   }
-	     die "Couldn't parse obsid_index = '$obsid_index' in get_obsid()\n";
+		    
+		}
+		else{
+		    die "Couldn't parse obsid_index = '$obsid_index' in get_obsid()\n";
+		}
+	    }
+
+
 	}
     }
 

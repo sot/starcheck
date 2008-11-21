@@ -46,19 +46,20 @@ my $ACA_MANERR_PAD = 20;		# Maneuver error pad for ACA effects (arcsec)
 my $r2a = 3600. * 180. / 3.14159265;
 my $faint_plot_mag = 11.0;
 my $alarm = ">> WARNING:";
+my $info  = ">> INFO   :";
 my %Default_SIM_Z = ('ACIS-I' => 92905,
 		     'ACIS-S' => 75620,
 		     'HRC-I'  => -50505,
 		     'HRC-S'  => -99612);
 my %pg_colors = (white   => 1,
-	      red     => 2,
-	      green   => 3,
-	      blue    => 4,
-	      cyan    => 5,
-	      yellow  => 7,
-	      orange  => 8,
-	      purple  => 12,
-	      magenta => 6);
+		 red     => 2,
+		 green   => 3,
+		 blue    => 4,
+		 cyan    => 5,
+		 yellow  => 7,
+		 orange  => 8,
+		 purple  => 12,
+		 magenta => 6);
 
 
 my $font_stop = qq{</font>};
@@ -76,7 +77,7 @@ my %bad_gui;
 my %bad_id;
 my %config;
 my $db_handle;
-my $db_unavailable = 0;
+
 
 1;
 
@@ -92,6 +93,7 @@ sub new {
     $self->{dot_obsid} = $self->{obsid};
     @{$self->{warn}} = ();
     @{$self->{yellow_warn}} = ();
+    @{$self->{fyi}} = ();
     $self->{n_guide_summ} = 0;
     @{$self->{commands}} = ();
     %{$self->{agasc_hash}} = ();
@@ -99,6 +101,14 @@ sub new {
     %{$self->{count_nowarn_stars}} = ();
     return $self;
 }
+    
+##################################################################################
+sub set_db_handle {
+##################################################################################
+    my $handle = shift;
+    $db_handle = $handle;
+}
+
 
 ##################################################################################
 sub setcolors {
@@ -553,7 +563,19 @@ sub check_dither {
     # stop time
     if (defined $self->{next}){
 	my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
-	$obs_tstop  = $next_manvr->{tstart};
+	if (defined $next_manvr){
+	    $obs_tstop  = $next_manvr->{tstart};
+	}
+	else{
+	    # if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
+	    # just use next obsid start time
+	    my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
+	    if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
+		push @{$self->{warn}}, "$alarm Next obsid has no manvr; checking dither until next obsid start time \n";
+		$obs_tstop = $next_cmd_obsid->{time};
+	    }
+	}
+
     }
     else{
 	$obs_tstop = $self->{or_er_stop};
@@ -562,13 +584,16 @@ sub check_dither {
 
     # Determine current dither status by finding the last dither commanding before 
     # the start of observation (+ 8 minutes)
-    
+
     foreach my $dither (reverse @{$dthr}) {
 	if ($obs_tstart + $obs_beg_pad >= $dither->{time}) {
 	    my ($or_val, $bs_val) = ($dthr_cmd{$self->{DITHER_ON}}, $dither->{state});
 	    push @{$self->{warn}}, "$alarm Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
-	      if ($or_val ne $bs_val);
+		if ($or_val ne $bs_val);
 	    last;
+	}
+	elsif ( not defined $obs_tstop ){
+	    push @{$self->{warn}}, "$alarm Unable to determine obs tstop; could not check for dither changes during obs\n";
 	}
 	elsif ( $dither->{time} > ( $obs_tstart + $obs_beg_pad ) && $dither->{time} <= $obs_tstop - $obs_end_pad ) {
 	    push @{$self->{warn}}, "$alarm Dither commanding at $dither->{time}.  During observation.\n";
@@ -611,13 +636,16 @@ sub check_sim_position {
 	}
     }	
 }
+    
+
 
 #############################################################################################
 sub check_star_catalog {
 #############################################################################################
     my $self = shift;
     my $c;
-
+    
+    
     ########################################################################
     # Constants used in star catalog checks
     my $y_ang_min    =-2410;	# CCD boundaries in arcsec
@@ -692,13 +720,26 @@ sub check_star_catalog {
 	$dither = 20.0;
     }
 
- 
-#    my $targquat = find_command($self, "MP_TARGQUAT", -1);
-#    my $slew_err = $targquat->{man_err} || 120;
-
     my @warn = ();
     my @yellow_warn = ();
+
+    my $oflsid = $self->{dot_obsid};
+    my $obsid = $self->{obsid};
     
+    # Is this an obsid that is allowed to not have a star catalog, 
+    # if so, what oflsid string does it match:
+    my $ok_no_starcat;
+    if (defined $config{no_starcat_oflsid}){
+	my @no_starcats = @{$config{no_starcat_oflsid}};
+	for my $ofls_string (@no_starcats){
+	    if ( $oflsid =~ /$ofls_string/){
+		$ok_no_starcat = $ofls_string;
+	    }
+	}
+    }
+
+
+
    # Set slew error (arcsec) for this obsid, or 120 if not available 
     my $slew_err;
     my $targquat;
@@ -706,40 +747,22 @@ sub check_star_catalog {
 	$slew_err = $targquat->{man_err};
     }
     else{
-	$slew_err = 120;
-	
-	my $oflsid = $self->{dot_obsid};
-	my $obsid = $self->{obsid};
-	my $ok_bad_string;
-	if (defined $config{no_starcat_oflsid}){
-	    my @no_starcats = @{$config{no_starcat_oflsid}};
-	    for my $ofls_string (@no_starcats){
-		if ( $oflsid =~ /$ofls_string/){
-		    $ok_bad_string = $ofls_string;
-		}
-	    }
-	}
-	if (defined $ok_bad_string){
-	    push @{$self->{yellow_warn}}, "$alarm No target/maneuver for obsid $obsid ($oflsid). OK for '$ok_bad_string' ER. \n";		    
+	# if no target quaternion, warn and continue
+	if (defined $ok_no_starcat){
+	    push @{$self->{fyi}}, "$info No target/maneuver for obsid $obsid ($oflsid). OK for '$ok_no_starcat' ER. \n";
 	}
 	else{
 	    push @{$self->{warn}}, "$alarm No target/maneuver for obsid $obsid ($oflsid). \n";		    
 	}
     }
+    $slew_err = 120 if not defined $slew_err;
+    
 
-	    
-
+    # if no starcat, warn and quit this subroutine
     unless ($c = find_command($self, "MP_STARCAT")) {
-	my $oflsid = $self->{dot_obsid};
-	my $obsid = $self->{obsid};
-	if (defined $config{no_starcat_oflsid}){
-	    my @no_starcats = @{$config{no_starcat_oflsid}};
-	    for my $ofls_string (@no_starcats){
-		if ( $oflsid =~ /$ofls_string/){
-		    push @{$self->{yellow_warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). OK for '$ofls_string' ER. \n";		    
-		    return;
-		}
-	    }
+	if (defined $ok_no_starcat){
+	    push @{$self->{fyi}}, "$info No star catalog for obsid $obsid ($oflsid). OK for '$ok_no_starcat' ER. \n";
+	    return;
 	}
 	push @{$self->{warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). \n";		    
 	return;
@@ -775,8 +798,9 @@ sub check_star_catalog {
 	my $mag  = $c->{"GS_MAG$i"};
 	my $maxmag = $c->{"MAXMAG$i"};
 	my $halfw= $c->{"HALFW$i"};
+
 	# Search error for ACQ is the slew error, for fid, guide or mon it is about 4 arcsec
-	my $search_err = ($type =~ /BOT|ACQ/) ? $slew_err : 4.0;
+	my $search_err = ( (defined $type) and ($type =~ /BOT|ACQ/)) ? $slew_err : 4.0;
 	
 	# Find position extrema for smallest rectangle check
 	if ( $type =~ /BOT|GUI/ ) {
@@ -863,8 +887,8 @@ sub check_star_catalog {
     		push @warn,sprintf "$alarm [%2d] Angle Too Large.\n",$i;
 	    }
 	}	
-	
-	# Quandrant boundary interference
+		
+# Quandrant boundary interference
 	push @yellow_warn, sprintf "$alarm [%2d] Quadrant Boundary. \n",$i 
 	    unless ($type eq 'ACQ' or $type eq 'MON' or 
 		    (abs($yag-$y0) > $qb_dist + $slot_dither and abs($zag-$z0) > $qb_dist + $slot_dither ));
@@ -883,9 +907,14 @@ sub check_star_catalog {
 
 
 	if ($type =~ /BOT|GUI|ACQ/){
-	    if (($maxmag - $mag) < $mag_faint_slot_diff){
-		my $slot_diff = $maxmag - $mag;
-		push @warn, sprintf "$alarm [%2d] Magnitude.  MAXMAG - MAG = %1.2f < $mag_faint_slot_diff \n",$i,$slot_diff;
+	    if (( $maxmag =~ /---/) or ($mag =~ /---/)){
+		push @warn, sprintf "$alarm [%2d] Magnitude.  MAG or MAGMAX not defined \n",$i;		
+	    }
+	    else{
+		if (($maxmag - $mag) < $mag_faint_slot_diff){
+		    my $slot_diff = $maxmag - $mag;
+		    push @warn, sprintf "$alarm [%2d] Magnitude.  MAXMAG - MAG = %1.2f < $mag_faint_slot_diff \n",$i,$slot_diff;
+		}
 	    }
 	}
 	
@@ -900,19 +929,10 @@ sub check_star_catalog {
 	    push @warn, sprintf "$alarm [%2d] Search Box Size. Search Box smaller than slew error \n",$i;
 	}
 
+
 	# Check that readout sizes are all 6x6 for science observations
-	
 	if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6"){
-	    # if BOT or GUI, in slot 7, with 8x8 box,  and close to center of CCD 
-	    if ( ($type =~ /BOT|GUI/) && ($c->{"IMNUM$i"} == 7) && ($c->{"SIZE$i"} eq "8x8")
-		      && (abs($c->{"YANG$i"}) < $mon_expected_ymax) 
-              && (abs($c->{"ZANG$i"}) < $mon_expected_zmax)){
- 	    	push @warn, sprintf("$alarm [%2d] Readout Size. %s Should be 6x6.  Slot 7, Near Center... is this also a MON?\n", $i, $c->{"SIZE$i"});
-	        push @warn, sprintf("$alarm [%2d] (Continued)  If so, has Magnitude been checked?\n", $i);
-	    }
-	    else{
-		push @warn, sprintf("$alarm [%2d] Readout Size. %s Should be 6x6\n", $i, $c->{"SIZE$i"});
-	    }
+	    push @warn, sprintf("$alarm [%2d] Readout Size. %s Should be 6x6\n", $i, $c->{"SIZE$i"});
 	}
 
 	# Check that readout sizes are all 8x8 for engineering observations
@@ -974,7 +994,7 @@ sub check_star_catalog {
 		if ($dm > -4.0)  { push @warn, $warn } 
 		else { push @yellow_warn, $warn }
 	    }
-	    
+
 	    # Star within search box + search error and within 1.0 mags
 	    if ($type ne 'MON' and $dz < $halfw + $search_err and $dy < $halfw + $search_err and $dm > -1.0) {
 		my $warn = sprintf("$alarm [%2d] Search spoiler. %10d: " .
@@ -1009,6 +1029,45 @@ sub check_star_catalog {
 }
 
 #############################################################################################
+sub check_flick_pix_mon {
+#############################################################################################
+    my $self = shift;
+
+    # only check ERs for these MONS
+    return if ( $self->{obsid} < 50000 );
+
+    my $c;
+    # Check for existence of a star catalog
+    return unless ($c = find_command($self, "MP_STARCAT"));
+    
+    # See if there are any monitor stars.  Return if not.
+    my @mon_stars = grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
+    return unless (@mon_stars);
+
+    for my $mon_star (@mon_stars){
+
+#	map { print "$_ : ", $c->{"$_${mon_star}"}, "\n" } qw( IMNUM TYPE YANG ZANG SIZE RESTRK DIMDTS);
+
+	push @{$self->{fyi}}, sprintf("$info Obsid contains flickering pixel MON\n", $mon_star);
+
+
+	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Size is not 8x8\n", $mon_star)
+	    unless $c->{"SIZE${mon_star}"} eq "8x8";
+	
+	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window RESTRK should be 0\n", $mon_star) 
+	    unless $c->{"RESTRK${mon_star}"} == 0;
+	
+        # Verify the DTS is set to self
+	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. DTS should be set to self\n". $mon_star)
+	    unless $c->{"DIMDTS${mon_star}"} == $c->{"IMNUM${mon_star}"};
+
+    }	
+    
+
+}
+
+
+#############################################################################################
 sub check_monitor_commanding {
 #############################################################################################
     my $self = shift;
@@ -1033,35 +1092,69 @@ sub check_monitor_commanding {
     # Check for existence of a star catalog
     return unless ($c = find_command($self, "MP_STARCAT"));
 
-    # See if there are any monitor stars.  Return if not.
-    my @mon_stars = grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
-    return unless (@mon_stars);
+    # See if there are any monitor stars requested in the OR
+    my $or_has_mon = ( defined $or->{HAS_MON} ) ? 1 : 0;
 
-    # Check that the commanded monitor stars agree in position with the OR specification
+    my @mon_stars = grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
+    
+    # if there are no requests in the OR and there are no MON stars, exit
+    return unless $or_has_mon or scalar(@mon_stars);
+    
+    my $found_mon = scalar(@mon_stars);
+
+    # Where is the requested OR?
     my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
-    my ($yag, $zag) = Quat::radec2yagzag($or->{MON_RA}, $or->{MON_DEC}, $q_aca);
-    foreach (@mon_stars) {
-	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is in slot %2d and should be in slot 7.\n"
-				       , $_, $c->{"IMNUM$_"}) if $c->{"IMNUM$_"} != 7;
-	my $y_sep = $yag*$r2a - $c->{"YANG$_"};
-	my $z_sep = $zag*$r2a - $c->{"ZANG$_"};
-	my $sep = sqrt($y_sep**2 + $z_sep**2);
-	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is %6.2f arc-seconds off of OR specification\n"
-				       , $_, $sep) if $sep > 2.5;
-	my $track = $c->{"RESTRK$_"};
-	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is set to Convert-to-Track\n"
-				       , $_) if $track == 1;
-	# Verify the the designated track star is indeed a guide star.
-	my $dts_slot =  $c->{"DIMDTS$_"};
-	my $dts_type = "NULL";
-	foreach my $dts_index (1..16) {
-	    next unless $c->{"IMNUM$dts_index"} == $dts_slot and $c->{"TYPE$dts_index"} =~ /GUI|BOT/;
-	    $dts_type = $c->{"TYPE$dts_index"};
-	    last;
+    my ($or_yang, $or_zang) = Quat::radec2yagzag($or->{MON_RA}, $or->{MON_DEC}, $q_aca);
+
+    # Check all indices
+  IDX:
+    for my $idx ( 1 ... 16 ){
+	my %idx_hash = (idx => $idx );
+	($idx_hash{type}, 
+	 $idx_hash{imnum}, 
+	 $idx_hash{restrk}, 
+	 $idx_hash{yang}, 
+	 $idx_hash{zang}, 
+	 $idx_hash{dimdts}, 
+	 $idx_hash{size}) 
+	    = map { $c->{"$_${idx}"} } qw( 
+					   TYPE 
+					   IMNUM 
+					   RESTRK 
+					   YANG 
+					   ZANG 
+					   DIMDTS 
+					   SIZE);
+	my $y_sep = $or_yang*$r2a - $idx_hash{yang};
+	my $z_sep = $or_zang*$r2a - $idx_hash{zang};
+	$idx_hash{sep} = sqrt($y_sep**2 + $z_sep**2);
+	
+	# if this is a plain commanded MON
+	if ($idx_hash{type} =~ /MON/ ){
+	    $self->check_mon_requirements( \%idx_hash, $c );
+	    next IDX;
 	}
-	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. DTS for [%2d] is set to slot %2d which does not contain a guide star.\n", 
-				       $_, $_, $dts_slot) if $dts_type =~ /NULL/;
+	if (($idx_hash{type} =~ /GUI|BOT/) and ($idx_hash{size} eq '8x8') and ($idx_hash{imnum} == 7)){
+	    $found_mon = 1;
+	    push @{$self->{fyi}}, sprintf("$info [%2d] Appears to be MON used as GUI/BOT.  Has Magnitude been checked?\n",
+					   $idx);
+	    $self->check_mon_requirements( \%idx_hash, $c );
+	    next IDX;
+	}
+	if ((not $found_mon) and ($idx_hash{sep} < 2.5)){
+	    # if there *should* be one there...
+	    push @{$self->{fyi}}, sprintf("$info [%2d] Commanded at intended OR MON position; but not configured for MON\n",
+					   $idx);
+	}
+	
     }
+
+
+
+    # if I don't have a plain MON or a "stealth" MON, throw a warning
+    push @{$self->{warn}}, sprintf("$alarm MON requested in OR, but none found in catalog\n")
+	unless $found_mon;
+
 
     # Find the associated maneuver command for this obsid.  Need this to get the
     # exact time of the end of maneuver
@@ -1070,6 +1163,7 @@ sub check_monitor_commanding {
 	push @{$self->{warn}}, sprintf("$alarm Cannot find maneuver for checking monitor commanding\n");
 	return;
     }
+
 
     # Now check in backstop commands for :
     #  Dither is disabled (AODSDITH) 1 min prior to the end of the maneuver (EOM)
@@ -1085,8 +1179,11 @@ sub check_monitor_commanding {
 	my %param = Ska::Parse_CM_File::parse_params($bs->{params});
 	next unless ($param{TLMSID} =~ /^AO/);
 	foreach $cmd (keys %dt) {
-	    $cnt{$cmd}++ if ($param{TLMSID} eq $cmd and
-			     abs($bs->{time} - ($t_manv+$dt{$cmd})) < $time_tol);
+	    if ($cmd =~ /$param{TLMSID}/){
+		if ( abs($bs->{time} - ($t_manv+$dt{$cmd})) < $time_tol){
+		    $cnt{$cmd}++;
+		}
+	    }
 	}
     }
 
@@ -1097,6 +1194,46 @@ sub check_monitor_commanding {
 	push @{$self->{warn}}, "$alarm Found $cnt{$cmd} $cmd commands near " . time2date($t_manv+$dt{$cmd}) . "\n";
     }
 }	
+
+	    
+
+
+sub check_mon_requirements {
+    my $self = shift;
+    my $idx_hash = shift;
+    my $starcat = shift;
+    
+    # if it doesn't match the requested location
+    push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is %6.2f arc-seconds off of OR specification\n"
+				   , $idx_hash->{idx}, $idx_hash->{sep}) 
+	if $idx_hash->{sep} > 2.5;
+    # if it isn't 8x8
+    push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Size is not 8x8\n", $idx_hash->{idx})
+	unless $idx_hash->{size} eq "8x8";
+
+    # if it isn't in slot 7
+    push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is in slot %2d and should be in slot 7.\n"
+				   , $$idx_hash->{idx}, $idx_hash->{imnum}) 
+	if $idx_hash->{imnum} != 7;
+
+    push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is set to Convert-to-Track\n", $idx_hash->{idx}) 
+	if $idx_hash->{restrk} == 1;
+    
+    # Verify the the designated track star is indeed a guide star.
+    my $dts_slot = $idx_hash->{dimdts};
+    my $dts_type = "NULL";
+    foreach my $dts_index (1..16) {
+	next unless $starcat->{"IMNUM$dts_index"} == $dts_slot and $starcat->{"TYPE$dts_index"} =~ /GUI|BOT/;
+	$dts_type = $starcat->{"TYPE$dts_index"};
+	last;
+    }
+    push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. DTS for [%2d] is set to slot %2d which does not contain a guide star.\n", 
+				   $idx_hash->{idx}, $idx_hash->{idx}, $dts_slot) 
+	if $dts_type =~ /NULL/;
+    
+    
+}
+
 
 #############################################################################################
 sub check_fids {
@@ -1149,7 +1286,8 @@ sub check_fids {
 	}
 
        
-	push @{$warn}, "$alarm Fid $self->{SI} $fid is turned on with FIDSEL but not found in star catalog\n"
+	push @{$warn}, sprintf("$alarm Fid $self->{SI} FIDSEL $fid not found within 10 arcsec of (%.1f, %.1f)\n",
+			       $yag, $zag)
 	    unless ($fidsel_ok);
     }
     
@@ -1210,6 +1348,8 @@ sub calc_fid_ang {
     return ($yag, $zag);
 }
 
+
+
 #############################################################################################
 sub print_report {
 #############################################################################################
@@ -1219,7 +1359,7 @@ sub print_report {
 
     my $target_name = ( $self->{TARGET_NAME}) ? $self->{TARGET_NAME} : $self->{SS_OBJECT};
 
-    $o .= sprintf( "<TABLE WIDTH=850 CELLPADDING=0><TD VALIGN=TOP><PRE><A NAME=\"obsid%s\"></A>", $self->{obsid});
+    $o .= sprintf( "<TABLE WIDTH=853 CELLPADDING=0><TD VALIGN=TOP WIDTH=810><PRE><A NAME=\"obsid%s\"></A>", $self->{obsid});
     $o .= sprintf ("${blue_font_start}OBSID: %-5s  ", $self->{obsid});
     $o .= sprintf ("%-22s %-6s SIM Z offset:%-5d (%-.2fmm) Grating: %-5s", $target_name, $self->{SI}, 
 		   $self->{SIM_OFFSET_Z},  ($self->{SIM_OFFSET_Z})*1000*($odb{"ODB_TSC_STEPS"}[0]), $self->{GRATING}) if ($target_name);
@@ -1351,7 +1491,7 @@ sub print_report {
 
 
     
-    $o .= "\n" if (@{$self->{warn}} || @{$self->{yellow_warn}});
+    $o .= "\n" if (@{$self->{warn}} || @{$self->{yellow_warn}} || @{$self->{fyi}} );
 
 
 
@@ -1369,6 +1509,14 @@ sub print_report {
 	}
 	$o .= "${font_stop}";
     }
+    if (@{$self->{fyi}}) {
+	$o .= "${blue_font_start}";
+	foreach (@{$self->{fyi}}) {
+	    $o .= $_;
+	}
+	$o .= "${font_stop}";
+    }
+
     $o .= "\n";
 
     if (exists $self->{figure_of_merit}) {
@@ -1431,7 +1579,8 @@ sub add_guide_summ {
     my ($obsid, $guide_ref) = @_;
     my $c;
 
-    $c = find_command($self, 'MP_STARCAT');
+    return unless ($c = find_command($self, 'MP_STARCAT'));
+    
 #    unless ($c = find_command($self, 'MP_STARCAT')) {
 #	if ($self->{n_guide_summ}++ == 0) {
 #	    push @{$self->{warn}}, ">> WARNING: " .
@@ -1558,7 +1707,12 @@ sub get_agasc_stars {
 sub identify_stars {
 #############################################################################################
     my $self = shift;
+
     return unless (my $c = find_command($self, 'MP_STARCAT'));
+
+    my $manvr = find_command($self, "MP_TARGQUAT" );
+
+    my $obs_time = $c->{time};
 
     for my $i (1 .. 16) {
 	my $type = $c->{"TYPE$i"};
@@ -1615,7 +1769,7 @@ sub identify_stars {
 	    $c->{"GS_POSERR$i"} = $star->{poserr};
 	    $c->{"GS_CLASS$i"} = $star->{class};
 	    $c->{"GS_ASPQ$i"} = $star->{aspq};
-	    my $used_before = star_used_before( "$gs_id" );
+	    my $used_before = star_used_before( "$gs_id", $obs_time );
 	    $c->{"GS_USEDBEFORE$i"} =  $used_before;
 #	    print "$gs_id has used_before = $used_before \n";
 
@@ -1637,7 +1791,7 @@ sub identify_stars {
 		    $c->{"GS_MAG$i"} = sprintf "%8.3f", $star->{mag};
 		    $c->{"GS_YANG$i"} = $star->{yag};
 		    $c->{"GS_ZANG$i"} = $star->{zag};
-		    $c->{"GS_USEDBEFORE$i"} =  star_used_before( $star->{id} );
+		    $c->{"GS_USEDBEFORE$i"} =  star_used_before( $star->{id}, $obs_time );
 		    last;
 		}
 	    }
@@ -1651,23 +1805,24 @@ sub identify_stars {
 sub star_used_before {
 #############################################################################################
     my $star_id = shift;
+    my $obs_tstart = shift;
 
- #   print "id is $star_id ";
-
-    use Ska::DatabaseUtil qw{ sql_connect };
-
-    my %config = ( 'db_connect_info' => 'sybase-aca-aca_read');
+    my $obs_tstart_minus_day = $obs_tstart - 86400;
 
     # by default, use the link
     my $used_before = 1;
     
-  #  return $used_before if ($db_unavailable);
+    return $used_before if (not defined $db_handle);
 
     eval{
-	if (not defined $db_handle){
-	    $db_handle = sql_connect( $config{db_connect_info} );
-	}    
-	my $query = qq{ select count(id) from starcheck_catalog where type != 'FID' and id = $star_id };
+	my $query = qq{ select count(id) from mp_load_info, starcheck_catalog 
+			    where mp_load_info.obsid = starcheck_catalog.obsid 
+			    and mp_load_info.obi = starcheck_catalog.obi 
+			    and type != 'FID'
+			    and id = $star_id 
+			    and tstart < $obs_tstart_minus_day };
+
+#	my $query = qq{ select count(id) from starcheck_catalog where type != 'FID' and id = $star_id  };
 	my $sqlh = $db_handle->prepare($query);
 	$sqlh->execute();
 	my $id_count = $sqlh->fetchrow_array;
@@ -1680,7 +1835,7 @@ sub star_used_before {
     };
     if ($@){
 	# if we get db errors, let's stop trying
-	$db_unavailable = 1;
+	$db_handle = undef;
     }
 
 
@@ -1706,6 +1861,7 @@ sub plot_stars {
     my $self = shift;
     my $c;
     return unless ($c = find_command($self, 'MP_STARCAT'));
+    return unless ((defined $self->{ra}) and (defined $self->{dec}) and (defined $self->{roll}));
     $self->{plot_file} = shift;
     
     my %sym_type = (FID => 8,
@@ -1885,6 +2041,7 @@ sub plot_compass{
     my $self = shift;
     my $c;
     return unless ($c = find_command($self, 'MP_STARCAT'));
+    return unless ( (defined $self->{ra}) and (defined $self->{dec}) and (defined $self->{roll}));
     $self->{compass_file} = shift;
     
     # Setup pgplot
