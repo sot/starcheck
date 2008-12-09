@@ -159,7 +159,7 @@ sub set_ACA_bad_pixels {
 	foreach my $i ($line[0]..$line[1]) {
 	    foreach my $j ($line[2]..$line[3]) {
 		my $pixel = {};
-		my ($yag,$zag) = toAngle($i,$j);
+		my ($yag,$zag) = Ska::ACACoordConvert::toAngle($i,$j);
 		$pixel->{yag} = $yag;
 		$pixel->{zag} = $zag;
 		push @bad_pixels, $pixel;

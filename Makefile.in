@@ -14,8 +14,7 @@ FID_CHARACTERISTICS = fid_CHARACTERIS_FEB07
 FID_LINK_NAME = fid_CHARACTERISTICS
 
 RELATED_LIB = $(SRC)/StarcheckParser.pm
-BIN = $(SRC)/starcheck.pl 
-STANDALONE_BIN = $(SRC)/starcheck
+BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
 GEN_LIB = $(SRC)/Parse_CM_File.pm
 LIB = $(SRC)/Obsid.pm $(SRC)/FigureOfMerit.pm $(SRC)/Dark_Cal_Checker.pm
 DATA = $(SRC)/ACABadPixels $(SRC)/agasc.bad $(SRC)/fid_CHARACTERIS_JUL01 $(SRC)/$(FID_CHARACTERISTICS) $(SRC)/characteristics.yaml $(SRC)/A.tlr $(SRC)/B.tlr $(SRC)/tlr.cfg $(ROOT_FLIGHT)/data/starcheck/bad_gui_stars.rdb $(SRC)/up.gif $(SRC)/down.gif
@@ -42,17 +41,6 @@ INSTALL_BAD_ACQS = $(SKA)/data/acq_stats/
 all: 
 	# Nothing to make; "make install" to install to $(SKA)
 
-standalone:
-	$(SRC)/make_starcheck.pl --ska=$(PREFIX) --destdir=$(SRC) 
-	chmod 775 $(SRC)/starcheck
-
-standalone_install: standalone install
-	rsync --times --cvs-exclude $(STANDALONE_BIN) $(INSTALL_BIN)/
-
-sot:
-	$(SRC)/make_sot_starcheck.pl --ska=$(PREFIX) --destdir=$(SRC)
-	chmod 775 $(SRC)/starcheck
-
 bad_acq_install:
 	mkdir -p $(INSTALL_BAD_ACQS)
 	rsync -arvuz $(BAD_ACQS) $(INSTALL_BAD_ACQS)
@@ -63,24 +51,19 @@ check: check_install all install
 	if [ -d test ] ; then rm -r test ; fi
 	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
-# only for use in /proj/sot/ska checking
+# Basic aliveness test
 test: check_install install bad_acq_install
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	$(SRC)/starcheck.pl -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
+	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
-# again, not for use with standalone
+# Comprehensive regression test
 regress: check_install install bad_acq_install
 	if [ -r regress_diffs ] ; then rm regress_diffs ; fi
 	if [ -r regress_log ] ; then rm regress_log ; fi
 	if [ -d regress ] ; then rm -r regress ; fi
 	$(SRC)/run_regress
-
-
-standalone_regress: install
-	$(SRC)/standalone_regress $(PREFIX)
-
 
 checklist:
 ifdef DOC_PHP

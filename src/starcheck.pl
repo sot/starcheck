@@ -1,4 +1,4 @@
-#!/usr/bin/env /proj/sot/ska/bin/perlska
+#!/usr/bin/env /proj/sot/ska/bin/perl
 
 ##*******************************************************************************
 #
@@ -743,7 +743,7 @@ if ($par{text}) {
 	my $table_text = qq{};
 	my ($depth, $count) = $ts->coords;
 	foreach my $row ($ts->rows) {
-	    $table_text .= $row->[0] . "\n";
+	    $table_text .= $row->[0] . "\n" if defined $row->[0];
 	}
 	if ($table_text =~ /OBSID/s){
 	    $table{$depth}{$count} = $table_text;
