@@ -48,7 +48,7 @@ RunRegression()
 
     echo "Running: $RELEASE/bin/starcheck.pl -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
     echo "**** (RELEASE) $load ****" >> $log
-    env SKA=$RELEASE PERL5LIB='' SYBASE='' $RELEASE/bin/starcheck.pl -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
+    env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck.pl -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
   fi  
 
 
