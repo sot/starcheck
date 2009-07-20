@@ -20,9 +20,7 @@ LIB = $(SRC)/Obsid.pm $(SRC)/FigureOfMerit.pm $(SRC)/Dark_Cal_Checker.pm
 DATA = $(SRC)/ACABadPixels $(SRC)/agasc.bad $(SRC)/fid_CHARACTERIS_JUL01 $(SRC)/$(FID_CHARACTERISTICS) $(SRC)/characteristics.yaml $(SRC)/A.tlr $(SRC)/B.tlr $(SRC)/tlr.cfg $(ROOT_FLIGHT)/data/starcheck/bad_gui_stars.rdb $(SRC)/up.gif $(SRC)/down.gif
 
 
-ICXC_STARCHECK = https://icxc.harvard.edu/mta/ASPECT/tool_doc/starcheck_php_doc_tmp
-ICXC_DOC_FOLDER = /proj/sot/ska/doc/starcheck_php_doc_tmp/
-DOC_PHP = aca_load_review_cl.php
+DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
 #BADPIXELS = ACABadPixels.new
 #TEST_DEPS = data/acq_stats/bad_acq_stars.rdb data/aca_dark_cal_checker/A.tlr data/aca_dark_cal_checker/B.tlr data/aca_dark_cal_checker/tlr.cfg
@@ -66,12 +64,10 @@ regress: check_install install bad_acq_install
 	$(SRC)/run_regress
 
 checklist:
-ifdef DOC_PHP
-	mkdir -p $(ICXC_DOC_FOLDER)
+ifdef DOC_RST
 	mkdir -p $(INSTALL_DOC)
-	if [ -r $(INSTALL_DOC)/$(DOC_HTML) ] ; then rm $(INSTALL_DOC)/$(DOC_HTML); fi
-	rsync --times --cvs-exclude $(SRC)/$(DOC_PHP) $(ICXC_DOC_FOLDER)/
-	wget $(ICXC_STARCHECK)/$(DOC_PHP) -O $(INSTALL_DOC)/$(DOC_HTML)
+	if [ -r $(DOC_HTML) ] ; then rm $(DOC_HTML); fi
+	rst2html.py $(DOC_RST) > $(DOC_HTML)
 endif
 
 

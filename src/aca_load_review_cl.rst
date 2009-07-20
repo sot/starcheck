@@ -157,8 +157,8 @@ Checks
 |       |                  |(immediately follows an OR at identical    |    |                |
 |       |                  |attitude, duration in NPM <= 10 min )      |    |                |
 |       |                  +--------------------+------+-----+----+----+    |AS:             |
-|       |                  |Special Case        | #FL  | #AS |#GS |#MW |    |                |
-|       |                  |(SCER)              |      |     |    |    |    |Possible Bright |
+|       |                  |Special Case ER     | #FL  | #AS |#GS |#MW |    |                |
+|       |                  |                    |      |     |    |    |    |Possible Bright |
 |       |                  +--------------------+------+-----+----+----+    |Star Hold       |
 |ACA-044|Star catalog      |Requirements        |  0   | >=4 |>=4 |<=1 |n/a |                |
 |       |                  +--------------------+------+-----+----+----+    |GS:             |                
