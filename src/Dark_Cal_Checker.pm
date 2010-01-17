@@ -477,7 +477,7 @@ sub check_dither_enable_at_end{
 ##***************************************************************************
 
     my %output = (
-		  comment => ['Dither enabled afted Dark Cal'],
+		  comment => ['Dither enabled after Dark Cal'],
 		  );
 
     my ($tlr, $config) = @_;    
