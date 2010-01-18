@@ -1647,6 +1647,7 @@ sub get_agasc_stars {
     return unless ($c = find_command($self, "MP_TARGQUAT"));
     
     my $agasc_region;
+    my $agasc_method;
 
     eval{
 	$agasc_region = Ska::AGASC->new({
@@ -1655,15 +1656,19 @@ sub get_agasc_stars {
 	    dec => $self->{dec},
 	    radius => 1.3,
 	    datetime => $self->{date},
-	    prefer_mp_get_agasc => 1,
 	});
+	$agasc_method = $Ska::AGASC::access_method;
     };
     if( $@ ){
 	croak("Could not use AGASC: $@");
     }
 
-    my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
+    if ($agasc_method =~ /CFITSIO/){
+	push @{$self->{warn}}, 
+	sprintf("$alarm Ska::AGASC fell back to slow CFITSIO; problem with mp_get_agasc\n");
+    }
 
+    my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
 
     for my $id ($agasc_region->list_ids() )  {
 
