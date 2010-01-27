@@ -34,6 +34,8 @@ use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit );
 use RDB;
 
 use Ska::AGASC;
+use SQL::Abstract;
+use Ska::DatabaseUtil qw( sql_fetchall_array_of_hashref );
 use Carp;
 
 
@@ -643,6 +645,7 @@ sub check_sim_position {
 sub check_star_catalog {
 #############################################################################################
     my $self = shift;
+    my $or = shift;
     my $c;
     
     
@@ -932,7 +935,12 @@ sub check_star_catalog {
 
 	# Check that readout sizes are all 6x6 for science observations
 	if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6"){
+	  if (($c->{"SIZE$i"} eq "8x8") and ($or->{HAS_MON}) and ($c->{"IMNUM$i"} == 7 )){
+	    push @{$self->{fyi}}, sprintf("$info [%2d] Readout Size. 8x8 Stealth MON?", $i);
+	  }
+	  else{
 	    push @warn, sprintf("$alarm [%2d] Readout Size. %s Should be 6x6\n", $i, $c->{"SIZE$i"});
+	  }
 	}
 
 	# Check that readout sizes are all 8x8 for engineering observations
@@ -1086,25 +1094,34 @@ sub check_monitor_commanding {
 
 	# Don't worry about monitor commanding for non-science observations
 	return if ($self->{obsid} > 50000);
-
     }
 
     # Check for existence of a star catalog
     return unless ($c = find_command($self, "MP_STARCAT"));
+    
 
     # See if there are any monitor stars requested in the OR
     my $or_has_mon = ( defined $or->{HAS_MON} ) ? 1 : 0;
 
     my @mon_stars = grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
-    
+
     # if there are no requests in the OR and there are no MON stars, exit
     return unless $or_has_mon or scalar(@mon_stars);
-    
-    my $found_mon = scalar(@mon_stars);
 
+
+    my $found_mon = scalar(@mon_stars);
+    my $stealth_mon = 0;
+
+    if (($found_mon) and (not $or_has_mon)){ 
+      push @{$self->{warn}}, sprintf("$alarm MON not in OR, but in catalog. Position not checked.\n");    
+    }
+    
     # Where is the requested OR?
     my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
-    my ($or_yang, $or_zang) = Quat::radec2yagzag($or->{MON_RA}, $or->{MON_DEC}, $q_aca);
+    my ($or_yang, $or_zang);
+    if ($or_has_mon){
+      ($or_yang, $or_zang) = Quat::radec2yagzag($or->{MON_RA}, $or->{MON_DEC}, $q_aca) if ($or_has_mon) ;   
+    }
 
     # Check all indices
   IDX:
@@ -1131,37 +1148,72 @@ sub check_monitor_commanding {
 	
 	# if this is a plain commanded MON
 	if ($idx_hash{type} =~ /MON/ ){
-	    $self->check_mon_requirements( \%idx_hash, $c );
-	    next IDX;
-	}
-	if (($idx_hash{type} =~ /GUI|BOT/) and ($idx_hash{size} eq '8x8') and ($idx_hash{imnum} == 7)){
-	    $found_mon = 1;
-	    push @{$self->{fyi}}, sprintf("$info [%2d] Appears to be MON used as GUI/BOT.  Has Magnitude been checked?\n",
-					   $idx);
-	    $self->check_mon_requirements( \%idx_hash, $c );
-	    next IDX;
-	}
-	if ((not $found_mon) and ($idx_hash{sep} < 2.5)){
-	    # if there *should* be one there...
-	    push @{$self->{fyi}}, sprintf("$info [%2d] Commanded at intended OR MON position; but not configured for MON\n",
-					   $idx);
+	  # if it doesn't match the requested location
+	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is %6.2f arc-seconds off of OR specification\n"
+					 , $idx_hash{idx}, $idx_hash{sep}) 
+	    if $idx_hash{sep} > 2.5;
+	# if it isn't 8x8
+	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Size is not 8x8\n", $idx_hash{idx})
+	    unless $idx_hash{size} eq "8x8";
+
+	# if it isn't in slot 7
+	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is in slot %2d and should be in slot 7.\n"
+					 , $idx_hash{idx}, $idx_hash{imnum}) 
+	    if $idx_hash{imnum} != 7;
+	
+	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is set to Convert-to-Track\n", $idx_hash{idx}) 
+	  if $idx_hash{restrk} == 1;
+	  
+
+	# Verify the the designated track star is indeed a guide star.
+	  my $dts_slot = $idx_hash{dimdts};
+	  my $dts_type = "NULL";
+	  foreach my $dts_index (1..16) {
+	    next unless $c->{"IMNUM$dts_index"} == $dts_slot and $c->{"TYPE$dts_index"} =~ /GUI|BOT/;
+	    $dts_type = $c->{"TYPE$dts_index"};
+	    last;
+	  }
+	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. DTS for [%2d] is set to slot %2d which does not contain a guide star.\n", 
+					 $idx_hash{idx}, $idx_hash{idx}, $dts_slot) 
+	    if $dts_type =~ /NULL/;
+	  next IDX;
 	}
 	
-    }
-
+	if (($idx_hash{type} =~ /GUI|BOT/) and ($idx_hash{size} eq '8x8') and ($idx_hash{imnum} == 7)){
+	  $stealth_mon = 1;
+	  push @{$self->{fyi}}, sprintf("$info [%2d] Appears to be MON used as GUI/BOT.  Has Magnitude been checked?\n",
+					$idx);
+	  # if it doesn't match the requested location
+	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is %6.2f arc-seconds off of OR specification\n"
+					 , $idx_hash{idx}, $idx_hash{sep}) 
+	    if $idx_hash{sep} > 2.5;
+	  
+	  next IDX;
+	}
+	if ((not $found_mon) and ($idx_hash{sep} < 2.5)){
+	  # if there *should* be one there...
+	  push @{$self->{fyi}}, sprintf("$info [%2d] Commanded at intended OR MON position; but not configured for MON\n",
+					$idx);
+	}
+	
+      }
 
 
     # if I don't have a plain MON or a "stealth" MON, throw a warning
     push @{$self->{warn}}, sprintf("$alarm MON requested in OR, but none found in catalog\n")
-	unless $found_mon;
+      unless ( $found_mon or $stealth_mon );
 
+    # if we're using a guide star, we don't need the rest of the dither setup
+    if ($stealth_mon and not $found_mon){
+      return;
+    }
 
     # Find the associated maneuver command for this obsid.  Need this to get the
     # exact time of the end of maneuver
     my $manv;
     unless ($manv = find_command($self, "MP_TARGQUAT", -1)) {
-	push @{$self->{warn}}, sprintf("$alarm Cannot find maneuver for checking monitor commanding\n");
-	return;
+      push @{$self->{warn}}, sprintf("$alarm Cannot find maneuver for checking monitor commanding\n");
+      return;
     }
 
 
@@ -1195,44 +1247,7 @@ sub check_monitor_commanding {
     }
 }	
 
-	    
 
-
-sub check_mon_requirements {
-    my $self = shift;
-    my $idx_hash = shift;
-    my $starcat = shift;
-    
-    # if it doesn't match the requested location
-    push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is %6.2f arc-seconds off of OR specification\n"
-				   , $idx_hash->{idx}, $idx_hash->{sep}) 
-	if $idx_hash->{sep} > 2.5;
-    # if it isn't 8x8
-    push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Size is not 8x8\n", $idx_hash->{idx})
-	unless $idx_hash->{size} eq "8x8";
-
-    # if it isn't in slot 7
-    push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is in slot %2d and should be in slot 7.\n"
-				   , $$idx_hash->{idx}, $idx_hash->{imnum}) 
-	if $idx_hash->{imnum} != 7;
-
-    push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is set to Convert-to-Track\n", $idx_hash->{idx}) 
-	if $idx_hash->{restrk} == 1;
-    
-    # Verify the the designated track star is indeed a guide star.
-    my $dts_slot = $idx_hash->{dimdts};
-    my $dts_type = "NULL";
-    foreach my $dts_index (1..16) {
-	next unless $starcat->{"IMNUM$dts_index"} == $dts_slot and $starcat->{"TYPE$dts_index"} =~ /GUI|BOT/;
-	$dts_type = $starcat->{"TYPE$dts_index"};
-	last;
-    }
-    push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. DTS for [%2d] is set to slot %2d which does not contain a guide star.\n", 
-				   $idx_hash->{idx}, $idx_hash->{idx}, $dts_slot) 
-	if $dts_type =~ /NULL/;
-    
-    
-}
 
 
 #############################################################################################
@@ -1453,21 +1468,30 @@ sub print_report {
 	    # change from a map to a loop to get some conditional control, since PoorTextFormat can't seem to 
 	    # take nested \link_target when the line is colored green or red
 	    $table .= sprintf('%3d', $c->{"IMNUM${i}"});
-	    if ($c->{"GS_USEDBEFORE${i}"}){
-		my $idlength = length($c->{"GS_ID${i}"});
-		my $idpad_n = 12 - $idlength;
-		my $idpad;
-		while ($idpad_n > 0 ){
-		    $idpad .= " ";
-		    $idpad_n --;
-		}
-		$table .= sprintf("${idpad}<A HREF=\"%s%s\">%s</A>", $acq_stat_lookup, $c->{"GS_ID${i}"}, $c->{"GS_ID${i}"});
-#		$table .= sprintf("\\link_target{${acq_stat_lookup}%s,%12s}", $c->{"GS_ID${i}"}, $c->{"GS_ID${i}"});
+	    my $db_stats = $c->{"GS_USEDBEFORE${i}"};
+	    my $idlength = length($c->{"GS_ID${i}"});
+	    my $idpad_n = 12 - $idlength;
+	    my $idpad;
+	    while ($idpad_n > 0 ){
+		$idpad .= " ";
+		$idpad_n --;
 	    }
+	    if ($db_stats->{acq} or $db_stats->{gui}){
+	    $table .= sprintf("${idpad}<A HREF=\"%s%s\" STYLE=\"text-decoration: none;\" "
+			      . "ONMOUSEOVER=\"return overlib ('"
+			      . "ACQ total:%d noid:%d <BR />"
+			      . "GUI total:%d bad:%d fail:%d obc_bad:%d <BR />"
+			      . "Avg Mag %4.2f"
+			      . "', WIDTH, 220);\" ONMOUSEOUT=\"return nd();\">%s</A>", 
+			      $acq_stat_lookup, $c->{"GS_ID${i}"}, 
+			      $db_stats->{acq}, $db_stats->{acq_noid},
+			      $db_stats->{gui}, $db_stats->{gui_bad}, $db_stats->{gui_fail}, $db_stats->{gui_obc_bad},
+			      $db_stats->{avg_mag},
+			      $c->{"GS_ID${i}"});
+	  }
 	    else{
-		$table .= sprintf('%12s', $c->{"GS_ID${i}"});
+	      $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
 	    }
-	    
 	    for my $field_idx (0 .. $#fields){
 		my $curr_format = $format[$field_idx];
 #		if (($curr_format =~ /link_target/) and ($color)){
@@ -1530,7 +1554,7 @@ sub print_report {
 	$o .= "Acquisition Stars Expected  : $self->{figure_of_merit}->{expected}\n";
     }
 
-    # cut little table for buttons for previous and next obsid
+    # cute little table for buttons for previous and next obsid
     $o .= "</PRE></TD><TD VALIGN=TOP>\n";
     if (defined $self->{prev}->{obsid} or defined $self->{next}->{obsid}){
 	$o .= " <TABLE WIDTH=43><TR>";
@@ -1663,9 +1687,9 @@ sub get_agasc_stars {
 	croak("Could not use AGASC: $@");
     }
 
-    if ($agasc_method =~ /CFITSIO/){
+    if ($agasc_method =~ /cfitsio/){
 	push @{$self->{warn}}, 
-	sprintf("$alarm Ska::AGASC fell back to slow CFITSIO; problem with mp_get_agasc\n");
+	sprintf("$alarm mp_get_agasc failed! starcat not flight approved! \n");
     }
 
     my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
@@ -1774,8 +1798,8 @@ sub identify_stars {
 	    $c->{"GS_POSERR$i"} = $star->{poserr};
 	    $c->{"GS_CLASS$i"} = $star->{class};
 	    $c->{"GS_ASPQ$i"} = $star->{aspq};
-	    my $used_before = star_used_before( "$gs_id", $obs_time );
-	    $c->{"GS_USEDBEFORE$i"} =  $used_before;
+	    my $db_hist = star_dbhist( "$gs_id", $obs_time );
+	    $c->{"GS_USEDBEFORE$i"} =  $db_hist;
 #	    print "$gs_id has used_before = $used_before \n";
 
 	}
@@ -1796,7 +1820,7 @@ sub identify_stars {
 		    $c->{"GS_MAG$i"} = sprintf "%8.3f", $star->{mag};
 		    $c->{"GS_YANG$i"} = $star->{yag};
 		    $c->{"GS_ZANG$i"} = $star->{zag};
-		    $c->{"GS_USEDBEFORE$i"} =  star_used_before( $star->{id}, $obs_time );
+		    $c->{"GS_USEDBEFORE$i"} =  star_dbhist( $star->{id}, $obs_time );
 		    last;
 		}
 	    }
@@ -1807,44 +1831,110 @@ sub identify_stars {
 }
 
 #############################################################################################
-sub star_used_before {
+sub star_dbhist {
 #############################################################################################
+
     my $star_id = shift;
     my $obs_tstart = shift;
 
     my $obs_tstart_minus_day = $obs_tstart - 86400;
 
-    # by default, use the link
-    my $used_before = 1;
+    return undef if (not defined $db_handle);
+
+    my %stats  =  ( 
+		   'agasc_id' => $star_id,
+		   'acq' => 0,
+		   'acq_noid' => 0,
+		   'gui' => 0,
+		   'gui_bad' => 0,
+		   'gui_fail' => 0,
+		   'gui_obc_bad' => 0,
+		   'avg_mag' => 13.9375,
+		  );
     
-    return $used_before if (not defined $db_handle);
+
 
     eval{
-	my $query = qq{ select count(id) from mp_load_info, starcheck_catalog 
-			    where mp_load_info.obsid = starcheck_catalog.obsid 
-			    and mp_load_info.obi = starcheck_catalog.obi 
-			    and type != 'FID'
-			    and id = $star_id 
-			    and tstart < $obs_tstart_minus_day };
+	# acq_stats_data
+	my $sql = SQL::Abstract->new();
+	my %acq_where =  ( 'agasc_id' => $star_id,
+                           'type' =>  { '!=' => 'FID'},
+                           'tstart' => { '<' => $obs_tstart_minus_day }
+			   );
 
-#	my $query = qq{ select count(id) from starcheck_catalog where type != 'FID' and id = $star_id  };
-	my $sqlh = $db_handle->prepare($query);
-	$sqlh->execute();
-	my $id_count = $sqlh->fetchrow_array;
-	if ($id_count > 0){
-	    $used_before = 1;
+	my ($acq_all_stmt, @acq_all_bind ) = $sql->select('acq_stats_data', 
+							  '*',
+							  \%acq_where );
+
+	my @acq_all = sql_fetchall_array_of_hashref( $db_handle, $acq_all_stmt, @acq_all_bind );
+	my @mags;
+
+	if (scalar(@acq_all)){
+	    my $noid = 0;
+	    for my $attempt (@acq_all){
+		if ($attempt->{'obc_id'} =~ 'NOID'){
+		    $noid++;
+		}
+		else{
+		  push @mags, $attempt->{'mag_obs'};
+		}
+	    }
+	    $stats{'acq'} = scalar(@acq_all);
+	    $stats{'acq_noid'} = $noid;
 	}
-	else{
-	    $used_before = 0;
+
+	# guide_stats_view
+	$sql = SQL::Abstract->new();
+	my %gui_where = ( 'id' => $star_id,
+			  'type' => { '!=' => 'FID' },
+			  'kalman_tstart' => { '<' => $obs_tstart_minus_day });
+
+	my ($gui_all_stmt, @gui_all_bind ) = $sql->select('guide_stats_view', 
+							  '*',
+							  \%gui_where );
+
+	my @gui_all = sql_fetchall_array_of_hashref( $db_handle, $gui_all_stmt, @gui_all_bind );
+
+
+	if (scalar(@gui_all)){
+	    my $bad = 0;
+	    my $fail = 0;
+	    my $obc_bad = 0;
+	    for my $attempt (@gui_all){
+		if ($attempt->{'percent_not_tracking'} >= 5){
+		    $bad++;
+		}
+		if ($attempt->{'percent_not_tracking'} == 100){
+		    $fail++;
+		}
+		else{
+		  if ((defined $attempt->{'mag_obs_mean'}) and ($attempt->{'mag_obs_mean'} < 13.9 )){
+		    push @mags, $attempt->{'mag_obs_mean'};
+		  }
+		}
+		if ($attempt->{'percent_obc_bad_status'} >= 5){
+		    $obc_bad++;
+		}
+	    }
+	    $stats{'gui'} = scalar(@gui_all);
+	    $stats{'gui_bad'} = $bad;
+	    $stats{'gui_fail'} = $fail;
+	    $stats{'gui_obc_bad'} = $obc_bad;
+	}
+
+	my $mag_sum = 0;
+	if (scalar(@mags)){
+	  map { $mag_sum += $_ } @mags;
+	  $stats{'avg_mag'} = $mag_sum / scalar(@mags);
 	}
     };
     if ($@){
-	# if we get db errors, let's stop trying
-	$db_handle = undef;
+      # if we get db errors, just print and move on
+      print STDERR $@;
+
     }
 
-
-    return $used_before;
+    return \%stats;
 
 
 }

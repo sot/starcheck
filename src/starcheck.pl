@@ -206,10 +206,10 @@ unless (-e $STARCHECK) {
     print $log_fh "Created plot directory $STARCHECK\n" if ($log_fh);
 }
 
-# copy over the up and down gifs
-if ((-e "${Starcheck_Data}/up.gif") and (-e "${Starcheck_Data}/down.gif")){
-    copy( "${Starcheck_Data}/up.gif", "${STARCHECK}/up.gif");
-    copy( "${Starcheck_Data}/down.gif", "${STARCHECK}/down.gif");
+# copy over the up and down gifs and overlib
+for my $data_file ('up.gif', 'down.gif', 'overlib.js'){
+    copy( "${Starcheck_Data}/${data_file}", "${STARCHECK}/${data_file}")
+	or print STDERR "copy(${Starcheck_Data}/${data_file}, ${STARCHECK}/${data_file}) failed: $! \n";
 }
 
 
@@ -263,10 +263,10 @@ map { warning("$_\n") } @{$error};
 
 
 
-# Warn if we aren't on Solaris
-if ($OS ne 'SunOS'){
-    warning("uname != SunOS; starcheck is only approved on Solaris/SunOS \n");
-}
+## Warn if we aren't on Solaris
+#if ($OS ne 'SunOS'){
+#    warning("uname != SunOS; starcheck is only approved on Solaris/SunOS \n");
+#}
 
 
 # See if we have database access
@@ -490,10 +490,10 @@ foreach my $obsid (@obsid_id) {
 	    warning ("Could not create plots for Obsid $obsid:\n $@ \n");
 	}
     }
-    $obs{$obsid}->check_star_catalog();
-    $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_flick_pix_mon();
+    $obs{$obsid}->check_star_catalog( $or{$obsid} );
+    $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_sim_position(@sim_trans);
     $obs{$obsid}->check_dither(\@dither);
     $obs{$obsid}->count_good_stars();
@@ -666,13 +666,13 @@ foreach $obsid (@obsid_id) {
     my $pict2 = qq{};
     my $pict3 = qq{};
     if ($obs{$obsid}->{plot_file}){
-	$pict1 = qq{ <img src="$obs{$obsid}->{plot_file}"> };
+	$pict1 = qq{ <img src="$obs{$obsid}->{plot_file}" width=426 height=426> };
     }
     if ($obs{$obsid}->{plot_field_file}){
-	$pict2 = qq{Star Field<BR /><img align="top" src="$obs{$obsid}->{plot_field_file}">};
+	$pict2 = qq{Star Field<BR /><img align="top" src="$obs{$obsid}->{plot_field_file}" width=231 height=231>};
     }
     if ($obs{$obsid}->{compass_file}){
-	$pict3 = qq{Compass<BR /><img align="top" src="$obs{$obsid}->{compass_file}">};
+	$pict3 = qq{Compass<BR /><img align="top" src="$obs{$obsid}->{compass_file}" width=154 height=154>};
     }
 
     $out .= "<TABLE CELLPADDING=0><TR><TD ROWSPAN=2>$pict1</TD><TD ALIGN=CENTER>$pict2</TD></TR><TR><TD ALIGN=CENTER>$pict3</TD></TR></TABLE>\n" ;
@@ -709,7 +709,8 @@ close($OUT);
 if ($par{html}) {
     open (my $OUT, "> $STARCHECK.html") or die "Couldn't open $STARCHECK.html for writing\n";
 #    print $OUT $ptf->ptf2any('html', $out);
-    print $OUT "<HTML><HEAD></HEAD><BODY>$out</BODY></HTML>";
+    print $OUT qq{<HTML><HEAD><script type="text/javascript" src="${STARCHECK}/overlib.js"></script></HEAD>};
+    print $OUT qq{<BODY><div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>$out</BODY></HTML>};
     close $OUT;
 #    open (my $DBGOUT, "> $STARCHECK.ptf");
 #    print $DBGOUT $out;
