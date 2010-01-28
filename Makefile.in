@@ -17,7 +17,7 @@ RELATED_LIB = $(SRC)/StarcheckParser.pm
 BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
 GEN_LIB = $(SRC)/Parse_CM_File.pm
 LIB = $(SRC)/Obsid.pm $(SRC)/FigureOfMerit.pm $(SRC)/Dark_Cal_Checker.pm
-DATA = $(SRC)/ACABadPixels $(SRC)/agasc.bad $(SRC)/fid_CHARACTERIS_JUL01 $(SRC)/$(FID_CHARACTERISTICS) $(SRC)/characteristics.yaml $(SRC)/A.tlr $(SRC)/B.tlr $(SRC)/tlr.cfg $(ROOT_FLIGHT)/data/starcheck/bad_gui_stars.rdb $(SRC)/up.gif $(SRC)/down.gif
+DATA = $(SRC)/ACABadPixels $(SRC)/agasc.bad $(SRC)/fid_CHARACTERIS_JUL01 $(SRC)/$(FID_CHARACTERISTICS) $(SRC)/characteristics.yaml $(SRC)/A.tlr $(SRC)/B.tlr $(SRC)/tlr.cfg $(ROOT_FLIGHT)/data/starcheck/bad_gui_stars.rdb $(SRC)/up.gif $(SRC)/down.gif $(SRC)/overlib.js
 
 
 DOC_RST = $(SRC)/aca_load_review_cl.rst
