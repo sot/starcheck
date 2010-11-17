@@ -73,6 +73,7 @@ GetOptions( \%par,
 	   'html!',
 	   'text!',
 	   'yaml!',
+           'vehicle!',
 	   'agasc=s',
 	   'agasc_dir=s',
 	   'chex=s',
@@ -92,24 +93,22 @@ my $font_stop = qq{</font>};
 usage( 1 )
     if $par{help};
 
-# Find backstop, guide star summary, OR, and maneuver files.  Only backstop is required
-
-
-
+# Find backstop, guide star summary, OR, and maneuver files.
 my %input_files = ();
 
-my $backstop   = get_file("$par{dir}/*.backstop",'backstop', 'required');
+my $sosa_prefix = $par{vehicle} ? "VR" : "CR";
+my $sosa_dir = $par{vehicle} ? "vehicle" : "combined";
+
+my $backstop   = get_file("$par{dir}/${sosa_prefix}*.backstop",'backstop', 'required');
 my $guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
 my $or_file    = get_file("$par{dir}/mps/or/*.or",      'OR');
 my $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 my $dot_file   = get_file("$par{dir}/mps/md*.dot",     'DOT', 'required');
-my $mech_file  = get_file("$par{dir}/output/TEST_mechcheck.txt", 'mech check');
+my $mech_file  = get_file("$par{dir}/output/${sosa_dir}/TEST_mechcheck.txt", 'mech check');
 my $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');    
 # asterisk only include to make glob work correctly
-
-
 
 my $config_file;
 if (defined $par{config_file}){
@@ -163,9 +162,9 @@ print $log_fh "Using AGASC from $agasc_dir \n" if ($log_fh);
 
 
 
-my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
+my $manerr_file= get_file("$par{dir}/output/${sosa_dir}/*_ManErr.txt",'manerr');    
 my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
-my $tlr_file   = get_file("$par{dir}/*.tlr", 'TLR', 'required');
+my $tlr_file   = get_file("$par{dir}/${sosa_prefix}*.tlr", 'TLR', 'required');
 
 my $bad_agasc_file = get_file("$Starcheck_Data/agasc.bad", 'banned_agasc');
 my $ACA_bad_pixel_file = get_file("$Starcheck_Data/ACABadPixels", 'bad_pixel');
@@ -459,12 +458,7 @@ foreach (@bs) {
 }
 
 # Do main checking
-
-
-
 foreach my $obsid (@obsid_id) {
-
-
     if ($par{plot}) {
 	eval{
 	    $obs{$obsid}->get_agasc_stars($agasc_dir);
@@ -479,9 +473,9 @@ foreach my $obsid (@obsid_id) {
     }
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_flick_pix_mon();
-    $obs{$obsid}->check_star_catalog( $or{$obsid} );
+    $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->make_figure_of_merit();
-    $obs{$obsid}->check_sim_position(@sim_trans);
+    $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
     $obs{$obsid}->check_dither(\@dither);
     $obs{$obsid}->count_good_stars();
 

@@ -646,6 +646,7 @@ sub check_star_catalog {
 #############################################################################################
     my $self = shift;
     my $or = shift;
+    my $vehicle = shift;
     my $c;
     
     
@@ -674,8 +675,6 @@ sub check_star_catalog {
 
     # Rough angle / pixel scale for dither
     my $ang_per_pix = 5;
-	
-
 
     # If guessing if a BOT or GUI star in slot 7 with an 8x8 box is also a MON
     # we expect MON stars to be within 480 arc seconds of the center, Y or Z
@@ -741,8 +740,6 @@ sub check_star_catalog {
 	}
     }
 
-
-
    # Set slew error (arcsec) for this obsid, or 120 if not available 
     my $slew_err;
     my $targquat;
@@ -759,7 +756,6 @@ sub check_star_catalog {
 	}
     }
     $slew_err = 120 if not defined $slew_err;
-    
 
     # if no starcat, warn and quit this subroutine
     unless ($c = find_command($self, "MP_STARCAT")) {
@@ -771,7 +767,6 @@ sub check_star_catalog {
 	return;
     }
 
-    
     # Reset the minimum number of guide stars if a monitor window is commanded
     $min_guide -= scalar grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
 
@@ -788,10 +783,9 @@ sub check_star_catalog {
     push @warn,"$alarm Too Many Acquisition Stars\n" if (@{$self->{acq}} > 8);
     
     # Match positions of fids in star catalog with expected, and verify a one to one 
-    # correspondance between FIDSEL command and star catalog
-    check_fids($self, $c, \@warn);
-    
-
+    # correspondance between FIDSEL command and star catalog.  
+    # Skip this for vehicle-only loads since fids will be turned off.
+    check_fids($self, $c, \@warn) unless $vehicle;
 
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
@@ -1246,9 +1240,6 @@ sub check_monitor_commanding {
 	push @{$self->{warn}}, "$alarm Found $cnt{$cmd} $cmd commands near " . time2date($t_manv+$dt{$cmd}) . "\n";
     }
 }	
-
-
-
 
 #############################################################################################
 sub check_fids {
