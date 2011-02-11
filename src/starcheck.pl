@@ -54,11 +54,14 @@ my $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
 my $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
 my %par = (dir  => '.',
-	   plot => 1,
-	   html => 1,
-	   text => 1,
-	   yaml => 1,
-	   chex => undef);
+		   plot => 1,
+		   html => 1,
+		   text => 1,
+		   yaml => 1,
+		   chex => undef,
+		   config_file => "characteristics.yaml",
+		   fid_char => "fid_CHARACTERISTICS",
+		   );
 
 my $log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
 
@@ -66,20 +69,20 @@ my $agasc_parent_dir = '/data/agasc';
 my $default_agasc_dir = '/data/agasc1p6/';
 
 GetOptions( \%par, 
-	   'help', 
-	   'dir=s',
-	   'out=s',
-	   'plot!',
-	   'html!',
-	   'text!',
-	   'yaml!',
-           'vehicle!',
-	   'agasc=s',
-	   'agasc_dir=s',
-	   'chex=s',
-	   'fid_char=s',
-	   'config_file=s',
-	   ) ||
+			'help', 
+			'dir=s',
+			'out=s',
+			'plot!',
+			'html!',
+			'text!',
+			'yaml!',
+			'vehicle!',
+			'agasc=s',
+			'agasc_dir=s',
+			'chex=s',
+			'fid_char=s',
+			'config_file=s',
+			) ||
     exit( 1 );
 
 my $STARCHECK   = $par{out} || 'starcheck';
@@ -96,43 +99,31 @@ usage( 1 )
 # Find backstop, guide star summary, OR, and maneuver files.
 my %input_files = ();
 
-my $sosa_prefix = $par{vehicle} ? "VR" : "CR";
-my $sosa_dir = $par{vehicle} ? "vehicle" : "combined";
+# for split loads directory configuration 
+my $sosa_dir_slash = $par{vehicle} ? "vehicle/" : "";
 
-my $backstop   = get_file("$par{dir}/${sosa_prefix}*.backstop",'backstop', 'required');
+# asterisk only include to make globs work correctly
+my $backstop   = get_file("$par{dir}/${sosa_dir_slash}*.backstop", 'backstop', 'required');
 my $guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
 my $or_file    = get_file("$par{dir}/mps/or/*.or",      'OR');
 my $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 my $dot_file   = get_file("$par{dir}/mps/md*.dot",     'DOT', 'required');
-my $mech_file  = get_file("$par{dir}/output/${sosa_dir}/TEST_mechcheck.txt", 'mech check');
+my $mech_file  = get_file("$par{dir}/${sosa_dir_slash}output/TEST_mechcheck.txt*", 'mech check');
 my $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
-my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');    
-# asterisk only include to make glob work correctly
+my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither'); 
 
-my $config_file;
-if (defined $par{config_file}){
-    $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
-}
-else{
-    $config_file = get_file("$Starcheck_Data/characteristics.yaml*", 'config', 'required');
-}
+my $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
 
 my $config_ref = YAML::LoadFile($config_file);
 my $mp_top_link = guess_mp_toplevel({ path => abs_path($par{dir}), 
-				      config => $config_ref });
+									  config => $config_ref });
 
 
-my $odb_file; 
-# Override fid characteristics if present at command line
-if (defined $par{fid_char}){
-    $odb_file = get_file("$Starcheck_Data/$par{fid_char}*", 'odb', 'required');
-}
-else{
-    $odb_file = get_file("$Starcheck_Data/fid_CHARACTERISTICS*", 'odb', 'required'); 
-}
+my $odb_file = get_file("$Starcheck_Data/$par{fid_char}*", 'odb', 'required');
 
-my $agasc_dir;
+
+my $agasc_dir = $default_agasc_dir;
 if ( defined $par{agasc} or defined $par{agasc_dir}){
     if ( defined $par{agasc} and defined $par{agasc_dir}){
 	print STDERR "Option 'agasc_dir' overrides 'agasc' \n";
@@ -152,26 +143,18 @@ if ( defined $par{agasc} or defined $par{agasc_dir}){
 	}
     }
 }
-else{
-    $agasc_dir = $default_agasc_dir;
-}
 print STDERR "Using AGASC from $agasc_dir \n";
 print $log_fh "Using AGASC from $agasc_dir \n" if ($log_fh);
 
 
-
-
-
-my $manerr_file= get_file("$par{dir}/output/${sosa_dir}/*_ManErr.txt",'manerr');    
+my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
 my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
-my $tlr_file   = get_file("$par{dir}/${sosa_prefix}*.tlr", 'TLR', 'required');
+my $tlr_file   = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required');
 
 my $bad_agasc_file = get_file("$Starcheck_Data/agasc.bad", 'banned_agasc');
 my $ACA_bad_pixel_file = get_file("$Starcheck_Data/ACABadPixels", 'bad_pixel');
 my $bad_acqs_file = get_file( $ENV{'SKA_DATA'}."/acq_stats/bad_acq_stars.rdb", 'acq_star_rdb');
 my $bad_gui_file = get_file( "$Starcheck_Data/bad_gui_stars.rdb", 'gui_star_rdb');
-
-
 
 
 # Let's find which dark current made the current bad pixel file
