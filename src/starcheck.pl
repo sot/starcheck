@@ -446,9 +446,9 @@ foreach my $obsid (@obsid_id) {
 	eval{
 	    $obs{$obsid}->get_agasc_stars($agasc_dir);
 	    $obs{$obsid}->identify_stars();
-	    $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.gif") ;
-	    $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.gif") ;
-	    $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.gif");
+	    $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.png") ;
+	    $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.png") ;
+	    $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.png");
 	};
 	if ($@){
 	    warning ("Could not create plots for Obsid $obsid:\n $@ \n");
@@ -1215,7 +1215,7 @@ Default is '.'.
 =item B<-out <out>>
 
 Output reports will be <out>.html, <out>.txt.  Star plots will be 
-<out>/stars_<obsid>.gif.  The default is <out> = 'STARCHECK'.
+<out>/stars_<obsid>.png.  The default is <out> = 'STARCHECK'.
 
 =item B<-[no]plot>
 
@@ -1258,7 +1258,7 @@ used to determine star/fid IDs and magnitudes.  A report summarizing
 the star catalogs is generated in HTML and/or plain text formats.
 
 The output reports are named <out>.html, <out>.txt, and star plots are
-named <out>/stars_<obsid>.gif.  If not specified on the command line,
+named <out>/stars_<obsid>.png.  If not specified on the command line,
 <out> is 'STARCHECK'.
 
 Starcheck.pl looks in <dir> for a single Backstop file with the name '*.backstop'.
