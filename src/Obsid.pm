@@ -1602,7 +1602,6 @@ sub print_report {
 	}
 	$o .= "${font_stop}";
     }
-
     $o .= "\n";
 
     if (exists $self->{figure_of_merit}) {
@@ -2001,7 +2000,74 @@ sub star_dbhist {
 
 }
 
+#############################################################################################
+sub star_image_map {
+#############################################################################################
+	my $self = shift;
+	my $c;
+    return unless ($c = find_command($self, 'MP_STARCAT'));
+    return unless ((defined $self->{ra}) and (defined $self->{dec}) and (defined $self->{roll}));	my $obsid = $self->{obsid};
 
+	# a hash of the agasc ids we want to plot
+	my %plot_ids;
+	# first the catalog ones
+	for my $i (1 .. 16){
+		next if ($c->{"TYPE$i"} eq 'NUL');
+		next if ($c->{"TYPE$i"} eq 'FID');
+		if (defined $self->{agasc_hash}->{$c->{"GS_ID${i}"}}){
+			$plot_ids{$c->{"GS_ID${i}"}} = 1;
+		}
+	}
+	# then up to 100 of the stars in the field brighter than
+	# the faint plot limit
+	my $star_count_limit = 100;
+	my $star_count = 0;
+    foreach my $star (values %{$self->{agasc_hash}}) {
+		next if ($star->{mag} > $faint_plot_mag);
+		$plot_ids{$star->{id}} = 1;
+		last if $star_count > $star_count_limit;
+		$star_count++;
+	}
+
+	# notes for pixel scaling.
+	# these will need to change if we resize the images.
+	# bottom left +43+383
+	# top left +43+42
+	# bottom right +383+383
+	# top right +383*43
+	# 2900x2900
+	my $pix_scale = 340 / (2900. * 2);
+	my $map = "<map name=\"starmap_${obsid}\" id=\"starmap_${obsid}\"> \n";
+	for my $star_id (keys %plot_ids){
+		my $cat_star = $self->{agasc_hash}->{$star_id};
+		my $sid = $cat_star->{id};
+		my $yag = $cat_star->{yag};
+		my $zag = $cat_star->{zag};
+		my ($pix_row, $pix_col) = ('None', 'None');
+		eval{
+			($pix_row, $pix_col) = toPixels($yag, $zag);		
+		};
+		my $image_x = 43 + ((2900 - $yag) * $pix_scale);
+		my $image_y = 43 + ((2900 - $zag) * $pix_scale);
+		my $star = '<area href="javascript:void(0);"' . "\n"
+			. 'ONMOUSEOVER="return overlib (' 
+			. "'id=$sid <br/>" 
+			. sprintf("yag,zag=%.2f,%.2f <br />", $yag, $zag)
+			. "row,col=$pix_row,$pix_col <br/>" 
+			. sprintf("mag=%.2f <br />", $cat_star->{mag})
+			. sprintf("class=%s <br />", $cat_star->{class})
+			. sprintf("color=%.3f <br />", $cat_star->{bv})
+			. sprintf("aspq1=%.1f <br />", $cat_star->{aspq})
+			. '\', WIDTH, 220);"' . "\n"
+			. 'ONMOUSEOUT="return nd();"' . "\n"
+			. 'SHAPE="circle"' . "\n"
+			. 'ALT=""' . "\n"
+			. "COORDS=\"$image_x,$image_y,2\">" . "\n";
+		$map .= $star;
+	}	
+	$map .= "</map> \n";          
+	return $map;
+}
 
 
 #############################################################################################
@@ -2089,7 +2155,7 @@ sub plot_stars {
 	if ($c->{"TYPE$i"} eq 'FID'){ # Make open (fid)
 	    pgpoint(1, $x, $y, $sym_type{$c->{"TYPE$i"}});
 	}
-       	if ($c->{"TYPE$i"} =~ /(BOT|ACQ)/) {           # Plot search box
+    if ($c->{"TYPE$i"} =~ /(BOT|ACQ)/) {           # Plot search box
 	    box($x, $y, $c->{"HALFW$i"}, $c->{"HALFW$i"});
 	}
 	if ($c->{"TYPE$i"} =~ /MON/) {             # Plot monitor windows double size for visibility

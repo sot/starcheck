@@ -612,7 +612,10 @@ foreach $obsid (@obsid_id) {
     my $pict2 = qq{};
     my $pict3 = qq{};
     if ($obs{$obsid}->{plot_file}){
-	$pict1 = qq{ <img src="$obs{$obsid}->{plot_file}" width=426 height=426> };
+		my $obs = $obs{$obsid}->{obsid};
+		my $obsmap = $obs{$obsid}->star_image_map();
+		$pict1 = qq{$obsmap <img src="$obs{$obsid}->{plot_file}" usemap=\#starmap_${obs}
+						width=426 height=426 border=0> };
     }
     if ($obs{$obsid}->{plot_field_file}){
 	$pict2 = qq{Star Field<BR /><img align="top" src="$obs{$obsid}->{plot_field_file}" width=231 height=231>};
