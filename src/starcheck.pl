@@ -66,8 +66,8 @@ my %par = (dir  => '.',
 
 my $log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
 
-my $agasc_parent_dir = '/data/agasc';
-my $default_agasc_dir = '/data/agasc1p6/';
+my $agasc_parent_dir = '/proj/sot/ska/data/agasc';
+my $default_agasc_dir = '/proj/sot/ska/data/agasc1p6/';
 
 GetOptions( \%par, 
 			'help', 
