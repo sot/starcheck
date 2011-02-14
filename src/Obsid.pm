@@ -604,6 +604,60 @@ sub check_dither {
 }
 
 #############################################################################################
+sub check_momentum_unload{
+#############################################################################################
+	my $self = shift;
+	my $backstop = shift;
+
+	# NPM range that will be checked for momentum dumps
+	# duplicates check_dither range...
+	my ($obs_tstart, $obs_tstop);
+
+	# as with dither, check for end of associated maneuver to this attitude
+	# and finding none, set start time as obsid start
+    my $manvr = find_command($self, "MP_TARGQUAT", -1);
+	if ((defined $manvr) and (defined $manvr->{tstop})){
+		$obs_tstart = $manvr->{tstop};
+	}
+	else{
+		$obs_tstart = date2time($self->{date});
+	}
+
+    # set the observation stop as the beginning of the next maneuever
+    # or, if last obsid in load, use the processing summary or/er observation
+    # stop time
+    if (defined $self->{next}){
+		my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
+		if (defined $next_manvr){
+			$obs_tstop  = $next_manvr->{tstart};
+		}
+		else{
+			# if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
+			# just use next obsid start time
+			my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
+			if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
+				$obs_tstop = $next_cmd_obsid->{time};
+			}
+		}
+    }
+    else{
+		$obs_tstop = $self->{or_er_stop};
+    }
+
+	for my $entry (@{$backstop}){
+		if ((defined $entry->{command}) and (defined $entry->{command}->{TLMSID})){
+			if ($entry->{command}->{TLMSID} =~ /AOMUNLGR/){
+				if (($entry->{time} >= $obs_tstart) and ($entry->{time} <= $obs_tstop )){
+					push @{$self->{fyi}}, "$info Momentum Unload (AOMUNLGR) in NPM at " . $entry->{date};
+				}
+			}
+		}
+	}
+
+
+}
+
+#############################################################################################
 sub check_sim_position {
 #############################################################################################
     my $self = shift;

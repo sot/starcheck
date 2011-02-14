@@ -260,7 +260,9 @@ eval{
     $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir} });
 };
 if ($@){
-    warning("Dark Cal Checker Failed $@ \n");
+	unless ($@ =~ /No ACA commanding found/){
+		warning("Dark Cal Checker Failed $@ \n");
+	}
 }
 
 
@@ -458,6 +460,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
     $obs{$obsid}->check_dither(\@dither);
+	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->count_good_stars();
 
 # Make sure there is only one star catalog per obsid
