@@ -860,12 +860,21 @@ sub check_star_catalog {
 	    # ignore precision errors in color
 	    my $color = sprintf('%.7f', $c->{"GS_BV$i"});
 	    $c->{"GS_NOTES$i"} .= 'c' if ($color eq '0.7000000');
+		$c->{"GS_NOTES$i"} .= 'C' if ($color eq '1.5000000');
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
 	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 399);
-	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",$c->{"GS_BV$i"},($c->{"GS_MAGERR$i"})/100,($c->{"GS_POSERR$i"})/1000) if ($c->{"GS_NOTES$i"} =~ /[cmp]/);
+	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",$c->{"GS_BV$i"},($c->{"GS_MAGERR$i"})/100,($c->{"GS_POSERR$i"})/1000) if ($c->{"GS_NOTES$i"} =~ /[Ccmp]/);
 	    $marginal_note = sprintf("$alarm [%2d] Marginal star. %s\n",$i,$note) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
-	    if ( $c->{"GS_NOTES$i"} =~ /c/ && $type =~ /BOT|GUI/ ) { push @warn, $marginal_note }
-	    elsif ($marginal_note) { push @yellow_warn, $marginal_note }
+		# for B-V = 0.7 and guide, red warnings
+		# for all others, including (B-V = 1.5 and guide), yellow warning
+		if ( $marginal_note ){
+			if ($color eq '0.7000000' && $type =~ /BOT|GUI/ ) { 
+				push @warn, $marginal_note;
+			}
+			else{
+				push @yellow_warn, $marginal_note;
+			}
+		}
 	    push @warn, sprintf("$alarm [%2d] Bad star.  Class = %s %s\n", $i,$c->{"GS_CLASS$i"},$note) if ($c->{"GS_NOTES$i"} =~ /b/);
 	}
 
