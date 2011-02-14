@@ -13,8 +13,8 @@ RunRegression()
   agasc=${1}
   fid_char=${2}
 
-  test=$home/regress/test/$load
-  release=$home/regress/release/$load
+  test=$home/regress/${OSTYPE}_test/$load
+  release=$home/regress/${OSTYPE}_release/$load
 
   # Make sure we have a clean test directory
   if [ -d $test ]
@@ -65,10 +65,11 @@ RunRegression()
 # Define the files and directories
 home=$PWD
 mphome=/data/mpcrit1/mplogs
-log=$home/regress_log
-diffs=$home/regress_diffs
+log=$home/${OSTYPE}_regress_log
+diffs=$home/${OSTYPE}_regress_diffs
 
 RELEASE=/proj/sot/ska
+
 
 if [ "$SKA" = "$RELEASE" ] ; then
   echo "Error - test bin is the same as the release bin."
