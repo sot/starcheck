@@ -1068,7 +1068,7 @@ sub check_flick_pix_mon {
 	    unless $c->{"RESTRK${mon_star}"} == 0;
 	
         # Verify the DTS is set to self
-	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. DTS should be set to self\n". $mon_star)
+	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. DTS should be set to self\n", $mon_star)
 	    unless $c->{"DIMDTS${mon_star}"} == $c->{"IMNUM${mon_star}"};
 
     }	
