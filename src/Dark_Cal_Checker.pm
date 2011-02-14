@@ -6,10 +6,11 @@ use strict;
 use warnings;
 use Carp;
 use IO::All;
-use Ska::Convert qw(date2time);
+use Ska::Convert qw(date2time time2date);
 use Quat;
 use Config::General;
 use Math::Trig;
+use Data::Dumper;
 
 use Ska::Parse_CM_File;
 
@@ -23,20 +24,16 @@ sub new{
     my $DarkCal_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
     my %par = (
-	       dir => '.',
-	       app_data => "${DarkCal_Data}",
-	       config => 'tlr.cfg',
-	       tlr => 'CR*.tlr',
-	       mm => '/mps/mm*.sum',
-	       backstop => 'CR*.backstop',
-	       dot => "/mps/md*.dot",
+			   dir => '.',
+			   app_data => "${DarkCal_Data}",
+			   config => 'tlr.cfg',
+			   tlr => 'CR*.tlr',
+			   mm => '/mps/mm*.sum',
+			   backstop => 'CR*.backstop',
+			   dot => "/mps/md*.dot",
+			   %{$par_ref},
 	       );
-    
-    # Override Defaults as needed from passed parameter hash
-    while (my ($key,$value) = each %{$par_ref}) {
-	$par{$key} = $value;
-    }
-    
+
     
 # Create a hash to store all information about the checks as they are performed
     my %feedback = (
@@ -47,330 +44,305 @@ sub new{
 # %Input files is used by get_file()
 
     my %config = ParseConfig(-ConfigFile => "$par{app_data}/$par{config}");
+	$feedback{oflsids} = $config{template}->{manvr}->{point_order}->{oflsid};
     fix_config_hex(\%config);
 
     my $tlr_file    = get_file("$par{dir}/$par{tlr}", 'tlr', 'required', \@{$feedback{input_files}});
-
     my $tlr = TLR->new($tlr_file, 'tlr', \%config);
-
-    my $transponder;
-
-    
-    eval{
-	$feedback{transponder} = identify_transponder($tlr, \%config);
-    };
-    if ($@){
-	my $error = $@;
-	if ($error =~ /No ACA commanding found/){
-	    $feedback{dark_cal_present} = 0;
-	    return \%feedback;
-	}
-	else{
-	    croak($error);
-	}
-    }
-
-
-    if ($feedback{transponder}->{status}){
-	$transponder = $feedback{transponder}->{transponder};
-    } 
-    else{
-	# identify transponder should croak if problem, but:
-	die "Transponder not correctly selected!\n";
-    }
-    
-    if ($par{verbose}){
-	print "\n";
-    }
-    
-    my $mm_file = get_file("$par{dir}/$par{mm}", 'Maneuver Management', 'required', \@{$feedback{input_files}});
+	#my $mm_file = get_file("$par{dir}/$par{mm}", 'Maneuver Management', 'required', \@{$feedback{input_files}});
     my $dot_file = get_file("$par{dir}/$par{dot}", 'DOT', 'required', \@{$feedback{input_files}});
-    my @mm = Ska::Parse_CM_File::MM({file => $mm_file, ret_type => 'array'});
+    #my @mm = Ska::Parse_CM_File::MM({file => $mm_file, ret_type => 'array'});
     my ($dot_href, $s_touched, $dot_aref) = Ska::Parse_CM_File::DOT($dot_file);
     my $bs_file = get_file("$par{dir}/$par{backstop}", 'Backstop', 'required', \@{$feedback{input_files}});
     my @bs = Ska::Parse_CM_File::backstop($bs_file);
-    
-    my $template_file = get_file("$par{app_data}/$config{file}{template}{$transponder}", 'template', 'required', \@{$feedback{input_files}} );
-    my $template = TLR->new($template_file, 'template', \%config);
 
-#    $feedback{check_mm_vs_backstop} = check_mm_vs_backstop( $mm_file, $bs_file );
-    $feedback{check_tlr_sequence} = check_tlr_sequence($tlr);
-    $feedback{check_transponder} = check_transponder($tlr, \%config); 
-    $feedback{check_dither_disable_before_replica_0} = check_dither_disable_before_replica_0($tlr, \%config);
-    $feedback{check_dither_param_before_replica_0} = check_dither_param_before_replica_0($tlr, \%config);
-    $feedback{check_for_dither_during} = check_for_dither_during($tlr, \%config);
+	# load A and B templates
+    my %templates = map { $_ => TLR->new(get_file("$par{app_data}/$config{file}{template}{$_}", 
+												  'template', 
+												  'required', 
+												  \@{$feedback{input_files}} ), 'template', \%config) } qw(A B);
+	
+	my $manvrs = maneuver_parse($dot_aref);
+	my $dwells = calc_dwells($manvrs);
+	my $timelines = iu_timeline($tlr);
+	my @trim_tlr = @{ trim_tlr( $tlr, \%config )};
+	$feedback{aca_init_command} = compare_timingncommanding( [$trim_tlr[0]], [$templates{A}->{entries}[0]], \%config, 
+															 "First ACA command is the template-independent init command");
+	%feedback = (%feedback, %{replicas($tlr, \%templates, $timelines, \%config)});
     $feedback{check_dither_enable_at_end} = check_dither_enable_at_end($tlr, \%config);
     $feedback{check_dither_param_at_end} = check_dither_param_at_end($tlr, \%config);
-    $feedback{compare_timingncommanding} = compare_timingncommanding($tlr, $template, \%config);
-
-    if (!$feedback{compare_timingncommanding}->{status}){
-	if ($transponder eq 'A'){
-#	    print "\tTrying other template\n";
-	    my $test_template_file = get_file("$par{app_data}/$config{file}{template}{B}", 'template', 'required', \@{$feedback{input_files}});
-	    my $test_template = TLR->new($test_template_file, 'template', \%config);
-	    my $test_other = compare_timingncommanding($tlr, $test_template, \%config);
-	    if ($test_other->{status}){
-		print "--->>>  Matches template for B transponder; check selected transponder.\n";
-	    }
-	}
-	else{
-#	    print "\tTrying other template\n";
-	    my $test_template_file = get_file("$par{app_data}/$config{file}{template}{A}", 'template', 'required', \@{$feedback{input_files}} );
-	    my $test_template = TLR->new($test_template_file, 'template', \%config);
-	    my $test_other = compare_timingncommanding($tlr, $test_template, \%config);
-	    if ($test_other->{status}){
-		print "--->>>  Matches template for A transponder; check selected transponder.\n";
-	    }
-	    
-	}
-    }
-    $feedback{check_manvr} = check_manvr( \%config, \@bs, $dot_aref);
-    $feedback{check_dwell} = check_dwell(\%config, \@bs, $dot_aref);
-    $feedback{check_manvr_point} = check_manvr_point( \%config, \@bs, $dot_aref);
-
+    $feedback{check_manvr} = check_manvr( \%config, $manvrs);
+    $feedback{check_dwell} = check_dwell(\%config, $manvrs, $dwells);
+    $feedback{check_manvr_point} = check_manvr_point( \%config, \@bs, $manvrs);
+	$feedback{check_momentum_unloads} = check_momentum_unloads(\%config, \@bs, $manvrs, $dwells);
+	
     bless \%feedback, $class;
     return \%feedback;
 
 }
 
-# Phasing out use of maneuver processing summary in Jun 2008.
-# Eliminating this routine
+##***************************************************************************
+sub maneuver_parse{
+##***************************************************************************
+# use the DOT entries to create an array of maneuver (hashes) each with
+# a defined initial and final oflsid, tstart, tstop, and duration	
 
-###***************************************************************************
-#sub check_mm_vs_backstop{
-###***************************************************************************
-## confirm that that maneuver summary times and quaternions match the backstop
-#
-#    my $ms_file = shift;
-#    my $bs_file = shift;
-#
-#    my %output = (
-#		  status => 1,
-#		  comment => ['Comparing Backstop maneuvers to those in Maneuver Summary'],
-#		  criteria => ['Confirms that each backstop maneuver has a match in maneuver summary',
-#			       'Matches start of maneuver at AONMMODE and target quaternion MP_TARGQUAT'],
-#		  );
-#    eval{
-#	Ska::Parse_CM_File::verifyMM($ms_file, $bs_file);
-#      };
-#    if ($@){
-#	print "$@ \n";
-#	$output{status} = 0;
-#	$output{info} = [{ text =>"$@", type => 'error' }];
-#    }
-#    return \%output;
-#}		      
-	    
+	my $dot = shift;
+
+	my @raw_manvrs;
+    for my $dot_entry (@{$dot}){
+		if ($dot_entry->{cmd_identifier} =~ /ATS_MANVR/){
+			push @raw_manvrs, $dot_entry;
+		}
+    }
+
+	# mock initial starting attitude
+	my $init = 'dcIAT';
+	my @manvrs;
+	# for each maneuver, make a hash and push it
+	# saving the new attitude as the initial oflsid for the next maneuver
+	for my $manvr (@raw_manvrs){
+		my %man = ( init => $init,
+					final => $manvr->{oflsid},
+					tstart => $manvr->{time} + timestring_to_secs($manvr->{MANSTART}),
+					tstop => $manvr->{time} 
+					+ timestring_to_secs($manvr->{MANSTART}) 
+					+ timestring_to_secs($manvr->{DURATION}),
+					duration => timestring_to_mins($manvr->{DURATION}),
+					);
+		
+		push @manvrs, \%man;
+		$init = $manvr->{oflsid};
+
+	}
+	return \@manvrs;
+
+}
+
+##***************************************************************************
+sub calc_dwells{
+##***************************************************************************
+# From the parsed DOT maneuvers, generate an hash of dwells keyed off of
+# oflsid.  This will not be robust for obsids without maneuvers, but
+# that should not be a problem for any of the oflsids we'll be checking
+# (specifically, the dark cal ones).
+
+	my $manvrs = shift;
+	my %dwell;
+	my $dwell_start;
+	for my $manvr (@{$manvrs}){
+		if (defined $dwell_start){
+			$dwell{$manvr->{init}} = { duration => $manvr->{tstart} - $dwell_start,
+									   tstart => $dwell_start,
+									   tstop => $manvr->{tstart},
+									   oflsid => $manvr->{init},
+								   };
+		}
+		$dwell_start = $manvr->{tstop};
+	}
+	return \%dwell;
+}
+
+
+##***************************************************************************	    
+sub replicas{
+##***************************************************************************
+# perform dither, transponder selection, and complete command/timing checks on
+# each of the dark cal replicas
+
+	my $tlr = shift;
+	my $templates = shift;
+	my $timelines = shift;
+	my $config = shift;
+	my @trim_tlr = @{ trim_tlr( $tlr, $config )};
+	my %feedback;
+	# for each replica
+	for my $r_idx (0 .. 4){
+		# find the indexes in the real tlr and trim to a reduced set of commands to check
+		# note that begin_replica and end_replica use trace_ids from the TLR
+		my $r_start = $tlr->begin_replica($r_idx)->index();
+		my $r_end = $tlr->end_replica($r_idx)->index();
+		my @replica_tlr;
+		for my $entry (@trim_tlr){
+			if (($entry->index() >= $r_start) and ($entry->index() <= $r_end)){
+				push @replica_tlr, $entry;
+			}
+		}
+		# run the command checks on each transponder and store the results in the %per_trans hash
+		my %per_trans;
+		my $best_guess;
+		for my $trans qw( A B ){
+			my $template = $templates->{$trans};
+			my @replica_templ;
+			for my $entry (@{$template->{entries}}){
+				if ((defined $entry->replica()) and ($entry->replica() == $r_idx )){
+					push @replica_templ, $entry;
+				}
+			}
+			$per_trans{$trans} = compare_timingncommanding( \@replica_tlr, \@replica_templ, $config, 
+															"Strict Timing Checks: Timing and Hex Commanding for replica $r_idx");
+			$per_trans{$trans}->{transponder} = $trans;
+		}
+		# for the transponder version with fewest errors, assign the output, and
+		# assign a transponder
+		if ($per_trans{A}->{n_fails} < $per_trans{B}->{n_fails}){
+			$best_guess = 'A';
+			$feedback{"tnc_replica_${r_idx}"} = $per_trans{A};
+		}
+		else{
+			$best_guess = 'B';
+			$feedback{"tnc_replica_${r_idx}"} = $per_trans{B};
+		}
+		my $r_time = $replica_tlr[0]->time();
+		# for the given transponder and replica, check that the transponder state is correct
+		$feedback{"trans_replica_${r_idx}"} = check_iu($r_idx, $r_time, $best_guess, $timelines, $config);
+		# also confirm that dither is disabled before the start of the replica
+		$feedback{"dither_disable_${r_idx}"} = check_dither_disable_before_replica( $tlr, $config, $r_idx);		
+	}
+
+	return \%feedback;
+
+}
+
+##***************************************************************************
+sub check_iu{
+##***************************************************************************
+	my ($replica, $r_time, $transponder, $timelines, $config) = @_;
+	my %output = (
+				  comment => ["Checking IU/transponder state before replica $replica"],
+				  criteria => ["Find the commanded IU state before $r_time, looking for",
+							   'all CIMODESL, CPX???, CPA??? commands',
+							   "Compares current CTX/CPA state with desired state for transponder $transponder",
+							   "The transponder is predetermined by the hex checks against each template",
+							   "if both fail, a 'best guess' based on the smaller number of errors is used",
+							   ],
+				  status => 1,
+				  );
+
+	my %tmpl = ( A => $config->{template}->{A}->{transponder},
+				 B => $config->{template}->{B}->{transponder});
+
+
+	my $state;
+	for my $t (reverse @{$timelines}){
+		next unless $t->{time} < $r_time;
+		$state = $t;
+		last;
+	}
+	if (not defined $state->{iu}){
+		push @{$output{info}}, { text => "IU config not set (should be CIU512X)", type => 'error' };
+		$output{status} = 0;
+	}
+	else{
+		my $want_iu = ($transponder eq 'A') ? 'CIU512T' : 'CIU512X';
+		if ($state->{iu} eq $want_iu){
+			push @{$output{info}}, { text => "IU config set to $want_iu at ". $state->{datestart}, type => 'info' };
+		}
+		else{
+			push @{$output{info}}, { text => "IU config set to '" . $state->{iu} ."', should be $want_iu", type => 'error' };	
+			$output{status} = 0;
+		}
+	}
+
+	my %want = %{$tmpl{$transponder}};
+	my @tinfo;
+	my $t_select = 1;
+	for my $cm (keys %want){
+		if ($state->{$cm} ne $want{$cm}){
+			$t_select = 0;
+			push @tinfo, { text => "transponder state $cm => " . $state->{$cm} . " != " . $want{$cm}, type => 'error'};
+		}
+		else{
+			push @tinfo, { text => "transponder state $cm => " . $state->{$cm} . " == " . $want{$cm}, type => 'info'};
+		}
+	}
+	push @{$output{info}}, { text => "Transponder should be set to $transponder", type => 'info'};
+	push @{$output{info}}, @tinfo;
+	if ($t_select == 0){
+		$output{status} = 0;
+		push @{$output{info}}, { text => "Transponder not correctly set for $transponder", type => 'error' };
+	}
+	else{
+		push @{$output{info}}, { text => "Transponder correctly to $transponder", type => 'info' };
+	}
+
+	return \%output;
+
+}
+
+
+##***************************************************************************
+sub iu_timeline{
+##***************************************************************************
+# Step through the TLR and generate/clock out an array of timeline "states" for 
+# the CPA, CTX, and CIMODESL options.
+
+	my $tlr = shift;
+	my @timelines;
+	my %timeline;
+	my %cimodesl = ('7C0 6360' => 'CIU128T',
+					'7C0 6380' => 'CIU256T', 
+					'7C0 63A0' => 'CIU512T', 
+					'7C0 63C0' => 'CIU1024T',
+					'7C0 6780' => 'CIU256X', 
+					'7C0 67A0' => 'CIU512X', 
+					'7C0 67C0' => 'CIU1024X',
+					'7C0 6BA0' => 'CIMODESL',
+					'7C0 6FA0' => 'CIMODESL');
+
+	my %tog = ( 'ON' => 'ON',
+				'OF' => 'OFF');
+
+	for my $entry (@{$tlr->{entries}}){
+		if (defined $entry->comm_mnem()){
+			if ($entry->comm_mnem() eq 'CIMODESL'){
+				my $iu = $cimodesl{$entry->hex()->[0]};
+				if (not defined $timeline{iu} or ($iu ne $timeline{iu})){
+					$timeline{iu} = $iu;
+					$timeline{datestart} = $entry->datestamp();
+					$timeline{time} = $entry->time();
+					push @timelines, {%timeline};
+				}
+			}
+			if ($entry->comm_mnem() =~ /^(C(TX|PA))(A|B)(ON|OF)/){
+				my $tkey = "$1$3";
+				my $tval = $tog{$4};
+				if ((not defined $timeline{$tkey}) or ($timeline{$tkey} ne $tval)){
+					$timeline{$tkey} = $tval;
+					$timeline{datestart} = $entry->datestamp();
+					$timeline{time} = $entry->time();
+					push @timelines, {%timeline};
+				}
+			}
+		}
+	}
+	return \@timelines;
+}
+
 
  
-##***************************************************************************
-sub check_tlr_sequence{
-# This check is not required, but it did assist when some of my "intentionally
-# broken" checks did not work, because the datestamp on the line was used as 
-# the time point instead of the command's position in the tlr.
-##***************************************************************************
 
-    my $tlr = shift;
-
-    # default is ok, unless there is a problem
-    my %output = (
-		  status => 1,
-		  comment => ['Checking TLR to confirm commands are consecutive'],
-		  criteria => ['Confirms that each timestamp in the TLR is >= to the previous timestamp'],
-		  );
-		   
-    my @tlr_arr = @{$tlr->{entries}};
-
-    my $last_time;
-    
-    for my $entry (@tlr_arr){
-	if (not defined $last_time){
-	    $last_time = $entry->time();
-	    next;
-	}
-	if ($entry->time() < $last_time ){
-	    my $string = sprintf("TLR timestamps are non-sequential near TLR index ", $entry->index(), " \n");
-	    my @info = [{ text => $string, type => 'error' }];
-	    $output{status} = 0;
-#	    $output{error} = \@info;
-	}
-	$last_time = $entry->time();
-    }
-    return \%output;
-}
 
 ##***************************************************************************
-sub identify_transponder{
+sub check_dither_disable_before_replica{
 ##***************************************************************************
+
+    my ($tlr, $config, $replica) = @_;    
 
     my %output = (
-		  criteria => ['Finds last set of transponder commands before first aca hw cmd'],
-		  );
-
-    my ($tlr, $config) = @_;
-    
-    my %cmd_list = map { $_ => $config->{template}{$_}{transponder}} qw( A B);    
-    push @{$output{criteria}}, "transponder commands identified by mnemonic as any one of:";
-    my $string_cmd_list;
-    for my $comm_mnem (map {@$_} @{cmd_list{'A','B'}}){
-        $string_cmd_list .= " " . $comm_mnem->{comm_mnem};
-    }
-    push @{$output{criteria}}, $string_cmd_list;
-
-
-    my @tlr_arr = @{$tlr->{entries}};
-    my $index_0 = $tlr->first_aca_hw_cmd->index();
-    push @{$output{criteria}}, sprintf('First aca hw cmd at ' . $tlr->first_aca_hw_cmd->datestamp());
-
-    # find the last transponder commanding before the first aca hw cmd
-
-    my $cmd_cnt = 0;
-    my @last_trans_cmd;
-    
-    push @{$output{criteria}}, sprintf("Searches back from first aca hw cmd until " 
-				       . scalar(@{$cmd_list{A}}) . " transponder commands identified");
-
-    for my $tlr_entry (reverse @tlr_arr[0 .. $index_0]){
-	last unless ($cmd_cnt < scalar(@{$cmd_list{A}}));
-	next unless ( grep { $_->{comm_mnem} eq $tlr_entry->comm_mnem() } (map {@$_} @{cmd_list{'A','B'}}) );
-	$cmd_cnt++;
-	unshift @last_trans_cmd, $tlr_entry;
-    }
-
-    push @{$output{criteria}}, "Last group of commands is then compared to templates for A and B transponder selection";
-
-
-    # Compare the array of commands to the correct commanding for the A transponder
-#    push @{$output{info}}, "Comparing transponder commands to list for transponder A ... ";
-    my $A = entry_arrays_match( \@last_trans_cmd, $cmd_list{'A'});
-    if ($A->{status}){
-	push @{$output{info}}, { text => "Comparing transponder commands to list for transponder A ... ", type => 'info' };
-	push @{$output{info}}, @{$A->{info}};
-	$output{transponder} = 'A';
-	$output{comment} = ["Identifying Transponder: Transponder Selected = A"],
-	$output{status} = 1;
-	return \%output;
-    }
-    else{
-	push @{$output{criteria}}, "Comparing transponder commands to list for transponder A ... Failed";
-	push @{$output{info}}, { text => "Comparing transponder commands to list for transponder A ... Failed", 
-				 type => 'error'};
-	push @{$output{info}}, @{$A->{info}};
-#	push @{$output{criteria}}, @{$A->{info}};
-    }
-    
-
-    # Compare the array of commands to the correct commanding for the B transponder
-
-    
-    my $B = entry_arrays_match( \@last_trans_cmd, $cmd_list{'B'});
-    if ($B->{status}){
-	push @{$output{info}}, { text => "Comparing transponder commands to list for transponder B ... ", type => 'info'};
-	push @{$output{info}}, @{$B->{info}};
-	$output{transponder} = 'B';
-	$output{comment} = ["Identifying Transponder: Transponder Select = B"],
-	$output{status} = 1;
-	return \%output;
-    }
-    else{
-	push @{$output{criteria}}, "Comparing transponder commands to list for transponder B ... Failed ";
-	push @{$output{info}}, { text => "Comparing transponder commands to list for transponder B ... Failed",
-				 type => 'error'};
-	push @{$output{info}}, @{$B->{info}};
-#	push @{$output{criteria}}, @{$B->{info}};
-    }
-    return \%output;
-
-#    croak("Transponder not selected correctly before ACA HW commands\n");
-
-
-}
-
-##***************************************************************************
-sub check_transponder{
-# this checks to confirm the absence of *additional* transponder commands
-# during the aca commanding
-##***************************************************************************
-    
-    my %output = (
-		  comment => ['Checking for Additional Transponder Commands'],
-		  );
-
-    my ($tlr, $config) = @_;
-    my %cmd_list = map { $_ => $config->{template}{$_}{transponder}} qw( A B);
-
-    my @tlr_arr = @{$tlr->{entries}};
-    my $index_0 = $tlr->first_aca_hw_cmd->index();
-    my $index_1 = $tlr->last_aca_hw_cmd->index();
-
-    # time after last AAC1CCSC to end of template
-    my $time_for_wrap_up = $config->{template}{time}{time_for_wrap_up} * 60;
-    # the time from end of track to transponder off should be 30 minutes, but again
-    # let's take that from the config file
-    my $dtime_end_of_track = $config->{template}{time}{dtime_end_of_track} * 60;
-
-    my @trans_cmd_during;
-
-    for my $tlr_entry (@tlr_arr[$index_0 .. (scalar(@tlr_arr)-1)]){
-	# ignore CIMODESL (they're in the transponder dictionary, but they aren't unique to 
-	# transponder commands)
-	next if ($tlr_entry->comm_mnem() eq 'CIMODESL');
-	next unless ( grep { $_->{comm_mnem} eq $tlr_entry->comm_mnem() } (map {@$_} @{cmd_list{'A','B'}}) );
-	# stop checking when we reach end of track
-	last if ($tlr_entry->time() >= ($tlr->last_aca_hw_cmd->time() + $time_for_wrap_up + $dtime_end_of_track));
-	push @trans_cmd_during, $tlr_entry;
-    }
-
-    push @{$output{criteria}}, sprintf("Searches the TLR for any transponder commands (ignoring CIMODESL) between the first ACA hw cmd");
-    push @{$output{criteria}}, sprintf( "and end of track, which we define as the time of the last aca hw cmd at");
-    push @{$output{criteria}}, sprintf( $tlr->last_aca_hw_cmd->datestamp() . " + padding of " 
-					. $config->{template}{time}{time_for_wrap_up} 
-					. " min + time of end of track to end of comm of " 
-					. $config->{template}{time}{dtime_end_of_track}
-					. " min");
-
-    push @{$output{criteria}}, "Any transponder commands in interval result in error";
-    
-    # there is a problem/ or the load should be examined by hand if there are any transponder commands
-    if (scalar(@trans_cmd_during) == 0){
-	$output{status} = 1;
-	return \%output;
-    }
-    else{
-	$output{status} = 0;
-	$output{info} = [{ text => "Additional transponder commanding discovered during dark cal sequence!",
-			   type => 'error'}];
-	for my $entry (@trans_cmd_during){
-	    my $string = $entry->datestamp . "\t" . $entry->comm_mnem . "\t" . $entry->comm_desc . "\n";
-	    push @{$output{info}}, { text => $string,
-				     type => 'error'};
-	}
-	return \%output;
-    }
-
-
-}
-
-##***************************************************************************
-sub check_dither_disable_before_replica_0{
-##***************************************************************************
-
-    my ($tlr, $config) = @_;    
-
-    my %output = (
-		  comment => ['Dither disable before Dark Cal'],
+		  comment => ["Dither disable before Dark Cal replica $replica"],
 		  );
 
     my @tlr_arr = @{$tlr->{entries}};
 
     my %cmd_list = map { $_ => $config->{template}{independent}{$_}} qw( dither_enable dither_disable );
 
-    my $index_0 = $tlr->begin_replica(0)->index();
+    my $index_0 = $tlr->begin_replica($replica)->index();
 
     my $time_before_replica_0 = $config->{template}{time}{dtime_dither_disable_repl_0};
 
-    push @{$output{criteria}}, sprintf("Steps back through the TLR from the first aca hw command at replica 0");
-    push @{$output{criteria}}, sprintf("where replica 0 at " . $tlr->begin_replica(0)->datestamp() );
+    push @{$output{criteria}}, sprintf("Steps back through the TLR from the replica start time");
+    push @{$output{criteria}}, sprintf("where replica $replica " . $tlr->begin_replica($replica)->datestamp() );
     push @{$output{criteria}}, sprintf("looks for any dither enable or disable command mnemonics :");
 
     my $string_cmd_list;
@@ -392,7 +364,7 @@ sub check_dither_disable_before_replica_0{
     }
 
     if (scalar(@last_dith_cmd) == 0){
-	push @{$output{info}}, { text => "No Dither Commands found before Dark Current Calibration",
+	push @{$output{info}}, { text => "No Dither Commands found before replica $replica",
 				 type => 'error'};
 	$output{status} = 0;
 	return \%output;
@@ -412,64 +384,6 @@ sub check_dither_disable_before_replica_0{
 
 }
 
-
-
-##***************************************************************************
-sub check_for_dither_during{
-##***************************************************************************
-
-    my %output = (
-		  status => 1,
-		  comment => ['Dither changes during Dark Cal'],
-		  );
-    
-    my ($tlr, $config) = @_;    
-    
-    my @tlr_arr = @{$tlr->{entries}};
-
-    my %cmd_list = map { $_ => $config->{template}{independent}{$_}} qw( dither_enable dither_disable dither_null_param );
-
-    my $string_cmd_list;
-    for my $comm_mnem (map {@$_} @{cmd_list{'dither_enable','dither_disable', 'dither_null_param'}}){
-        $string_cmd_list .= " " . $comm_mnem->{comm_mnem};
-    }
-
-    my $index_start = $tlr->begin_replica(0)->index();
-    my $index_end = $tlr->end_replica(4)->index();
-
-    push @{$output{criteria}}, sprintf("Steps through the TLR from the beginning of Replica 0 to the end of Replica 4");
-    push @{$output{criteria}}, sprintf("begin replica 0 at " . $tlr->begin_replica(0)->datestamp()
-				       . ", end replica 4 at " . $tlr->end_replica(4)->datestamp());
-    push @{$output{criteria}}, sprintf("and searches for any dither enable, disable, or parameter commands, those with comm_mnem like: ");
-    push @{$output{criteria}}, $string_cmd_list;
-    push @{$output{criteria}}, "Any extra dither commanding is an error";
-
-    # find any dither commands during the dark cal
-    # create an array of those commands 
-
-    my @dith_cmd_during;
-
-    for my $tlr_entry (@tlr_arr[$index_start .. $index_end]){
-	next unless ( grep { $tlr_entry->comm_mnem() eq $_->{comm_mnem} } 
-		      (map {@$_} @{cmd_list{'dither_enable','dither_disable','dither_null_param'}}) );
-	push @dith_cmd_during, $tlr_entry;
-    }
-
-    if (scalar(@dith_cmd_during) == 0){
-	push @{$output{info}}, { text => "No extra dither commanding found", type => 'info'};
-	return \%output;
-    }
-    else{
-	push @{$output{info}}, { text => "Additional dither commanding discovered during dark cal sequence!", type => 'error'};
-	for my $entry (@dith_cmd_during){
-	    push @{$output{error}}, { text => sprintf($entry->datestamp . "\t" . $entry->comm_mnem ."\t" . $entry->comm_desc),
-				      type => 'error' };
-	}
-	$output{status} = 0;
-	return \%output;
-    }
-
-}
 
 
 ##***************************************************************************
@@ -546,10 +460,10 @@ sub check_dither_enable_at_end{
 }
 
 ##***************************************************************************
-sub check_dither_param_before_replica_0{
+sub check_dither_param_before_replica{
 ##***************************************************************************
 
-    my ($tlr, $config) = @_;    
+    my ($tlr, $config, $replica) = @_;    
 
     my %output = (
 		  comment => ['Dither param before Dark Cal'],
@@ -566,8 +480,8 @@ sub check_dither_param_before_replica_0{
     }
 
    
-    push @{$output{criteria}}, sprintf("Steps back through the TLR from the first aca hw command at replica 0");
-    push @{$output{criteria}}, sprintf("where replica 0 at " . $tlr->begin_replica(0)->datestamp() );
+    push @{$output{criteria}}, sprintf("Steps back through the TLR from the replica $replica");
+    push @{$output{criteria}}, sprintf("where replica $replica at " . $tlr->begin_replica($replica)->datestamp() );
     push @{$output{criteria}}, sprintf("looks for any dither parameter command mnemonics :");
 
     my $string_cmd_list;
@@ -577,7 +491,7 @@ sub check_dither_param_before_replica_0{
     push @{$output{criteria}}, $string_cmd_list;
     
     
-    my $index_0 = $tlr->begin_replica(0)->index();
+    my $index_0 = $tlr->begin_replica($replica)->index();
 
     my $time_before_replica_0 = $config->{template}{time}{dtime_dither_disable_repl_0};
 
@@ -596,7 +510,7 @@ sub check_dither_param_before_replica_0{
 	
     if (scalar(@last_dith_param) == 0 ){
 
-	push @{$output{info}}, { text => "Dither parameters not set before replica 0", type => 'error'};
+	push @{$output{info}}, { text => "Dither parameters not set before replica $replica", type => 'error'};
  	$output{status} = 0;
 	return \%output;
     }
@@ -708,80 +622,68 @@ sub check_dither_param_at_end{
 ##***************************************************************************
 sub check_manvr {
 ##***************************************************************************
+# Check that the maneuver timing is consistent with the template for maneuvers to and from replicas
 
-    my ($config, $bs, $dot) = @_;
-    my @templ_manvr = @{$config->{template}{manvr}{manvr}};
+    my ($config, $manvrs) = @_;
 
-#    use Data::Dumper;
-#    print Dumper $dot;
-
+	my %maneuver_times = %{$config->{template}{maneuver}};
+	my %init = %{$config->{template}{replica_targ}};
+	my %final = %{$config->{template}{replica_targ}};
+	
     my %output = (
 		  status => 1,
 		  comment => ['Maneuver Timing'],
 		  );
     
+    push @{$output{criteria}}, "Compares the DC maneuver times to and from replicas to the config file times";
 
-    push @{$output{criteria}}, "Compares the maneuver times from the dot to the config file times";
-
-
-
-    my @manvrs;
-    for my $dot_entry (@{$dot}){
-	if ($dot_entry->{cmd_identifier} =~ /ATS_MANVR/){
-	    push @manvrs, $dot_entry;
-	}
-    }
-
-
-
-#
-    my $start_m_check = 0;
-    my $j = 0;
-    my $end_m_check = 1;
-
-    my $templ_n_manvr = scalar(@templ_manvr);
-
-    for my $manvr_idx (1 ... $#manvrs){
 	
-	my $manvr = $manvrs[$manvr_idx];
+    for my $manvr (@{$manvrs}){
 
-	if ($manvr->{oflsid} eq $templ_manvr[0]{final}){
-	    $start_m_check = 1;
-	}
-	
-	next unless ($start_m_check and $end_m_check);
-	my $t_manvr_min = timestring_to_mins($manvr->{DURATION});
-
-	my $templ_t_manvr = $templ_manvr[$j]{time};
-	
-	push @{$output{info}}, { text => "Maneuver to $manvr->{oflsid} : time = $t_manvr_min min  ; expected time = $templ_t_manvr min",
-				 type => 'info' };
-		
-
-	if ($templ_t_manvr != $t_manvr_min){
-	    push @{$output{info}}, { text => "Maneuver Time incorrect",
-				     type => 'error'};
-	    $output{status} = 0;
-	    return \%output;
-	}
-	
-	$j++;
-
-	if ($manvrs[$manvr_idx]->{oflsid} eq $templ_manvr[-1]{final}){
-	    $end_m_check = 0;
+		# if to or from a replica
+		if (($manvr->{init} =~ /DC_T/) or ($manvr->{final} =~ /DC_T/)){
+			my $expected_time;
+			# to a replica
+			if (($manvr->{init} =~ /DFC/) and ($manvr->{final} =~ /DC_T/)){
+				$expected_time = $maneuver_times{center_to_replica};
+				$final{$manvr->{final}} += 1;
+			}
+			# from a replica
+			if (($manvr->{init} =~ /DC_T/) and ($manvr->{final} =~ /DFC/)){
+				$expected_time = $maneuver_times{replica_to_center};
+				$init{$manvr->{init}} += 1;
+			}
+			# if unexpected (as in, oflsid for DFC doesn't match /DFC/)
+			if (not defined $expected_time){
+				push @{$output{info}}, { text => "Illegal Dark Cal Maneuver. Unexpected maneuver from "
+											 . "$manvr->{init} to $manvr->{final} ",
+											 type => 'error' };
+				$output{status} = 0;
+				next;
+			}
+			my $t_manvr_min = $manvr->{duration};
+			push @{$output{info}}, { text => "Maneuver from $manvr->{init} to $manvr->{final} : "
+										 . "time = $t_manvr_min min ; "
+										 . "expected time = $expected_time",
+										 type => 'info' };
+			if ($expected_time != $t_manvr_min){
+				$output{status} = 0;
+				push @{$output{info}}, { text => "Maneuver Time Incorrect",
+										 type => "error" };
+			}				
+			
+		}
 	}
 
-    }
+	# confirm that we have one maneuver to each replica, and one maneuver
+	# away from each replica.
+	if ((grep {!/1/} values %init) or (grep {!/1/} values %final)){
+		push @{$output{info}}, { text => "Extra maneuvering to or from replicas... check manually.",
+								 type => "error" };
+		$output{status} = 0;
+	}
 
-    if ($templ_n_manvr != $j){
-	push @{$output{info}}, { text => "$j maneuvers checked ; expected $templ_n_manvr maneuvers",
-				 type => 'error'};
-    }
-    
-    
     return \%output;
-    
-    
 }
     
 
@@ -789,85 +691,68 @@ sub check_manvr {
 sub check_dwell{
 ##***************************************************************************
 
-    my ($config, $bs, $dot) = @_;
+    my ($config, $manvrs, $dwells) = @_;
 
-    my @templ_manvr = @{$config->{template}{manvr}{manvr}};
-    my @templ_dwell = @{$config->{template}{manvr}{dwell}};
+	my %template_dwell = %{$config->{template}{dwell}};
+	my %replica_targ = %{$config->{template}{replica_targ}};
 
     my %output = (
 		  status => 1,
 		  comment => ['Dwell Timing'],
 		  );
 
-    push @{$output{criteria}}, "Compares the time between maneuvers in the DOT to the config file dwell times";
+    push @{$output{criteria}}, "Checks the dwell time at every replica and at every Dark Field Center just before a replica.";
 
-    my @manvrs;
-    for my $dot_entry (@{$dot}){
-	if ($dot_entry->{cmd_identifier} =~ /ATS_MANVR/){
-	    push @manvrs, $dot_entry;
+	# find ids of dfcs before replicas
+	my @check_ids;
+	for my $manvr (@{$manvrs}){
+		if ($manvr->{final} =~ /DC_T/){
+			push @check_ids, $manvr->{init};
+		}
 	}
-    }
+	# and the replicas themselves
+	push @check_ids, sort keys %replica_targ;
 
-    
-    my $j = 0;
-    my $start_d_check = 0;
-    my $end_d_check = 1;
-
-    for my $manvr_idx (0 .. $#manvrs ){
-	
-	my $manvr = $manvrs[$manvr_idx];
-
-	if ($manvr->{oflsid} eq $templ_dwell[0]{final}){
-	    $start_d_check = 1;
+	# check 
+	for my $id (@check_ids){
+		if (not defined $dwells->{$id}){
+			push @{$output{info}}, { text => "No dwell found for $id from DOT maneuvers",
+									 type => "error"};
+			$output{status} = 0;
+		}
+		my $template_type = ($id =~ /DFC/) ? 'center' : 'replica';
+		my ($outputs, $status) = single_dwell_check( $id, 
+													 $dwells->{$id}->{duration}, 
+													 $template_dwell{$template_type} * 60);
+		push @{$output{info}}, @{$outputs};
+		$output{status} = 0 if ($status == 0);
+		 
 	}
-
-	next unless ($start_d_check and $end_d_check);
-	
-	if ($manvr->{oflsid} ne $templ_dwell[$j]{init}){
-	    $output{info} = [{ text => "Dwell Sequence Problem", type => 'error' }];
-	    $output{status} = 0;
-	    return \%output;
-	}
-
-	# how many secs before man start?
-	my $t_manvr_delay = timestring_to_secs($manvr->{MANSTART});
-	# how long is the maneuver?
-	my $t_manvr_dur = timestring_to_secs($manvr->{DURATION});
-
-	# so, we get there at:
-	my $t_manvr_stop = $manvr->{time} + $t_manvr_delay + $t_manvr_dur;
-
-	# the next maneuver starts at
-	my $t_manvr_next = $manvrs[ $manvr_idx + 1]->{time};
-
-	# dwell time is then
-	my $t_dwell_sec = $t_manvr_next - $t_manvr_stop;
-	my $templ_t_dwell_sec = $templ_dwell[$j]{time} * 60; # template has minutes
-	
-	push @{$output{info}}, { text => "Dwell at $manvr->{oflsid} : time = $t_dwell_sec secs  ; expected time = $templ_t_dwell_sec secs",
-				 type => 'info' };
-
-	my $dwell_tolerance = 1; # second
-	if (abs($t_dwell_sec - $templ_t_dwell_sec) > $dwell_tolerance ){
-	    push @{$output{info}}, { text => "Dwell Time incorrect", type => 'error' };
-	    $output{status} = 0;
-	}
-	
-	$j++;
-
-	if ($manvrs[$manvr_idx]{oflsid} eq $templ_manvr[-1]{final}){
-	    $end_d_check = 0;
-	}
-
-    }
-    
-    return \%output;
-    
-    
+	return \%output;
 }
 
+##***************************************************************************
+sub single_dwell_check{
+##***************************************************************************
+	my ($oflsid, $dwell, $expected_dwell) = @_;
+	
+	my $dwell_tolerance = 1; # second		
+	my @outputs;
+	my $status = 0;
 
+	push @outputs, { text => "Dwell at $oflsid : time = $dwell secs  ; expected time = $expected_dwell secs",
+					 type => 'info' };
+		
+	if (abs($dwell - $expected_dwell) > $dwell_tolerance ){
+		push @outputs, { text => "Dwell Time incorrect", type => 'error' };
+		$status = 0;
+	}
+    return \@outputs, $status;
+}
+
+##***************************************************************************
 sub timestring_to_secs {
+##***************************************************************************
     my $timestring = shift;
     my %timehash;
     ($timehash{days}, $timehash{hours}, $timehash{min}, $timehash{sec}) = split(":", $timestring);
@@ -880,7 +765,9 @@ sub timestring_to_secs {
 
 }
 
+##***************************************************************************
 sub timestring_to_mins {
+##***************************************************************************
     my $timestring = shift;
     my %timehash;
     ($timehash{days}, $timehash{hours}, $timehash{min}, $timehash{sec}) = split(":", $timestring);
@@ -892,13 +779,116 @@ sub timestring_to_mins {
     return $mins;
 }
 
+
+##***************************************************************************
+sub check_momentum_unloads {
+##***************************************************************************
+	
+    my ($config, $bs, $manvrs, $dwells) = @_;
+
+	# first, look for any unloads
+	my @unloads = ();
+	for my $entry (@{$bs}){
+		if ((defined $entry->{command}) and (defined $entry->{command}->{TLMSID})){
+			if ($entry->{command}->{TLMSID} =~ /AOMUNLGR/){
+				push @unloads, $entry->{datestamp};
+			}
+		}
+	}
+
+    my %output = (
+				  status => 1,
+				  comment => ['Check for Momentum Unloads'],
+				  );
     
+	
+    push @{$output{criteria}}, "Confirms no momentum dumps at DFC or at replicas or during manvr to or from replicas";
+	
+	# not worth doing much if there aren't any unloads
+	if (scalar(@unloads) == 0){
+		return \%output;
+	}
+
+	
+    for my $manvr (@{$manvrs}){
+		# maneuver to or from a replica
+		if (($manvr->{init} =~ /DC_T/) or ($manvr->{final} =~ /DC_T/)){
+			push @{$output{info}}, { text => sprintf("Checking for momentum dumps during maneuver from %s to %s",
+													 $manvr->{init},
+													 $manvr->{final}),
+									 type => 'info'};
+			
+			for my $unload (@unloads){
+				if ((date2time($unload) >= $manvr->{tstart})
+					and (date2time($unload) <= $manvr->{tstop})){
+					$output{status} = 0;
+					push @{$output{info}}, { text => sprintf("Momentum dump at %s during maneuver from %s to %s",
+															 $unload,
+															 $manvr->{init},
+															 $manvr->{final}),
+											 type => 'error'};
+				}
+			}
+		}
+
+	}
+
+	# find ids of dfcs before replicas
+	my @oflsids;
+	for my $manvr (@{$manvrs}){
+		if ($manvr->{final} =~ /DC_T/){
+			push @oflsids, $manvr->{init};
+		}
+	}
+	# and add the replicas
+	my %replica_targ = %{$config->{template}{replica_targ}};
+	push @oflsids, sort keys %replica_targ;
+
+	# check all these dwells
+	for my $id (@oflsids){
+		my ($outputs, $status) = single_unload_check( $dwells->{$id}, \@unloads);
+		push @{$output{info}}, @{$outputs};
+		$output{status} = 0 if ($status == 0);
+	}
+
+    return \%output;
+    
+    
+}
+
+##***************************************************************************
+sub single_unload_check{
+##***************************************************************************
+	my ($dwell, $unloads) = @_;
+
+	my @outputs;
+	my $status = 0;
+
+	push @outputs, { text => sprintf("Checking for unloads during $dwell->{oflsid} "
+									 . ": %s to %s ", 
+									 time2date($dwell->{tstart}),
+									 time2date($dwell->{tstop})),
+						 type => 'info' };
+	
+	for my $unload (@{$unloads}){
+		if ((date2time($unload) >= $dwell->{tstart})
+			and (date2time($unload) <= $dwell->{tstop})){
+			$status = 0;
+			push @outputs, { text => sprintf("Momentum dump at %s during dwell at %s",
+													 $unload,
+													 $dwell->{oflsid}),
+									 type => 'error'};
+		}
+	}
+
+    return \@outputs, $status;
+}    
 
 ##***************************************************************************
 sub check_manvr_point{
 ##***************************************************************************
     
-    my ($config, $bs, $dot) = @_;
+    my ($config, $bs, $manvrs) = @_;
 
     my %output = (
 		  comment => ['Maneuver Pointing'],
@@ -908,107 +898,75 @@ sub check_manvr_point{
     push @{$output{criteria}}, "Confirms that the delta positions for each of the dark cal pointings",
                                "match the expected delta positions listed in the config file";
 
-    my @point_order = @{$config->{template}{manvr}{point_order}{oflsid}};
-    my %point_delta = %{$config->{template}{manvr}{point_delta_pos}};
+	my %replica_targ = %{$config->{template}{replica_targ}};
+	my %pointings = %{$config->{template}{point}{replicas}};
+	my $as_slop = $config->{template}{point}{arcsec_slop};
 
-    # grab just the maneuvers from the dot
-    my @manvrs;
-    for my $dot_entry (@{$dot}){
-	if ($dot_entry->{cmd_identifier} =~ /ATS_MANVR/){
-	    push @manvrs, $dot_entry;
-	}
-    }
+    my $center_quat;
 
+    for my $manvr (@{$manvrs}){
 
-    my @points;
-    my $center;
-    my $start_pt;
+		my $dest_obsid = $manvr->{final};
+		# find maneuvers to a DFC or to a replica
+		next unless ($dest_obsid =~ /DFC/ or $dest_obsid =~ /DC_T/);
 
-    my $start_check;
-    my $as_slop = $config->{template}{manvr}{arcsec_slop};
-
-    # Step through the dot maneuvers until we reach ones that match the template
-    # check the maneuver quaternions on those to make sure the offsets are the same
-    # as the template
-
-    for my $manvr (@manvrs){
-
-	my $dest_obsid = $manvr->{oflsid};
-
-	if ($dest_obsid eq $point_order[0]){
-	    $start_check = 1;
-	}
-
-	next unless ($start_check);
-
-	# find the first matching backstop target quaternion after the maneuver command
-	# time
-	my $bs_match;
-	for my $bs_entry (@{$bs}) {
-	    next unless ($bs_entry->{time} > $manvr->{time});
-	    next unless ($bs_entry->{cmd} =~ /MP_TARGQUAT/);
-	    $bs_match = $bs_entry;
-	    last;
-	}
+		# find the first matching backstop target quaternion after the maneuver command
+		# time
+		my $bs_match;
+		for my $bs_entry (@{$bs}) {
+			next unless ($bs_entry->{time} > $manvr->{tstart});
+			next unless ($bs_entry->{cmd} =~ /MP_TARGQUAT/);
+			$bs_match = $bs_entry;
+			last;
+		}
 	    
-       
-	my $targ_quat = Quat->new($bs_match->{command}->{Q1}, 
-				  $bs_match->{command}->{Q2}, 
-				  $bs_match->{command}->{Q3},
-				  $bs_match->{command}->{Q4});
-	
-	my %target = ( 
-		       obsid => $dest_obsid,
-		       quat => $targ_quat,
-		       );
+       	my $targ_quat = Quat->new($bs_match->{command}->{Q1}, 
+								  $bs_match->{command}->{Q2}, 
+								  $bs_match->{command}->{Q3},
+								  $bs_match->{command}->{Q4});
 
-	
-	if ($dest_obsid =~ /DFC_0/){
-	    $center = \%target;
-	}
-
-	push @points, \%target;
-	
-	last if ($dest_obsid eq $point_order[-1]);
-       
-    }
-
-    # store the quaternion for the field center
-
-    my $center_quat = $center->{quat};
-
-    # step through the array of maneuvers and verify the match with the expected positions
-
-
-    for my $i (0 .. scalar(@points)-1){
+		my %target = ( 
+					   obsid => $dest_obsid,
+					   quat => $targ_quat,
+					   );
 		
-	my $point = $points[$i];
-	if ( $point->{obsid} ne $point_order[$i]){
-	    push @{$output{info}}, { text => sprintf("Obsid incorrect " . $point->{obsid} . " ne " . $point_order[$i]),
-				     type => 'error' };
-	    $output{status} = 0;
-	    return \%output;
-	}
-	my $delta = ($point->{quat})->divide($center_quat);
-	my $x = sprintf( "%5.2f", rad_to_arcsec($delta->{q}[1]*2));
-	my $y = sprintf( "%5.2f", rad_to_arcsec($delta->{q}[2]*2));
+		# store the quaternion for the field center
+		if ($dest_obsid =~ /DFC_I/){
+			$center_quat = $targ_quat;
+		}
+		next unless defined $center_quat;
 
-	# Define where the point should really be using the relative positions in the config file
-	my $temp_delta = ($point->{quat})->divide($center_quat);
-	$temp_delta->{q}[1] = arcsec_to_rad($point_delta{$point_order[$i]}->{dx})/2;
-	$temp_delta->{q}[2] = arcsec_to_rad($point_delta{$point_order[$i]}->{dy})/2;
-	my $pred_point = $temp_delta->multiply($center_quat);
-	
-	if ( !quat_near($point->{quat}, $pred_point, $as_slop) ){
-	    push @{$output{info}}, { text => sprintf("Delta position of " . $point->{obsid} . " relative to DFC of ($x, $y) is incorrect"),
-				      type => 'error' };
-	    $output{status} = 0;
-	    return \%output;
 
-	}
-	
-	push @{$output{info}}, { text => sprintf("Delta position of " . $point->{obsid} . " relative to DFC is (% 7.2f, % 7.2f) : Correct", $x, $y),
-				 type => 'info' };
+		my $delta = ($target{quat})->divide($center_quat);
+		my $x = sprintf( "%5.2f", rad_to_arcsec($delta->{q}[1]*2));
+		my $y = sprintf( "%5.2f", rad_to_arcsec($delta->{q}[2]*2));
+
+		my $pred_point;
+		# make a throw-away delta quaternion and then fill in the x and y for the targets
+		# DFC/DC_T that are being checked.
+		my $temp_delta = ($target{quat})->divide($center_quat);
+		if ($dest_obsid =~ /DFC/){
+			$temp_delta->{q}[1] = 0;
+			$temp_delta->{q}[2] = 0;
+			$pred_point = $temp_delta->multiply($center_quat);
+		}
+		if ($dest_obsid =~ /DC_T/){
+			$temp_delta->{q}[1] = arcsec_to_rad($pointings{$dest_obsid}->{dx})/2;
+			$temp_delta->{q}[2] = arcsec_to_rad($pointings{$dest_obsid}->{dy})/2;
+			$pred_point = $temp_delta->multiply($center_quat);
+		}
+
+		if ( !quat_near($target{quat}, $pred_point, $as_slop) ){
+			push @{$output{info}}, { text => sprintf("Delta position of " . $target{obsid} 
+													 . " relative to DFC of ($x, $y) is incorrect"),
+									 type => 'error' };
+			$output{status} = 0;
+		}
+		else{
+			push @{$output{info}}, { text => sprintf("Delta position of " . $target{obsid} 
+													 . " relative to DFC_I is (% 7.2f, % 7.2f) : Correct", $x, $y),
+								 type => 'info' };
+		}
     }
     return \%output;
         
@@ -1120,71 +1078,71 @@ sub trim_tlr{
 sub compare_timingncommanding{
 ##***************************************************************************
 
-    my $tlr = shift;
-    my $template = shift;
+    my $tlr_arr = shift;
+    my $templ_arr = shift;
     my $config = shift;
+	my $comment = shift;
 
     my %output = (
-		  status => 1,
-		  comment => ['Strict Timing Checks: Timing and Hex Commanding'],
-		  );
+				  status => 1,
+				  comment => ["$comment"],
+				  n_checks => 0,
+				  n_fails => 0, 
+				  );
     
 
-    my @tlr_arr = @{ trim_tlr( $tlr, $config ) };
+#    my @tlr_arr = @{ trim_tlr( $tlr, $config ) };
     my %command_dict = %{$config->{dict}{TLR}{comm_mnem}};
  #   my @tlr_arr = @{$tlr->{entries}};
-    my @templ_arr = @{$template->{entries}};
+#    my @templ_arr = @{$template->{entries}};
     
-    my @match_tlr_arr;
+    my @match_tlr_arr = @{$tlr_arr};
     
-    push @{$output{criteria}}, "Steps through the TLR looking for entries which occur on or after the time of the",
-    "first ACA hw commanding and which have command mnemonics that are in the config file list";
+    push @{$output{criteria}}, "Compares TLR entries to template TLR entries";
     my $string_cmd_dict = join(" ", (keys %command_dict));
     push @{$output{criteria}}, $string_cmd_dict;
-    push @{$output{criteria}}, "Stops looking for new entries when n entries have been found, where n is the ",
-    "number of entries in the template (one exception: AAC1CCSC commands will be added",
-    "even if n has been reached)";
 
-    for my $entry (@tlr_arr){
-	next unless( defined $entry->rel_time() );
-	next unless( $entry->rel_time() >= 0);
-#	next unless( defined $command_dict{$entry->comm_mnem()} );
-	next if ($entry->comm_mnem() ne 'AAC1CCSC' and scalar(@match_tlr_arr) >= scalar(@templ_arr));
-#	print $entry->rel_time(), " ", $entry->comm_mnem(), "\n";
-	push @match_tlr_arr, $entry;
-    }
+#    for my $entry (@{$tlr_arr}){
+#		next unless( defined $entry->rel_time() );
+#		next unless( $entry->rel_time() >= 0);
+##	next unless( defined $command_dict{$entry->comm_mnem()} );
+#		next if ($entry->comm_mnem() ne 'AAC1CCSC' and scalar(@match_tlr_arr) >= scalar(@{$templ_arr}));
+##	print $entry->rel_time(), " ", $entry->comm_mnem(), "\n";
+#		push @match_tlr_arr, $entry;
+#    }
 
 
     push @{$output{criteria}}, "Checks each entry against template entry for matching timing, comm_mnem, and hex.";
     for my $i (0 .. scalar(@match_tlr_arr)-1){
-	if ((defined $match_tlr_arr[$i]) and (defined $templ_arr[$i])){
-	    my $match = $match_tlr_arr[$i]->matches_entry($templ_arr[$i]);
-	    push @{$output{info}}, @{$match->{info}};
-	    if ( $match->{status} ){
-		next;
-	    }
-	    else{
-		$output{status} = 0;	
-		next;
-	    }
-	}
-	else{
-	    push @{$output{error}}, "Mismatch in number of entries" ;
-	    $output{status} = 0;
-	}
+		if ((defined $match_tlr_arr[$i]) and (defined $templ_arr->[$i])){
+			my $match = $match_tlr_arr[$i]->matches_entry($templ_arr->[$i]);
+			push @{$output{info}}, @{$match->{info}};
+			$output{n_checks}++;
+			if ( $match->{status} ){
+				next;
+			}
+			else{
+				$output{status} = 0;
+				$output{n_fails}++;
+				next;
+			}
+		}
+		else{
+			push @{$output{error}}, "Mismatch in number of entries" ;
+			$output{status} = 0;
+		}
     }
 
-    push @{$output{criteria}}, "Error if too many AAC1CCSC entries found.";
-    if (scalar(@match_tlr_arr) > scalar(@templ_arr)){
-	push @{$output{info}} , { text => "Too many AAC1CCSC hardware commands!", type => 'error'} ;
-	$output{status} = 0;
+    #push @{$output{criteria}}, "Error if too many AAC1CCSC entries found.";
+    #if (scalar(@match_tlr_arr) > scalar(@{$templ_arr})){
+	#push @{$output{info}} , { text => "Too many AAC1CCSC hardware commands!", type => 'error'} ;
+	#$output{status} = 0;
+    #}
+    push @{$output{criteria}}, "Error if wrong number of commands found";
+    if (scalar(@match_tlr_arr) < scalar(@{$templ_arr})){
+		push @{$output{info}} , { text => "Not enough entries in the ACA commanding section", type => 'error'} ;
+		$output{status} = 0;
     }
-    push @{$output{criteria}}, "Error if too few dark cal commands found";
-    if (scalar(@match_tlr_arr) < scalar(@templ_arr)){
-	push @{$output{info}} , { text => "Not enough entries in the ACA commanding section", type => 'error'} ;
-	$output{status} = 0;
-    }
-
 
     return \%output;
     
@@ -1201,7 +1159,7 @@ sub fix_config_hex{
 # arrays.  Here I push single hex command strings into arrays.  I should get
 # the list from the config instead of specifying it here
 
-    my @transponders = ( 'A','B', 'independent' );
+    my @transponders = ( 'independent' );
     
     for my $transponder (@transponders){
 
@@ -1259,6 +1217,7 @@ package TLR;
 use strict;
 use warnings;
 use IO::All;
+use Data::Dumper;
 use Carp;
 
 
@@ -1334,19 +1293,18 @@ sub begin_replica{
     my @aca_hw_cmds;
         
     for my $entry (@{$self->{entries}}){
-	if (defined $entry->{comm_mnem}){
-	    if (($entry->{comm_mnem} eq 'AAC1CCSC') and ( $entry->trace_id() =~ /ADC_R$replica/)) {
-		push @aca_hw_cmds, $entry;
-	    }
+		if (defined $entry->trace_id()){
+			#print $entry->trace_id(), "\n";
+		}
+		if ((defined $entry->trace_id()) and ($entry->trace_id() =~ /ADC_R$replica/)){
+			$self->{begin_replica}->{$replica} = $entry;	
+			last;
+		}
+		
 	}
-    }
-
-    $self->{begin_replica}->{$replica} = $aca_hw_cmds[0];
-
-    die "No ACA commanding found.  Could not define reference entry"
-	unless defined $self->{begin_replica}->{$replica};
-
-
+    
+    die "Could not find replica $replica beginning"
+		unless defined $self->{begin_replica}->{$replica};
     return $self->{begin_replica}->{$replica};
 
 }
@@ -1358,21 +1316,16 @@ sub end_replica{
     my $replica = shift;
     return $self->{end_replica}->{$replica} if (defined $self->{end_replica}->{$replica});
     
-    my @aca_hw_cmds;
-        
-    for my $entry (@{$self->{entries}}){
-	if (defined $entry->{comm_mnem}){
-	    if (($entry->{comm_mnem} eq 'AAC1CCSC') and ( $entry->trace_id() =~ /ADC_R$replica/)) {
-		push @aca_hw_cmds, $entry;
+	for my $entry (reverse @{$self->{entries}}){
+		if ((defined $entry->trace_id()) and ( $entry->trace_id() =~ /ADC_R$replica/)) {
+			$self->{end_replica}->{$replica} = $entry;
+			last;
 	    }
 	}
-    }
 
-    $self->{end_replica}->{$replica} = $aca_hw_cmds[-1];
 
-    die "No ACA commanding found.  Could not define reference entry"
-	unless defined $self->{end_replica}->{$replica};
-
+    die "Could not find replica $replica end"
+		unless defined $self->{end_replica}->{$replica};
 
     return $self->{end_replica}->{$replica};
 
@@ -1557,6 +1510,7 @@ sub get_templ_array {
     my $config = shift;
     my $parent = shift;
     my $field = $config->{format}{Template}{field};
+
     my $arr_field = $config->{format}{Template}{arr_field};
 
     my @template;
@@ -1581,7 +1535,7 @@ sub get_templ_array {
 	    
 		#don't bother with nulls and strip off spaces
 		%linehash = remove_nullsnspaces(\%linehash);
-	    
+
 		my $entry = TemplateTLREntry->new(%linehash);
 	    	      
 		$entry->add_hex($hex_area);
@@ -1637,6 +1591,7 @@ use Class::MakeMethods::Standard::Hash  (
 					 scalar => [ qw(
 							comm_desc
 							datestamp
+							replica
 							hex
 							index
 							trace_id
@@ -1686,42 +1641,44 @@ sub matches_entry{
 				  type => 'error' };
     }
 
-    my $step_rel_time_match = ($entry1->step_rel_time() == $entry2->step_rel_time());
+    my $step_rel_time_match = ($entry1->step_rel_time_replica() == $entry2->step_rel_time_replica());
     if ( !$step_rel_time_match ){
 #	push @{$output{error}} ,sprintf($entry1->datestamp() . "\t" . $entry1->comm_mnem() . "\t" . $entry1->comm_desc());
-#	push @{$output{error}}, sprintf("step relative time mismatch: " . $entry1->step_rel_time() . " secs tlr, " . $entry2->step_rel_time() . " secs template ");
+#	push @{$output{error}}, sprintf("step relative time mismatch: " . $entry1->step_rel_time_replica() . " secs tlr, " . $entry2->step_rel_time_replica() . " secs template ");
 	push @{$output{info}}, { text =>  sprintf($entry1->datestamp() . "\t" . $entry1->comm_mnem() . "\t" . $entry1->comm_desc()),
 			 type => 'error'};
 
-	push @{$output{info}}, { text => sprintf("step relative time mismatch: " . $entry1->step_rel_time() . " secs tlr, " . $entry2->step_rel_time() . " secs template "),
+	push @{$output{info}}, { text => sprintf("step relative time mismatch: " 
+											 . $entry1->step_rel_time_replica() . " secs tlr, " 
+											 . $entry2->step_rel_time_replica() . " secs template "),
 				 type => 'error'};
     }
     else{
-	push @{$output{info}}, { text => sprintf("step relative time match : " . $entry1->step_rel_time() . " secs "),
+	push @{$output{info}}, { text => sprintf("step relative time match : " . $entry1->step_rel_time_replica() . " secs "),
 				 type => 'info' };
     }
 
-    my $rel_time_match = ($entry1->rel_time() == $entry2->rel_time());
-
-    if ( !$rel_time_match ){
-#	push @{$output{info}} ,sprintf($entry1->datestamp() . "\t" . $entry1->comm_mnem() . "\t" . $entry1->comm_desc());
-#	push @{$output{info}}, { text =>  sprintf($entry1->datestamp() . "\t" . $entry1->comm_mnem() . "\t" . $entry1->comm_desc()),
-#			 type => 'error'};
-
-	push @{$output{info}}, { text => sprintf( "Bad rel time from start: " . $entry1->rel_time() . " does not match expected " . $entry2->rel_time()),
-				 type => 'info'};
-    }
-    else{
-	push @{$output{info}}, { text => sprintf("Good rel time from start: " . $entry1->rel_time() . " secs "),
-				 type => 'info'};
-    }
+#    my $rel_time_match = ($entry1->rel_time() == $entry2->rel_time());
+#
+#    if ( !$rel_time_match ){
+##	push @{$output{info}} ,sprintf($entry1->datestamp() . "\t" . $entry1->comm_mnem() . "\t" . $entry1->comm_desc());
+##	push @{$output{info}}, { text =>  sprintf($entry1->datestamp() . "\t" . $entry1->comm_mnem() . "\t" . $entry1->comm_desc()),
+##			 type => 'error'};
+#
+#		push @{$output{info}}, { text => sprintf( "Bad rel time from start: " . $entry1->rel_time() . " does not match expected " . $entry2->rel_time()),
+#							 type => 'info'};
+#}
+#    else{
+#		push @{$output{info}}, { text => sprintf("Good rel time from start: " . $entry1->rel_time() . " secs "),
+#				 type => 'info'};
+#    }
 
     my $hex_equal = check_hex_equal($entry1->hex(), $entry2->hex());
     if (defined $hex_equal->{info}){
 	push @{$output{info}}, @{$hex_equal->{info}};
     }
     if (($entry1->comm_mnem() eq $entry2->comm_mnem()) and
-	($entry1->step_rel_time() == $entry2->step_rel_time()) and
+	($entry1->step_rel_time_replica() == $entry2->step_rel_time_replica()) and
 	($hex_equal->{status})){
 	$output{status} = 1;
     }
@@ -1852,11 +1809,15 @@ sub comm_mnem{
     return qq();
 }
 
-sub step_rel_time{
+sub step_rel_time_replica{
+	# reset to give replica relative times...
     my $entry = shift;
-    if (defined $entry->previous_entry()){
-	return ( $entry->time() - $entry->previous_entry()->time());
-    }
+    if ((defined $entry->previous_entry())
+		and (defined $entry->replica())
+		and (defined $entry->previous_entry()->replica())
+		and ($entry->previous_entry()->replica() == $entry->replica())){
+		return ( $entry->time() - $entry->previous_entry()->time());		
+	}
     return 0;
 }
 
@@ -1899,6 +1860,21 @@ use Carp;
 use base 'TLREntry';
 
 our @ISA = qw( TLREntry );
+
+sub replica{
+	my $self = shift;
+	return $self->{replica} if (defined $self->{replica});
+	for my $r_idx (0 .. 4){
+		# find the indexes in the real tlr and trim to a reduced set of commands to check
+		my $r_start = $self->{parent}->begin_replica($r_idx)->index();
+		my $r_end = $self->{parent}->end_replica($r_idx)->index();
+		if (($self->index() >= $r_start) and ($self->index() <= $r_end)){
+			$self->{replica} = $r_idx;
+			return $self->{replica};
+		}
+	}
+	return undef;
+}
 
 1;
 

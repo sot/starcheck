@@ -782,20 +782,28 @@ sub format_dark_cal_out{
     my $out;
 
     my @checks = qw(
-
-		    transponder
-		    check_tlr_sequence
-		    check_transponder
-		    check_dither_disable_before_replica_0
-		    check_dither_param_before_replica_0
-		    check_for_dither_during
-		    check_dither_enable_at_end
-		    check_dither_param_at_end
-	 	    compare_timingncommanding
-		    check_manvr
-		    check_dwell
-		    check_manvr_point
-		    );
+					aca_init_command
+					trans_replica_0
+					dither_disable_0
+					tnc_replica_0
+					trans_replica_1
+					dither_disable_1
+					tnc_replica_1
+					trans_replica_2
+					dither_disable_2
+					tnc_replica_2
+					trans_replica_3
+					dither_disable_3
+					tnc_replica_3
+					trans_replica_4
+					dither_disable_4
+					tnc_replica_4
+					check_manvr
+					check_dwell
+					check_manvr_point
+					check_dither_enable_at_end
+					check_dither_param_at_end
+					);
     
     
     for my $file (@{$dark_cal_checker->{input_files}}){
@@ -812,15 +820,25 @@ sub format_dark_cal_out{
     $out .= "\n\n";
     $out .= "ACA Dark Cal Checker Report:\n";
 #    $out .= sprintf( "[" . is_ok($dark_cal_checker->{check_mm_vs_backstop}->{status}) . "]\tManeuver Summary agrees with Backstop\n");
-    $out .= sprintf( "[" . is_ok($dark_cal_checker->{check_transponder}->{status}) . "]\ttransponder = " . $dark_cal_checker->{transponder}{transponder} . " and no transponder commands through end of track.\n");
-    $out .= sprintf("[" . is_ok($dark_cal_checker->{compare_timingncommanding}->{status}) . "]\tACA Calibration Commanding (hex, sequence, and timing of ACA/OBC commands).\n");
+    $out .= sprintf( "[" . is_ok($dark_cal_checker->{trans_replica_0}->{status} 
+								 and $dark_cal_checker->{trans_replica_1}->{status} 
+								 and $dark_cal_checker->{trans_replica_2}->{status} 
+								 and $dark_cal_checker->{trans_replica_3}->{status} 
+								 and $dark_cal_checker->{trans_replica_4}->{status}) . "]\ttransponder correctly selected before each replica\n");
+    $out .= sprintf("[" . is_ok($dark_cal_checker->{tnc_replica_0}->{status}
+								and $dark_cal_checker->{tnc_replica_1}->{status}
+								and $dark_cal_checker->{tnc_replica_2}->{status}
+								and $dark_cal_checker->{tnc_replica_3}->{status}
+								and $dark_cal_checker->{tnc_replica_4}->{status}) . "]\tACA Calibration Commanding (hex, sequence, and timing of ACA/OBC commands).\n");
     $out .= sprintf("[". is_ok($dark_cal_checker->{check_manvr}->{status} and $dark_cal_checker->{check_dwell}->{status}) . "]\tManeuver and Dwell timing.\n");
     $out .= sprintf("[" . is_ok($dark_cal_checker->{check_manvr_point}->{status}) . "]\tManeuver targets.\n");
-    $out .= sprintf("[" . is_ok($dark_cal_checker->{check_dither_disable_before_replica_0}->{status}
-				and $dark_cal_checker->{check_dither_param_before_replica_0}->{status}
-				and $dark_cal_checker->{check_for_dither_during}->{status}
-				and $dark_cal_checker->{check_dither_enable_at_end}->{status}
-				and $dark_cal_checker->{check_dither_param_at_end}->{status}) . "]\tDither enable/disable and parameter commands\n");
+    $out .= sprintf("[" . is_ok($dark_cal_checker->{dither_disable_0}->{status}
+								and $dark_cal_checker->{dither_disable_1}->{status}
+								and $dark_cal_checker->{dither_disable_2}->{status}
+								and $dark_cal_checker->{dither_disable_3}->{status}
+								and $dark_cal_checker->{dither_disable_4}->{status}
+								and $dark_cal_checker->{check_dither_enable_at_end}->{status}
+								and $dark_cal_checker->{check_dither_param_at_end}->{status}) . "]\tDither enable/disable and parameter commands\n");
     
     $out .= "\n";
 
