@@ -42,6 +42,7 @@ use Cwd qw( abs_path );
 
 use HTML::TableExtract;
 
+use Ska::AGASC;
 
 # cheat to get the OS (major)
 my $OS = `uname`;
@@ -232,6 +233,12 @@ my @global_warn;
 map { warning("$_\n") } @{$error};
 
 
+# do a tiny AGASC search to see which method will be used
+my $tiny_agasc_search = Ska::AGASC->new({ra=>0,dec=>0,w=>0.001}); 
+my $agasc_method = $Ska::AGASC::access_method;
+if ($agasc_method =~ /cfitsio/){
+    warning("Ska::AGASC call to mp_get_agasc failed.  Output not approved for authoritative load review. \n");
+} 
 
 ## Warn if we aren't on Solaris
 #if ($OS ne 'SunOS'){

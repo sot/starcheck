@@ -1732,25 +1732,18 @@ sub get_agasc_stars {
     return unless ($c = find_command($self, "MP_TARGQUAT"));
     
     my $agasc_region;
-    my $agasc_method;
 
     eval{
-	$agasc_region = Ska::AGASC->new({
-	    agasc_dir => $AGASC_DIR,
-	    ra => $self->{ra},
-	    dec => $self->{dec},
-	    radius => 1.3,
-	    datetime => $self->{date},
-	});
-	$agasc_method = $Ska::AGASC::access_method;
-    };
+		$agasc_region = Ska::AGASC->new({
+			agasc_dir => $AGASC_DIR,
+			ra => $self->{ra},
+			dec => $self->{dec},
+			radius => 1.3,
+			datetime => $self->{date},
+		});
+	};
     if( $@ ){
-	croak("Could not use AGASC: $@");
-    }
-
-    if ($agasc_method =~ /cfitsio/){
-	push @{$self->{warn}}, 
-	sprintf("$alarm mp_get_agasc failed! starcat not flight approved! \n");
+		croak("Could not use AGASC: $@");
     }
 
     my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
