@@ -639,6 +639,25 @@ sub check_sim_position {
     }	
 }
     
+#############################################################################################
+sub set_ok_no_starcat{
+#############################################################################################
+	my $self = shift;
+    my $oflsid = $self->{dot_obsid};
+    # Is this an obsid that is allowed to not have a star catalog, 
+    # if so, what oflsid string does it match:
+    my $ok_no_starcat;
+    if (defined $config{no_starcat_oflsid}){
+		my @no_starcats = @{$config{no_starcat_oflsid}};
+		for my $ofls_string (@no_starcats){
+			if ( $oflsid =~ /$ofls_string/){
+				$ok_no_starcat = $ofls_string;
+			}
+		}
+    }
+	$self->{ok_no_starcat} = $ok_no_starcat;
+}
+
 
 
 #############################################################################################
@@ -727,18 +746,7 @@ sub check_star_catalog {
 
     my $oflsid = $self->{dot_obsid};
     my $obsid = $self->{obsid};
-    
-    # Is this an obsid that is allowed to not have a star catalog, 
-    # if so, what oflsid string does it match:
-    my $ok_no_starcat;
-    if (defined $config{no_starcat_oflsid}){
-	my @no_starcats = @{$config{no_starcat_oflsid}};
-	for my $ofls_string (@no_starcats){
-	    if ( $oflsid =~ /$ofls_string/){
-		$ok_no_starcat = $ofls_string;
-	    }
-	}
-    }
+    my $ok_no_starcat = $self->{ok_no_starcat};
 
    # Set slew error (arcsec) for this obsid, or 120 if not available 
     my $slew_err;

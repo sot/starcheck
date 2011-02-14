@@ -87,6 +87,7 @@ GetOptions( \%par,
 
 my $STARCHECK   = $par{out} || 'starcheck';
 
+my $empty_font_start = qq{<font>};
 my $red_font_start = qq{<font color="#FF0000">};
 my $yellow_font_start = qq{<font color="#009900">};
 my $blue_font_start = qq{<font color="#0000FF">};
@@ -365,6 +366,7 @@ for my $i (0 .. $#cmd) {
 
 foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_obsid(); # Commanded obsid
+	$obs{$obsid}->set_ok_no_starcat();
     $obs{$obsid}->set_target();
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
@@ -402,22 +404,18 @@ foreach my $oflsid (keys %guidesumm){
 
 HAS_GUIDE:
 foreach my $oflsid (@obsid_id){
-
     if (defined $guidesumm{$oflsid}){
-	$obs{$oflsid}->add_guide_summ($oflsid, \%guidesumm);
+		$obs{$oflsid}->add_guide_summ($oflsid, \%guidesumm);
     }
     else {
-	my $obsid = $obs{$oflsid}->{obsid};
-	if (defined $config_ref->{no_starcat_oflsid}){
-            my @no_starcats = @{$config_ref->{no_starcat_oflsid}};
-            for my $ofls_string (@no_starcats){
-                if ( $oflsid =~ /$ofls_string/){
-		    push @{$obs{$oflsid}->{yellow_warn}}, sprintf(">> WARNING: No Guide Star Summary for obsid $obsid ($oflsid). OK for '$ofls_string' ER. \n");
-		    next HAS_GUIDE;
+		my $obsid = $obs{$oflsid}->{obsid};
+		if (defined $obs{$oflsid}->{ok_no_starcat}){
+			my $ofls_string = $obs{$oflsid}->{ok_no_starcat};
+			push @{$obs{$oflsid}->{fyi}}, 
+			sprintf(">> INFO   : No Guide Star Summary for obsid $obsid ($oflsid). OK for '$ofls_string' ER. \n");
+			next HAS_GUIDE;
 		}
-            }
-        }
-	push @{$obs{$oflsid}->{warn}}, sprintf(">> WARNING: No Guide Star Summary for obsid $obsid ($oflsid). \n");			
+		push @{$obs{$oflsid}->{warn}}, sprintf(">> WARNING: No Guide Star Summary for obsid $obsid ($oflsid). \n");			
     }
 	
 }
@@ -556,49 +554,30 @@ for my $obs_idx (0 .. $#obsid_id) {
     my $good_guide_count = $obs{$obsid}->{count_nowarn_stars}{GUI};
     my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};
 
-    my $min_num_er_acq = 5;
-    my $min_num_er_gui = 6;
-    my $min_num_or_acq = 4;
-    my $min_num_or_gui = 4;
-
     # if Obsid is numeric, print tally info
     if ($obs{$obsid}->{obsid} =~ /^\d*$/ ){
+		
+		# minumum requirements for acq and guide for ERs and ORs
+		# should be set by config...
+		my $min_num_acq = ($obs{$obsid}->{obsid} > 40000 ) ? 5 : 4;
+		my $min_num_gui = ($obs{$obsid}->{obsid} > 40000 ) ? 6 : 4;
+		if (defined $obs{$obsid}->{ok_no_starcat}){
+			$min_num_acq = 0;
+			$min_num_gui = 0;
+		}
+		my $acq_font_start = ($good_acq_count < $min_num_acq) ? $red_font_start
+			: $empty_font_start;
+		my $gui_font_start = ($good_guide_count < $min_num_gui) ? $red_font_start
+			: $empty_font_start;
 
-	# For ERs
-	if ( $obs{$obsid}->{obsid} > 50000 ){
-	    if ($good_acq_count < $min_num_er_acq){
-		$out .= $red_font_start;
-	    }
-	    $out .= sprintf "$good_acq_count clean ACQ | ";
-	    if ($good_acq_count < $min_num_er_acq){
-		$out .= qq{</font>};
-	    }
-	    if ($good_guide_count < $min_num_er_gui){
-		$out .= $red_font_start;
-	    }
-	    $out .= sprintf "$good_guide_count clean GUI | ";
-	    if ($good_guide_count < $min_num_er_gui){
-		$out .= qq{</font>};
-	    }
-	}
-	# For ORs
-	else {
-	    if ($good_acq_count < $min_num_or_acq){
-		$out .= $red_font_start;
-	    }
-	    $out .= sprintf "$good_acq_count clean ACQ | ";
-	    if ($good_acq_count < $min_num_or_acq){
-		$out .= qq{</font>};
-	    }
-	    if ($good_guide_count < $min_num_or_gui){
-		$out .= $red_font_start;
-	    }
-	    $out .= sprintf "$good_guide_count clean GUI | ";
-	    if ($good_guide_count < $min_num_or_gui){
-		$out .= qq{</font>};
-	    }   
-	    
-	}
+		$out .= "$acq_font_start";
+		$out .= sprintf "$good_acq_count clean ACQ | ";
+		$out .= "$font_stop";
+
+		$out .= "$gui_font_start";
+		$out .= sprintf "$good_guide_count clean GUI | ";
+		$out .= "$font_stop";
+
 	
     }
     # if Obsid is non-numeric, print "Unknown"
