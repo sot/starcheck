@@ -34,12 +34,40 @@ sub new{
 			   %{$par_ref},
 	       );
 
+
+    my @checks = qw(
+					aca_init_command
+					trans_replica_0
+					dither_disable_0
+					tnc_replica_0
+					trans_replica_1
+					dither_disable_1
+					tnc_replica_1
+					trans_replica_2
+					dither_disable_2
+					tnc_replica_2
+					trans_replica_3
+					dither_disable_3
+					tnc_replica_3
+					trans_replica_4
+					dither_disable_4
+					tnc_replica_4
+					check_manvr
+					check_dwell
+					check_manvr_point
+					check_dither_enable_at_end
+					check_dither_param_at_end
+					);
+
     
 # Create a hash to store all information about the checks as they are performed
     my %feedback = (
-		    input_files => [],
-		    dark_cal_present => 1,
-		    );
+					input_files => [],
+					dark_cal_present => 1,
+					checks => \@checks,
+					);
+
+
 	
 # %Input files is used by get_file()
 
@@ -67,8 +95,9 @@ sub new{
 	my $timelines = iu_timeline($tlr);
 	my @trim_tlr = @{ trim_tlr( $tlr, \%config )};
 	$feedback{aca_init_command} = compare_timingncommanding( [$trim_tlr[0]], [$templates{A}->{entries}[0]], \%config, 
-															 "First ACA command is the template-independent init command");
+																 "First ACA command is the template-independent init command");
 	%feedback = (%feedback, %{replicas($tlr, \%templates, $timelines, \%config)});
+		
     $feedback{check_dither_enable_at_end} = check_dither_enable_at_end($tlr, \%config);
     $feedback{check_dither_param_at_end} = check_dither_param_at_end($tlr, \%config);
     $feedback{check_manvr} = check_manvr( \%config, $manvrs);
@@ -1212,6 +1241,133 @@ sub get_file {
 }
 
 
+##***************************************************************************
+sub print{
+##***************************************************************************
+
+	my $dark_cal_checker = shift;
+    my $opt = shift;
+    my $out;
+
+    for my $file (@{$dark_cal_checker->{input_files}}){
+		$out .= "$file \n";
+    }
+    
+    for my $check (@{$dark_cal_checker->{checks}}){
+		$out .= format_dark_cal_check($dark_cal_checker->{$check}, $opt->{verbose}, $opt->{criteria});
+		if ($opt->{html}){
+			$out .= "\n";
+		}
+    }
+    
+    $out .= "\n\n";
+    $out .= "ACA Dark Cal Checker Report:\n";
+    $out .= sprintf( "[" . is_ok($dark_cal_checker->{trans_replica_0}->{status} 
+								 and $dark_cal_checker->{trans_replica_1}->{status} 
+								 and $dark_cal_checker->{trans_replica_2}->{status} 
+								 and $dark_cal_checker->{trans_replica_3}->{status} 
+								 and $dark_cal_checker->{trans_replica_4}->{status}) . "]\ttransponder correctly selected before each replica\n");
+    $out .= sprintf("[" . is_ok($dark_cal_checker->{tnc_replica_0}->{status}
+								and $dark_cal_checker->{tnc_replica_1}->{status}
+								and $dark_cal_checker->{tnc_replica_2}->{status}
+								and $dark_cal_checker->{tnc_replica_3}->{status}
+								and $dark_cal_checker->{tnc_replica_4}->{status}) . "]\tACA Calibration Commanding (hex, sequence, and timing of ACA/OBC commands).\n");
+    $out .= sprintf("[". is_ok($dark_cal_checker->{check_manvr}->{status} and $dark_cal_checker->{check_dwell}->{status}) . "]\tManeuver and Dwell timing.\n");
+    $out .= sprintf("[" . is_ok($dark_cal_checker->{check_manvr_point}->{status}) . "]\tManeuver targets.\n");
+    $out .= sprintf("[" . is_ok($dark_cal_checker->{dither_disable_0}->{status}
+								and $dark_cal_checker->{dither_disable_1}->{status}
+								and $dark_cal_checker->{dither_disable_2}->{status}
+								and $dark_cal_checker->{dither_disable_3}->{status}
+								and $dark_cal_checker->{dither_disable_4}->{status}
+								and $dark_cal_checker->{check_dither_enable_at_end}->{status}
+								and $dark_cal_checker->{check_dither_param_at_end}->{status}) . "]\tDither enable/disable and parameter commands\n");
+    
+    $out .= "\n";
+	
+    if ($opt->{html}){
+		my $html = "<PRE>" . $out . "</PRE>" ;
+		return $html;
+    }
+
+    return $out;
+}
+
+
+
+##***************************************************************************
+sub is_ok{
+##***************************************************************************
+    my $check = shift;
+	my $red_font_start = qq{<font color="#FF0000">};
+	my $font_stop = qq{</font>};
+    if ($check){
+        return "ok";
+    }
+    else{
+        return "${red_font_start}NO${font_stop}";
+    }
+}
+
+
+
+##***************************************************************************
+sub format_dark_cal_check{
+# Run check controls the printing of all information passed back from the
+# checking subroutines
+##***************************************************************************
+
+    my $feedback = shift;
+    my $verbose = shift;
+    my $criteria = shift;
+
+	my $red_font_start = qq{<font color="#FF0000">};
+	my $yellow_font_start = qq{<font color="#009900">};
+	my $blue_font_start = qq{<font color="#0000FF">};
+	my $font_stop = qq{</font>};
+
+    my $return_string;
+
+    $return_string .= sprintf("[" . is_ok($feedback->{status}). "]\t". $feedback->{comment}[0] . "\n");
+
+    # if verbose or there's an error
+    if ($criteria){
+        for my $line (@{$feedback->{criteria}}){
+	    $return_string .= "$blue_font_start         $line${font_stop}\n";
+        }	
+    }
+    if ($verbose or !$feedback->{status}){
+        # if just an error, not verbose
+        if (!$verbose and !$feedback->{status}){
+	    for my $entry (@{$feedback->{info}}){
+		if ($entry->{type} eq 'error'){
+		    my $line = $entry->{text};
+		    $return_string .= "${red_font_start} --->>>  $line${font_stop}\n";
+		}
+            }
+        }
+        # if verbose and error
+	else{
+	    for my $entry (@{$feedback->{info}}){
+		my $line = $entry->{text};
+		my $type = $entry->{type};
+		if ($type eq 'info'){
+		    $return_string .= " \t$line \n";
+		}
+		if ($type eq 'error'){
+		    $return_string .= "${red_font_start} --->>>  $line${font_stop}\n";
+		}
+	    }	    
+	}
+    }
+
+    return $return_string;
+    
+}
+
+
+
+
+
 package TLR;
 
 use strict;
@@ -1303,7 +1459,7 @@ sub begin_replica{
 		
 	}
     
-    die "Could not find replica $replica beginning"
+    croak( "Could not find replica $replica beginning")
 		unless defined $self->{begin_replica}->{$replica};
     return $self->{begin_replica}->{$replica};
 
@@ -1324,7 +1480,7 @@ sub end_replica{
 	}
 
 
-    die "Could not find replica $replica end"
+    croak("Could not find replica $replica end")
 		unless defined $self->{end_replica}->{$replica};
 
     return $self->{end_replica}->{$replica};
@@ -1340,7 +1496,7 @@ sub last_aca_hw_cmd{
     $self->{last_aca_hw_cmd} = $self->end_replica(4);
    
 
-    die "No ACA commanding found.  Could not define reference entry"
+    croak("No ACA commanding found.  Could not define reference entry")
 	unless defined $self->{last_aca_hw_cmd};
 
 
@@ -1370,7 +1526,7 @@ sub manvr_away_from_dfc{
 	$manvr_cnt++;
     }
 
-    die "Error finding maneuver away from DFC. "
+    croak("Error finding maneuver away from DFC. ")
 	unless scalar(@manvr_list) == 2;
     
     $self->{manvr_away_from_dfc} = $manvr_list[1];

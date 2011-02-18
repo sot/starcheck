@@ -240,10 +240,10 @@ if ($agasc_method =~ /cfitsio/){
     warning("Ska::AGASC call to mp_get_agasc failed.  Output not approved for authoritative load review. \n");
 } 
 
-## Warn if we aren't on Solaris
-#if ($OS ne 'SunOS'){
-#    warning("uname != SunOS; starcheck is only approved on Solaris/SunOS \n");
-#}
+## Warn if we are on Solaris
+if ($OS eq 'SunOS'){
+    warning("uname == SunOS; starcheck is only approved on Linux \n");
+}
 
 
 # See if we have database access
@@ -747,112 +747,21 @@ sub dark_cal_print{
     my $dark_cal_checker = shift;
     my $out_dir = shift;
 
-    my %run_options;
-    %run_options = ( dark_cal_checker => $dark_cal_checker,
-		     verbose => 1,
-		     criteria => 0,
-		     html => 1,
-		     );
-
-    io("${out_dir}/dark_cal_verbose.html")->print(format_dark_cal_out( \%run_options ));
-
-    %run_options = ( dark_cal_checker => $dark_cal_checker,
-		     verbose => 1,
-		     criteria => 1,
-		     html => 1,
-		     );
+    io("${out_dir}/dark_cal_verbose.html")->print($dark_cal_checker->print({ verbose => 1,
+																			 criteria => 0,
+																			 html => 1}));
 
 
-    io("${out_dir}/dark_cal_super_verbose.html")->print(format_dark_cal_out( \%run_options ));
-
-    %run_options = ( dark_cal_checker => $dark_cal_checker,
-		     verbose => 0,
-		     criteria => 0,
-		     html => 0,
-		     );
+    io("${out_dir}/dark_cal_super_verbose.html")->print($dark_cal_checker->print({verbose => 1,
+																				  criteria => 1,
+																				  html => 1}));
 
     my $out;
     $out .= "<A HREF=\"${out_dir}/dark_cal_verbose.html\">VERBOSE</A> ";
     $out .= "<A HREF=\"${out_dir}/dark_cal_super_verbose.html\">SUPERVERBOSE</A>\n";
-    $out .= format_dark_cal_out( \%run_options );
-
-    return $out;
-}
-
-##***************************************************************************
-sub format_dark_cal_out{
-##***************************************************************************
-
-    my $opt = shift;
-    my $dark_cal_checker = $opt->{dark_cal_checker};
-
-    my $out;
-
-    my @checks = qw(
-					aca_init_command
-					trans_replica_0
-					dither_disable_0
-					tnc_replica_0
-					trans_replica_1
-					dither_disable_1
-					tnc_replica_1
-					trans_replica_2
-					dither_disable_2
-					tnc_replica_2
-					trans_replica_3
-					dither_disable_3
-					tnc_replica_3
-					trans_replica_4
-					dither_disable_4
-					tnc_replica_4
-					check_manvr
-					check_dwell
-					check_manvr_point
-					check_dither_enable_at_end
-					check_dither_param_at_end
-					);
-    
-    
-    for my $file (@{$dark_cal_checker->{input_files}}){
-	$out .= "$file \n";
-    }
-    
-    for my $check (@checks){
-	$out .= format_dark_cal_check($dark_cal_checker->{$check}, $opt->{verbose}, $opt->{criteria});
-	if ($opt->{html}){
-	    $out .= "\n";
-	}
-    }
-    
-    $out .= "\n\n";
-    $out .= "ACA Dark Cal Checker Report:\n";
-#    $out .= sprintf( "[" . is_ok($dark_cal_checker->{check_mm_vs_backstop}->{status}) . "]\tManeuver Summary agrees with Backstop\n");
-    $out .= sprintf( "[" . is_ok($dark_cal_checker->{trans_replica_0}->{status} 
-								 and $dark_cal_checker->{trans_replica_1}->{status} 
-								 and $dark_cal_checker->{trans_replica_2}->{status} 
-								 and $dark_cal_checker->{trans_replica_3}->{status} 
-								 and $dark_cal_checker->{trans_replica_4}->{status}) . "]\ttransponder correctly selected before each replica\n");
-    $out .= sprintf("[" . is_ok($dark_cal_checker->{tnc_replica_0}->{status}
-								and $dark_cal_checker->{tnc_replica_1}->{status}
-								and $dark_cal_checker->{tnc_replica_2}->{status}
-								and $dark_cal_checker->{tnc_replica_3}->{status}
-								and $dark_cal_checker->{tnc_replica_4}->{status}) . "]\tACA Calibration Commanding (hex, sequence, and timing of ACA/OBC commands).\n");
-    $out .= sprintf("[". is_ok($dark_cal_checker->{check_manvr}->{status} and $dark_cal_checker->{check_dwell}->{status}) . "]\tManeuver and Dwell timing.\n");
-    $out .= sprintf("[" . is_ok($dark_cal_checker->{check_manvr_point}->{status}) . "]\tManeuver targets.\n");
-    $out .= sprintf("[" . is_ok($dark_cal_checker->{dither_disable_0}->{status}
-								and $dark_cal_checker->{dither_disable_1}->{status}
-								and $dark_cal_checker->{dither_disable_2}->{status}
-								and $dark_cal_checker->{dither_disable_3}->{status}
-								and $dark_cal_checker->{dither_disable_4}->{status}
-								and $dark_cal_checker->{check_dither_enable_at_end}->{status}
-								and $dark_cal_checker->{check_dither_param_at_end}->{status}) . "]\tDither enable/disable and parameter commands\n");
-    
-    $out .= "\n";
-
-    if ($opt->{html}){
-	my $html = "<PRE>" . $out . "</PRE>" ;
-	return $html;
-    }
+    $out .= $dark_cal_checker->print({verbose => 0,
+									  criteria => 0,
+									  html => 0});
 
     return $out;
 }
@@ -891,72 +800,6 @@ sub guess_mp_toplevel{
 }
 
 
-
-
-
-
-##***************************************************************************
-sub is_ok{
-##***************************************************************************
-    my $check = shift;
-    if ($check){
-        return "ok";
-    }
-    else{
-        return "${red_font_start}NO${font_stop}";
-    }
-}
-
-
-
-##***************************************************************************
-sub format_dark_cal_check{
-# Run check controls the printing of all information passed back from the
-# checking subroutines
-##***************************************************************************
-
-    my $feedback = shift;
-    my $verbose = shift;
-    my $criteria = shift;
-
-    my $return_string;
-
-    $return_string .= sprintf("[" . is_ok($feedback->{status}). "]\t". $feedback->{comment}[0] . "\n");
-
-    # if verbose or there's an error
-    if ($criteria){
-        for my $line (@{$feedback->{criteria}}){
-	    $return_string .= "$blue_font_start         $line${font_stop}\n";
-        }	
-    }
-    if ($verbose or !$feedback->{status}){
-        # if just an error, not verbose
-        if (!$verbose and !$feedback->{status}){
-	    for my $entry (@{$feedback->{info}}){
-		if ($entry->{type} eq 'error'){
-		    my $line = $entry->{text};
-		    $return_string .= "${red_font_start} --->>>  $line${font_stop}\n";
-		}
-            }
-        }
-        # if verbose and error
-	else{
-	    for my $entry (@{$feedback->{info}}){
-		my $line = $entry->{text};
-		my $type = $entry->{type};
-		if ($type eq 'info'){
-		    $return_string .= " \t$line \n";
-		}
-		if ($type eq 'error'){
-		    $return_string .= "${red_font_start} --->>>  $line${font_stop}\n";
-		}
-	    }	    
-	}
-    }
-
-    return $return_string;
-    
-}
 
 
 
@@ -1244,7 +1087,7 @@ Specify version of agasc ( 1p4, 1p5, or 1p6 ).  Default is 1p6 .
 
 =item B<-agasc_dir <agasc directory>>
 
-Specify directory path to agasc.  Default is /data/agasc1p6 . Overrides -agasc option.
+Specify directory path to agasc.  Overrides -agasc option.
 
 =item B<-fid_char <fid characteristics file>>
 
