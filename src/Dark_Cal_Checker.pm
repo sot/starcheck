@@ -55,6 +55,7 @@ sub new{
 					check_manvr
 					check_dwell
 					check_manvr_point
+					check_momentum_unloads
 					check_dither_enable_at_end
 					check_dither_param_at_end
 					);
@@ -77,6 +78,7 @@ sub new{
 
     my $tlr_file    = get_file("$par{dir}/$par{tlr}", 'tlr', 'required', \@{$feedback{input_files}});
     my $tlr = TLR->new($tlr_file, 'tlr', \%config);
+	$feedback{tlr} = $tlr;
 	#my $mm_file = get_file("$par{dir}/$par{mm}", 'Maneuver Management', 'required', \@{$feedback{input_files}});
     my $dot_file = get_file("$par{dir}/$par{dot}", 'DOT', 'required', \@{$feedback{input_files}});
     #my @mm = Ska::Parse_CM_File::MM({file => $mm_file, ret_type => 'array'});
@@ -209,7 +211,7 @@ sub replicas{
 				}
 			}
 			$per_trans{$trans} = compare_timingncommanding( \@replica_tlr, \@replica_templ, $config, 
-															"Strict Timing Checks: Timing and Hex Commanding for replica $r_idx");
+															"Strict Timing Checks: Timing and Hex Commanding for replica $r_idx transponder $trans");
 			$per_trans{$trans}->{transponder} = $trans;
 		}
 		# for the transponder version with fewest errors, assign the output, and
@@ -222,9 +224,15 @@ sub replicas{
 			$best_guess = 'B';
 			$feedback{"tnc_replica_${r_idx}"} = $per_trans{B};
 		}
-		my $r_time = $replica_tlr[0]->time();
-		# for the given transponder and replica, check that the transponder state is correct
-		$feedback{"trans_replica_${r_idx}"} = check_iu($r_idx, $r_time, $best_guess, $timelines, $config);
+        # for the given transponder and replica, check that the transponder state is correct
+		$feedback{"trans_replica_${r_idx}"} = check_iu({ replica => $r_idx, 
+														 r_tstart => $replica_tlr[0]->time(), 
+														 r_tstop => $replica_tlr[-1]->time(),
+														 r_datestart => $replica_tlr[0]->datestamp(),
+														 r_datestop => $replica_tlr[-1]->datestamp(),
+														 transponder => $best_guess, 
+														 timelines => $timelines, 
+														 config => $config});
 		# also confirm that dither is disabled before the start of the replica
 		$feedback{"dither_disable_${r_idx}"} = check_dither_disable_before_replica( $tlr, $config, $r_idx);		
 	}
@@ -236,16 +244,21 @@ sub replicas{
 ##***************************************************************************
 sub check_iu{
 ##***************************************************************************
-	my ($replica, $r_time, $transponder, $timelines, $config) = @_;
+	my $check_cfg = shift;
+	my ($replica, $r_datestart, $transponder, $timelines, $config) = 
+		@{$check_cfg}{qw(replica r_datestart transponder timelines config)};
+
+	#my $r_tstart $r_tstop, $transponder, $timelines, $config) = @_;
 	my %output = (
 				  comment => ["Checking IU/transponder state before replica $replica"],
-				  criteria => ["Find the commanded IU state before $r_time, looking for",
+				  criteria => ["Find the commanded IU state before $r_datestart, looking for",
 							   'all CIMODESL, CPX???, CPA??? commands',
 							   "Compares current CTX/CPA state with desired state for transponder $transponder",
 							   "The transponder is predetermined by the hex checks against each template",
 							   "if both fail, a 'best guess' based on the smaller number of errors is used",
 							   ],
 				  status => 1,
+				  transponder => $transponder,
 				  );
 
 	my %tmpl = ( A => $config->{template}->{A}->{transponder},
@@ -254,12 +267,12 @@ sub check_iu{
 
 	my $state;
 	for my $t (reverse @{$timelines}){
-		next unless $t->{time} < $r_time;
+		next unless $t->{time} < $check_cfg->{r_tstart};
 		$state = $t;
 		last;
 	}
 	if (not defined $state->{iu}){
-		push @{$output{info}}, { text => "IU config not set (should be CIU512X)", type => 'error' };
+		push @{$output{info}}, { text => "IU config not set (should be CIU512X or CIU512T)", type => 'error' };
 		$output{status} = 0;
 	}
 	else{
@@ -273,26 +286,31 @@ sub check_iu{
 		}
 	}
 
+	# check for changes during the replica
+	if ($state->{tstop} < $check_cfg->{r_tstop}){
+		push @{$output{info}}, { text => "Transponder state change during replica at $state->{datestop}", type => 'error' };
+	}
+	else{
+		push @{$output{info}}, { text => "Transponder state unchanged through replica end at $check_cfg->{r_datestop}", type => 'info' };
+	}
+
+
 	my %want = %{$tmpl{$transponder}};
 	my @tinfo;
 	my $t_select = 1;
 	for my $cm (keys %want){
-		if ($state->{$cm} ne $want{$cm}){
-			$t_select = 0;
-			push @tinfo, { text => "transponder state $cm => " . $state->{$cm} . " != " . $want{$cm}, type => 'error'};
-		}
-		else{
-			push @tinfo, { text => "transponder state $cm => " . $state->{$cm} . " == " . $want{$cm}, type => 'info'};
-		}
+		push @tinfo, { text => "transponder state $cm set to " . $state->{$cm} . ", should be " . $want{$cm}
+					   , type => $state->{$cm} ne $want{$cm} ? 'error' : 'info'};
+		$t_select = 0 if ($state->{$cm} ne $want{$cm});
 	}
-	push @{$output{info}}, { text => "Transponder should be set to $transponder", type => 'info'};
+	push @{$output{info}}, { text => "Checking against config for intended transponder $transponder", type => 'info'};
 	push @{$output{info}}, @tinfo;
 	if ($t_select == 0){
 		$output{status} = 0;
 		push @{$output{info}}, { text => "Transponder not correctly set for $transponder", type => 'error' };
 	}
 	else{
-		push @{$output{info}}, { text => "Transponder correctly to $transponder", type => 'info' };
+		push @{$output{info}}, { text => "Transponder correctly set to $transponder", type => 'info' };
 	}
 
 	return \%output;
@@ -326,10 +344,16 @@ sub iu_timeline{
 		if (defined $entry->comm_mnem()){
 			if ($entry->comm_mnem() eq 'CIMODESL'){
 				my $iu = $cimodesl{$entry->hex()->[0]};
-				if (not defined $timeline{iu} or ($iu ne $timeline{iu})){
+				if (((not defined $timeline{iu}) or ($iu ne $timeline{iu}))
+					and ($iu ne 'CIMODESL')){
 					$timeline{iu} = $iu;
 					$timeline{datestart} = $entry->datestamp();
 					$timeline{time} = $entry->time();
+					$timeline{tstart} = $entry->time();
+					if (scalar(@timelines)){
+						$timelines[-1]->{datestop} = $entry->datestamp();
+						$timelines[-1]->{tstop} = $entry->time();
+					}
 					push @timelines, {%timeline};
 				}
 			}
@@ -340,12 +364,19 @@ sub iu_timeline{
 					$timeline{$tkey} = $tval;
 					$timeline{datestart} = $entry->datestamp();
 					$timeline{time} = $entry->time();
+					$timeline{tstart} = $entry->time();
+					if (scalar(@timelines)){
+						$timelines[-1]->{datestop} = $entry->datestamp();
+						$timelines[-1]->{tstop} = $entry->time();
+					}
 					push @timelines, {%timeline};
 				}
 			}
 		}
 	}
+
 	return \@timelines;
+
 }
 
 
@@ -371,8 +402,8 @@ sub check_dither_disable_before_replica{
     my $time_before_replica_0 = $config->{template}{time}{dtime_dither_disable_repl_0};
 
     push @{$output{criteria}}, sprintf("Steps back through the TLR from the replica start time");
-    push @{$output{criteria}}, sprintf("where replica $replica " . $tlr->begin_replica($replica)->datestamp() );
-    push @{$output{criteria}}, sprintf("looks for any dither enable or disable command mnemonics :");
+    push @{$output{criteria}}, sprintf("where replica $replica starts at " . $tlr->begin_replica($replica)->datestamp() );
+    push @{$output{criteria}}, sprintf("and looks for any dither enable or disable command mnemonics :");
 
     my $string_cmd_list;
     for my $comm_mnem (map {@$_} @{cmd_list{'dither_enable','dither_disable'}}){
@@ -767,14 +798,20 @@ sub single_dwell_check{
 	
 	my $dwell_tolerance = 1; # second		
 	my @outputs;
-	my $status = 0;
+	my $status = 1;
 
 	push @outputs, { text => "Dwell at $oflsid : time = $dwell secs  ; expected time = $expected_dwell secs",
 					 type => 'info' };
 		
 	if (abs($dwell - $expected_dwell) > $dwell_tolerance ){
-		push @outputs, { text => "Dwell Time incorrect", type => 'error' };
-		$status = 0;
+		if ($dwell < $expected_dwell){
+			push @outputs, { text => "Dwell Time incorrect", type => 'error' };
+			$status = 0;
+		}
+		else{
+			push @outputs, { text => "Dwell Time too long (probably OK)", type => 'warn' };
+			$status = 0;
+		}
 	}
     return \@outputs, $status;
 }
@@ -891,7 +928,7 @@ sub single_unload_check{
 	my ($dwell, $unloads) = @_;
 
 	my @outputs;
-	my $status = 0;
+	my $status = 1;
 
 	push @outputs, { text => sprintf("Checking for unloads during $dwell->{oflsid} "
 									 . ": %s to %s ", 
@@ -1120,26 +1157,14 @@ sub compare_timingncommanding{
 				  );
     
 
-#    my @tlr_arr = @{ trim_tlr( $tlr, $config ) };
+
     my %command_dict = %{$config->{dict}{TLR}{comm_mnem}};
- #   my @tlr_arr = @{$tlr->{entries}};
-#    my @templ_arr = @{$template->{entries}};
     
     my @match_tlr_arr = @{$tlr_arr};
     
     push @{$output{criteria}}, "Compares TLR entries to template TLR entries";
     my $string_cmd_dict = join(" ", (keys %command_dict));
     push @{$output{criteria}}, $string_cmd_dict;
-
-#    for my $entry (@{$tlr_arr}){
-#		next unless( defined $entry->rel_time() );
-#		next unless( $entry->rel_time() >= 0);
-##	next unless( defined $command_dict{$entry->comm_mnem()} );
-#		next if ($entry->comm_mnem() ne 'AAC1CCSC' and scalar(@match_tlr_arr) >= scalar(@{$templ_arr}));
-##	print $entry->rel_time(), " ", $entry->comm_mnem(), "\n";
-#		push @match_tlr_arr, $entry;
-#    }
-
 
     push @{$output{criteria}}, "Checks each entry against template entry for matching timing, comm_mnem, and hex.";
     for my $i (0 .. scalar(@match_tlr_arr)-1){
@@ -1162,11 +1187,7 @@ sub compare_timingncommanding{
 		}
     }
 
-    #push @{$output{criteria}}, "Error if too many AAC1CCSC entries found.";
-    #if (scalar(@match_tlr_arr) > scalar(@{$templ_arr})){
-	#push @{$output{info}} , { text => "Too many AAC1CCSC hardware commands!", type => 'error'} ;
-	#$output{status} = 0;
-    #}
+
     push @{$output{criteria}}, "Error if wrong number of commands found";
     if (scalar(@match_tlr_arr) < scalar(@{$templ_arr})){
 		push @{$output{info}} , { text => "Not enough entries in the ACA commanding section", type => 'error'} ;
@@ -1252,10 +1273,12 @@ sub print{
     for my $file (@{$dark_cal_checker->{input_files}}){
 		$out .= "$file \n";
     }
+	$out .= "\n";
     
+
     for my $check (@{$dark_cal_checker->{checks}}){
-		$out .= format_dark_cal_check($dark_cal_checker->{$check}, $opt->{verbose}, $opt->{criteria});
-		if ($opt->{html}){
+		$out .= $dark_cal_checker->format_dark_cal_check($check, $opt);
+		if ($opt->{html_standalone}){
 			$out .= "\n";
 		}
     }
@@ -1284,15 +1307,42 @@ sub print{
     
     $out .= "\n";
 	
-    if ($opt->{html}){
-		my $html = "<PRE>" . $out . "</PRE>" ;
+	$out .= $dark_cal_checker->transponder_timing();
+
+
+    if ($opt->{html_standalone}){
+		my $html = "<HTML><HEAD></HEAD><BODY><PRE>" . $out . "</PRE></BODY></HTML>" ;
 		return $html;
     }
 
     return $out;
 }
 
+##***************************************************************************
+sub transponder_timing{
+##***************************************************************************
+	my $self = shift;
+	my $trans = '';
+	my $text = "For dark current operations, transponder should be set to:\n";
+	for my $t (0 .. 4){
+		if ($trans ne $self->{"tnc_replica_$t"}->{'transponder'}){
+			$trans = $self->{"tnc_replica_$t"}->{'transponder'};
+			$text .= "Transponder " . $trans;
+			if ($t > 0){
+				$text .= "\tafter " . $self->{'tlr'}->end_replica($t-1)->datestamp() . "\n\t";
+			}
+			$text .= "\tbefore " . $self->{'tlr'}->begin_replica($t)->datestamp() . "\n";
+			if ($self->{"trans_replica_$t"}->{status} == 1){
+				$text .= "\t\t(Commanding already included in Loads)\n";
+			}
+			else{
+				$text .= "\t\tRequires real time commanding\n";
+			}
+		}
+	}
 
+	return $text;
+}
 
 ##***************************************************************************
 sub is_ok{
@@ -1316,9 +1366,12 @@ sub format_dark_cal_check{
 # checking subroutines
 ##***************************************************************************
 
-    my $feedback = shift;
-    my $verbose = shift;
-    my $criteria = shift;
+	my $self = shift;
+	my $check_name = shift;
+	# if anything left, use the options, else set defaults
+	my $opt = 1 == @_ ? pop @_ : { 'criteria' => 0, 'verbose' => 0, 'html_standalone' => 0 };
+
+	my $feedback = $self->{$check_name};
 
 	my $red_font_start = qq{<font color="#FF0000">};
 	my $yellow_font_start = qq{<font color="#009900">};
@@ -1326,38 +1379,45 @@ sub format_dark_cal_check{
 	my $font_stop = qq{</font>};
 
     my $return_string;
+	
+	if ($opt->{criteria}){
+		# add a ref to get here from the starcheck page
+        $return_string .= "<A NAME=\"$check_name\"></A>\n";
+	}
 
-    $return_string .= sprintf("[" . is_ok($feedback->{status}). "]\t". $feedback->{comment}[0] . "\n");
+    $return_string .= "[" . is_ok($feedback->{status}). "]\t";
+
+	if (!$opt->{criteria} & !$opt->{verbose} & !$opt->{html_standalone} & defined $opt->{link_to}){
+		$return_string .= "<A HREF=\"$opt->{link_to}#$check_name\">";
+	}
+
+    $return_string .= $feedback->{comment}[0] . "\n";
+
+	if (!$opt->{criteria} & !$opt->{verbose} & !$opt->{html_standalone} & defined $opt->{link_to}){
+		$return_string .= "</A>";
+	}
 
     # if verbose or there's an error
-    if ($criteria){
-        for my $line (@{$feedback->{criteria}}){
+    if ($opt->{criteria}){
+		for my $line (@{$feedback->{criteria}}){
 	    $return_string .= "$blue_font_start         $line${font_stop}\n";
         }	
     }
-    if ($verbose or !$feedback->{status}){
-        # if just an error, not verbose
-        if (!$verbose and !$feedback->{status}){
-	    for my $entry (@{$feedback->{info}}){
-		if ($entry->{type} eq 'error'){
-		    my $line = $entry->{text};
-		    $return_string .= "${red_font_start} --->>>  $line${font_stop}\n";
-		}
-            }
-        }
-        # if verbose and error
-	else{
-	    for my $entry (@{$feedback->{info}}){
-		my $line = $entry->{text};
-		my $type = $entry->{type};
-		if ($type eq 'info'){
-		    $return_string .= " \t$line \n";
-		}
-		if ($type eq 'error'){
-		    $return_string .= "${red_font_start} --->>>  $line${font_stop}\n";
-		}
-	    }	    
-	}
+    if ($opt->{verbose}){
+		for my $entry (@{$feedback->{info}}){
+			my $line = $entry->{text};
+			my $type = $entry->{type};
+			if ($type eq 'info'){
+				$return_string .= " \t$line \n";
+			}
+			if ($type eq 'error'){
+				$return_string .= "${red_font_start} --->>>  $line${font_stop}\n";
+			}
+			if ($type eq 'warn'){
+				$return_string .= "${yellow_font_start} --->>>  $line${font_stop}\n";
+			}
+		}	    
+		
     }
 
     return $return_string;

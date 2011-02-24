@@ -591,7 +591,7 @@ sub check_dither {
 	if ($obs_tstart + $obs_beg_pad >= $dither->{time}) {
 	    my ($or_val, $bs_val) = ($dthr_cmd{$self->{DITHER_ON}}, $dither->{state});
 	    push @{$self->{warn}}, "$alarm Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
-		if ($or_val ne $bs_val);
+			if ($or_val ne $bs_val);
 	    last;
 	}
 	elsif ( not defined $obs_tstop ){

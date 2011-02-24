@@ -749,19 +749,21 @@ sub dark_cal_print{
 
     io("${out_dir}/dark_cal_verbose.html")->print($dark_cal_checker->print({ verbose => 1,
 																			 criteria => 0,
-																			 html => 1}));
+																			 html_standalone => 1}));
 
 
     io("${out_dir}/dark_cal_super_verbose.html")->print($dark_cal_checker->print({verbose => 1,
 																				  criteria => 1,
-																				  html => 1}));
+																				  html_standalone => 1}));
 
     my $out;
     $out .= "<A HREF=\"${out_dir}/dark_cal_verbose.html\">VERBOSE</A> ";
     $out .= "<A HREF=\"${out_dir}/dark_cal_super_verbose.html\">SUPERVERBOSE</A>\n";
     $out .= $dark_cal_checker->print({verbose => 0,
 									  criteria => 0,
-									  html => 0});
+									  html => 0,
+									  link_to => "${out_dir}/dark_cal_super_verbose.html",
+								  });
 
     return $out;
 }
