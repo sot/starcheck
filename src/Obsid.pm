@@ -620,55 +620,58 @@ sub check_dither {
 #############################################################################################
 sub check_momentum_unload{
 #############################################################################################
-	my $self = shift;
-	my $backstop = shift;
-
-	# NPM range that will be checked for momentum dumps
-	# duplicates check_dither range...
-	my ($obs_tstart, $obs_tstop);
-
-	# as with dither, check for end of associated maneuver to this attitude
-	# and finding none, set start time as obsid start
+    my $self = shift;
+    my $backstop = shift;
+    
+    # NPM range that will be checked for momentum dumps
+    # duplicates check_dither range...
+    my ($obs_tstart, $obs_tstop);
+    
+    # as with dither, check for end of associated maneuver to this attitude
+    # and finding none, set start time as obsid start
     my $manvr = find_command($self, "MP_TARGQUAT", -1);
-	if ((defined $manvr) and (defined $manvr->{tstop})){
-		$obs_tstart = $manvr->{tstop};
-	}
-	else{
-		$obs_tstart = date2time($self->{date});
-	}
-
+    if ((defined $manvr) and (defined $manvr->{tstop})){
+        $obs_tstart = $manvr->{tstop};
+    }
+    else{
+        $obs_tstart = date2time($self->{date});
+    }
+    
     # set the observation stop as the beginning of the next maneuever
     # or, if last obsid in load, use the processing summary or/er observation
     # stop time
     if (defined $self->{next}){
-		my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
-		if (defined $next_manvr){
-			$obs_tstop  = $next_manvr->{tstart};
-		}
-		else{
-			# if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
-			# just use next obsid start time
-			my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
-			if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
-				$obs_tstop = $next_cmd_obsid->{time};
-			}
-		}
+        my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
+        if (defined $next_manvr){
+            $obs_tstop  = $next_manvr->{tstart};
+        }
+        else{
+            # if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
+            # just use next obsid start time
+            my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
+            if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
+                $obs_tstop = $next_cmd_obsid->{time};
+            }
+        }
     }
     else{
-		$obs_tstop = $self->{or_er_stop};
+        $obs_tstop = $self->{or_er_stop};
     }
 
-	for my $entry (@{$backstop}){
-		if ((defined $entry->{command}) and (defined $entry->{command}->{TLMSID})){
-			if ($entry->{command}->{TLMSID} =~ /AOMUNLGR/){
-				if (($entry->{time} >= $obs_tstart) and ($entry->{time} <= $obs_tstop )){
-					push @{$self->{fyi}}, "$info Momentum Unload (AOMUNLGR) in NPM at " . $entry->{date};
-				}
-			}
-		}
-	}
-
-
+    
+    if (not defined $obs_tstart or not defined $obs_tstop){
+        push @{$self->{warn}}, "$alarm Momentum Unloads not checked.\n";
+        return;
+    }
+    for my $entry (@{$backstop}){
+        if ((defined $entry->{command}) and (defined $entry->{command}->{TLMSID})){
+            if ($entry->{command}->{TLMSID} =~ /AOMUNLGR/){
+                if (($entry->{time} >= $obs_tstart) and ($entry->{time} <= $obs_tstop )){
+                    push @{$self->{fyi}}, "$info Momentum Unload (AOMUNLGR) in NPM at " . $entry->{date} . "\n";
+                }
+            }
+        }
+    }
 }
 
 #############################################################################################
@@ -710,20 +713,20 @@ sub check_sim_position {
 #############################################################################################
 sub set_ok_no_starcat{
 #############################################################################################
-	my $self = shift;
+    my $self = shift;
     my $oflsid = $self->{dot_obsid};
     # Is this an obsid that is allowed to not have a star catalog, 
     # if so, what oflsid string does it match:
     my $ok_no_starcat;
     if (defined $config{no_starcat_oflsid}){
-		my @no_starcats = @{$config{no_starcat_oflsid}};
-		for my $ofls_string (@no_starcats){
-			if ( $oflsid =~ /$ofls_string/){
-				$ok_no_starcat = $ofls_string;
-			}
-		}
+        my @no_starcats = @{$config{no_starcat_oflsid}};
+        for my $ofls_string (@no_starcats){
+            if ( $oflsid =~ /$ofls_string/){
+                $ok_no_starcat = $ofls_string;
+            }
+        }
     }
-	$self->{ok_no_starcat} = $ok_no_starcat;
+    $self->{ok_no_starcat} = $ok_no_starcat;
 }
 
 
@@ -825,10 +828,10 @@ sub check_star_catalog {
     else{
 	# if no target quaternion, warn and continue
 	if (defined $ok_no_starcat){
-	    push @{$self->{fyi}}, "$info No target/maneuver for obsid $obsid ($oflsid). OK for '$ok_no_starcat' ER. \n";
+	  push @{$self->{fyi}}, "$info No target/maneuver for obsid $obsid ($oflsid). OK for '$ok_no_starcat' ER. \n";
 	}
 	else{
-	    push @{$self->{warn}}, "$alarm No target/maneuver for obsid $obsid ($oflsid). \n";		    
+	  push @{$self->{warn}}, "$alarm No target/maneuver for obsid $obsid ($oflsid). \n";		    
 	}
     }
     $slew_err = 120 if not defined $slew_err;
@@ -1121,7 +1124,7 @@ sub check_flick_pix_mon {
     my $self = shift;
 
     # only check ERs for these MONS
-    return if ( $self->{obsid} < 50000 );
+    return if ( $self->{obsid} =~ /NONE/ or $self->{obsid} < 50000 );
 
     my $c;
     # Check for existence of a star catalog

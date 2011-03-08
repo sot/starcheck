@@ -951,7 +951,7 @@ sub get_obsid {
 	}
     }
 
-    warning("Could not find an match in DOT for $cmd at $date\n");
+    warning("Could not find a match in DOT for $cmd at $date\n");
 
     # Couldn't match input command to DOT.  For TARGQUAT or STARCAT, force
     # processing by making a bogus obsid 
