@@ -120,9 +120,9 @@ for load in \
     2006/MAR0606/oflsc \
     2006/NOV1306/oflsa \
     2006/AUG0706/oflsb \
-	2006/DEC2506/ofls \
-	2006/MAR0606/ofls \
-	2006/NOV2006/ofls
+    2006/DEC2506/oflsc \
+    2006/MAR0606/oflsc \
+    2006/NOV2006/oflsb
 do
   RunRegression 1p6 fid_CHARACTERIS_JUL01
 done
@@ -132,30 +132,30 @@ done
 # Go through specified loads and run test and release starcheck versions
 for load in \
     2007/MAR0507/oflsa \
-	2007/AUG0607/ofls \
+    2007/AUG0607/oflsa \
     2007/AUG1407/oflsa \
-	2007/DEC1007/ofls \
-	2007/MAR0507/ofls \
-	2007/SEP0307/ofls \
-	2008/JUL0708/ofls \
+    2007/DEC1007/oflsb \
+    2007/MAR0507/oflsa \
+    2007/SEP0307/oflsa \
+    2008/JUL0708/oflsb \
     2008/MAY0508/oflsa \
     2008/AUG1808/oflsa \
     2008/SEP0108/oflsb \
-	2008/SEP2908/ofls \
-	2009/APR2009/ofls \
-	2009/FEB1609/ofls \
+    2008/SEP2908/oflsb \
+    2009/APR2009/oflsc \
+    2009/FEB1609/oflsa \
     2009/FEB2309/oflsc \
-	2009/JUL0609/ofls \
+    2009/JUL0609/oflsb \
     2009/JUN2209/oflsb \
     2009/NOV3009/oflsb \
-	2009/OCT0509/ofls \
+    2009/OCT0509/oflsa \
     2009/DEC2109/oflsb \
-	2010/APR1110/ofls \
-	2010/APR1210/ofls \
-	2010/JAN1110/ofls \
-	2010/JUL0510/ofls \
-	2010/OCT1110/ofls \
-	2010/OCT2510/ofls \
+    2010/APR1110/oflsb \
+    2010/APR1210/oflsa \
+    2010/JAN1110/oflsa \
+    2010/JUL0510/oflsb \
+    2010/OCT1110/oflsb \
+    2010/OCT2510/oflsb \
     2011/JAN1711/oflsa
 do
   RunRegression 1p6 fid_CHARACTERIS_FEB07
