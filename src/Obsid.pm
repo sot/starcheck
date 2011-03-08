@@ -592,7 +592,21 @@ sub check_dither {
 	    my ($or_val, $bs_val) = ($dthr_cmd{$self->{DITHER_ON}}, $dither->{state});
 	    push @{$self->{warn}}, "$alarm Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
 			if ($or_val ne $bs_val);
-	    last;
+	    if ($or_val eq 'ENAB'){
+	      my $y_amp = $self->{DITHER_Y_AMP} * 3600;
+	      my $z_amp = $self->{DITHER_Z_AMP} * 3600;
+	      if (defined $dither->{ampl_y}
+                and defined $dither->{ampl_p}
+                and (abs($y_amp - $dither->{ampl_y}) > 0.1
+		  or abs($z_amp - $dither->{ampl_p}) > 0.1)){
+	            my $warn = sprintf("$alarm Dither amp. mismatch - OR: (Y %.1f, Z %.1f) "
+				       . "!= Backstop: (Y %.1f, Z %.1f)\n",
+				       $y_amp, $z_amp, 
+				       $dither->{ampl_y}, $dither->{ampl_p});
+                    push @{$self->{warn}}, $warn;
+	       }
+	    }
+            last;
 	}
 	elsif ( not defined $obs_tstop ){
 	    push @{$self->{warn}}, "$alarm Unable to determine obs tstop; could not check for dither changes during obs\n";

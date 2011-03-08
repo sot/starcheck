@@ -67,18 +67,23 @@ sub dither {
     my $bs;
     my @bs_state;
     my @bs_time;
+    my @bs_params;
     my @dh_state;
     my @dh_time;
-    my %dith_cmd = ('DS' => 'DISA', 'EN' => 'ENAB');
+    my @dh_params;
+    my %dith_cmd = ('DSDITH' => 'DISA', 
+		    'ENDITH' => 'ENAB', 
+		    'DITPAR' => undef);
     my %obs;
     my $dither_time_violation = 0;
     # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
-	if ($bs->{cmd} eq 'COMMAND_SW') {
+	if ($bs->{cmd} =~ '(COMMAND_SW|MP_DITHER)') {
 	    my %params = %{$bs->{command}};
-	    if ($params{TLMSID} =~ 'AO(DS|EN)DITH') {
+	    if ($params{TLMSID} =~ 'AO(DSDITH|ENDITH|DITPAR)') {
 		push @bs_state, $dith_cmd{$1};
 		push @bs_time, $bs->{time};  # see comment below about timing
+		push @bs_params, { %params };
 	    }
 	}
     }
@@ -90,11 +95,12 @@ sub dither {
 
     if ($dh_file && (my $dith_hist_fh = new IO::File $dh_file, "r")) {
 	while (<$dith_hist_fh>) {
-	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (EN|DS) DITH/x) {
+	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (ENDITH|DSDITH)/x) {
 		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
 		my $time = date2time("$yr:$doy:$hr:$min:$sec");
 		push @dh_state, $dith_cmd{$state};
 		push @dh_time, $time;
+		push @dh_params, {};
 	    }
 	}
 
@@ -104,7 +110,8 @@ sub dither {
     my @ok = grep { $dh_time[$_] < $bs_arr->[0]->{time} } (0 .. $#dh_time);
     my @state = (@dh_state[@ok], @bs_state);
     my @time   = (@dh_time[@ok], @bs_time);
-   
+    my @params = (@dh_params[@ok], @bs_params);
+
     
     # if the most recent/last entry in the dither file has a timestamp newer than
     # the first entry in the load
@@ -116,12 +123,26 @@ sub dither {
     # Now make an array of hashes as the final output.  Keep track of where the info
     # came from, for later use in Chex
     my @dither;
-    @dither = map { { time   => $time[$_],
-		      state  => $state[$_],
-		      source => $time[$_] < $bs_arr->[0]->{time} ? 'history' : 'backstop'}
-		} (0 .. $#state);
+    my $dither_state;
+    my $dither_ampl_p;
+    my $dither_ampl_y;
+    my $bs_start = $bs_arr->[0]->{time};
+    my $r2a = 3600. * 180. / 3.14159265;
+ 
+    foreach (0 .. $#state) {
+      $dither_state = $state[$_] if defined $state[$_];
+      $dither_ampl_p = $params[$_]->{COEFP} * $r2a if defined $params[$_]->{COEFP};
+      $dither_ampl_y = $params[$_]->{COEFY} * $r2a if defined $params[$_]->{COEFY};
+      
+      push @dither, { time => $time[$_],
+		      state => $dither_state,
+		      source => $time[$_] < $bs_start ? 'history' : 'backstop',
+		      ampl_p => $dither_ampl_p,
+		      ampl_y => $dither_ampl_y};
+      
     
 
+    }
     return ($dither_time_violation, @dither);
 
 }
