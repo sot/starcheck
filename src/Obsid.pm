@@ -590,6 +590,7 @@ sub check_dither {
     foreach my $dither (reverse @{$dthr}) {
 	if ($obs_tstart + $obs_beg_pad >= $dither->{time}) {
 	    my ($or_val, $bs_val) = ($dthr_cmd{$self->{DITHER_ON}}, $dither->{state});
+            # ACA-002
 	    push @{$self->{warn}}, "$alarm Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
 			if ($or_val ne $bs_val);
 	    if ($or_val eq 'ENAB'){
@@ -608,6 +609,7 @@ sub check_dither {
 	    }
             last;
 	}
+        # ACA-003
 	elsif ( not defined $obs_tstop ){
 	    push @{$self->{warn}}, "$alarm Unable to determine obs tstop; could not check for dither changes during obs\n";
 	}
@@ -702,6 +704,7 @@ sub check_sim_position {
 #		print STDERR " self->{obsid} = $self->{obsid}\n";
 #		print STDERR " sim_offset_z = $self->{SIM_OFFSET_Z}   SI = $self->{SI}\n";
 #		print STDERR " st->{POS} = $par{POS}   sim_z = $sim_z   delta = ", $par{POS}-$sim_z,"\n";
+                    # ACA-001
 		    push @{$self->{warn}}, "$alarm SIM position mismatch:  OR=$sim_z  BACKSTOP=$par{POS}\n";
 		}
 		last;
@@ -783,6 +786,9 @@ sub check_star_catalog {
     my $mag_faint_yellow= 10.3;	# Faint mag limit (yellow)
     my $mag_bright      = 6.0;	# Bright mag limit 
 
+    my $fid_faint = 7.2;
+    my $fid_bright = 6.8;
+
     my $spoil_dist   = 140;	# Min separation of star from other star within $sep_mag mags
     my $spoil_mag    = 5.0;	# Don't flag if mag diff is more than this
    
@@ -836,6 +842,7 @@ sub check_star_catalog {
     }
     $slew_err = 120 if not defined $slew_err;
 
+    # ACA-004
     # if no starcat, warn and quit this subroutine
     unless ($c = find_command($self, "MP_STARCAT")) {
 	if (defined $ok_no_starcat){
@@ -845,13 +852,13 @@ sub check_star_catalog {
 	push @{$self->{warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). \n";		    
 	return;
     }
-
     # Reset the minimum number of guide stars if a monitor window is commanded
     $min_guide -= scalar grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
 
     print STDERR "Checking star catalog for obsid $self->{obsid}\n";
     
     # Global checks on star/fid numbers
+    # ACA-005 ACA-006 ACA-007 ACA-008 ACA-044
     
     push @warn,"$alarm Too Few Fid Lights\n" if (@{$self->{fid}} < $min_fid && $is_science);
     push @warn,"$alarm Too Many Fid Lights\n" if ( (@{$self->{fid}} > 0 && $is_er) ||
@@ -889,7 +896,7 @@ sub check_star_catalog {
 	my $slot_dither = ($type =~ /FID/ ? 5.0 : $dither); # Pseudo-dither, depending on star or fid
 	my $pix_slot_dither = $slot_dither / $ang_per_pix;
 
-       # Warn if star not identified
+       # Warn if star not identified ACA-042
 	if ( $type =~ /BOT|GUI|ACQ/ and not defined $c->{"GS_IDENTIFIED$i"}) {
 	    push @warn, sprintf("$alarm [%2d] Missing Star. No AGASC star near search center \n", $i);
 	}
@@ -917,7 +924,7 @@ sub check_star_catalog {
 		$i, $sid, $bad_gui{$sid}{'n_nbad'}, $bad_gui{$sid}{'n_obs'};
 	}
 	    
-	# Bad AGASC ID
+	# Bad AGASC ID ACA-031
 	push @yellow_warn,sprintf "$alarm [%2d] Non-numeric AGASC ID.  %s\n",$i,$sid if ($sid ne '---' && $sid =~ /\D/);
 	push @warn,sprintf "$alarm [%2d] Bad AGASC ID.  %s\n",$i,$sid if ($bad_id{$sid});
 	
@@ -930,7 +937,7 @@ sub check_star_catalog {
 #	    $c->{"GS_NOTES$i"} .= 'c' if ($c->{"GS_BV$i"} == 0.700);
 	    # ignore precision errors in color
 	    my $color = sprintf('%.7f', $c->{"GS_BV$i"});
-	    $c->{"GS_NOTES$i"} .= 'c' if ($color eq '0.7000000');
+	    $c->{"GS_NOTES$i"} .= 'c' if ($color eq '0.7000000'); # ACA-033
 		$c->{"GS_NOTES$i"} .= 'C' if ($color eq '1.5000000');
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
 	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 399);
@@ -950,7 +957,7 @@ sub check_star_catalog {
 	}
 
 	# Star/fid outside of CCD boundaries
-
+        # ACA-019 ACA-020 ACA-021
 	my ($pixel_row, $pixel_col);
 	eval{
 		($pixel_row, $pixel_col) = toPixels( $yag, $zag);
@@ -973,12 +980,12 @@ sub check_star_catalog {
 	    }
 	}	
 		
-# Quandrant boundary interference
+        # Quandrant boundary interference ACA-013 ACA-014 (and ACA-012 if it were actually a check)
 	push @yellow_warn, sprintf "$alarm [%2d] Quadrant Boundary. \n",$i 
 	    unless ($type eq 'ACQ' or $type eq 'MON' or 
 		    (abs($yag-$y0) > $qb_dist + $slot_dither and abs($zag-$z0) > $qb_dist + $slot_dither ));
 	
-	# Faint and bright limits
+	# Faint and bright limits ~ACA-009 ACA-010
 	if ($type ne 'MON' and $mag ne '---') {
 
 	    if ($mag < $mag_bright or $mag > $mag_faint_red) {
@@ -990,7 +997,14 @@ sub check_star_catalog {
 	
 	}
 
+	# FID magnitude limits ACA-011
+	if ($type eq 'FID') {
+	    if ($mag =~ /---/ or $mag < $fid_bright or $mag > $fid_faint) {
+		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i, $mag =~ /---/ ? 0 : $mag;
+	    } 
+	}
 
+        # ACA-041
 	if ($type =~ /BOT|GUI|ACQ/){
 	    if (( $maxmag =~ /---/) or ($mag =~ /---/)){
 		push @warn, sprintf "$alarm [%2d] Magnitude.  MAG or MAGMAX not defined \n",$i;		
@@ -1004,18 +1018,18 @@ sub check_star_catalog {
 	}
 	
 
-	# Search box too large
+	# Search box too large ACA-018
 	if ($type ne 'MON' and $c->{"HALFW$i"} > 200) {
 	    push @warn, sprintf "$alarm [%2d] Search Box Size. Search Box Too Large. \n",$i;
 	}
 
-	# ACQ/BOTH search box smaller than slew error
+	# ACQ/BOTH search box smaller than slew error ACA-015
 	if (($type =~ /BOT|ACQ/) and $c->{"HALFW$i"} < $slew_err) {
 	    push @warn, sprintf "$alarm [%2d] Search Box Size. Search Box smaller than slew error \n",$i;
 	}
 
 
-	# Check that readout sizes are all 6x6 for science observations
+	# Check that readout sizes are all 6x6 for science observations ACA-027
 	if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6"){
 	  if (($c->{"SIZE$i"} eq "8x8") and ($or->{HAS_MON}) and ($c->{"IMNUM$i"} == 7 )){
 	    push @{$self->{fyi}}, sprintf("$info [%2d] Readout Size. 8x8 Stealth MON?", $i);
@@ -1025,21 +1039,21 @@ sub check_star_catalog {
 	  }
 	}
 
-	# Check that readout sizes are all 8x8 for engineering observations
+	# Check that readout sizes are all 8x8 for engineering observations ACA-028
 	if ($is_er && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "8x8"){
 	    push @warn, sprintf("$alarm [%2d] Readout Size.  %s Should be 8x8\n", $i, $c->{"SIZE$i"});
 	}
 	
-	# Check that readout sizes are all 8x8 for FID lights
+	# Check that readout sizes are all 8x8 for FID lights ACA-029
 	push @warn, sprintf("$alarm [%2d] Readout Size.  %s Should be 8x8\n", $i, $c->{"SIZE$i"})
 	    if ($type =~ /FID/  && $c->{"SIZE$i"} ne "8x8");
 
-	# Check that readout size is 8x8 for monitor windows
+	# Check that readout size is 8x8 for monitor windows ACA-030
 	push @warn, sprintf("$alarm [%2d] Readout Size. %s Should be 8x8\n", $i, $c->{"SIZE$i"})
 	    if ($type =~ /MON/  && $c->{"SIZE$i"} ne "8x8");
 	
 
-	# Bad Pixels
+	# Bad Pixels ACA-025
         my @close_pixels;
         my @dr;
 	if ($type ne 'ACQ' and $c->{"GS_PASS$i"} =~ /^1|\s+|g[1-2]/) {
@@ -1075,7 +1089,7 @@ sub check_star_catalog {
 	    my $dm = $mag ne '---' ? $mag - $star->{mag} : 0.0;
 	    my $dm_string = $mag ne '---' ? sprintf("%4.1f", $mag - $star->{mag}) : '?';
 	    
-	    # Fid within $dither + 25 arcsec of a star (yellow) and within 4 mags (red)
+	    # Fid within $dither + 25 arcsec of a star (yellow) and within 4 mags (red) ACA-024
 	    if ($type eq 'FID'
 		and $dz < $dither+25 and $dy < $dither+25
 		and $dm > -5.0) {
@@ -1085,15 +1099,15 @@ sub check_star_catalog {
 		else { push @yellow_warn, $warn }
 	    }
 
-	    # Star within search box + search error and within 1.0 mags
+	    # Star within search box + search error and within 1.0 mags 
 	    if ($type ne 'MON' and $dz < $halfw + $search_err and $dy < $halfw + $search_err and $dm > -1.0) {
 		my $warn = sprintf("$alarm [%2d] Search spoiler. %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
-		if ($dm > -0.2)  { push @warn, $warn }
+		if ($dm > -0.2)  { push @warn, $warn } # ACA-022 ACA-023
 		else { push @yellow_warn, $warn }
 	    }
 	    # Common column: dz within limit, spoiler is $col_sep_mag brighter than star,
-	    # and spoiler is located between star and readout
+	    # and spoiler is located between star and readout ACA-026
 	    if ($type ne 'MON'
 		and $dz < $col_sep_dist
 		and $dm > $col_sep_mag
@@ -1230,7 +1244,7 @@ sub check_monitor_commanding {
 	
 	# if this is a plain commanded MON
 	if ($idx_hash{type} =~ /MON/ ){
-	  # if it doesn't match the requested location
+	  # if it doesn't match the requested location ACA-037
 	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is %6.2f arc-seconds off of OR specification\n"
 					 , $idx_hash{idx}, $idx_hash{sep}) 
 	    if $idx_hash{sep} > 2.5;
@@ -1238,16 +1252,16 @@ sub check_monitor_commanding {
 	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Size is not 8x8\n", $idx_hash{idx})
 	    unless $idx_hash{size} eq "8x8";
 
-	# if it isn't in slot 7
+	# if it isn't in slot 7 ACA-036
 	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is in slot %2d and should be in slot 7.\n"
 					 , $idx_hash{idx}, $idx_hash{imnum}) 
 	    if $idx_hash{imnum} != 7;
-	
+	# ACA-038
 	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is set to Convert-to-Track\n", $idx_hash{idx}) 
 	  if $idx_hash{restrk} == 1;
 	  
 
-	# Verify the the designated track star is indeed a guide star.
+	# Verify the the designated track star is indeed a guide star. ACA-039
 	  my $dts_slot = $idx_hash{dimdts};
 	  my $dts_type = "NULL";
 	  foreach my $dts_index (1..16) {
@@ -1304,7 +1318,7 @@ sub check_monitor_commanding {
     #    to the target attitude.
     #  The OFP Aspect Camera Process is restarted (AOACRSET) 3 minutes after EOM.
     #  Dither is enabled (AOENDITH) 5 min after EOM
-
+    # ACA-040
 
     my $t_manv = $manv->{tstop};
     my %dt = (AODSDITH => -60, AOACRSET => 180, AOENDITH => 300);
@@ -1356,7 +1370,7 @@ sub check_fids {
     @fid_ok = map { 0 } @{$self->{fid}};
 
     # Calculate yang and zang for each commanded fid, then cross-correlate with
-    # all commanded fids.
+    # all commanded fids. 
     foreach my $fid (@{$self->{fidsel}}) {
 
 	my ($yag, $zag, $error) = calc_fid_ang($fid, $self->{SI}, $self->{SIM_OFFSET_Z}, $self->{obsid});
@@ -1379,12 +1393,12 @@ sub check_fids {
 	    }
 	}
 
-       
+        # ACA-034
 	push @{$warn}, sprintf("$alarm Fid $self->{SI} FIDSEL $fid not found within 10 arcsec of (%.1f, %.1f)\n",
 			       $yag, $zag)
 	    unless ($fidsel_ok);
     }
-    
+    # ACA-035
     for $i_fid (0 .. $#fid_ok) {
 	push @{$warn}, "$alarm Fid with IDX=\[$self->{fid}[$i_fid]\] is in star catalog but is not turned on via FIDSEL\n"
 	    unless ($fid_ok[$i_fid]);
@@ -1843,7 +1857,7 @@ sub identify_stars {
 	    my $star = $self->{agasc_hash}{$gs_id};
 
 	    # let's still confirm that the backstop yag zag is what we expect
-	    # from agasc and ra,dec,roll
+	    # from agasc and ra,dec,roll ACA-043
 
 	    if (abs($star->{yag} - $yag) > ($ID_DIST_LIMIT)
 		|| abs($star->{zag} - $zag) > ($ID_DIST_LIMIT)){
