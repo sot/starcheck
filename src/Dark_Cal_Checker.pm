@@ -85,27 +85,28 @@ sub new{
     my ($dot_href, $s_touched, $dot_aref) = Ska::Parse_CM_File::DOT($dot_file);
     my $bs_file = get_file("$par{dir}/$par{backstop}", 'Backstop', 'required', \@{$feedback{input_files}});
     my @bs = Ska::Parse_CM_File::backstop($bs_file);
-
-	# load A and B templates
+    
+    # load A and B templates
     my %templates = map { $_ => TLR->new(get_file("$par{app_data}/$config{file}{template}{$_}", 
-												  'template', 
-												  'required', 
-												  \@{$feedback{input_files}} ), 'template', \%config) } qw(A B);
-	
-	my $manvrs = maneuver_parse($dot_aref);
-	my $dwells = calc_dwells($manvrs);
-	my $timelines = iu_timeline($tlr);
-	my @trim_tlr = @{ trim_tlr( $tlr, \%config )};
-	$feedback{aca_init_command} = compare_timingncommanding( [$trim_tlr[0]], [$templates{A}->{entries}[0]], \%config, 
-																 "First ACA command is the template-independent init command");
-	%feedback = (%feedback, %{replicas($tlr, \%templates, $timelines, \%config)});
-		
+                                                  'template', 
+                                                  'required', 
+                                                  \@{$feedback{input_files}} ), 'template', \%config) } qw(A B);
+    
+    my $manvrs = maneuver_parse($dot_aref);
+    my $dwells = calc_dwells($manvrs);
+    my $timelines = iu_timeline($tlr);
+    my @trim_tlr = @{ trim_tlr( $tlr, \%config )};
+
+    $feedback{aca_init_command} = compare_timingncommanding( [$tlr->{first_aca_hw_cmd}], [$templates{A}->{entries}[0]], \%config, 
+                                                             "First ACA command is the template-independent init command");
+    %feedback = (%feedback, %{replicas($tlr, \%templates, $timelines, \%config)});
+    
     $feedback{check_dither_enable_at_end} = check_dither_enable_at_end($tlr, \%config);
     $feedback{check_dither_param_at_end} = check_dither_param_at_end($tlr, \%config);
     $feedback{check_manvr} = check_manvr( \%config, $manvrs);
     $feedback{check_dwell} = check_dwell(\%config, $manvrs, $dwells);
     $feedback{check_manvr_point} = check_manvr_point( \%config, \@bs, $manvrs);
-	$feedback{check_momentum_unloads} = check_momentum_unloads(\%config, \@bs, $manvrs, $dwells);
+    $feedback{check_momentum_unloads} = check_momentum_unloads(\%config, \@bs, $manvrs, $dwells);
 	
     bless \%feedback, $class;
     return \%feedback;
