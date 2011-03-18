@@ -54,7 +54,7 @@ test: check_install install bad_acq_install
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck -dir /data/mpcrit1/mplogs/2011/JAN1711/oflsa -out test
+	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
 # Comprehensive regression test
 regress: check_install install bad_acq_install
