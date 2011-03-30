@@ -94,14 +94,6 @@ done
 # Go through specified loads and run test and release starcheck versions
 for load in \
     2004/AUG0104/oflsa \
-    2004/MAR0804/oflsc \
-    2003/MAR3103/oflsc \
-    2004/JAN2104/oflsa \
-    2004/MAR0104/oflsb \
-    2004/MAR1504/oflsa \
-    2004/MAR1904/oflsa \
-    2004/MAR2204/oflsb \
-    2004/MAR2904/oflsc \
     2004/MAY3104/oflsc \
     2004/JUL2604/oflsa \
     2004/DEC2704/oflsb 
@@ -157,7 +149,8 @@ for load in \
     2010/OCT1110/oflsb \
     2010/OCT2510/oflsb \
     2011/JAN1711/oflsa \
-    2011/MAR1411/oflsa 
+    2011/MAR1411/oflsa \
+    2011/APR0411/oflsa
 do
   RunRegression 1p6 fid_CHARACTERIS_FEB07
 done

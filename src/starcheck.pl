@@ -8,7 +8,7 @@
 ##*******************************************************************************
 
 
-my $version = '2011-Mar-Release';
+my $version = '2011-Mar-B-Release';
 
 # Set defaults and get command line options
 
@@ -905,11 +905,11 @@ sub set_dot_cmd {
 		   );
 
     %dot_time_offset = (ATS_DTHR  => -120.0,
-			ATS_OBSID => 90.0,
+			ATS_OBSID => 0,
 			);
 
     %dot_tolerance = (ATS_DTHR  => 200.0,
-		      ATS_OBSID => 110.0,
+		      ATS_OBSID => 1.0,
 			);
 }
 
