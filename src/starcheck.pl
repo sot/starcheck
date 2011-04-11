@@ -350,8 +350,8 @@ my $obsid;
 my %obs;
 my @obsid_id;
 for my $i (0 .. $#cmd) {
-    # Get obsid for this cmd by matching up with corresponding commands
-    # from DOT.   Returns undef if it isn't "interesting"
+    # Get obsid (aka ofls_id) for this cmd by matching up with corresponding
+    # commands from DOT.  Returns undef if it isn't "interesting"
     next unless ($obsid = get_obsid ($time[$i], $cmd[$i], $date[$i]));
     
     # If obsid hasn't been seen before, create obsid object
@@ -370,12 +370,18 @@ for my $i (0 .. $#cmd) {
 				 cmd  => $cmd[$i] } );
 }
 
+# Read guide star summary file $guide_summ.  This file is the OFLS summary of
+# guide/acq/fid star catalogs for each obsid.  In addition to confirming
+# numbers from Backstop, it has star id's and magnitudes.
+
+my %guidesumm = Ska::Parse_CM_File::guide($guide_summ) if (defined $guide_summ);
+
 # After all commands have been added to each obsid, set some global
 # object parameters based on commands
 
 foreach my $obsid (@obsid_id) {
-    $obs{$obsid}->set_obsid(); # Commanded obsid
-	$obs{$obsid}->set_ok_no_starcat();
+    $obs{$obsid}->set_obsid(\%guidesumm); # Commanded obsid
+    $obs{$obsid}->set_ok_no_starcat();
     $obs{$obsid}->set_target();
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
@@ -386,23 +392,14 @@ foreach my $obsid (@obsid_id) {
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
 }
 
-
-# create pointers from each obsid to the previous obsid (except the first one)
+# Create pointers from each obsid to the previous obsid (except the first one)
 # and the next obsid
 for my $obsid_idx (0 .. ($#obsid_id)){
     $obs{$obsid_id[$obsid_idx]}->{prev} = ( $obsid_idx > 0 ) ? $obs{$obsid_id[$obsid_idx-1]} : undef;
     $obs{$obsid_id[$obsid_idx]}->{next} = ( $obsid_idx < $#obsid_id) ? $obs{$obsid_id[$obsid_idx+1]} : undef;
 }
 
-
-
-# Read guide star summary file $guide_summ.
-# This file is the OFLS summary of guide/acq/fid star catalogs for
-# each obsid.  In addition to confirming numbers from Backstop, it
-# has star id's and magnitudes.  The results are stored in the
-# MP_STARCAT cmd, so this processing has to occur after set_star_catalog
-
-my %guidesumm = Ska::Parse_CM_File::guide($guide_summ) if (defined $guide_summ);
+# Check that every Guide summary OFLS ID has a matching OFLS ID in DOT
 
 foreach my $oflsid (keys %guidesumm){
     unless (defined $obs{$oflsid}){
@@ -410,6 +407,7 @@ foreach my $oflsid (keys %guidesumm){
     }
 }
 
+# Add guide_summary data to MP_STARCAT cmd for each obsid.  
 
 HAS_GUIDE:
 foreach my $oflsid (@obsid_id){
@@ -428,7 +426,6 @@ foreach my $oflsid (@obsid_id){
     }
 	
 }
-
 
 # Set up for SIM-Z checking
 # Find SIMTSC continuity statement from mech check file

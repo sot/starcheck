@@ -239,10 +239,25 @@ sub set_bad_agasc {
 
 ##################################################################################
 sub set_obsid {
+# Set self->{obsid} to the commanded (numeric) obsid value.  
+# Use the following (in order of preference):
+# - Backstop command (this relies on the DOT to associate cmd with star catalog)
+# - Guide summary which provides ofls_id and obsid for each star catalog
+# - OFLS ID from the DOT (as a fail-thru to still get some output)
 ##################################################################################
     my $self = shift;
-    my $c = find_command($self, "MP_OBSID");
-    $self->{obsid} = $c->{ID} if ($c);
+    my $gs = shift;  # Guide summary
+    my $oflsid = $self->{dot_obsid};
+    my $gs_obsid;
+    my $bs_obsid;
+    my $mp_obsid_cmd = find_command($self, "MP_OBSID");
+    $gs_obsid = $gs->{$oflsid}{guide_summ_obsid} if defined $gs->{$oflsid};
+    $bs_obsid = $mp_obsid_cmd->{ID} if $mp_obsid_cmd;
+    $self->{obsid} = $bs_obsid || $gs_obsid || $oflsid;
+    if (defined $bs_obsid and defined $gs_obsid and $bs_obsid != $gs_obsid) {
+        push @{$self->{warn}}, sprintf("$alarm Obsid mismatch: guide summary %d != backstop %d\n",
+                                      $gs_obsid, $bs_obsid);
+    }
 }
 
 
