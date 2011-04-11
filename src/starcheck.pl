@@ -86,14 +86,13 @@ GetOptions( \%par,
 			) ||
     exit( 1 );
 
-my $STARCHECK   = $par{out} || 'starcheck';
+my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
 my $empty_font_start = qq{<font>};
 my $red_font_start = qq{<font color="#FF0000">};
 my $yellow_font_start = qq{<font color="#009900">};
 my $blue_font_start = qq{<font color="#0000FF">};
 my $font_stop = qq{</font>};
-
 
 usage( 1 )
     if $par{help};

@@ -516,6 +516,8 @@ sub set_star_catalog {
 
     return unless ($c = find_command($self, "MP_STARCAT"));
 	
+    $self->{date} = $c->{date};
+
     @{$self->{fid}} = ();
     @{$self->{gui}} = ();
     @{$self->{acq}} = ();
