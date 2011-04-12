@@ -100,8 +100,9 @@ usage( 1 )
 # Find backstop, guide star summary, OR, and maneuver files.
 my %input_files = ();
 
-# for split loads directory configuration 
+# for split loads directory and prefix configuration 
 my $sosa_dir_slash = $par{vehicle} ? "vehicle/" : "";
+my $sosa_prefix = $par{vehicle} ? "V_" : "";
 
 # asterisk only include to make globs work correctly
 my $backstop   = get_file("$par{dir}/${sosa_dir_slash}*.backstop", 'backstop', 'required');
@@ -109,7 +110,7 @@ my $guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
 my $or_file    = get_file("$par{dir}/mps/or/*.or",      'OR');
 my $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 my $dot_file   = get_file("$par{dir}/mps/md*.dot",     'DOT', 'required');
-my $mech_file  = get_file("$par{dir}/${sosa_dir_slash}output/TEST_mechcheck.txt*", 'mech check');
+my $mech_file  = get_file("$par{dir}/${sosa_dir_slash}output/${sosa_prefix}TEST_mechcheck.txt*", 'mech check');
 my $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither'); 
