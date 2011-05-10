@@ -8,7 +8,7 @@
 ##*******************************************************************************
 
 
-my $version = '2011-Mar-B-Release';
+my $version = '2011-May-Release';
 
 # Set defaults and get command line options
 
