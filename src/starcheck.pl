@@ -26,6 +26,7 @@ use Time::JulianDay;
 use Time::DayOfYear;
 use Time::Local;
 use PoorTextFormat;
+use Chex;
 
 #use lib '/proj/axaf/simul/lib/perl';
 #use GrabEnv qw( grabenv );
@@ -58,6 +59,7 @@ my %par = (dir  => '.',
 		   html => 1,
 		   text => 1,
 		   yaml => 1,
+		   chex => undef,
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
 		   );
@@ -78,6 +80,7 @@ GetOptions( \%par,
 			'vehicle!',
 			'agasc=s',
 			'agasc_dir=s',
+			'chex=s',
 			'fid_char=s',
 			'config_file=s',
 			) ||
@@ -718,6 +721,22 @@ if ($par{text}) {
 }
 
   
+# Update the Chandra expected state file, if desired and possible
+
+if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
+   print STDERR "Updating Chandra expected state file\n";
+   print $log_fh "Updating Chandra expected state file\n" if ($log_fh);
+   my $chex = new Chex $par{chex};
+   $chex->update(mman         => \%mm,
+		 mech_check   => \@mc, 
+		 dot          => \%dot,
+		 soe          => \%soe,
+		 OR           => \%or,
+		 backstop     => \@bs,
+		 dither       => \@dither,
+		);
+}
+
 ##***************************************************************************
 sub dark_cal_print{
 ##***************************************************************************
