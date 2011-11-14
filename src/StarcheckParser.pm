@@ -175,7 +175,7 @@ sub get_target{
     my @block = split "\n", $$data;
     my $topline = $block[0];
     my %target;
-    if ($topline =~ /OBSID:\s(\S{5})\s*/){
+    if ($topline =~ /^OBSID:\s(\S{5})\s*$/){
     }
     else{
 	if ($topline =~ /OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s.*\sGrating:\s*(\S+)\s*/ ){
