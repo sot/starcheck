@@ -1,40 +1,33 @@
-
-PREFIX = @prefix@
-
 TASK = starcheck
+FLIGHT_ENV = SKA
 
 SRC = $(PWD)/src
 
 PERLTASK = Ska/Starcheck
 PERLGEN = Ska/
 
-# include /proj/sot/ska/include/Makefile.FLIGHT
-
-FID_CHARACTERISTICS = fid_CHARACTERIS_FEB07
-FID_LINK_NAME = fid_CHARACTERISTICS
+include $(SKA)/include/Makefile.FLIGHT
 
 RELATED_LIB = $(SRC)/StarcheckParser.pm
 BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
 GEN_LIB = $(SRC)/Parse_CM_File.pm
 LIB = $(SRC)/Obsid.pm $(SRC)/FigureOfMerit.pm $(SRC)/Dark_Cal_Checker.pm
-DATA = $(SRC)/ACABadPixels $(SRC)/agasc.bad $(SRC)/fid_CHARACTERIS_JUL01 $(SRC)/$(FID_CHARACTERISTICS) $(SRC)/characteristics.yaml $(SRC)/A.tlr $(SRC)/B.tlr $(SRC)/tlr.cfg $(ROOT_FLIGHT)/data/starcheck/bad_gui_stars.rdb $(SRC)/up.gif $(SRC)/down.gif $(SRC)/overlib.js
-
 
 DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
-#BADPIXELS = ACABadPixels.new
-#TEST_DEPS = data/acq_stats/bad_acq_stars.rdb data/aca_dark_cal_checker/A.tlr data/aca_dark_cal_checker/B.tlr data/aca_dark_cal_checker/tlr.cfg
 
-
-SKA = $(PREFIX)
-INSTALL= $(SKA)
-INSTALL_DOC = $(PREFIX)/doc
-INSTALL_BIN = $(PREFIX)/bin
-INSTALL_PERLLIB = $(PREFIX)/lib/perl
-INSTALL_DATA = $(PREFIX)/data/$(TASK)
-ROOT_FLIGHT = /proj/sot/ska
 BAD_ACQS = $(ROOT_FLIGHT)/data/acq_stats/bad_acq_stars.rdb
 INSTALL_BAD_ACQS = $(SKA)/data/acq_stats/
+
+TEST_DATA_TGZ = $(INSTALL_DATA)/AUG0104A_test_data.tar.gz
+DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics-1.0.tar.gz
+
+test_data:
+	tar -zxvpf $(TEST_DATA_TGZ) 
+
+starcheck_data:
+	tar -zxvpf $(DATA_TGZ)
+	cd starcheck_characteristics && $(MAKE) install
 
 all: 
 	# Nothing to make; "make install" to install to $(SKA)
@@ -50,7 +43,7 @@ check: check_install all install
 	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
 # Basic aliveness test
-test: check_install install bad_acq_install
+test: check_install install bad_acq_install test_data starcheck_data
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
@@ -78,10 +71,6 @@ ifdef BIN
 	rsync --times --cvs-exclude $(BIN) $(INSTALL_BIN)/
 #	pod2html starcheck.pl > $(INSTALL_DOC)/starcheck.html
 endif
-ifdef DATA
-	mkdir -p $(INSTALL_DATA)
-	rsync --times --cvs-exclude $(DATA) $(INSTALL_DATA)/
-endif
 ifdef LIB
 	mkdir -p $(INSTALL_PERLLIB)/$(PERLTASK)
 	rsync --times --cvs-exclude $(LIB) $(INSTALL_PERLLIB)/$(PERLTASK)/
@@ -90,11 +79,7 @@ ifdef GEN_LIB
 	mkdir -p $(INSTALL_PERLLIB)/$(PERLGEN)
 	rsync --times --cvs-exclude $(GEN_LIB) $(INSTALL_PERLLIB)/$(PERLGEN)/
 endif
-ifdef FID_LINK_NAME
-	rm -f $(INSTALL_DATA)/$(FID_LINK_NAME)
-	ln -s $(INSTALL_DATA)/$(FID_CHARACTERISTICS) $(INSTALL_DATA)/$(FID_LINK_NAME)
-endif
-	mkdir -p $(SKA)/ops/Chex
+
 
 # Make sure install dir is not flight.  (This doesn't resolve links etc)
 check_install:
