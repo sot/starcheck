@@ -898,6 +898,7 @@ sub check_star_catalog {
 	my $mag  = $c->{"GS_MAG$i"};
 	my $maxmag = $c->{"MAXMAG$i"};
 	my $halfw= $c->{"HALFW$i"};
+        my $db_stats = $c->{"GS_USEDBEFORE${i}"};
 
 	# Search error for ACQ is the slew error, for fid, guide or mon it is about 4 arcsec
 	my $search_err = ( (defined $type) and ($type =~ /BOT|ACQ/)) ? $slew_err : 4.0;
@@ -923,23 +924,38 @@ sub check_star_catalog {
 	$i, $sid, $c->{"GS_ASPQ$i"} 
 	if ($type =~ /BOT|ACQ|GUI/ && defined $c->{"GS_ASPQ$i"} && $c->{"GS_ASPQ$i"} != 0);
 	
+
+        my $obs_min_cnt = 2;
+        my $obs_bad_frac = 0.3;
 	# Bad Acquisition Star
-	if ( ($type =~ /BOT|ACQ|GUI/)
-	     && ($bad_acqs{$sid}{'n_noids'} && $bad_acqs{$sid}{'n_obs'} > 2  
-		 && $bad_acqs{$sid}{'n_noids'}/$bad_acqs{$sid}{'n_obs'} > 0.3)){	
-	    push @yellow_warn, sprintf 
+	if ($type =~ /BOT|ACQ|GUI/){
+            my $n_obs = $bad_acqs{$sid}{n_obs};
+            my $n_noids = $bad_acqs{$sid}{n_noids};
+            if (defined $db_stats->{acq}){
+                $n_obs = $db_stats->{acq};
+                $n_noids = $db_stats->{acq_noid};
+            }
+            if ($n_noids && $n_obs > $obs_min_cnt && $n_noids/$n_obs > $obs_bad_frac){
+                push @yellow_warn, sprintf 
 		"$alarm [%2d] Bad Acquisition Star. %s has %2d failed out of %2d attempts\n",
-		$i, $sid, $bad_acqs{$sid}{'n_noids'}, $bad_acqs{$sid}{'n_obs'};
-	}
+		$i, $sid, $n_noids, $n_obs;
+            }
+        }
 	 
 	# Bad Guide Star
-	if ( ($type =~ /BOT|GUI/)
-	     && ( $bad_gui{$sid}{'n_nbad'} && $bad_gui{$sid}{'n_obs'} > 2  
-		  && $bad_gui{$sid}{'n_nbad'}/$bad_gui{$sid}{'n_obs'} > 0.3)){	
-	    push @yellow_warn, sprintf 
+	if ($type =~ /BOT|GUI/){
+            my $n_obs = $bad_gui{$sid}{n_obs};
+            my $n_nbad = $bad_gui{$sid}{n_nbad};
+            if (defined $db_stats->{gui}){
+                $n_obs = $db_stats->{gui};
+                $n_nbad = $db_stats->{gui_bad};
+            }
+            if ($n_nbad && $n_obs > $obs_min_cnt && $n_nbad/$n_obs > $obs_bad_frac){
+                push @yellow_warn, sprintf 
 		"$alarm [%2d] Bad Guide Star. %s has bad data %2d of %2d attempts\n",
-		$i, $sid, $bad_gui{$sid}{'n_nbad'}, $bad_gui{$sid}{'n_obs'};
-	}
+		$i, $sid, $n_nbad, $n_obs;
+            }
+        }
 	    
 	# Bad AGASC ID ACA-031
 	push @yellow_warn,sprintf "$alarm [%2d] Non-numeric AGASC ID.  %s\n",$i,$sid if ($sid ne '---' && $sid =~ /\D/);
