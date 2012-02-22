@@ -1156,8 +1156,8 @@ sub check_flick_pix_mon {
 #############################################################################################
     my $self = shift;
 
-    # only check ERs for these MONS
-    return if ( $self->{obsid} =~ /NONE/ or $self->{obsid} < 50000 );
+    # this only applies to ERs (and they should have numeric obsids)
+    return unless ( $self->{obsid} =~ /^\d+$/ and $self->{obsid} > 50000 );
 
     my $c;
     # Check for existence of a star catalog
