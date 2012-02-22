@@ -26,6 +26,44 @@ RunRegression()
   echo "mkdir -p $test"
   mkdir -p $test
 
+  # Vehicle Block
+
+  if [ -d $mphome/$load/vehicle ]
+  then
+    echo "cd $test"
+    cd $test
+
+
+  # Run test version.  Use the 'starcheck' launcher to activate the dev environment
+  #
+    echo "Running: $SKA/bin/starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+    echo "******************** (TEST VEHICLE) $load *******************" >> $vlog
+    $SKA/bin/starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
+    perl -p -i.bak -e "s{$SKA}{$RELEASE}" $test/v_starcheck.txt
+
+  # Now run current release version if not already there
+  #
+    if [ ! -r $release/v_starcheck.txt ]
+    then
+      echo "mkdir -p $release"
+      mkdir -p $release
+      
+      echo "cd $release"
+      cd $release
+      
+      echo "Running: $RELEASE/bin/starcheck.pl -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+      echo "**** (RELEASE VEHICLE) $load ****" >> $vlog
+      env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck.pl -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
+    fi  
+
+
+  # Now compare with release version
+    
+    echo "diff $test/v_starcheck.txt $release/v_starcheck.txt >> $vdiffs"
+    echo "********************* $load vehicle ********************" >> $vdiffs
+    diff $test/v_starcheck.txt $release/v_starcheck.txt >> $vdiffs
+  fi
+
   echo "cd $test"
   cd $test
 
@@ -58,6 +96,7 @@ RunRegression()
   echo "********************* $load ********************" >> $diffs
   diff $test/starcheck.txt $release/starcheck.txt >> $diffs
 
+
   cd $home
 }
                                                                                                                                                              
@@ -65,7 +104,9 @@ RunRegression()
 # Define the files and directories
 home=$PWD
 mphome=/data/mpcrit1/mplogs
+vlog=$home/${OSTYPE}_vehicle_regress_log
 log=$home/${OSTYPE}_regress_log
+vdiffs=$home/${OSTYPE}_vehicle_regress_diffs
 diffs=$home/${OSTYPE}_regress_diffs
 
 RELEASE=/proj/sot/ska
@@ -150,10 +191,10 @@ for load in \
     2010/OCT2510/oflsb \
     2011/JAN1711/oflsa \
     2011/MAR1411/oflsa \
-    2011/APR0411/oflsa
+    2011/APR0411/oflsa \
+    2011/DEC1211/oflsa \
+    2012/JAN3012/oflsa
 do
   RunRegression 1p6 fid_CHARACTERIS_FEB07
 done
-
-
 
