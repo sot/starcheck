@@ -27,6 +27,7 @@ use Time::DayOfYear;
 use Time::Local;
 use PoorTextFormat;
 use Chex;
+use Quat;
 
 #use lib '/proj/axaf/simul/lib/perl';
 #use GrabEnv qw( grabenv );
@@ -563,28 +564,60 @@ for my $obs_idx (0 .. $#obsid_id) {
 
     # if Obsid is numeric, print tally info
     if ($obs{$obsid}->{obsid} =~ /^\d*$/ ){
-		
-		# minumum requirements for acq and guide for ERs and ORs
-		# should be set by config...
-		my $min_num_acq = ($obs{$obsid}->{obsid} > 40000 ) ? 5 : 4;
-		my $min_num_gui = ($obs{$obsid}->{obsid} > 40000 ) ? 6 : 4;
-		if (defined $obs{$obsid}->{ok_no_starcat}){
-			$min_num_acq = 0;
-			$min_num_gui = 0;
-		}
-		my $acq_font_start = ($good_acq_count < $min_num_acq) ? $red_font_start
-			: $empty_font_start;
-		my $gui_font_start = ($good_guide_count < $min_num_gui) ? $red_font_start
-			: $empty_font_start;
 
-		$out .= "$acq_font_start";
-		$out .= sprintf "$good_acq_count clean ACQ | ";
-		$out .= "$font_stop";
+        # minumum requirements for acq and guide for ERs and ORs
+        # should be set by config...
+        my $min_num_acq = ($obs{$obsid}->{obsid} > 40000 ) ? 5 : 4;
+        my $min_num_gui = ($obs{$obsid}->{obsid} > 40000 ) ? 6 : 4;
 
-		$out .= "$gui_font_start";
-		$out .= sprintf "$good_guide_count clean GUI | ";
-		$out .= "$font_stop";
+        # if there is no star catalog and that's ok
+        if (not ($obs{$obsid}->find_command("MP_STARCAT")) 
+            and $obs{$obsid}->{ok_no_starcat}){
+            $min_num_acq = 0;
+            $min_num_gui = 0;
+        }
+        
 
+        # if the previous obsid is an OR and the current one is an ER
+        # and the obsid is < 10 minutes in duration (we've got a <10 min NPM criterion)
+        # and there is a star catalog to check
+        # and the last obsid had a star catalog
+        if ($obs{$obsid}->{obsid} > 40000
+            and $obs{$obsid}->find_command("MP_STARCAT")
+            and $obs{$obsid}->{prev}
+            and $obs{$obsid}->{prev}->{obsid} < 40000
+            and $obs{$obsid}->{prev}->find_command("MP_STARCAT")
+            and ($obs{$obsid}->{obs_tstop} - $obs{$obsid}->{obs_tstart} < 10*60)){
+
+            # and the pointings are the same
+            my $has_diff = 0;
+            for my $component qw(ra dec roll){
+                my $curr = $obs{$obsid}->{$component};
+                my $prev = $obs{$obsid}->{prev}->{$component};
+                if (abs($curr - $prev) > .001){
+                    $has_diff++;
+                }
+            }
+            # use the 'special case' ER rules from ACA-044
+            if ($has_diff == 0){
+                print "$obs{$obsid}->{obsid} is SC ER \n";
+                $min_num_acq = 4;
+                $min_num_gui = 4;
+            }
+        }
+
+        my $acq_font_start = ($good_acq_count < $min_num_acq) ? $red_font_start
+        : $empty_font_start;
+        my $gui_font_start = ($good_guide_count < $min_num_gui) ? $red_font_start
+        : $empty_font_start;
+        
+        $out .= "$acq_font_start";
+        $out .= sprintf "$good_acq_count clean ACQ | ";
+        $out .= "$font_stop";
+        
+        $out .= "$gui_font_start";
+        $out .= sprintf "$good_guide_count clean GUI | ";
+        $out .= "$font_stop";
 	
     }
     # if Obsid is non-numeric, print "Unknown"

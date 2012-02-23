@@ -676,6 +676,8 @@ sub check_momentum_unload{
     else{
         $obs_tstop = $self->{or_er_stop};
     }
+    $self->{obs_tstart} = $obs_tstart;
+    $self->{obs_tstop} = $obs_tstop;
 
     
     if (not defined $obs_tstart or not defined $obs_tstop){
