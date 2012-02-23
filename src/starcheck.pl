@@ -390,6 +390,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file, $tlr_file);
     $obs{$obsid}->set_fids(@fidsel);
     $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
+    $obs{$obsid}->set_npm_times();
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
 }
 
