@@ -390,7 +390,6 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file, $tlr_file);
     $obs{$obsid}->set_fids(@fidsel);
     $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
-    $obs{$obsid}->set_npm_times();
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
 }
 
@@ -460,13 +459,15 @@ foreach my $obsid (@obsid_id) {
 	    warning ("Could not create plots for Obsid $obsid:\n $@ \n");
 	}
     }
+    $obs{$obsid}->set_npm_times();
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_flick_pix_mon();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
     $obs{$obsid}->check_dither(\@dither);
-	$obs{$obsid}->check_momentum_unload(\@bs);
+    $obs{$obsid}->check_momentum_unload(\@bs);
+    $obs{$obsid}->check_for_special_case_er();
     $obs{$obsid}->count_good_stars();
 
 # Make sure there is only one star catalog per obsid
@@ -564,7 +565,7 @@ for my $obs_idx (0 .. $#obsid_id) {
     my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};
 
     # if Obsid is numeric, print tally info
-    if ($obs{$obsid}->{obsid} =~ /^\d*$/ ){
+    if ($obs{$obsid}->{obsid} =~ /^\d+$/ ){
 
         # minumum requirements for acq and guide for ERs and ORs
         # should be set by config...
@@ -578,33 +579,10 @@ for my $obs_idx (0 .. $#obsid_id) {
             $min_num_gui = 0;
         }
         
-
-        # if the previous obsid is an OR and the current one is an ER
-        # and the obsid is < 10 minutes in duration (we've got a <10 min NPM criterion)
-        # and there is a star catalog to check
-        # and the last obsid had a star catalog
-        if ($obs{$obsid}->{obsid} > 40000
-            and $obs{$obsid}->find_command("MP_STARCAT")
-            and $obs{$obsid}->{prev}
-            and $obs{$obsid}->{prev}->{obsid} < 40000
-            and $obs{$obsid}->{prev}->find_command("MP_STARCAT")
-            and ($obs{$obsid}->{obs_tstop} - $obs{$obsid}->{obs_tstart} < 10*60)){
-
-            # and the pointings are the same
-            my $has_diff = 0;
-            for my $component qw(ra dec roll){
-                my $curr = $obs{$obsid}->{$component};
-                my $prev = $obs{$obsid}->{prev}->{$component};
-                if (abs($curr - $prev) > .001){
-                    $has_diff++;
-                }
-            }
-            # use the 'special case' ER rules from ACA-044
-            if ($has_diff == 0){
-                print "$obs{$obsid}->{obsid} is SC ER \n";
-                $min_num_acq = 4;
-                $min_num_gui = 4;
-            }
+        # use the 'special case' ER rules from ACA-044
+        if ($obs{$obsid}->{special_case_er}){
+            $min_num_acq = 4;
+            $min_num_gui = 4;
         }
 
         my $acq_font_start = ($good_acq_count < $min_num_acq) ? $red_font_start

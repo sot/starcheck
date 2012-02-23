@@ -497,16 +497,16 @@ sub set_npm_times{
             $obs_tstop  = $next_manvr->{tstart};
         }
         else{
-            # if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
+            # if the next obsid doesn't have a maneuver
             # just use next obsid start time
             my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
             if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
-		push @{$self->{warn}}, "$alarm Next obsid has no manvr; uses next obsid start date for NPM checks (dither, momentum)\n";
+		push @{$self->{fyi}}, "$alarm Next obsid has no manvr; using next obsid 'date' for NPM checks (dither, momentum)\n";
                 $obs_tstop = $next_cmd_obsid->{time};
             }
         }
     }
-    else{
+    if (not defined $obs_tstop){
         $obs_tstop = $self->{or_er_stop};
     }
     $self->{obs_tstart} = $obs_tstart;
@@ -679,6 +679,41 @@ sub check_momentum_unload{
         }
     }
 }
+
+#############################################################################################
+sub check_for_special_case_er{
+#############################################################################################
+    my $self = shift;
+ 
+    # if the previous obsid is an OR and the current one is an ER
+    # and the obsid is < 10 minutes in duration (we've got a <10 min NPM criterion)
+    # and there is a star catalog to check
+    # and the last obsid had a star catalog
+    $self->{special_case_er} = 0;
+    if ($self->{obsid} =~ /^\d+$/
+        and $self->{obsid} > 40000
+        and $self->find_command("MP_STARCAT")
+        and $self->{prev}
+        and $self->{prev}->{obsid} =~ /^\d+$/
+        and $self->{prev}->{obsid} < 40000
+        and $self->{prev}->find_command("MP_STARCAT")
+        and $self->{obs_tstop} - $self->{obs_tstart} < 10*60){
+        # and the pointings are the same
+        my $has_diff = 0;
+        for my $component qw(ra dec roll){
+            my $curr = $self->{$component};
+            my $prev = $self->{$component};
+            if (abs($curr - $prev) > .001){
+                $has_diff++;
+            }
+        }
+        if ($has_diff == 0){
+            $self->{special_case_er} = 1;
+            push @{$self->{fyi}}, "$info Special Case ER";
+        }
+    }
+}
+
 
 #############################################################################################
 sub check_sim_position {
