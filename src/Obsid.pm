@@ -461,10 +461,15 @@ sub set_ps_times{
 	    }
 	}
     }
-
-    $self->{or_er_start} = date2time($or_er_start);
-    $self->{or_er_stop} = date2time($or_er_stop);
-
+    if (not defined $or_er_start or not defined $or_er_stop){
+        push @{$self->{warn}}, "$alarm Could not find obsid $obsid in processing summary\n";
+        $self->{or_er_start} = undef;
+        $self->{or_er_stop} = undef;
+    }
+    else{
+        $self->{or_er_start} = date2time($or_er_start);
+        $self->{or_er_stop} = date2time($or_er_stop);
+    }
 
 
 }
@@ -509,9 +514,16 @@ sub set_npm_times{
     if (not defined $obs_tstop){
         $obs_tstop = $self->{or_er_stop};
     }
-    $self->{obs_tstart} = $obs_tstart;
-    $self->{obs_tstop} = $obs_tstop;
+
+    if (not defined $obs_tstart or not defined $obs_tstop){
+        push @{$self->{warn}}, "$alarm Could not determine obsid start and stop times for NPM checks (dither, momentum)\n";
+    }
+    else{
+        $self->{obs_tstart} = $obs_tstart;
+        $self->{obs_tstop} = $obs_tstop;
+    }
 }
+
 
 
 ##################################################################################
