@@ -634,7 +634,9 @@ sub check_dither {
     if ( $self->{obsid} =~ /^\d*$/){
 	return if ($self->{obsid} > 50000); # For eng obs, don't have OR to specify dither
     }
-    unless ($manvr = find_command($self, "MP_TARGQUAT", -1) and defined $self->{DITHER_ON} and defined $manvr->{tstart}) {
+    unless (defined $self->{DITHER_ON} 
+            and $manvr = find_command($self, "MP_TARGQUAT", -1) 
+            and defined $manvr->{tstart}) {
 	push @{$self->{warn}}, "$alarm Dither status not checked\n";
 	return;
     }
