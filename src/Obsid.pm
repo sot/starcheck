@@ -702,7 +702,7 @@ sub check_for_special_case_er{
         my $has_diff = 0;
         for my $component qw(ra dec roll){
             my $curr = $self->{$component};
-            my $prev = $self->{$component};
+            my $prev = $self->{prev}->{$component};
             if (abs($curr - $prev) > .001){
                 $has_diff++;
             }
