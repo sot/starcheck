@@ -20,6 +20,9 @@ BAD_ACQS = $(ROOT_FLIGHT)/data/acq_stats/bad_acq_stars.rdb
 INSTALL_BAD_ACQS = $(SKA)/data/acq_stats/
 
 TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
+# starcheck_characteristics tarball should be installed from
+# separate starcheck_characteristics project
+# with "make install_dist" from that project
 DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
 
 test_data:
