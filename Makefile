@@ -19,8 +19,8 @@ DOC_HTML = aca_load_review_cl.html
 BAD_ACQS = $(ROOT_FLIGHT)/data/acq_stats/bad_acq_stars.rdb
 INSTALL_BAD_ACQS = $(SKA)/data/acq_stats/
 
-TEST_DATA_TGZ = $(INSTALL_DATA)/AUG0104A_test_data.tar.gz
-DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics-1.0.tar.gz
+TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
+DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
 
 test_data:
 	tar -zxvpf $(TEST_DATA_TGZ) 
