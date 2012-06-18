@@ -3,15 +3,12 @@ FLIGHT_ENV = SKA
 
 SRC = $(PWD)/src
 
-PERLTASK = Ska/Starcheck
-PERLGEN = Ska/
-
 include $(SKA)/include/Makefile.FLIGHT
 
 RELATED_LIB = $(SRC)/StarcheckParser.pm
 BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
-GEN_LIB = $(SRC)/Parse_CM_File.pm
-LIB = $(SRC)/Obsid.pm $(SRC)/FigureOfMerit.pm $(SRC)/Dark_Cal_Checker.pm
+LIB = $(SRC)/lib/Ska/Starcheck/Obsid.pm $(SRC)/lib/Ska/Starcheck/FigureOfMerit.pm \
+	$(SRC)/lib/Ska/Starcheck/Dark_Cal_Checker.pm $(SRC)/lib/Ska/Parse_CM_File.pm
 
 DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
@@ -82,12 +79,8 @@ ifdef BIN
 #	pod2html starcheck.pl > $(INSTALL_DOC)/starcheck.html
 endif
 ifdef LIB
-	mkdir -p $(INSTALL_PERLLIB)/$(PERLTASK)
-	rsync --times --cvs-exclude $(LIB) $(INSTALL_PERLLIB)/$(PERLTASK)/
-endif
-ifdef GEN_LIB
-	mkdir -p $(INSTALL_PERLLIB)/$(PERLGEN)
-	rsync --times --cvs-exclude $(GEN_LIB) $(INSTALL_PERLLIB)/$(PERLGEN)/
+	mkdir -p $(INSTALL_PERLLIB)
+	rsync --times --cvs-exclude --recursive $(SRC)/lib/* $(INSTALL_PERLLIB)/
 endif
 
 
