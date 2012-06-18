@@ -51,8 +51,6 @@ chomp($OS);
 
 # Set some global vars with directory locations
 my $SKA = $ENV{SKA} || '/proj/sot/ska';
-my $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
-my $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
 my %par = (dir  => '.',
 		   plot => 1,
@@ -80,11 +78,14 @@ GetOptions( \%par,
 			'vehicle!',
 			'agasc=s',
 			'agasc_dir=s',
-			'chex=s',
+                        'sc_data=s',
+                        'chex=s',
 			'fid_char=s',
 			'config_file=s',
 			) ||
     exit( 1 );
+
+my $Starcheck_Data = "$par{sc_data}" || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
 
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
@@ -1096,6 +1097,12 @@ Specify directory path to agasc.  Overrides -agasc option.
 =item B<-fid_char <fid characteristics file>>
 
 Specify file name of the fid characteristics file to use.  This must be in the SKA/data/starcheck/ directory.
+
+=item B<-sc_data <starcheck data directory>>
+
+Specify directory which contains starcheck data files including agasc.bad and fid characteristics.  Default is SKA/data/starcheck.
+
+Specify YAML configuration file in starcheck data directory.  Default is SKA/data/starcheck/characteristics.yaml
 
 =item B<-config_file <config file>>
 
