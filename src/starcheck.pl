@@ -265,7 +265,8 @@ else{
 use Ska::Starcheck::Dark_Cal_Checker;
 my $dark_cal_checker;
 eval{
-    $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir} });
+    $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir},
+                                                                app_data => $Starcheck_Data});
 };
 if ($@){
 	unless ($@ =~ /No ACA commanding found/){
