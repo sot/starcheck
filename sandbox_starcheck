@@ -1,0 +1,5 @@
+#!/bin/sh
+
+exec perl -I src/lib ./src/starcheck.pl --sc_data starcheck_data_local "$@"
+
+exit 1

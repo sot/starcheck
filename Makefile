@@ -28,6 +28,16 @@ GITSHA := $(shell git rev-parse --short HEAD)
 test_data:
 	tar -zxvpf $(TEST_DATA_TGZ) 
 
+starcheck_data_local:
+	if [ -r characteristics_temp ] ; then rm -r characteristics_temp ; fi
+	if [ -r starcheck_data_local ] ; then rm -r starcheck_data_local ; fi
+	mkdir -p characteristics_temp
+	mkdir -p starcheck_data_local
+	tar -zxvpf $(DATA_TGZ) -C characteristics_temp
+	rsync -aruvz  characteristics_temp/starcheck_characteristics/* starcheck_data_local/
+	rm -r characteristics_temp
+	cd starcheck_data_local && $(MAKE) fid_link
+
 starcheck_data:
 	tar -zxvpf $(DATA_TGZ)
 	cd starcheck_characteristics && $(MAKE) install
@@ -43,11 +53,11 @@ check: check_install all install
 	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
 # Basic aliveness test
-test: check_install install test_data starcheck_data
+test: test_data starcheck_data_local
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
+	./sandbox_starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
 
 # Comprehensive regression test
