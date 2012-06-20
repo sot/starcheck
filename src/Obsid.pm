@@ -421,6 +421,7 @@ sub set_manerr {
 		{
 		    $c->{man_err} = $me->{MaxErrYZ} + $ACA_MANERR_PAD;
 		    $c->{man_err_data} = $me; # Save the whole record just in case
+                    $c->{man_err_fromfile} = 1;
 		} else {
 		    push @{$self->{yellow_warn}}, sprintf("$alarm Mismatch in target quaternion ($c->{date}) and maneuver error file\n");
 		}
@@ -883,6 +884,9 @@ sub check_star_catalog {
     my $targquat;
     if ($targquat = find_command($self, "MP_TARGQUAT", -1)){
 	$slew_err = $targquat->{man_err};
+        if ((not defined $targquat->{man_err_fromfile}) or ($targquat->{man_err_fromfile} == 0)){
+            push @{$self->{warn}}, "$alarm No match for $obsid ($oflsid) in maneuver error file. \n";
+        }
     }
     else{
 	# if no target quaternion, warn and continue
