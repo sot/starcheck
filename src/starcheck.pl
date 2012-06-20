@@ -156,7 +156,7 @@ my $tlr_file   = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required')
 
 my $bad_agasc_file = get_file("$Starcheck_Data/agasc.bad", 'banned_agasc');
 my $ACA_bad_pixel_file = get_file("$Starcheck_Data/ACABadPixels", 'bad_pixel');
-my $bad_acqs_file = get_file( $ENV{'SKA_DATA'}."/acq_stats/bad_acq_stars.rdb", 'acq_star_rdb');
+my $bad_acqs_file = get_file( "$Starcheck_Data/bad_acq_stars.rdb", 'acq_star_rdb');
 my $bad_gui_file = get_file( "$Starcheck_Data/bad_gui_stars.rdb", 'gui_star_rdb');
 
 
