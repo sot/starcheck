@@ -13,8 +13,6 @@ LIB = $(SRC)/lib/Ska/Starcheck/Obsid.pm $(SRC)/lib/Ska/Starcheck/FigureOfMerit.p
 DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
 
-BAD_ACQS = $(ROOT_FLIGHT)/data/acq_stats/bad_acq_stars.rdb
-INSTALL_BAD_ACQS = $(SKA)/data/acq_stats/
 
 TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # starcheck_characteristics tarball should be installed from
@@ -41,9 +39,6 @@ starcheck_data:
 all: 
 	# Nothing to make; "make install" to install to $(SKA)
 
-bad_acq_install:
-	mkdir -p $(INSTALL_BAD_ACQS)
-	rsync -arvuz $(BAD_ACQS) $(INSTALL_BAD_ACQS)
 
 check: check_install all install
 	if [ -r test.html ] ; then rm test.html ; fi
@@ -52,7 +47,7 @@ check: check_install all install
 	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
 # Basic aliveness test
-test: check_install install bad_acq_install test_data starcheck_data
+test: check_install install test_data starcheck_data
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
