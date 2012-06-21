@@ -36,9 +36,9 @@ RunRegression()
 
   # Run test version.  Use the 'starcheck' launcher to activate the dev environment
   #
-    echo "Running: $SKA/bin/starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+    echo "Running: ${home}/sandbox_starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
     echo "******************** (TEST VEHICLE) $load *******************" >> $vlog
-    $SKA/bin/starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
+    ${home}/sandbox_starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
     # cut first 4 lines and replace test ska with release to make cleaner diffs
     perl -n -i.bak -e 'print if $. > 3' $test/v_starcheck.txt
     perl -p -i -e "s{$SKA}{$RELEASE}" $test/v_starcheck.txt
@@ -72,9 +72,9 @@ RunRegression()
 
   # Run test version.  Use the 'starcheck' launcher to activate the dev environment
   #
-  echo "Running: $SKA/bin/starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+  echo "Running: ${home}/sandbox_starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
   echo "******************** (TEST) $load *******************" >> $log
-  $SKA/bin/starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
+  ${home}/sandbox_starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
   # cut first 4 lines and replace test ska with release to make cleaner diffs
   perl -n -i.bak -e 'print if $. > 3' $test/starcheck.txt
   perl -p -i -e "s{$SKA}{$RELEASE}" $test/starcheck.txt
