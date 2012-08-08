@@ -370,12 +370,18 @@ sub set_maneuver {
 		# Now check for consistency between quaternion from MANUEVER summary
 		# file and the quat from backstop (MP_TARGQUAT cmd)
 		
-		# Get quat from MP_TARGQUAT (backstop) command.  This might have errors
-		my $q4_obc = sqrt(1.0 - $c->{Q1}**2 - $c->{Q2}**2 - $c->{Q3}**2);
+		# normalize the quat from backstop
+		my $norm = sqrt($c->{Q1}**2 + $c->{Q2}**2 + $c->{Q3}**2 + $c->{Q4}**2);
+		if (abs(1.0 - $norm) > 1e-6){
+		   push @{$self->{warn}}, sprintf("$alarm Uplink quaternion norm > 1e-6\n");
+		}
+		my $norm_factor = 1.0 / $norm;
+		my @c_quat_norm = map {$c->{$_} * $norm_factor} qw(Q1 Q2 Q3 Q4);
+
 
 		# Get quat from MANEUVER summary file.  This is correct to high precision
 		my $q_man = Quat->new($m->{ra}, $m->{dec}, $m->{roll});
-		my $q_obc = Quat->new($c->{Q1}, $c->{Q2}, $c->{Q3}, $q4_obc);
+		my $q_obc = Quat->new(@c_quat_norm);
 		my @q_man = @{$q_man->{q}};
 		my $q_diff = $q_man->divide($q_obc);
 		    
