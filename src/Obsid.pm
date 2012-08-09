@@ -369,13 +369,23 @@ sub set_maneuver {
 		$c->{man_err} = 85 if ($c->{man_err} > 85);
 		# Now check for consistency between quaternion from MANUEVER summary
 		# file and the quat from backstop (MP_TARGQUAT cmd)
-		
-		# Get quat from MP_TARGQUAT (backstop) command.  This might have errors
-		my $q4_obc = sqrt(1.0 - $c->{Q1}**2 - $c->{Q2}**2 - $c->{Q3}**2);
+
+		# Get quat from MP_TARGQUAT (backstop) command.  
+		# Compute 4th component (as only first 3 are uplinked) and renormalize.
+		# Intent is to match OBC Target Reference subfunction
+		my $q4_obc = sqrt(abs(1.0 - $c->{Q1}**2 - $c->{Q2}**2 - $c->{Q3}**2));
+		my $norm = sqrt($c->{Q1}**2 + $c->{Q2}**2 + $c->{Q3}**2 + $q4_obc**2);
+		if (abs(1.0 - $norm) > 1e-6){
+		   push @{$self->{warn}}, sprintf("$alarm Uplink quaternion norm value $norm is too far from 1.0\n");
+		}
+		my @c_quat_norm = ($c->{Q1} / $norm,
+	                       $c->{Q2} / $norm,
+                           $c->{Q3} / $norm,
+                           $q4_obc / $norm);
 
 		# Get quat from MANEUVER summary file.  This is correct to high precision
 		my $q_man = Quat->new($m->{ra}, $m->{dec}, $m->{roll});
-		my $q_obc = Quat->new($c->{Q1}, $c->{Q2}, $c->{Q3}, $q4_obc);
+		my $q_obc = Quat->new(@c_quat_norm);
 		my @q_man = @{$q_man->{q}};
 		my $q_diff = $q_man->divide($q_obc);
 		    
