@@ -373,10 +373,9 @@ sub set_maneuver {
 		# normalize the quat from backstop
 		my $norm = sqrt($c->{Q1}**2 + $c->{Q2}**2 + $c->{Q3}**2 + $c->{Q4}**2);
 		if (abs(1.0 - $norm) > 1e-6){
-		   push @{$self->{warn}}, sprintf("$alarm Uplink quaternion norm > 1e-6\n");
+		   push @{$self->{warn}}, sprintf("$alarm Uplink quaternion norm value $norm is too far from 1.0\n");
 		}
-		my $norm_factor = 1.0 / $norm;
-		my @c_quat_norm = map {$c->{$_} * $norm_factor} qw(Q1 Q2 Q3 Q4);
+		my @c_quat_norm = map {$c->{$_} / $norm} qw(Q1 Q2 Q3 Q4);
 
 
 		# Get quat from MANEUVER summary file.  This is correct to high precision
