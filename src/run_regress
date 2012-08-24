@@ -39,7 +39,9 @@ RunRegression()
     echo "Running: $SKA/bin/starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
     echo "******************** (TEST VEHICLE) $load *******************" >> $vlog
     $SKA/bin/starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
-    perl -p -i.bak -e "s{$SKA}{$RELEASE}" $test/v_starcheck.txt
+    # cut first 4 lines and replace test ska with release to make cleaner diffs
+    perl -n -i.bak -e 'print if $. > 3' $test/v_starcheck.txt
+    perl -p -i -e "s{$SKA}{$RELEASE}" $test/v_starcheck.txt
 
   # Now run current release version if not already there
   #
@@ -54,6 +56,7 @@ RunRegression()
       echo "Running: $RELEASE/bin/starcheck.pl -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
       echo "**** (RELEASE VEHICLE) $load ****" >> $vlog
       env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck.pl -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
+      perl -n -i.bak -e 'print if $. > 3' $release/v_starcheck.txt
     fi  
 
 
@@ -72,7 +75,9 @@ RunRegression()
   echo "Running: $SKA/bin/starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
   echo "******************** (TEST) $load *******************" >> $log
   $SKA/bin/starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
-  perl -p -i.bak -e "s{$SKA}{$RELEASE}" $test/starcheck.txt
+  # cut first 4 lines and replace test ska with release to make cleaner diffs
+  perl -n -i.bak -e 'print if $. > 3' $test/starcheck.txt
+  perl -p -i -e "s{$SKA}{$RELEASE}" $test/starcheck.txt
 
   # Now run current release version if not already there
   #
@@ -87,6 +92,7 @@ RunRegression()
     echo "Running: $RELEASE/bin/starcheck.pl -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
     echo "**** (RELEASE) $load ****" >> $log
     env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck.pl -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
+    perl -n -i.bak -e 'print if $. > 3' $release/starcheck.txt
   fi  
 
 
