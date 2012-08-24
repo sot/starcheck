@@ -13,8 +13,8 @@ RunRegression()
   agasc=${1}
   fid_char=${2}
 
-  test=$home/regress/${OSTYPE}_test/$load
-  release=$home/regress/${OSTYPE}_release/$load
+  test=$home/regress/test/$load
+  release=$home/regress/release/$load
 
   # Make sure we have a clean test directory
   if [ -d $test ]
@@ -110,10 +110,10 @@ RunRegression()
 # Define the files and directories
 home=$PWD
 mphome=/data/mpcrit1/mplogs
-vlog=$home/${OSTYPE}_vehicle_regress_log
-log=$home/${OSTYPE}_regress_log
-vdiffs=$home/${OSTYPE}_vehicle_regress_diffs
-diffs=$home/${OSTYPE}_regress_diffs
+vlog=$home/vehicle_regress_log
+log=$home/regress_log
+vdiffs=$home/vehicle_regress_diffs
+diffs=$home/regress_diffs
 
 RELEASE=/proj/sot/ska
 
