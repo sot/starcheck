@@ -58,7 +58,7 @@ regress: check_install install bad_acq_install
 	if [ -r regress_log ] ; then rm regress_log ; fi
 	if [ -r vehicle_regress_diffs ] ; then rm vehicle_regress_diffs ; fi
 	if [ -r vehicle_regress_log ] ; then rm vehicle_regress_log ; fi
-	if [ -d regress ] ; then rm -r regress ; fi
+	if [ -d regress/test ] ; then rm -r regress/test ; fi
 	$(SRC)/run_regress
 
 checklist:
