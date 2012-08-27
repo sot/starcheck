@@ -16,8 +16,6 @@ LIB = $(SRC)/Obsid.pm $(SRC)/FigureOfMerit.pm $(SRC)/Dark_Cal_Checker.pm
 DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
 
-BAD_ACQS = $(ROOT_FLIGHT)/data/acq_stats/bad_acq_stars.rdb
-INSTALL_BAD_ACQS = $(SKA)/data/acq_stats/
 
 TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # starcheck_characteristics tarball should be installed from
@@ -25,8 +23,20 @@ TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # with "make install_dist" from that project
 DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
 
+GITSHA := $(shell git rev-parse --short HEAD)
+
 test_data:
 	tar -zxvpf $(TEST_DATA_TGZ) 
+
+starcheck_data_local:
+	if [ -r characteristics_temp ] ; then rm -r characteristics_temp ; fi
+	if [ -r starcheck_data_local ] ; then rm -r starcheck_data_local ; fi
+	mkdir -p characteristics_temp
+	mkdir -p starcheck_data_local
+	tar -zxvpf $(DATA_TGZ) -C characteristics_temp
+	rsync -aruvz  characteristics_temp/starcheck_characteristics/* starcheck_data_local/
+	rm -r characteristics_temp
+	cd starcheck_data_local && $(MAKE) fid_link
 
 starcheck_data:
 	tar -zxvpf $(DATA_TGZ)
@@ -35,9 +45,6 @@ starcheck_data:
 all: 
 	# Nothing to make; "make install" to install to $(SKA)
 
-bad_acq_install:
-	mkdir -p $(INSTALL_BAD_ACQS)
-	rsync -arvuz $(BAD_ACQS) $(INSTALL_BAD_ACQS)
 
 check: check_install all install
 	if [ -r test.html ] ; then rm test.html ; fi
@@ -46,20 +53,21 @@ check: check_install all install
 	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
 # Basic aliveness test
-test: check_install install bad_acq_install test_data starcheck_data
+test: test_data starcheck_data_local
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
+	./sandbox_starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
+
 
 # Comprehensive regression test
-regress: check_install install bad_acq_install
+regress: test_data starcheck_data_local
 	if [ -r regress_diffs ] ; then rm regress_diffs ; fi
 	if [ -r regress_log ] ; then rm regress_log ; fi
 	if [ -r vehicle_regress_diffs ] ; then rm vehicle_regress_diffs ; fi
 	if [ -r vehicle_regress_log ] ; then rm vehicle_regress_log ; fi
-	if [ -d regress ] ; then rm -r regress ; fi
-	$(SRC)/run_regress
+	if [ -r regress/$(GITSHA) ] ; then rm -r regress/$(GITSHA); fi
+	$(SRC)/run_regress $(GITSHA)
 
 checklist:
 ifdef DOC_RST
