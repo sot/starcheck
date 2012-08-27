@@ -64,7 +64,7 @@ RunRegression()
     
     echo "diff $test/v_starcheck.txt $release/v_starcheck.txt >> $vdiffs"
     echo "********************* $load vehicle ********************" >> $vdiffs
-    diff $test/v_starcheck.txt $release/v_starcheck.txt >> $vdiffs
+    diff -u $release/v_starcheck.txt $test/v_starcheck.txt >> $vdiffs
   fi
 
   echo "cd $test"
@@ -100,7 +100,7 @@ RunRegression()
 
   echo "diff $test/starcheck.txt $release/starcheck.txt >> $diffs"
   echo "********************* $load ********************" >> $diffs
-  diff $test/starcheck.txt $release/starcheck.txt >> $diffs
+  diff -u $release/starcheck.txt $test/starcheck.txt >> $diffs
 
 
   cd $home
