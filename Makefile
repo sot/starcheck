@@ -20,11 +20,11 @@ TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # with "make install_dist" from that project
 DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
 
-SHA_FILES = $(BIN) $(LIB) $(GEN_LIB) \
-	$(INSTALL_DATA)/ACABadPixels $(INSTALL_DATA)/agasc.bad \
-	$(INSTALL_DATA)/fid_CHARACTERIS_JUL01 $(INSTALL_DATA)/fid_CHARACTERIS_FEB07 \
-	$(INSTALL_DATA)/fid_CHARACTERISTICS $(INSTALL_DATA)/characteristics.yaml \
-	$(INSTALL_DATA)/A.tlr $(INSTALL_DATA)/B.tlr $(INSTALL_DATA)/tlr.cfg
+SHA_FILES = $(BIN) $(LIB) \
+	starcheck_data_local/ACABadPixels starcheck_data_local/agasc.bad \
+	starcheck_data_local/fid_CHARACTERIS_JUL01 starcheck_data_local/fid_CHARACTERIS_FEB07 \
+	starcheck_data_local/fid_CHARACTERISTICS starcheck_data_local/characteristics.yaml \
+	starcheck_data_local/A.tlr starcheck_data_local/B.tlr starcheck_data_local/tlr.cfg
 
 # Calculate the SHA1 checksum of the set of files in SHA_FILES and return just the sum
 SHA = $(shell sha1sum $(SHA_FILES) | sha1sum | cut -c 1-40)
@@ -65,7 +65,7 @@ test: test_data starcheck_data_local
 
 
 # Comprehensive regression test
-regress: check_install install bad_acq_install
+regress: test_data starcheck_data_local
 	$(SRC)/run_regress $(SHA)
 
 checklist:
