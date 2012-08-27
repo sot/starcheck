@@ -61,7 +61,7 @@ test: test_data starcheck_data_local
 
 
 # Comprehensive regression test
-regress: check_install install
+regress: test_data starcheck_data_local
 	if [ -r regress_diffs ] ; then rm regress_diffs ; fi
 	if [ -r regress_log ] ; then rm regress_log ; fi
 	if [ -r vehicle_regress_diffs ] ; then rm vehicle_regress_diffs ; fi
