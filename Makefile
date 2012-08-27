@@ -25,6 +25,8 @@ TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # with "make install_dist" from that project
 DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
 
+GITSHA := $(shell git rev-parse --short HEAD)
+
 test_data:
 	tar -zxvpf $(TEST_DATA_TGZ) 
 
@@ -52,14 +54,15 @@ test: check_install install bad_acq_install test_data starcheck_data
 	if [ -d test ] ; then rm -r test ; fi
 	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
+
 # Comprehensive regression test
 regress: check_install install bad_acq_install
 	if [ -r regress_diffs ] ; then rm regress_diffs ; fi
 	if [ -r regress_log ] ; then rm regress_log ; fi
 	if [ -r vehicle_regress_diffs ] ; then rm vehicle_regress_diffs ; fi
 	if [ -r vehicle_regress_log ] ; then rm vehicle_regress_log ; fi
-	if [ -d regress/test ] ; then rm -r regress/test ; fi
-	$(SRC)/run_regress
+	if [ -r regress/$(GITSHA) ] ; then rm -r regress/$(GITSHA); fi
+	$(SRC)/run_regress $(GITSHA)
 
 checklist:
 ifdef DOC_RST

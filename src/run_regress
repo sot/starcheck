@@ -13,7 +13,7 @@ RunRegression()
   agasc=${1}
   fid_char=${2}
 
-  test=$home/regress/test/$load
+  test=$regtestdir/$load
   release=$home/regress/release/$load
 
   # Make sure we have a clean test directory
@@ -109,6 +109,9 @@ RunRegression()
 
 # Define the files and directories
 home=$PWD
+gitsha=${1}
+regtestdir=$home/regress/${gitsha}
+
 mphome=/data/mpcrit1/mplogs
 vlog=$home/vehicle_regress_log
 log=$home/regress_log
@@ -118,10 +121,23 @@ diffs=$home/regress_diffs
 RELEASE=/proj/sot/ska
 
 
+
+
 if [ "$SKA" = "$RELEASE" ] ; then
   echo "Error - test bin is the same as the release bin."
   exit 1
 fi
+
+# Make a file to store the git short tag
+if [ -w $regtestdir/version ]
+then 
+    echo "rm ${regtestdir}/version"
+    rm ${regtestdir}/version
+fi
+mkdir -p $regtestdir
+echo "echo $gitsha > ${regtestdir}/version"
+echo "$gitsha" >> ${regtestdir}/version
+
 
 # Remove existing log and diffs files
 for file in $log $diffs
