@@ -25,6 +25,15 @@ TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # with "make install_dist" from that project
 DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
 
+SHA_FILES = $(BIN) $(LIB) $(GEN_LIB) \
+	$(INSTALL_DATA)/ACABadPixels $(INSTALL_DATA)/agasc.bad \
+	$(INSTALL_DATA)/fid_CHARACTERIS_JUL01 $(INSTALL_DATA)/fid_CHARACTERIS_FEB07 \
+	$(INSTALL_DATA)/fid_CHARACTERISTICS $(INSTALL_DATA)/characteristics.yaml \
+	$(INSTALL_DATA)/A.tlr $(INSTALL_DATA)/B.tlr $(INSTALL_DATA)/tlr.cfg
+
+# Calculate the SHA1 checksum of the set of files in SHA_FILES and return just the sum
+SHA = $(shell sha1sum $(SHA_FILES) | sha1sum | cut -c 1-40)
+
 test_data:
 	tar -zxvpf $(TEST_DATA_TGZ) 
 
@@ -52,14 +61,15 @@ test: check_install install bad_acq_install test_data starcheck_data
 	if [ -d test ] ; then rm -r test ; fi
 	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
+
 # Comprehensive regression test
 regress: check_install install bad_acq_install
 	if [ -r regress_diffs ] ; then rm regress_diffs ; fi
 	if [ -r regress_log ] ; then rm regress_log ; fi
 	if [ -r vehicle_regress_diffs ] ; then rm vehicle_regress_diffs ; fi
 	if [ -r vehicle_regress_log ] ; then rm vehicle_regress_log ; fi
-	if [ -d regress/test ] ; then rm -r regress/test ; fi
-	$(SRC)/run_regress
+	if [ -r regress/$(SHA) ] ; then rm -r regress/$(SHA); fi
+	$(SRC)/run_regress $(SHA)
 
 checklist:
 ifdef DOC_RST

@@ -13,7 +13,7 @@ RunRegression()
   agasc=${1}
   fid_char=${2}
 
-  test=$home/regress/test/$load
+  test=$regtestdir/$load
   release=$home/regress/release/$load
 
   # Make sure we have a clean test directory
@@ -109,6 +109,9 @@ RunRegression()
 
 # Define the files and directories
 home=$PWD
+sha=${1}
+regtestdir=$home/regress/${sha}
+
 mphome=/data/mpcrit1/mplogs
 vlog=$home/vehicle_regress_log
 log=$home/regress_log
@@ -118,10 +121,27 @@ diffs=$home/regress_diffs
 RELEASE=/proj/sot/ska
 
 
+
+
 if [ "$SKA" = "$RELEASE" ] ; then
   echo "Error - test bin is the same as the release bin."
   exit 1
 fi
+
+# Make a file to store the file SHA and the current git commit
+if [ -w $regtestdir/version ]
+then 
+    echo "rm ${regtestdir}/version"
+    rm ${regtestdir}/version
+fi
+mkdir -p $regtestdir
+echo "echo 'file SHA: $sha' > ${regtestdir}/version"
+echo "file SHA: $sha" >> ${regtestdir}/version
+echo "echo -n git commit SHA: >> ${regtestdir}/version"
+echo -n "git commit SHA: " >> ${regtestdir}/version
+echo "git rev-parse --short HEAD >> ${regtestdir}/version"
+git rev-parse --short HEAD >> ${regtestdir}/version
+
 
 # Remove existing log and diffs files
 for file in $log $diffs
