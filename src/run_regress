@@ -121,10 +121,18 @@ diffs=$home/regress_diffs
 RELEASE=/proj/sot/ska
 
 
-
-
 if [ "$SKA" = "$RELEASE" ] ; then
   echo "Error - test bin is the same as the release bin."
+  exit 1
+fi
+
+if [ -d $regtestdir ]
+then
+  echo "*****************************************"
+  echo "Regression test output for this code already exists."
+  echo "    Delete to rerun regression tests:"
+  echo "    rm -r $regtestdir"
+  echo "*****************************************"
   exit 1
 fi
 
@@ -144,7 +152,7 @@ git rev-parse --short HEAD >> ${regtestdir}/version
 
 
 # Remove existing log and diffs files
-for file in $log $diffs
+for file in $log $diffs $vlog $vdiffs
 do
   if [ -w $file ]
   then

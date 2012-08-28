@@ -64,11 +64,6 @@ test: check_install install bad_acq_install test_data starcheck_data
 
 # Comprehensive regression test
 regress: check_install install bad_acq_install
-	if [ -r regress_diffs ] ; then rm regress_diffs ; fi
-	if [ -r regress_log ] ; then rm regress_log ; fi
-	if [ -r vehicle_regress_diffs ] ; then rm vehicle_regress_diffs ; fi
-	if [ -r vehicle_regress_log ] ; then rm vehicle_regress_log ; fi
-	if [ -r regress/$(SHA) ] ; then rm -r regress/$(SHA); fi
 	$(SRC)/run_regress $(SHA)
 
 checklist:
