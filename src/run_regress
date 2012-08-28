@@ -232,3 +232,12 @@ do
   RunRegression 1p6 fid_CHARACTERIS_FEB07
 done
 
+# Copy log and diffs to version directory
+for file in $log $diffs $vlog $vdiffs
+do
+  if [ -r $file ]
+  then
+    echo "cp $file $regtestdir"
+    cp $file $regtestdir
+  fi
+done
