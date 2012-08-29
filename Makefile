@@ -3,21 +3,16 @@ FLIGHT_ENV = SKA
 
 SRC = $(PWD)/src
 
-PERLTASK = Ska/Starcheck
-PERLGEN = Ska/
-
 include $(SKA)/include/Makefile.FLIGHT
 
 RELATED_LIB = $(SRC)/StarcheckParser.pm
 BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
-GEN_LIB = $(SRC)/Parse_CM_File.pm
-LIB = $(SRC)/Obsid.pm $(SRC)/FigureOfMerit.pm $(SRC)/Dark_Cal_Checker.pm
+LIB = $(SRC)/lib/Ska/Starcheck/Obsid.pm $(SRC)/lib/Ska/Starcheck/FigureOfMerit.pm \
+	$(SRC)/lib/Ska/Starcheck/Dark_Cal_Checker.pm $(SRC)/lib/Ska/Parse_CM_File.pm
 
 DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
 
-BAD_ACQS = $(ROOT_FLIGHT)/data/acq_stats/bad_acq_stars.rdb
-INSTALL_BAD_ACQS = $(SKA)/data/acq_stats/
 
 TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # starcheck_characteristics tarball should be installed from
@@ -25,17 +20,27 @@ TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # with "make install_dist" from that project
 DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
 
-SHA_FILES = $(BIN) $(LIB) $(GEN_LIB) \
-	$(INSTALL_DATA)/ACABadPixels $(INSTALL_DATA)/agasc.bad \
-	$(INSTALL_DATA)/fid_CHARACTERIS_JUL01 $(INSTALL_DATA)/fid_CHARACTERIS_FEB07 \
-	$(INSTALL_DATA)/fid_CHARACTERISTICS $(INSTALL_DATA)/characteristics.yaml \
-	$(INSTALL_DATA)/A.tlr $(INSTALL_DATA)/B.tlr $(INSTALL_DATA)/tlr.cfg
+SHA_FILES = $(BIN) $(LIB) \
+	starcheck_data_local/ACABadPixels starcheck_data_local/agasc.bad \
+	starcheck_data_local/fid_CHARACTERIS_JUL01 starcheck_data_local/fid_CHARACTERIS_FEB07 \
+	starcheck_data_local/fid_CHARACTERISTICS starcheck_data_local/characteristics.yaml \
+	starcheck_data_local/A.tlr starcheck_data_local/B.tlr starcheck_data_local/tlr.cfg
 
 # Calculate the SHA1 checksum of the set of files in SHA_FILES and return just the sum
 SHA = $(shell sha1sum $(SHA_FILES) | sha1sum | cut -c 1-40)
 
 test_data:
 	tar -zxvpf $(TEST_DATA_TGZ) 
+
+starcheck_data_local:
+	if [ -r characteristics_temp ] ; then rm -r characteristics_temp ; fi
+	if [ -r starcheck_data_local ] ; then rm -r starcheck_data_local ; fi
+	mkdir -p characteristics_temp
+	mkdir -p starcheck_data_local
+	tar -zxvpf $(DATA_TGZ) -C characteristics_temp
+	rsync -aruvz  characteristics_temp/starcheck_characteristics/* starcheck_data_local/
+	rm -r characteristics_temp
+	cd starcheck_data_local && $(MAKE) fid_link
 
 starcheck_data:
 	tar -zxvpf $(DATA_TGZ)
@@ -44,9 +49,6 @@ starcheck_data:
 all: 
 	# Nothing to make; "make install" to install to $(SKA)
 
-bad_acq_install:
-	mkdir -p $(INSTALL_BAD_ACQS)
-	rsync -arvuz $(BAD_ACQS) $(INSTALL_BAD_ACQS)
 
 check: check_install all install
 	if [ -r test.html ] ; then rm test.html ; fi
@@ -55,15 +57,15 @@ check: check_install all install
 	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
 # Basic aliveness test
-test: check_install install bad_acq_install test_data starcheck_data
+test: test_data starcheck_data_local
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
+	./sandbox_starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
 
 # Comprehensive regression test
-regress: check_install install bad_acq_install
+regress: test_data starcheck_data_local
 	$(SRC)/run_regress $(SHA)
 
 checklist:
@@ -82,12 +84,8 @@ ifdef BIN
 #	pod2html starcheck.pl > $(INSTALL_DOC)/starcheck.html
 endif
 ifdef LIB
-	mkdir -p $(INSTALL_PERLLIB)/$(PERLTASK)
-	rsync --times --cvs-exclude $(LIB) $(INSTALL_PERLLIB)/$(PERLTASK)/
-endif
-ifdef GEN_LIB
-	mkdir -p $(INSTALL_PERLLIB)/$(PERLGEN)
-	rsync --times --cvs-exclude $(GEN_LIB) $(INSTALL_PERLLIB)/$(PERLGEN)/
+	mkdir -p $(INSTALL_PERLLIB)
+	rsync --times --cvs-exclude --recursive $(SRC)/lib/* $(INSTALL_PERLLIB)/
 endif
 
 

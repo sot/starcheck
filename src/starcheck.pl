@@ -51,8 +51,6 @@ chomp($OS);
 
 # Set some global vars with directory locations
 my $SKA = $ENV{SKA} || '/proj/sot/ska';
-my $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
-my $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
 my %par = (dir  => '.',
 		   plot => 1,
@@ -80,11 +78,14 @@ GetOptions( \%par,
 			'vehicle!',
 			'agasc=s',
 			'agasc_dir=s',
+			'sc_data=s',
 			'chex=s',
 			'fid_char=s',
 			'config_file=s',
 			) ||
     exit( 1 );
+
+my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
 
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
@@ -155,7 +156,7 @@ my $tlr_file   = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required')
 
 my $bad_agasc_file = get_file("$Starcheck_Data/agasc.bad", 'banned_agasc');
 my $ACA_bad_pixel_file = get_file("$Starcheck_Data/ACABadPixels", 'bad_pixel');
-my $bad_acqs_file = get_file( $ENV{'SKA_DATA'}."/acq_stats/bad_acq_stars.rdb", 'acq_star_rdb');
+my $bad_acqs_file = get_file( "$Starcheck_Data/bad_acq_stars.rdb", 'acq_star_rdb');
 my $bad_gui_file = get_file( "$Starcheck_Data/bad_gui_stars.rdb", 'gui_star_rdb');
 
 
@@ -264,7 +265,8 @@ else{
 use Ska::Starcheck::Dark_Cal_Checker;
 my $dark_cal_checker;
 eval{
-    $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir} });
+    $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir},
+                                                                app_data => $Starcheck_Data});
 };
 if ($@){
 	unless ($@ =~ /No ACA commanding found/){
@@ -1096,6 +1098,12 @@ Specify directory path to agasc.  Overrides -agasc option.
 =item B<-fid_char <fid characteristics file>>
 
 Specify file name of the fid characteristics file to use.  This must be in the SKA/data/starcheck/ directory.
+
+=item B<-sc_data <starcheck data directory>>
+
+Specify directory which contains starcheck data files including agasc.bad and fid characteristics.  Default is SKA/data/starcheck.
+
+Specify YAML configuration file in starcheck data directory.  Default is SKA/data/starcheck/characteristics.yaml
 
 =item B<-config_file <config file>>
 

@@ -36,12 +36,14 @@ RunRegression()
 
   # Run test version.  Use the 'starcheck' launcher to activate the dev environment
   #
-    echo "Running: $SKA/bin/starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+    echo "Running: ${home}/sandbox_starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
     echo "******************** (TEST VEHICLE) $load *******************" >> $vlog
-    $SKA/bin/starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
+    ${home}/sandbox_starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
     # cut first 4 lines and replace test ska with release to make cleaner diffs
     perl -n -i.bak -e 'print if $. > 3' $test/v_starcheck.txt
     perl -p -i -e "s{$SKA}{$RELEASE}" $test/v_starcheck.txt
+    perl -p -i -e "s{$local_data}{$release_data}" $test/v_starcheck.txt
+    perl -p -i -e "s{$RELEASE/data/starcheck/bad_acq_stars.rdb}{$RELEASE/data/acq_stats/bad_acq_stars.rdb}" $test/v_starcheck.txt
 
   # Now run current release version if not already there
   #
@@ -72,12 +74,14 @@ RunRegression()
 
   # Run test version.  Use the 'starcheck' launcher to activate the dev environment
   #
-  echo "Running: $SKA/bin/starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+  echo "Running: ${home}/sandbox_starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
   echo "******************** (TEST) $load *******************" >> $log
-  $SKA/bin/starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
+  ${home}/sandbox_starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
   # cut first 4 lines and replace test ska with release to make cleaner diffs
   perl -n -i.bak -e 'print if $. > 3' $test/starcheck.txt
   perl -p -i -e "s{$SKA}{$RELEASE}" $test/starcheck.txt
+  perl -p -i -e "s{$local_data}{$release_data}" $test/starcheck.txt
+  perl -p -i -e "s{$RELEASE/data/starcheck/bad_acq_stars.rdb}{$RELEASE/data/acq_stats/bad_acq_stars.rdb}" $test/starcheck.txt
 
   # Now run current release version if not already there
   #
@@ -112,6 +116,7 @@ home=$PWD
 sha=${1}
 regtestdir=$home/regress/${sha}
 
+
 mphome=/data/mpcrit1/mplogs
 vlog=$home/vehicle_regress_log
 log=$home/regress_log
@@ -119,7 +124,8 @@ vdiffs=$home/vehicle_regress_diffs
 diffs=$home/regress_diffs
 
 RELEASE=/proj/sot/ska
-
+local_data=$home/starcheck_data_local
+release_data=$RELEASE/data/starcheck
 
 if [ "$SKA" = "$RELEASE" ] ; then
   echo "Error - test bin is the same as the release bin."
