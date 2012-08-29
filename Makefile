@@ -18,6 +18,8 @@ TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # starcheck_characteristics tarball should be installed from
 # separate starcheck_characteristics project
 # with "make install_dist" from that project
+TEST_BACKSTOP = AUG0104A/CR214_0300.backstop 
+
 DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
 
 DATA_FILES = starcheck_data_local/ACABadPixels starcheck_data_local/agasc.bad \
@@ -30,7 +32,7 @@ SHA_FILES = $(BIN) $(LIB) $(DATA_FILES)
 # Calculate the SHA1 checksum of the set of files in SHA_FILES and return just the sum
 SHA = $(shell sha1sum $(SHA_FILES) | sha1sum | cut -c 1-40)
 
-test_data:
+$(TEST_BACKSTOP):
 	tar -zxvpf $(TEST_DATA_TGZ) 
 
 $(DATA_FILES): starcheck_data_local
@@ -55,7 +57,7 @@ all:
 
 
 # Basic aliveness test
-test: test_data starcheck_data_local
+test: $(TEST_BACKSTOP) $(DATA_FILES)
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
@@ -65,7 +67,7 @@ check: test
 
 
 # Comprehensive regression test
-regress: test_data starcheck_data_local
+regress: $(TEST_BACKSTOP) $(DATA_FILES)
 	$(SRC)/run_regress $(SHA)
 
 checklist:
