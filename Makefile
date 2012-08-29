@@ -54,18 +54,14 @@ all:
 	# Nothing to make; "make install" to install to $(SKA)
 
 
-check: check_install all install
-	if [ -r test.html ] ; then rm test.html ; fi
-	if [ -r test.txt ] ; then rm test.txt ; fi
-	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
-
 # Basic aliveness test
 test: test_data starcheck_data_local
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
 	./sandbox_starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
+
+check: test
 
 
 # Comprehensive regression test
