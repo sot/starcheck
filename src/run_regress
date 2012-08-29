@@ -127,11 +127,6 @@ RELEASE=/proj/sot/ska
 local_data=$home/starcheck_data_local
 release_data=$RELEASE/data/starcheck
 
-if [ "$SKA" = "$RELEASE" ] ; then
-  echo "Error - test bin is the same as the release bin."
-  exit 1
-fi
-
 if [ -d $regtestdir ]
 then
   echo "*****************************************"
