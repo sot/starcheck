@@ -33,6 +33,9 @@ SHA = $(shell sha1sum $(SHA_FILES) | sha1sum | cut -c 1-40)
 test_data:
 	tar -zxvpf $(TEST_DATA_TGZ) 
 
+$(DATA_FILES): starcheck_data_local
+
+.PHONY: starcheck_data_local
 starcheck_data_local:
 	if [ -r characteristics_temp ] ; then rm -r characteristics_temp ; fi
 	if [ -r starcheck_data_local ] ; then rm -r starcheck_data_local ; fi
