@@ -21,6 +21,10 @@ TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 TEST_BACKSTOP = AUG0104A/CR214_0300.backstop 
 
 DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
+# if there is no DATA_TGZ in INSTALL_DATA use the flight one
+ifeq ($(wildcard $(DATA_TGZ)),)
+	DATA_TGZ = /proj/sot/ska/data/starcheck/starcheck_characteristics.tar.gz
+endif
 
 DATA_FILES = starcheck_data_local/ACABadPixels starcheck_data_local/agasc.bad \
 	starcheck_data_local/fid_CHARACTERIS_JUL01 starcheck_data_local/fid_CHARACTERIS_FEB07 \
