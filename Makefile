@@ -56,6 +56,7 @@ all:
 	# Nothing to make; "make install" to install to $(SKA)
 
 
+.PHONY: test
 # Basic aliveness test
 test: $(TEST_BACKSTOP) $(DATA_FILES)
 	if [ -r test.html ] ; then rm test.html ; fi
@@ -67,6 +68,7 @@ check: test
 
 
 # Comprehensive regression test
+.PHONY: regress
 regress: $(TEST_BACKSTOP) $(DATA_FILES)
 	$(SRC)/run_regress $(SHA)
 
