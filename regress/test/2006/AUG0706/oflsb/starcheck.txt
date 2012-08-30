@@ -70,20 +70,20 @@ Transponder B	before 2006:220:06:17:05.687
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2006:219:11:37:16.589   OBC Load Segment Begins     CL219:1103 
-OBSID =  6475 at 2006:219:11:40:22.589   6 clean ACQ | 5 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
-OBSID =  6415 at 2006:219:17:58:22.364   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
+OBSID =  6475 at 2006:219:11:40:22.589   6 clean ACQ | 5 clean GUI | WARNINGS [ 2] 
+OBSID =  6415 at 2006:219:17:58:22.364   6 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  6950 at 2006:220:00:34:40.484   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
-OBSID = 58846 at 2006:220:05:35:23.362   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 58846 at 2006:220:05:35:23.362   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 58845 at 2006:220:06:11:05.687   0 clean ACQ | 0 clean GUI | 
-OBSID = 58844 at 2006:220:06:30:11.687   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 58844 at 2006:220:06:30:11.687   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 58843 at 2006:220:06:54:05.687   0 clean ACQ | 0 clean GUI | 
-OBSID = 58842 at 2006:220:07:13:11.687   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 58842 at 2006:220:07:13:11.687   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 58841 at 2006:220:07:37:05.687   0 clean ACQ | 0 clean GUI | 
-OBSID = 58840 at 2006:220:07:56:11.687   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 58840 at 2006:220:07:56:11.687   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 58839 at 2006:220:08:20:05.687   0 clean ACQ | 0 clean GUI | 
-OBSID = 58838 at 2006:220:08:39:11.687   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 58838 at 2006:220:08:39:11.687   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 58837 at 2006:220:09:03:05.687   0 clean ACQ | 0 clean GUI | 
-OBSID = 58836 at 2006:220:09:22:11.687   7 clean ACQ | 7 clean GUI | WARNINGS [ 2]
+OBSID = 58836 at 2006:220:09:22:11.687   8 clean ACQ | 8 clean GUI | 
 OBSID = 58835 at 2006:220:09:46:11.687   8 clean ACQ | 8 clean GUI | 
 OBSID = 58834 at 2006:220:10:16:37.847   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 58833 at 2006:220:17:12:03.688   8 clean ACQ | 8 clean GUI | 
@@ -132,10 +132,9 @@ MP_STARCAT at 2006:219:11:40:22.589 (VCDU count = 8008682)
 
 >> WARNING: [12] Magnitude.  10.666
 >> WARNING: [13] Magnitude.  10.763
->> WARNING: [13] Bad Acquisition Star. 261625488 has  2 failed out of  6 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.659	-6.516	-4.653	
-Acquisition Stars Expected  : 7.17
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.587	-6.444	-4.583	
+Acquisition Stars Expected  : 7.11
 ==================================================================================== 
 OBSID: 6415   IRAS05436-0007         ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):    86.576082    -0.113920   110.742198
@@ -166,9 +165,10 @@ MP_STARCAT at 2006:219:17:58:22.364 (VCDU count = 8097189)
 [14]  2   624953600   ACQ  6x6   5.797  10.216  11.719  -1217    531  20   1  120    a3    
 
 >> WARNING: [12] Search spoiler.  624827992: Y,Z,Radial,Mag seps:   1  67  67 -0.1
+>> WARNING: [ 9] Bad Acquisition Star. 15211576 has  1 failed out of  3 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.595	-5.649	-4.022	
-Acquisition Stars Expected  : 7.28
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.928	-5.017	-3.449	
+Acquisition Stars Expected  : 7.01
 ==================================================================================== 
 OBSID: 6950   A3074                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):    44.624395   -52.713145    95.062515
@@ -221,12 +221,10 @@ MP_STARCAT at 2006:220:05:35:23.362 (VCDU count = 8260392)
 [ 7]  6  1118315672   BOT  8x8   5.797   9.619  11.125  -1167   -363  20   1  120  a2g3    
 [ 8]  7  1118317736   BOT  8x8   5.797   9.677  11.188  -1786    661  20   1  120  a2g2    
 
->> WARNING: [ 1] Bad Acquisition Star. 1117787424 has  6 failed out of  6 attempts
->> WARNING: [ 1] Bad Guide Star. 1117787424 has bad data  6 of  6 attempts
 >> WARNING: [ 4] Quadrant Boundary. 
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.444	-6.350	-4.538	
-Acquisition Stars Expected  : 6.75
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.591	-7.470	-5.620	
+Acquisition Stars Expected  : 7.69
 ==================================================================================== 
 OBSID: 58845  
 RA, Dec, Roll (deg):    87.615520   -58.273410   132.000000
@@ -261,12 +259,10 @@ MP_STARCAT at 2006:220:06:30:11.687 (VCDU count = 8273225)
 [ 7]  6  1118315672   BOT  8x8   5.797   9.619  11.125  -1167   -363  20   1  120  a2g3    
 [ 8]  7  1118317736   BOT  8x8   5.797   9.677  11.188  -1786    661  20   1  120  a2g2    
 
->> WARNING: [ 1] Bad Acquisition Star. 1117787424 has  6 failed out of  6 attempts
->> WARNING: [ 1] Bad Guide Star. 1117787424 has bad data  6 of  6 attempts
 >> WARNING: [ 4] Quadrant Boundary. 
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.444	-6.350	-4.538	
-Acquisition Stars Expected  : 6.75
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.591	-7.470	-5.620	
+Acquisition Stars Expected  : 7.69
 ==================================================================================== 
 OBSID: 58843  
 RA, Dec, Roll (deg):    87.675823   -58.283696   132.051290
@@ -301,12 +297,10 @@ MP_STARCAT at 2006:220:07:13:11.687 (VCDU count = 8283293)
 [ 7]  6  1118315672   BOT  8x8   5.797   9.619  11.125  -1167   -363  20   1  120  a2g3    
 [ 8]  7  1118317736   BOT  8x8   5.797   9.677  11.188  -1786    661  20   1  120  a2g2    
 
->> WARNING: [ 1] Bad Acquisition Star. 1117787424 has  6 failed out of  6 attempts
->> WARNING: [ 1] Bad Guide Star. 1117787424 has bad data  6 of  6 attempts
 >> WARNING: [ 4] Quadrant Boundary. 
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.444	-6.350	-4.538	
-Acquisition Stars Expected  : 6.75
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.591	-7.470	-5.620	
+Acquisition Stars Expected  : 7.69
 ==================================================================================== 
 OBSID: 58841  
 RA, Dec, Roll (deg):    87.595915   -58.305111   131.983326
@@ -341,12 +335,10 @@ MP_STARCAT at 2006:220:07:56:11.687 (VCDU count = 8293362)
 [ 7]  6  1118315672   BOT  8x8   5.797   9.619  11.125  -1167   -363  20   1  120  a2g3    
 [ 8]  7  1118317736   BOT  8x8   5.797   9.677  11.188  -1786    661  20   1  120  a2g2    
 
->> WARNING: [ 1] Bad Acquisition Star. 1117787424 has  6 failed out of  6 attempts
->> WARNING: [ 1] Bad Guide Star. 1117787424 has bad data  6 of  6 attempts
 >> WARNING: [ 4] Quadrant Boundary. 
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.444	-6.350	-4.538	
-Acquisition Stars Expected  : 6.75
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.591	-7.470	-5.620	
+Acquisition Stars Expected  : 7.69
 ==================================================================================== 
 OBSID: 58839  
 RA, Dec, Roll (deg):    87.555253   -58.263095   131.948737
@@ -381,12 +373,10 @@ MP_STARCAT at 2006:220:08:39:11.687 (VCDU count = 8303430)
 [ 7]  6  1118315672   BOT  8x8   5.797   9.619  11.125  -1167   -363  20   1  120  a2g3    
 [ 8]  7  1118317736   BOT  8x8   5.797   9.677  11.188  -1786    661  20   1  120  a2g2    
 
->> WARNING: [ 1] Bad Acquisition Star. 1117787424 has  6 failed out of  6 attempts
->> WARNING: [ 1] Bad Guide Star. 1117787424 has bad data  6 of  6 attempts
 >> WARNING: [ 4] Quadrant Boundary. 
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.444	-6.350	-4.538	
-Acquisition Stars Expected  : 6.75
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.591	-7.470	-5.620	
+Acquisition Stars Expected  : 7.69
 ==================================================================================== 
 OBSID: 58837  
 RA, Dec, Roll (deg):    87.635090   -58.241707   132.016647
@@ -422,11 +412,8 @@ MP_STARCAT at 2006:220:09:22:11.687 (VCDU count = 8313498)
 [ 8]  7  1118176096   GUI  8x8   5.797  10.180  11.688   2052   1637   1   1   25    g3    
 [ 9]  7  1118311888   ACQ  8x8   5.797   9.528  11.031   -871    -60  20   1  120    a2    
 
->> WARNING: [ 1] Bad Acquisition Star. 1117787424 has  6 failed out of  6 attempts
->> WARNING: [ 1] Bad Guide Star. 1117787424 has bad data  6 of  6 attempts
-
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.444	-6.350	-4.538	
-Acquisition Stars Expected  : 6.75
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.591	-7.470	-5.620	
+Acquisition Stars Expected  : 7.69
 ==================================================================================== 
 OBSID: 58835  
 RA, Dec, Roll (deg):    89.556917   -60.045440   132.000000

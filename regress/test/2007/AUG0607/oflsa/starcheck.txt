@@ -95,7 +95,7 @@ OBSID = 58273 at 2007:220:11:50:14.005   7 clean ACQ | 7 clean GUI | WARNINGS [ 
          ------  2007:220:18:26:41.091   OBC Load Segment Begins     CL220:1804 
 OBSID =  8589 at 2007:220:21:13:27.091   8 clean ACQ | 5 clean GUI | 
 OBSID =  8590 at 2007:221:12:29:18.937   8 clean ACQ | 5 clean GUI | 
-OBSID =  7481 at 2007:221:22:40:09.945   6 clean ACQ | 5 clean GUI | WARNINGS [ 3]
+OBSID =  7481 at 2007:221:22:40:09.945   5 clean ACQ | 4 clean GUI | WARNINGS [ 4]
 OBSID =  7618 at 2007:222:00:43:52.946   8 clean ACQ | 5 clean GUI | 
          ------  2007:222:10:01:02.946   OBC Load Segment Begins     CL222:1004 
 OBSID = 58272 at 2007:222:10:04:08.946   8 clean ACQ | 8 clean GUI | 
@@ -718,12 +718,13 @@ MP_STARCAT at 2007:221:22:40:09.945 (VCDU count = 14464310)
 [10]  1   746333272   ACQ  6x6   5.797  10.470  11.969    639   -743  20   1  120    a3    
 [11]  2   746343264   ACQ  6x6   5.797  10.499  12.547  -1079    183  20   1  120    a3   C
 
+>> WARNING: [ 6] Bad Acquisition Star. 746338440 has  1 failed out of  3 attempts
 >> WARNING: [10] Magnitude.  10.470
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.63, Pos_Err = 0.14
 >> WARNING: [11] Magnitude.  10.499
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.421	-4.643	-3.222	
-Acquisition Stars Expected  : 6.96
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.282	-3.757	-2.554	
+Acquisition Stars Expected  : 6.65
 ==================================================================================== 
 OBSID: 7618   PSRJ1906+0746          ACIS-I SIM Z offset:-1352 (-3.40mm) Grating: NONE 
 RA, Dec, Roll (deg):   286.696668     7.792725   233.944221

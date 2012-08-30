@@ -27,7 +27,7 @@ Using ACABadPixel file from 2008273 Dark Cal
 
          ------  2004:152:00:24:47.154   OBC Load Segment Begins     CL152:0004 
 OBSID = 60214 at 2004:152:00:27:53.154   8 clean ACQ | 8 clean GUI | 
-OBSID =  4965 at 2004:152:01:12:06.253   2 clean ACQ | 2 clean GUI | WARNINGS [ 1] WARNINGS [ 8]
+OBSID =  4965 at 2004:152:01:12:06.253   3 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 5]
 OBSID = 60213 at 2004:152:17:42:23.200   7 clean ACQ | 7 clean GUI | WARNINGS [ 2]
 OBSID = 60212 at 2004:153:04:18:37.801   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
          ------  2004:153:10:10:41.801   OBC Load Segment Begins     CL153:1004 
@@ -103,17 +103,14 @@ MP_STARCAT at 2004:152:01:12:06.253 (VCDU count = 7234795)
 [13]  2   335945976   ACQ  6x6   5.797  10.627  12.125    683  -2018  20   1  120    a3    
 
 >> WARNING: [13] Magnitude.  10.627
->> WARNING: [ 4] Bad Acquisition Star. 266212912 has  1 failed out of  3 attempts
 >> WARNING: [ 5] Magnitude.  10.468
->> WARNING: [ 8] Bad Acquisition Star. 266211016 has  1 failed out of  3 attempts
->> WARNING: [10] Bad Acquisition Star. 266214112 has  2 failed out of  4 attempts
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.87, Pos_Err = 0.07
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.87, Pos_Err = 0.06
 >> WARNING: [12] Marginal star. B-V = 1.500, Mag_Err = 0.87, Pos_Err = 0.07
 >> WARNING: [12] Magnitude.  10.340
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.627	-2.474	-1.591	
-Acquisition Stars Expected  : 5.92
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.915	-3.460	-2.331	
+Acquisition Stars Expected  : 6.54
 ==================================================================================== 
 OBSID: 60213  
 RA, Dec, Roll (deg):   291.000000   -35.500000    81.348096
