@@ -38,7 +38,7 @@ OBSID = 57020 at 2009:174:03:56:51.802   8 clean ACQ | 6 clean GUI | WARNINGS [ 
 OBSID = 57019 at 2009:174:04:06:58.236   8 clean ACQ | 8 clean GUI | 
 OBSID = 57018 at 2009:174:08:04:13.799   8 clean ACQ | 8 clean GUI | 
 OBSID = 57017 at 2009:174:09:51:58.394   8 clean ACQ | 8 clean GUI | 
-OBSID = 57016 at 2009:174:10:44:29.048   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 57016 at 2009:174:10:44:29.048   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 57015 at 2009:174:14:21:53.236   0 clean ACQ | 0 clean GUI | 
 OBSID = 10296 at 2009:174:16:27:14.475   4 clean ACQ | 5 clean GUI | WARNINGS [ 5]
 OBSID = 10279 at 2009:174:18:46:37.236   8 clean ACQ | 5 clean GUI | 
@@ -51,7 +51,7 @@ OBSID = 57013 at 2009:176:19:35:07.579   8 clean ACQ | 8 clean GUI |
 OBSID = 57012 at 2009:176:20:32:15.081   8 clean ACQ | 8 clean GUI | 
          ------  2009:176:23:37:27.328   OBC Load Segment Begins     CL176:2304 
 OBSID = 57011 at 2009:176:23:40:33.328   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
-OBSID = 57010 at 2009:177:01:20:00.127   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 57010 at 2009:177:01:20:00.127   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 57009 at 2009:177:06:38:09.579   0 clean ACQ | 0 clean GUI | 
 OBSID = 57008 at 2009:177:08:01:17.365   8 clean ACQ | 8 clean GUI | 
 OBSID =  9461 at 2009:177:09:05:04.844   8 clean ACQ | 5 clean GUI | 
@@ -400,6 +400,7 @@ MP_STARCAT at 2009:174:10:44:29.048 (VCDU count = 5563744)
 [ 8]  7   230567464   GUI  8x8   5.797   9.677  11.188  -2274  -1017   1   1   25    g2    
 [ 9]  7   229645360   ACQ  8x8   5.797   9.746  11.359  -1864   2137  20   1  120    a2    
 
+>> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 >> WARNING: [ 4] Search spoiler.  229642168: Y,Z,Radial,Mag seps:  62 126 141 -0.9
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.11	-8.818	-6.770	
@@ -702,6 +703,7 @@ MP_STARCAT at 2009:177:01:20:00.127 (VCDU count = 6443085)
 [11]  6   750271080   ACQ  8x8   5.797   9.730  11.859  -1136    305  20   1  120    a2    
 [12]  7   750258704   ACQ  8x8   5.797  10.101  11.609  -2079    498  20   1  120    a2    
 
+>> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 >> WARNING: [ 6] Magnitude.  10.437
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.225	-6.243	-4.560	

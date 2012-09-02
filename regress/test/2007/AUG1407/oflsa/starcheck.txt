@@ -58,13 +58,13 @@ Could not find a match in DOT for MP_STARCAT at 2007:225:22:43:11.448
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2007:224:17:10:49.663   OBC Load Segment Begins     CL224:1707 
-OBSID = NONE1 at 2007:224:17:13:55.663   Undefined Obsid; ER? OR?  | WARNINGS [ 8] WARNINGS [ 4]
-OBSID = NONE2 at 2007:224:20:33:58.922   Undefined Obsid; ER? OR?  | WARNINGS [ 9] WARNINGS [ 1]
-OBSID = NONE3 at 2007:224:22:23:40.556   Undefined Obsid; ER? OR?  | WARNINGS [ 9] WARNINGS [ 1]
-OBSID = NONE4 at 2007:224:23:35:00.556   Undefined Obsid; ER? OR?  | WARNINGS [ 9] WARNINGS [ 1]
-OBSID = NONE5 at 2007:225:10:40:33.637   Undefined Obsid; ER? OR?  | WARNINGS [ 8] WARNINGS [ 2]
-OBSID = NONE6 at 2007:225:12:59:16.015   Undefined Obsid; ER? OR?  | WARNINGS [ 5] WARNINGS [ 5]
-OBSID = NONE7 at 2007:225:22:43:11.448   Undefined Obsid; ER? OR?  | WARNINGS [ 5] WARNINGS [ 2]
+OBSID = NONE1 at 2007:224:17:13:55.663   Undefined Obsid; ER? OR?  | WARNINGS [10] WARNINGS [ 4]
+OBSID = NONE2 at 2007:224:20:33:58.922   Undefined Obsid; ER? OR?  | WARNINGS [11] WARNINGS [ 1]
+OBSID = NONE3 at 2007:224:22:23:40.556   Undefined Obsid; ER? OR?  | WARNINGS [11] WARNINGS [ 1]
+OBSID = NONE4 at 2007:224:23:35:00.556   Undefined Obsid; ER? OR?  | WARNINGS [11] WARNINGS [ 1]
+OBSID = NONE5 at 2007:225:10:40:33.637   Undefined Obsid; ER? OR?  | WARNINGS [10] WARNINGS [ 2]
+OBSID = NONE6 at 2007:225:12:59:16.015   Undefined Obsid; ER? OR?  | WARNINGS [ 7] WARNINGS [ 5]
+OBSID = NONE7 at 2007:225:22:43:11.448   Undefined Obsid; ER? OR?  | WARNINGS [ 6] WARNINGS [ 2]
 OBSID =  7485 at 2007:226:04:55:53.700   8 clean ACQ | 5 clean GUI | 
          ------  2007:226:19:19:00.918   OBC Load Segment Begins     CL226:1907 
 OBSID = 58264 at 2007:226:19:22:06.918   6 clean ACQ | 7 clean GUI | WARNINGS [ 2]
@@ -114,12 +114,14 @@ MP_STARCAT at 2007:224:17:13:55.663 (VCDU count = 15399435)
 [14]  1  *747246520   ACQ  6x6   5.797   9.688  11.188  -1602  -1160  20   1  120          
 [15]  2  *747254264   ACQ  6x6   5.797   9.963  11.469   -155   1107  20   1  120          
 
+>> WARNING: Could not find obsid NONE1 in processing summary
 >> WARNING: No Guide Star Summary for obsid NONE1 (NONE1). 
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
 >> WARNING: [ 1] Magnitude.   0.000
 >> WARNING: [ 2] Magnitude.   0.000
 >> WARNING: [ 3] Magnitude.   0.000
+>> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
 >> WARNING: Dither status not checked
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:224:17:13:54.020
@@ -154,6 +156,7 @@ MP_STARCAT at 2007:224:20:33:58.922 (VCDU count = 15446277)
 [11]  1 *1091447304   ACQ  6x6   5.797   9.155  10.656  -1743   -411  20   1  120          
 [12]  2 *1091437792   ACQ  6x6   5.797   8.619  10.125     93    847  20   1  120          
 
+>> WARNING: Could not find obsid NONE2 in processing summary
 >> WARNING: No Guide Star Summary for obsid NONE2 (NONE2). 
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
@@ -161,6 +164,7 @@ MP_STARCAT at 2007:224:20:33:58.922 (VCDU count = 15446277)
 >> WARNING: [ 2] Magnitude.   0.000
 >> WARNING: [ 3] Magnitude.   0.000
 >> WARNING: [ 4] Search Box Size. Search Box smaller than slew error 
+>> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
 >> WARNING: Dither status not checked
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:224:20:33:57.279
@@ -192,6 +196,7 @@ MP_STARCAT at 2007:224:22:23:40.556 (VCDU count = 15471961)
 [11]  1 *1180607104   ACQ  6x6   5.797   9.226  10.734   1512   2139  20   1  120          
 [12]  2 *1139280768   ACQ  6x6   5.797   9.625  11.531    383   -505  20   1  120          
 
+>> WARNING: Could not find obsid NONE3 in processing summary
 >> WARNING: No Guide Star Summary for obsid NONE3 (NONE3). 
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
@@ -199,6 +204,7 @@ MP_STARCAT at 2007:224:22:23:40.556 (VCDU count = 15471961)
 >> WARNING: [ 2] Magnitude.   0.000
 >> WARNING: [ 3] Magnitude.   0.000
 >> WARNING: [ 6] Search Box Size. Search Box smaller than slew error 
+>> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
 >> WARNING: Dither status not checked
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:224:22:23:38.913
@@ -231,6 +237,7 @@ MP_STARCAT at 2007:224:23:35:00.556 (VCDU count = 15488664)
 [12]  1  *670564504   ACQ  6x6   5.797   9.981  11.484    609   -552  20   1  120          
 [13]  2  *670567656   ACQ  6x6   5.797   6.862   8.359   1062    739  20   1  120          
 
+>> WARNING: Could not find obsid NONE4 in processing summary
 >> WARNING: No Guide Star Summary for obsid NONE4 (NONE4). 
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
@@ -238,6 +245,7 @@ MP_STARCAT at 2007:224:23:35:00.556 (VCDU count = 15488664)
 >> WARNING: [ 2] Magnitude.   0.000
 >> WARNING: [ 3] Magnitude.   0.000
 >> WARNING: [12] Search spoiler.  670564368: Y,Z,Radial,Mag seps: 229 103 251  0.8
+>> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
 >> WARNING: Dither status not checked
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:224:23:34:58.913
@@ -266,12 +274,14 @@ MP_STARCAT at 2007:225:10:40:33.637 (VCDU count = 15644500)
 [ 8]  7 *1042295352   GUI  8x8   5.797   8.515  10.016   -771  -2441   1   1   25          
 [ 9]  7 *1041771800   ACQ  8x8   5.797   9.725  11.750    308  -1392  20   1  120          
 
+>> WARNING: Could not find obsid NONE5 in processing summary
 >> WARNING: No Guide Star Summary for obsid NONE5 (NONE5). 
 >> WARNING: [ 1] Search Box Size. Search Box smaller than slew error 
 >> WARNING: [ 1] Search spoiler. 1041776136: Y,Z,Radial,Mag seps:   4 164 164  1.5
 >> WARNING: [ 3] Search Box Size. Search Box smaller than slew error 
 >> WARNING: [ 4] Search Box Size. Search Box smaller than slew error 
 >> WARNING: [ 4] Search spoiler. 1041774104: Y,Z,Radial,Mag seps:  61 149 161  0.4
+>> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
 >> WARNING: Dither status not checked
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:225:10:40:31.994
@@ -303,9 +313,11 @@ MP_STARCAT at 2007:225:12:59:16.015 (VCDU count = 15676978)
 [10]  6 *1048586096   ACQ  8x8   5.797  10.137  11.641   2050   -597  20   1  120          
 [11]  7 *1048582512   ACQ  8x8   5.797   9.970  11.469   1864  -1261  20   1  120          
 
+>> WARNING: Could not find obsid NONE6 in processing summary
 >> WARNING: No Guide Star Summary for obsid NONE6 (NONE6). 
 >> WARNING: [ 1] Search spoiler. 1048446792: Y,Z,Radial,Mag seps: 206 100 229  2.0
 >> WARNING: [ 1] Search spoiler. 1048457496: Y,Z,Radial,Mag seps: 214 101 237  0.7
+>> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
 >> WARNING: Dither status not checked
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:225:12:59:14.372
@@ -338,6 +350,7 @@ MP_STARCAT at 2007:225:22:43:11.448 (VCDU count = 15813701)
 [ 8]  7  *839523728   GUI  8x8   5.797   9.735  11.234    -36  -2443   1   1   25          
 [ 9]  7  *839524112   ACQ  8x8   5.797   5.926   7.422   2273  -1033  20   1  120          
 
+>> WARNING: Could not find obsid NONE7 in processing summary
 >> WARNING: No Guide Star Summary for obsid NONE7 (NONE7). 
 >> WARNING: [ 2] Search Box Size. Search Box smaller than slew error 
 >> WARNING: [ 6] Search Box Size. Search Box smaller than slew error 
