@@ -486,6 +486,9 @@ sub set_ps_times{
 
 #############################################################################################
 sub set_npm_times{
+# This needs to be run after the maneuvers for the *next* obsid have
+# been set, so it can't run in the setup loop in starcheck.pl that
+# calls set_maneuver().
 #############################################################################################
     my $self = shift;
 
@@ -508,7 +511,7 @@ sub set_npm_times{
     # stop time
     if (defined $self->{next}){
         my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
-        if (defined $next_manvr){
+        if ((defined $next_manvr) & (defined $next_manvr->{tstart})){
             $obs_tstop  = $next_manvr->{tstart};
         }
         else{
