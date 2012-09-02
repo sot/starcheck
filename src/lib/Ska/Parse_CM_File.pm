@@ -1,3 +1,4 @@
+
 package Ska::Parse_CM_File;
 
 ###############################################################
@@ -146,6 +147,90 @@ sub dither {
     return ($dither_time_violation, @dither);
 
 }
+
+
+###############################################################
+sub radmon { 
+###############################################################
+    my $h_file = shift;      # Radmon history file name
+    my $bs_arr = shift;               # Backstop array reference
+    my $bs;
+    my @bs_state;
+    my @bs_time;
+    my @bs_date;
+    my @bs_params;
+    my @h_state;
+    my @h_time;
+    my @h_date;
+    my %cmd = ('DS' => 'DISA', 
+	       'EN' => 'ENAB');
+    my %obs;
+    # First get everything from backstop
+    foreach $bs (@{$bs_arr}) {
+	if ($bs->{cmd} =~ '(COMMAND_SW)') {
+	    my %params = %{$bs->{command}};
+	    if ($params{TLMSID} =~ 'OORMP(DS|EN)') {
+		push @bs_state, $cmd{$1};
+		push @bs_time, $bs->{time};  # see comment below about timing
+		push @bs_date, $bs->{date};
+		push @bs_params, { %params };
+	    }
+	}
+    }
+    
+    # Now get everything from RADMON.txt
+    # Parse lines like:
+    # 2012222.011426269 | ENAB OORMPEN
+    # 2012224.051225059 | DISA OORMPDS
+    if ($h_file && (my $hist_fh = new IO::File $h_file, "r")) {
+	while (<$hist_fh>) {
+	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (DISA|ENAB) \s+ (OORMPDS|OORMPEN)/x) {
+		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
+		my $time = date2time("$yr:$doy:$hr:$min:$sec");
+                my $date = "$yr:$doy:$hr:$min:$sec";
+                push @h_date, $date;
+		push @h_state, $state;
+		push @h_time, $time;
+
+	    }
+	}
+
+	$hist_fh->close();
+    }
+    
+    my @ok = grep { $h_time[$_] < $bs_arr->[0]->{time} } (0 .. $#h_time);
+    my @state = (@h_state[@ok], @bs_state);
+    my @time   = (@h_time[@ok], @bs_time);
+    my @date   = (@h_date[@ok], @bs_date);
+
+    # if the most recent/last entry in the dither file has a timestamp newer than
+    my $time_violation = 0;
+    # the first entry in the load
+    if ( $h_time[-1] >= $bs_arr->[0]->{time} ){
+	$time_violation = 1;
+    }
+
+
+    # Now make an array of hashes as the final output.  Keep track of where the info
+    # came from, for later use in Chex
+    my @radmon;
+    my $radmon_state;
+    my $bs_start = $bs_arr->[0]->{time};
+ 
+    foreach (0 .. $#state) {
+      $radmon_state = $state[$_] if defined $state[$_];
+      push @radmon, { time => $time[$_],
+                      date => $date[$_],
+		      state => $radmon_state,
+		      source => $time[$_] < $bs_start ? 'history' : 'backstop',
+      };
+      
+      
+    }
+    return ($time_violation, @radmon);
+
+}
+
 
 ###############################################################
 sub fidsel {
