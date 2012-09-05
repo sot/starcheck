@@ -108,7 +108,7 @@ OBSID =  8006 at 2007:001:11:40:26.000   8 clean ACQ | 5 clean GUI |
 OBSID =  7765 at 2007:001:19:39:57.000   8 clean ACQ | 5 clean GUI | 
 OBSID =  7362 at 2007:001:21:19:35.634   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 58609 at 2007:001:22:27:18.872   8 clean ACQ | 8 clean GUI | 
-OBSID =  7703 at 2007:001:22:59:27.766   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID =  7703 at 2007:001:22:59:27.766   8 clean ACQ | 5 clean GUI | 
 OBSID =  7699 at 2007:002:00:51:24.681   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  7779 at 2007:002:03:00:06.965   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  8008 at 2007:002:04:31:43.965   8 clean ACQ | 5 clean GUI | 
@@ -1113,10 +1113,8 @@ MP_STARCAT at 2007:001:22:59:27.766 (VCDU count = 7400135)
 [11]  1    11665480   ACQ  6x6   5.797   9.749  11.469   -348   -907  20   1  120    a2    
 [12]  2    11666688   ACQ  6x6   5.797  10.093  11.594    710   -766  20   1  120    a2    
 
->> WARNING: [11] Bad Acquisition Star. 11665480 has  2 failed out of  4 attempts
-
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.730	-6.588	-4.727	
-Acquisition Stars Expected  : 7.18
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.505	-7.345	-5.458	
+Acquisition Stars Expected  : 7.60
 ==================================================================================== 
 OBSID: 7699   MS0906.5+1110          ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   137.339112    10.962701    65.600334

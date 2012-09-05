@@ -26,7 +26,7 @@ Using ACABadPixel file from 2008273 Dark Cal
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2006:317:07:01:47.683   OBC Load Segment Begins     CL317:0701 
-OBSID =  7285 at 2006:317:07:04:53.683   8 clean ACQ | 5 clean GUI | 
+OBSID =  7285 at 2006:317:07:04:53.683   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 58704 at 2006:317:12:40:10.895   8 clean ACQ | 8 clean GUI | 
 OBSID =  6916 at 2006:317:13:27:25.744   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID =  7122 at 2006:317:15:24:04.385   8 clean ACQ | 5 clean GUI | 
@@ -78,8 +78,10 @@ MP_STARCAT at 2006:317:07:04:53.683 (VCDU count = 7432477)
 [12]  1   367665472   ACQ  6x6   5.797   9.469  10.969   -947  -1719  20   1  120    a2    
 [13]  2   367673952   ACQ  6x6   5.797   9.527  11.328   -588   -590  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.32	-9.017	-6.957	
-Acquisition Stars Expected  : 7.84
+>> WARNING: [13] Bad Acquisition Star. 367673952 has  1 failed out of  3 attempts
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.51	-8.224	-6.191	
+Acquisition Stars Expected  : 7.55
 ==================================================================================== 
 OBSID: 58704  
 RA, Dec, Roll (deg):    95.000000     8.000000    72.673279

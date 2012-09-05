@@ -28,7 +28,7 @@ Using ACABadPixel file from 2008273 Dark Cal
          ------  2004:361:17:25:01.285   OBC Load Segment Begins     CL361:1703 
 OBSID = 59891 at 2004:362:00:34:22.122   8 clean ACQ | 8 clean GUI | 
 OBSID =  6177 at 2004:362:07:06:01.675   8 clean ACQ | 5 clean GUI | 
-OBSID =  5425 at 2004:362:13:08:00.144   7 clean ACQ | 5 clean GUI | WARNINGS [ 3]
+OBSID =  5425 at 2004:362:13:08:00.144   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID =  5725 at 2004:362:16:40:28.806   8 clean ACQ | 5 clean GUI | 
 OBSID = 59890 at 2004:362:19:30:14.889   8 clean ACQ | 8 clean GUI | 
 OBSID =  5926 at 2004:362:20:02:00.341   8 clean ACQ | 5 clean GUI | 
@@ -71,7 +71,7 @@ OBSID =  5726 at 2005:004:05:55:09.631   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID =  5890 at 2005:004:08:36:41.410   8 clean ACQ | 5 clean GUI | 
 OBSID =  5374 at 2005:004:20:17:22.714   8 clean ACQ | 5 clean GUI | 
          ------  2005:004:21:32:16.714   OBC Load Segment Begins     CL004:2103 
-OBSID =  5415 at 2005:004:21:35:22.714   5 clean ACQ | 4 clean GUI | WARNINGS [ 6]
+OBSID =  5415 at 2005:004:21:35:22.714   5 clean ACQ | 4 clean GUI | WARNINGS [ 5]
 OBSID =  5189 at 2005:005:02:16:08.928   8 clean ACQ | 5 clean GUI | 
 OBSID = 59876 at 2005:005:09:31:51.308   8 clean ACQ | 8 clean GUI | 
 OBSID =  5773 at 2005:005:10:12:43.095   4 clean ACQ | 3 clean GUI | WARNINGS [ 6]
@@ -82,8 +82,8 @@ OBSID = 59873 at 2005:006:06:48:31.395   8 clean ACQ | 8 clean GUI |
 OBSID = 59872 at 2005:006:09:09:23.949   8 clean ACQ | 8 clean GUI | 
 OBSID = 59871 at 2005:006:16:02:10.743   8 clean ACQ | 8 clean GUI | 
          ------  2005:006:17:30:01.285   OBC Load Segment Begins     CL006:1703 
-OBSID =  5416 at 2005:006:21:57:20.743   5 clean ACQ | 4 clean GUI | WARNINGS [ 6]
-OBSID =  5758 at 2005:007:02:27:25.141   7 clean ACQ | 4 clean GUI | WARNINGS [ 2]
+OBSID =  5416 at 2005:006:21:57:20.743   5 clean ACQ | 4 clean GUI | WARNINGS [ 5]
+OBSID =  5758 at 2005:007:02:27:25.141   6 clean ACQ | 3 clean GUI | WARNINGS [ 2]
 OBSID =  5791 at 2005:007:07:08:58.083   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID =  5414 at 2005:007:13:12:23.481   8 clean ACQ | 5 clean GUI | 
 OBSID =  5624 at 2005:007:19:14:18.640   8 clean ACQ | 5 clean GUI | 
@@ -100,7 +100,7 @@ OBSID = 59867 at 2005:008:19:28:56.730   8 clean ACQ | 8 clean GUI |
 OBSID = 59866 at 2005:009:00:16:46.518   8 clean ACQ | 8 clean GUI | 
 OBSID = 59865 at 2005:009:06:12:45.636   8 clean ACQ | 8 clean GUI | 
 OBSID =  5579 at 2005:009:12:27:56.730   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID =  5418 at 2005:009:23:08:09.310   5 clean ACQ | 4 clean GUI | WARNINGS [ 6]
+OBSID =  5418 at 2005:009:23:08:09.310   5 clean ACQ | 4 clean GUI | WARNINGS [ 5]
 OBSID =  4718 at 2005:010:03:54:13.695   8 clean ACQ | 5 clean GUI |
 ==================================================================================== 
 OBSID: 59891  
@@ -187,12 +187,11 @@ MP_STARCAT at 2004:362:13:08:00.144 (VCDU count = 11099406)
 [11]  1   166334120   ACQ  6x6   5.797  10.257  11.766    234   -476  20   1  120    a3    
 [12]  2   166461744   ACQ  6x6   5.797  10.411  13.172   -996    836  20   1  120    a3   C
 
->> WARNING: [12] Bad Acquisition Star. 166461744 has  2 failed out of  3 attempts
 >> WARNING: [12] Marginal star. B-V = 1.500, Mag_Err = 0.88, Pos_Err = 0.09
 >> WARNING: [12] Magnitude.  10.411
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.408	-5.379	-3.664	
-Acquisition Stars Expected  : 6.79
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.822	-5.787	-4.062	
+Acquisition Stars Expected  : 7.20
 ==================================================================================== 
 OBSID: 5725   S4 0714+45             ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   109.494003    45.641267   150.968574
@@ -1285,12 +1284,11 @@ MP_STARCAT at 2005:004:21:35:22.714 (VCDU count = 13915572)
 >> WARNING: [10] Magnitude.  10.345
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.88, Pos_Err = 0.15
 >> WARNING: [11] Magnitude.  10.411
->> WARNING: [12] Bad Acquisition Star. 240262800 has  2 failed out of  3 attempts
 >> WARNING: [12] Marginal star. B-V = 1.500, Mag_Err = 0.88, Pos_Err = 0.17
 >> WARNING: [12] Magnitude.  10.560
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.951	-5.829	-3.998	
-Acquisition Stars Expected  : 6.76
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.281	-6.156	-4.320	
+Acquisition Stars Expected  : 7.12
 ==================================================================================== 
 OBSID: 5189   FS Aur                 ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):    86.938145    28.603766   255.334901
@@ -1570,12 +1568,11 @@ MP_STARCAT at 2005:006:21:57:20.743 (VCDU count = 14595057)
 >> WARNING: [10] Magnitude.  10.345
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.88, Pos_Err = 0.15
 >> WARNING: [11] Magnitude.  10.411
->> WARNING: [12] Bad Acquisition Star. 240262800 has  2 failed out of  3 attempts
 >> WARNING: [12] Marginal star. B-V = 1.500, Mag_Err = 0.88, Pos_Err = 0.17
 >> WARNING: [12] Magnitude.  10.560
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.951	-5.829	-3.998	
-Acquisition Stars Expected  : 6.76
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.281	-6.156	-4.320	
+Acquisition Stars Expected  : 7.12
 ==================================================================================== 
 OBSID: 5758   cl0521-2530            ACIS-I SIM Z offset:-3083 (-7.75mm) Grating: NONE 
 RA, Dec, Roll (deg):    80.313422   -25.539509   328.095248
@@ -1602,11 +1599,11 @@ MP_STARCAT at 2005:007:02:27:25.141 (VCDU count = 14658294)
 [10]  1   849219800   ACQ  6x6   5.797   9.897  11.406   1151  -1739  20   1  120    a2    
 [11]  2   849223784   ACQ  6x6   5.797   9.655  11.156     35    750  20   1  120    a2    
 
->> WARNING: [ 8] Bad Acquisition Star. 849226688 has  4 failed out of  4 attempts
->> WARNING: [ 8] Bad Guide Star. 849226688 has bad data  3 of  3 attempts
+>> WARNING: [ 5] Bad Acquisition Star. 849223080 has  1 failed out of  3 attempts
+>> WARNING: [ 8] Bad Acquisition Star. 849226688 has  3 failed out of  3 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.568	-4.820	-3.360	
-Acquisition Stars Expected  : 6.54
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.778	-4.116	-2.759	
+Acquisition Stars Expected  : 6.26
 ==================================================================================== 
 OBSID: 5791   NGC766                 ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):    29.655606     8.353834   291.142210
@@ -2070,12 +2067,11 @@ MP_STARCAT at 2005:009:23:08:09.310 (VCDU count = 15623149)
 >> WARNING: [10] Magnitude.  10.345
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.88, Pos_Err = 0.15
 >> WARNING: [11] Magnitude.  10.411
->> WARNING: [12] Bad Acquisition Star. 240262800 has  2 failed out of  3 attempts
 >> WARNING: [12] Marginal star. B-V = 1.500, Mag_Err = 0.88, Pos_Err = 0.17
 >> WARNING: [12] Magnitude.  10.560
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.951	-5.829	-3.998	
-Acquisition Stars Expected  : 6.76
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.281	-6.156	-4.320	
+Acquisition Stars Expected  : 7.12
 ==================================================================================== 
 OBSID: 4718   SCULPTOR DWARF SPHER   ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):    15.016607   -33.699694   285.333173

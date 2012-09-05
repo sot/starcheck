@@ -41,7 +41,7 @@ OBSID =  5352 at 2004:210:01:20:51.838   0 clean ACQ | 0 clean GUI | WARNINGS [ 
 OBSID = 60112 at 2004:210:02:48:44.670   8 clean ACQ | 8 clean GUI | 
 OBSID =  4879 at 2004:210:03:22:56.785   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID =  5350 at 2004:210:14:43:49.048   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
-OBSID =  4757 at 2004:210:17:07:19.140   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
+OBSID =  4757 at 2004:210:17:07:19.140   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 60111 at 2004:210:20:37:03.700   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 60110 at 2004:210:23:00:02.692   8 clean ACQ | 6 clean GUI | 
 OBSID = 60109 at 2004:211:01:12:54.364   8 clean ACQ | 8 clean GUI | 
@@ -51,7 +51,7 @@ OBSID =  4763 at 2004:211:14:19:20.435   6 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID =  4725 at 2004:211:20:36:08.949   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  5197 at 2004:212:07:54:08.949   6 clean ACQ | 5 clean GUI | WARNINGS [ 2] 
          ------  2004:212:14:35:01.285   OBC Load Segment Begins     CL212:1400 
-OBSID =  4792 at 2004:212:16:25:28.949   5 clean ACQ | 4 clean GUI | WARNINGS [ 4]
+OBSID =  4792 at 2004:212:16:25:28.949   6 clean ACQ | 4 clean GUI | WARNINGS [ 3]
 OBSID =  4452 at 2004:212:17:56:31.045   6 clean ACQ | 4 clean GUI | WARNINGS [ 4]
 OBSID =  4591 at 2004:213:00:01:42.819   8 clean ACQ | 5 clean GUI | 
 OBSID = 60107 at 2004:213:13:03:58.563   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
@@ -434,11 +434,10 @@ MP_STARCAT at 2004:210:17:07:19.140 (VCDU count = 10237141)
 [10]  1   505809720   ACQ  6x6   5.797   9.579  11.078   -794    234  20   1  120    a2    
 [11]  2   505819192   ACQ  6x6   5.797   9.901  11.406   -191   1585  20   1  120    a2    
 
->> WARNING: [11] Bad Acquisition Star. 505819192 has  1 failed out of  3 attempts
 >> WARNING: [11] Search spoiler.  505817648: Y,Z,Radial,Mag seps:  29 105 109 -0.5
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.504	-5.627	-4.054	
-Acquisition Stars Expected  : 7.26
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.969	-6.071	-4.468	
+Acquisition Stars Expected  : 7.48
 ==================================================================================== 
 OBSID: 60111  
 RA, Dec, Roll (deg):   130.000000   -43.000000   181.728211
@@ -668,12 +667,11 @@ MP_STARCAT at 2004:212:16:25:28.949 (VCDU count = 10901686)
 [12]  2   266215344   ACQ  6x6   5.797  10.244  11.750   -599    354  20   1  120    a3    
 
 >> WARNING: [ 7] Bad Acquisition Star. 266350560 has  1 failed out of  3 attempts
->> WARNING: [10] Bad Acquisition Star. 266211016 has  1 failed out of  3 attempts
->> WARNING: [11] Bad Acquisition Star. 266214112 has  2 failed out of  4 attempts
+>> WARNING: [11] Bad Acquisition Star. 266214112 has  1 failed out of  3 attempts
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.87, Pos_Err = 0.07
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.324	-3.622	-2.349	
-Acquisition Stars Expected  : 6.38
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.731	-4.012	-2.698	
+Acquisition Stars Expected  : 6.69
 ==================================================================================== 
 OBSID: 4452   V4641Sgr               ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   274.821324   -25.394272   275.057393

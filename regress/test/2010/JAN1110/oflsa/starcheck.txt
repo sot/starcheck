@@ -71,7 +71,7 @@ Transponder B	before 2010:015:18:41:30.000
 
          ------  2010:011:02:58:45.385   OBC Load Segment Begins     CL011:0203 
 OBSID = 11480 at 2010:011:03:01:51.385   8 clean ACQ | 5 clean GUI | 
-OBSID = 11378 at 2010:011:04:21:53.752   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID = 11378 at 2010:011:04:21:53.752   6 clean ACQ | 4 clean GUI | WARNINGS [ 2]
 OBSID = 11852 at 2010:011:06:14:01.923   8 clean ACQ | 5 clean GUI | 
 OBSID = 11854 at 2010:011:07:57:59.022   8 clean ACQ | 5 clean GUI | 
 OBSID = 11702 at 2010:011:10:19:15.692   4 clean ACQ | 3 clean GUI | WARNINGS [ 4]
@@ -178,10 +178,11 @@ MP_STARCAT at 2010:011:04:21:53.752 (VCDU count = 6473783)
 [11]  1   186784600   ACQ  6x6   5.797  10.196  11.703    -52   1076  20   1  120    a2    
 [12]  2   186911904   ACQ  6x6   5.797  10.000  11.500   1196  -2088  20   1  120    a2    
 
+>> WARNING: [ 6] Bad Acquisition Star. 186911768 has  1 failed out of  3 attempts
 >> WARNING: [11] Search spoiler.  186781560: Y,Z,Radial,Mag seps:  36 122 128 -0.6
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.916	-6.777	-4.920	
-Acquisition Stars Expected  : 7.43
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.669	-5.638	-3.919	
+Acquisition Stars Expected  : 7.11
 ==================================================================================== 
 OBSID: 11852  PG 1001+054            ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   151.084914     5.194202    62.206256

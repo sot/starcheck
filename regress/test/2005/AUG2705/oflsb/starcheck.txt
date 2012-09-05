@@ -78,7 +78,7 @@ OBSID = 59488 at 2005:240:16:23:48.913   8 clean ACQ | 8 clean GUI |
 OBSID =  6222 at 2005:240:17:04:36.918   8 clean ACQ | 5 clean GUI | 
          ------  2005:241:03:18:32.933   OBC Load Segment Begins     CL241:0305 
 OBSID =  5735 at 2005:241:03:21:38.933   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID = 59487 at 2005:241:12:49:31.332   6 clean ACQ | 7 clean GUI | WARNINGS [ 3]
+OBSID = 59487 at 2005:241:12:49:31.332   7 clean ACQ | 8 clean GUI | WARNINGS [ 2]
 OBSID = 59486 at 2005:241:17:02:52.751   8 clean ACQ | 8 clean GUI | 
 OBSID = 59485 at 2005:241:23:43:17.326   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID =  5431 at 2005:242:06:15:32.987   8 clean ACQ | 5 clean GUI | 
@@ -88,7 +88,7 @@ OBSID =  6223 at 2005:243:05:11:21.530   8 clean ACQ | 5 clean GUI |
 OBSID =  6367 at 2005:243:19:28:04.558   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 59484 at 2005:244:02:55:19.427   8 clean ACQ | 8 clean GUI | 
 OBSID = 59483 at 2005:244:08:20:40.470   5 clean ACQ | 7 clean GUI | WARNINGS [ 3]
-OBSID = 59482 at 2005:244:14:16:38.454   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 59482 at 2005:244:14:16:38.454   8 clean ACQ | 8 clean GUI | 
 OBSID =  6000 at 2005:244:20:49:39.427   8 clean ACQ | 5 clean GUI | 
 OBSID =  6001 at 2005:244:22:00:06.688   8 clean ACQ | 5 clean GUI | 
 OBSID =  6002 at 2005:244:22:25:16.688   8 clean ACQ | 5 clean GUI | 
@@ -117,8 +117,8 @@ OBSID =  5757 at 2005:245:13:05:15.337   7 clean ACQ | 4 clean GUI | WARNINGS [ 
 OBSID =  6366 at 2005:246:06:21:38.040   8 clean ACQ | 5 clean GUI | 
 OBSID =  6368 at 2005:246:10:50:51.352   8 clean ACQ | 5 clean GUI | 
          ------  2005:246:12:30:01.285   OBC Load Segment Begins     CL246:1205 
-OBSID = 59480 at 2005:246:18:11:21.263   6 clean ACQ | 7 clean GUI | WARNINGS [ 2]
-OBSID = 59479 at 2005:247:00:17:39.591   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 59480 at 2005:246:18:11:21.263   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
+OBSID = 59479 at 2005:247:00:17:39.591   8 clean ACQ | 8 clean GUI | 
 OBSID = 59478 at 2005:247:05:57:39.648   5 clean ACQ | 7 clean GUI | WARNINGS [ 4]
 OBSID = 59477 at 2005:247:07:31:01.263   5 clean ACQ | 5 clean GUI | WARNINGS [ 5]
 OBSID = 59476 at 2005:247:07:56:29.690   0 clean ACQ | 0 clean GUI | 
@@ -365,12 +365,11 @@ MP_STARCAT at 2005:241:12:49:31.332 (VCDU count = 9815825)
 [ 8]  7   908460392   GUI  8x8   5.797   9.362  10.859    339  -2414   1   1   25          
 [ 9]  7   908461824   ACQ  8x8   5.797   9.903  11.406    397  -1541  20   1  120    a3    
 
->> WARNING: [ 5] Bad Acquisition Star. 908467008 has  1 failed out of  3 attempts
 >> WARNING: [ 9] Search spoiler.  908462184: Y,Z,Radial,Mag seps: 120   2 120 -0.6
 >> WARNING: [ 9] Search spoiler.  908461816: Y,Z,Radial,Mag seps: 122 184 221 -0.8
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.472	-5.596	-4.026	
-Acquisition Stars Expected  : 7.25
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.850	-5.959	-4.367	
+Acquisition Stars Expected  : 7.44
 ==================================================================================== 
 OBSID: 59486  
 RA, Dec, Roll (deg):   311.000000    -1.000000   252.259529
@@ -599,8 +598,6 @@ MP_STARCAT at 2005:244:14:16:38.454 (VCDU count = 10847735)
 [ 9]  5   224013064   ACQ  8x8   5.797  10.060  11.562  -1730  -1307  17   1  105    a2    
 [10]  6   223876528   ACQ  8x8   5.797  10.147  11.656    685    797  20   1  120    a2    
 [11]  7   290983016   ACQ  8x8   5.797   9.745  11.250   -157  -2039  20   1  120    a2    
-
->> WARNING: [ 6] Bad Guide Star. 223883736 has bad data  3 of  3 attempts
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.213	-7.063	-5.191	
 Acquisition Stars Expected  : 7.52
@@ -1375,11 +1372,10 @@ MP_STARCAT at 2005:246:18:11:21.263 (VCDU count = 11577034)
 [ 8]  7   908460392   GUI  8x8   5.797   9.362  10.859    477  -2391   1   1   25          
 [ 9]  7   908461824   ACQ  8x8   5.797   9.903  11.406    484  -1515  20   1  120    a3    
 
->> WARNING: [ 5] Bad Acquisition Star. 908467008 has  1 failed out of  3 attempts
 >> WARNING: [ 9] Search spoiler.  908462184: Y,Z,Radial,Mag seps: 120   8 120 -0.6
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.472	-5.596	-4.026	
-Acquisition Stars Expected  : 7.25
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.850	-5.959	-4.367	
+Acquisition Stars Expected  : 7.44
 ==================================================================================== 
 OBSID: 59479  
 RA, Dec, Roll (deg):   315.000000   -27.000000   301.551869
@@ -1402,10 +1398,8 @@ MP_STARCAT at 2005:247:00:17:39.591 (VCDU count = 11662803)
 [ 7]  6   908467240   BOT  8x8   5.797   9.520  11.031  -1315    910  20   1  120  a2g2    
 [ 8]  7   908467688   BOT  8x8   5.797   9.067  10.578    511    505  20   1  120          
 
->> WARNING: [ 6] Bad Acquisition Star. 908467008 has  1 failed out of  3 attempts
-
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.223	-6.222	-4.514	
-Acquisition Stars Expected  : 7.34
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.603	-6.591	-4.867	
+Acquisition Stars Expected  : 7.54
 ==================================================================================== 
 OBSID: 59478  
 RA, Dec, Roll (deg):    12.700000   -13.400000    80.820165
