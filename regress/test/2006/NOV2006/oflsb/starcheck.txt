@@ -70,14 +70,14 @@ Transponder B	before 2006:329:04:21:58.009
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2006:323:12:27:00.000   OBC Load Segment Begins     CL323:1207 
-OBSID = 58695 at 2006:323:12:30:06.000   6 clean ACQ | 7 clean GUI | WARNINGS [ 2]
+OBSID = 58695 at 2006:323:12:30:06.000   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 58694 at 2006:323:21:02:06.058   8 clean ACQ | 8 clean GUI | 
 OBSID =  7921 at 2006:324:03:12:22.371   8 clean ACQ | 5 clean GUI | 
          ------  2006:325:03:45:00.000   OBC Load Segment Begins     CL325:0307 
 OBSID = 58693 at 2006:325:11:08:56.748   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID =  8479 at 2006:325:11:50:50.267   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID = 58692 at 2006:326:00:25:15.830   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
-OBSID = 58691 at 2006:326:02:37:21.337   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 58691 at 2006:326:02:37:21.337   8 clean ACQ | 8 clean GUI | 
 OBSID = 58690 at 2006:326:12:30:09.420   8 clean ACQ | 8 clean GUI | 
          ------  2006:326:18:31:49.830   OBC Load Segment Begins     CL326:1807 
 OBSID =  7156 at 2006:326:18:34:55.830   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
@@ -89,7 +89,7 @@ OBSID =  7477 at 2006:328:05:55:48.797   6 clean ACQ | 4 clean GUI | WARNINGS [ 
 OBSID = 58689 at 2006:328:09:34:11.402   8 clean ACQ | 8 clean GUI | 
 OBSID =  8478 at 2006:328:10:05:44.517   8 clean ACQ | 5 clean GUI | 
 OBSID = 58688 at 2006:328:15:53:13.886   8 clean ACQ | 8 clean GUI | 
-OBSID = 58687 at 2006:328:18:07:52.988   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 58687 at 2006:328:18:07:52.988   8 clean ACQ | 8 clean GUI | 
 OBSID = 58686 at 2006:329:02:52:47.156   8 clean ACQ | 8 clean GUI | 
 OBSID = 58685 at 2006:329:03:50:06.000   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 58684 at 2006:329:04:15:58.009   0 clean ACQ | 0 clean GUI | 
@@ -134,12 +134,11 @@ MP_STARCAT at 2006:323:12:30:06.000 (VCDU count = 9531647)
 [ 9]  6   621806040   ACQ  8x8   5.797   9.353  10.859  -1929    115  20   1  120    a2    
 [10]  7   621808224   ACQ  8x8   5.797   9.578  11.078    688    467  20   1  120    a2    
 
->> WARNING: [ 1] Bad Acquisition Star. 621806408 has  1 failed out of  3 attempts
 >> WARNING: [ 9] Search spoiler.  621805624: Y,Z,Radial,Mag seps:  10  44  46 -0.9
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2006:323:20:30:00.000
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.486	-7.314	-5.411	
-Acquisition Stars Expected  : 7.47
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.75	-8.499	-6.500	
+Acquisition Stars Expected  : 7.79
 ==================================================================================== 
 OBSID: 58694  
 RA, Dec, Roll (deg):    88.000000     8.000000    66.640818
@@ -304,10 +303,8 @@ MP_STARCAT at 2006:326:02:37:21.337 (VCDU count = 10404370)
 [ 9]  6   621808224   ACQ  8x8   5.797   9.578  11.078    646    523  20   1  120    a2    
 [10]  7   621944944   ACQ  8x8   5.797   9.591  11.094   2052  -1586  20   1  120    a2    
 
->> WARNING: [ 1] Bad Acquisition Star. 621806408 has  1 failed out of  3 attempts
-
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.486	-7.314	-5.411	
-Acquisition Stars Expected  : 7.47
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.75	-8.499	-6.500	
+Acquisition Stars Expected  : 7.79
 ==================================================================================== 
 OBSID: 58690  
 RA, Dec, Roll (deg):    65.000000    -7.000000    14.470335
@@ -593,10 +590,8 @@ MP_STARCAT at 2006:328:18:07:52.988 (VCDU count = 11296591)
 [ 8]  7   622331928   GUI  8x8   5.797   9.125  10.625  -1845  -2411   1   1   25          
 [ 9]  7   621808224   ACQ  8x8   5.797   9.578  11.078    595    580  20   1  120    a2    
 
->> WARNING: [ 1] Bad Acquisition Star. 621806408 has  1 failed out of  3 attempts
-
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.486	-7.314	-5.411	
-Acquisition Stars Expected  : 7.47
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.75	-8.499	-6.500	
+Acquisition Stars Expected  : 7.79
 ==================================================================================== 
 OBSID: 58686  
 RA, Dec, Roll (deg):    32.500000     8.900000   296.669237

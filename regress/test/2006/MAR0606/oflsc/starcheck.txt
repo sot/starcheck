@@ -89,10 +89,10 @@ OBSID = 59073 at 2006:065:04:11:56.688   7 clean ACQ | 7 clean GUI | WARNINGS [ 
 OBSID =  6930 at 2006:065:04:34:58.449   6 clean ACQ | 5 clean GUI | WARNINGS [ 3]
          ------  2006:065:21:40:00.000   OBC Load Segment Begins     CL065:2107 
 OBSID =  5877 at 2006:066:02:58:01.359   8 clean ACQ | 5 clean GUI | 
-OBSID = 59072 at 2006:066:04:51:38.473   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 59072 at 2006:066:04:51:38.473   8 clean ACQ | 8 clean GUI | 
 OBSID =  5878 at 2006:066:05:17:26.836   8 clean ACQ | 5 clean GUI | 
 OBSID =  5412 at 2006:066:07:06:25.640   8 clean ACQ | 5 clean GUI | 
-OBSID =  6308 at 2006:066:12:57:12.847   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID =  6308 at 2006:066:12:57:12.847   8 clean ACQ | 5 clean GUI | 
 OBSID = 59071 at 2006:066:22:04:36.382   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
          ------  2006:067:04:15:01.285   OBC Load Segment Begins     CL067:0407 
 OBSID = 59070 at 2006:067:09:09:56.592   8 clean ACQ | 8 clean GUI | 
@@ -102,9 +102,9 @@ OBSID =  5881 at 2006:067:18:18:24.722   8 clean ACQ | 5 clean GUI |
 OBSID =  5882 at 2006:067:19:48:34.722   8 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID =  5883 at 2006:067:21:18:44.722   8 clean ACQ | 5 clean GUI | 
 OBSID =  5884 at 2006:067:22:48:54.722   8 clean ACQ | 5 clean GUI | 
-OBSID =  7289 at 2006:068:00:41:02.453   5 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
+OBSID =  7289 at 2006:068:00:41:02.453   5 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 4]
          ------  2006:068:21:05:00.000   OBC Load Segment Begins     CL068:2107 
-OBSID = 59069 at 2006:068:22:18:10.082   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 59069 at 2006:068:22:18:10.082   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID =  7290 at 2006:068:22:49:40.616   8 clean ACQ | 5 clean GUI | 
 OBSID = 59068 at 2006:069:07:09:20.616   8 clean ACQ | 8 clean GUI | 
 OBSID =  6913 at 2006:069:07:39:21.668   8 clean ACQ | 5 clean GUI | 
@@ -115,7 +115,7 @@ OBSID = 59066 at 2006:069:23:26:37.056   8 clean ACQ | 8 clean GUI |
 OBSID =  5436 at 2006:070:06:18:26.237   8 clean ACQ | 5 clean GUI | 
 OBSID =  6400 at 2006:070:14:16:53.252   8 clean ACQ | 5 clean GUI | 
 OBSID =  6264 at 2006:070:21:08:13.252   8 clean ACQ | 5 clean GUI | 
-OBSID =  7278 at 2006:071:01:19:20.207   6 clean ACQ | 5 clean GUI | WARNINGS [ 4]
+OBSID =  7278 at 2006:071:01:19:20.207   6 clean ACQ | 5 clean GUI | WARNINGS [ 3]
          ------  2006:071:12:00:00.000   OBC Load Segment Begins     CL071:1207 
 OBSID =  6886 at 2006:071:19:35:27.427   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID =  6861 at 2006:071:22:39:49.027   8 clean ACQ | 5 clean GUI | 
@@ -588,10 +588,8 @@ MP_STARCAT at 2006:066:04:51:38.473 (VCDU count = 6657507)
 [ 8]  7   331364584   GUI  8x8   5.797  10.271  11.781   2372  -1758   1   1   25    g3    
 [ 9]  7   331363832   ACQ  8x8   5.797   9.978  11.484   1437  -1209  20   1  120    a2    
 
->> WARNING: [ 2] Bad Acquisition Star. 331352088 has  1 failed out of  3 attempts
-
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.786	-5.809	-4.137	
-Acquisition Stars Expected  : 7.22
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.023	-6.927	-5.112	
+Acquisition Stars Expected  : 7.54
 ==================================================================================== 
 OBSID: 5878   N1_24                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   242.975551    54.539491    98.804634
@@ -675,10 +673,8 @@ MP_STARCAT at 2006:066:12:57:12.847 (VCDU count = 6771202)
 [10]  1   161614168   ACQ  6x6   5.797   8.635  10.141   1049   1781  20   1  120          
 [11]  2   162011296   ACQ  6x6   5.797   8.907  10.984   -603  -2092  20   1  120    a2    
 
->> WARNING: [ 9] Bad Acquisition Star. 161616856 has  2 failed out of  3 attempts
-
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.21	-7.926	-5.896	
-Acquisition Stars Expected  : 7.22
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
 ==================================================================================== 
 OBSID: 59071  
 RA, Dec, Roll (deg):   140.000000    12.000000   258.493217
@@ -936,12 +932,13 @@ MP_STARCAT at 2006:068:00:41:02.453 (VCDU count = 7273171)
 [12]  2   649859936   ACQ  6x6   5.797  10.657  12.156     81   1209  20   1  120    a4    
 
 >> WARNING: [12] Magnitude.  10.657
+>> WARNING: [10] Bad Acquisition Star. 649857712 has  1 failed out of  3 attempts
 >> WARNING: [10] Magnitude.  10.548
 >> WARNING: [11] Magnitude.  10.328
 >> WARNING: [11] Search spoiler.  649859128: Y,Z,Radial,Mag seps:  13 103 104 -0.8
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.244	-4.460	-3.034	
-Acquisition Stars Expected  : 6.81
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.206	-4.423	-3.000	
+Acquisition Stars Expected  : 6.78
 ==================================================================================== 
 OBSID: 59069  
 RA, Dec, Roll (deg):   188.000000    30.500000   143.541100
@@ -967,10 +964,9 @@ MP_STARCAT at 2006:068:22:18:10.082 (VCDU count = 7576889)
 [10]  7   331363832   ACQ  8x8   5.797   9.978  11.484   1323  -1333  20   1  120    a2    
 
 >> WARNING: [ 1] Nearby ACA bad pixel. Y,Z,Radial seps:  11,  13,  17
->> WARNING: [ 2] Bad Acquisition Star. 331352088 has  1 failed out of  3 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.786	-5.809	-4.137	
-Acquisition Stars Expected  : 7.22
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.023	-6.927	-5.112	
+Acquisition Stars Expected  : 7.54
 ==================================================================================== 
 OBSID: 7290   NGC 6205               ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   250.443441    36.438789    92.207809
@@ -1259,13 +1255,12 @@ MP_STARCAT at 2006:071:01:19:20.207 (VCDU count = 8293650)
 [13]  1   348009984   ACQ  6x6   5.797  10.122  11.625   2042   -872  20   1  120    a2    
 [14]  2   347999592   ACQ  6x6   5.797   8.150   9.656   1264   1788  20   1  120    a3    
 
->> WARNING: [11] Bad Acquisition Star. 347996280 has  2 failed out of  4 attempts
 >> WARNING: [11] Search spoiler.  348000552: Y,Z,Radial,Mag seps:  36 107 113 -0.8
 >> WARNING: [13] Search spoiler.  348019512: Y,Z,Radial,Mag seps: 203   1 203 -0.6
 >> WARNING: [13] Search spoiler.  348027728: Y,Z,Radial,Mag seps: 145  76 163 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.299	-5.349	-3.719	
-Acquisition Stars Expected  : 6.99
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.707	-6.629	-4.840	
+Acquisition Stars Expected  : 7.47
 ==================================================================================== 
 OBSID: 6886   SDSS J144842.45+0424   ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   222.192619     4.378626    89.543276

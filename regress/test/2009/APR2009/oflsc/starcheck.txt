@@ -78,7 +78,7 @@ OBSID = 57165 at 2009:110:16:04:58.347   8 clean ACQ | 8 clean GUI |
 OBSID = 57164 at 2009:110:16:44:33.502   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 57163 at 2009:111:00:45:13.705   8 clean ACQ | 8 clean GUI | 
 OBSID = 57162 at 2009:111:03:23:25.137   8 clean ACQ | 8 clean GUI | 
-OBSID =  9945 at 2009:111:06:35:52.695   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID =  9945 at 2009:111:06:35:52.695   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
          ------  2009:111:12:30:01.285   OBC Load Segment Begins     CL111:1204 
 OBSID =  9917 at 2009:111:16:02:18.347   8 clean ACQ | 5 clean GUI | 
 OBSID = 10277 at 2009:112:00:56:06.286   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
@@ -363,10 +363,11 @@ MP_STARCAT at 2009:111:06:35:52.695 (VCDU count = 1040995)
 [13]  1  1174027824   ACQ  6x6   5.797   9.223  10.734   1843   -530  20   1  120          
 [14]  2  1130649544   ACQ  6x6   5.797   6.560   8.062     69     41  20   1  120    a2    
 
->> WARNING: [11] Bad Acquisition Star. 1130635848 has 24 failed out of 33 attempts
+>> WARNING: [11] Bad Acquisition Star. 1130635848 has 42 failed out of 53 attempts
+>> WARNING: [14] Bad Acquisition Star. 1130649544 has 11 failed out of 11 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.17	-7.888	-5.858	
-Acquisition Stars Expected  : 7.16
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.390	-6.184	-4.251	
+Acquisition Stars Expected  : 6.11
 ==================================================================================== 
 OBSID: 9917   V1647 Ori              ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):    86.547364    -0.082999   255.785050
@@ -1066,8 +1067,8 @@ MP_STARCAT at 2009:116:13:46:10.990 (VCDU count = 2827602)
 [13]  1  1130644984   ACQ  6x6   5.797   8.788  10.297   1025   1292  20   1  120          
 [14]  2  1174027824   ACQ  6x6   5.797   9.223  10.734   1843   -530  20   1  120          
 
->> WARNING: [12] Bad Acquisition Star. 1130635848 has 24 failed out of 33 attempts
+>> WARNING: [12] Bad Acquisition Star. 1130635848 has 43 failed out of 54 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.17	-7.888	-5.858	
-Acquisition Stars Expected  : 7.16
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.13	-7.849	-5.819	
+Acquisition Stars Expected  : 7.09
 ==================================================================================== 

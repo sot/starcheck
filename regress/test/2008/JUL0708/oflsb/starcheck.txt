@@ -115,7 +115,7 @@ OBSID = 57692 at 2008:194:02:34:29.155   8 clean ACQ | 8 clean GUI |
          ------  2008:194:06:04:45.237   OBC Load Segment Begins     CL194:0604 
 OBSID =  9109 at 2008:194:08:51:31.237   8 clean ACQ | 5 clean GUI | 
          ------  2008:195:19:30:00.000   OBC Load Segment Begins     CL195:1904 
-OBSID = 57691 at 2008:196:07:19:31.453   8 clean ACQ | 8 clean GUI |
+OBSID = 57691 at 2008:196:07:19:31.453   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 ==================================================================================== 
 OBSID: 57712  
 RA, Dec, Roll (deg):    38.000000    67.800000    78.708584
@@ -713,12 +713,12 @@ MP_STARCAT at 2008:191:16:32:54.097 (VCDU count = 9889994)
 [12]  2   505814280   ACQ  6x6   5.797  10.340  11.844   -210   2075  20   1  120    a3    
 
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.41, Pos_Err = 0.05
->> WARNING: [11] Bad Acquisition Star. 505807848 has  9 failed out of 22 attempts
+>> WARNING: [11] Bad Acquisition Star. 505807848 has 16 failed out of 29 attempts
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.61, Pos_Err = 0.15
 >> WARNING: [12] Magnitude.  10.340
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.288	-6.161	-4.324	
-Acquisition Stars Expected  : 7.09
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.159	-6.033	-4.198	
+Acquisition Stars Expected  : 6.94
 ==================================================================================== 
 OBSID: 9108   G54.1+0.3              ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   292.646677    18.881428   177.993255
@@ -1169,6 +1169,8 @@ MP_STARCAT at 2008:196:07:19:31.453 (VCDU count = 11446276)
 [12]  6   434518088   ACQ  8x8   5.797   8.058   9.562   -962      3  20   1  120          
 [13]  7   434520336   ACQ  8x8   5.797   8.906  10.406    640   -678  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
-Acquisition Stars Expected  : 7.87
+>> WARNING: [ 2] Bad Acquisition Star. 434523728 has  1 failed out of  3 attempts
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.51	-8.224	-6.191	
+Acquisition Stars Expected  : 7.55
 ==================================================================================== 

@@ -30,7 +30,7 @@ OBSID = 57647 at 2008:230:19:26:13.529   8 clean ACQ | 8 clean GUI |
 OBSID = 57646 at 2008:231:00:06:15.248   8 clean ACQ | 8 clean GUI | 
 OBSID = 57645 at 2008:231:05:29:52.903   8 clean ACQ | 8 clean GUI | 
 OBSID =  9482 at 2008:231:09:06:43.420   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID =  9841 at 2008:232:01:29:46.221   6 clean ACQ | 3 clean GUI | WARNINGS [ 2]
+OBSID =  9841 at 2008:232:01:29:46.221   8 clean ACQ | 5 clean GUI | 
          ------  2008:232:05:15:01.285   OBC Load Segment Begins     CL232:0500 
 OBSID =  9484 at 2008:232:06:24:26.221   8 clean ACQ | 5 clean GUI | 
 OBSID =  9383 at 2008:232:22:27:17.221   8 clean ACQ | 5 clean GUI | 
@@ -161,10 +161,10 @@ MP_STARCAT at 2008:231:09:06:43.420 (VCDU count = 6495136)
 [11]  1  1130644984   ACQ  6x6   5.797   8.788  10.297  -2131   -330  20   1  120          
 [12]  2  1174027824   ACQ  6x6   5.797   9.223  10.734   -593    945  20   1  120          
 
->> WARNING: [10] Bad Acquisition Star. 1130635848 has 24 failed out of 33 attempts
+>> WARNING: [10] Bad Acquisition Star. 1130635848 has 27 failed out of 35 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.17	-7.888	-5.858	
-Acquisition Stars Expected  : 7.16
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.14	-7.863	-5.833	
+Acquisition Stars Expected  : 7.12
 ==================================================================================== 
 OBSID: 9841   2MASSW J1139511-3159   ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   174.974331   -31.968863   213.764478
@@ -192,11 +192,8 @@ MP_STARCAT at 2008:232:01:29:46.221 (VCDU count = 6725313)
 [11]  1   945824104   ACQ  6x6   5.797   9.997  11.500   -472   -960  20   1  120    a2    
 [12]  2   946341136   ACQ  6x6   5.797  10.088  11.594   1176   1461  20   1  120    a2    
 
->> WARNING: [ 5] Bad Guide Star. 945825368 has bad data  1 of  3 attempts
->> WARNING: [ 6] Bad Acquisition Star. 945946912 has  2 failed out of  3 attempts
-
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.234	-4.460	-3.046	
-Acquisition Stars Expected  : 6.69
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.024	-5.215	-3.738	
+Acquisition Stars Expected  : 7.25
 ==================================================================================== 
 OBSID: 9484   Carina Clusters Ptg    ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   161.208558   -59.342173   192.744349

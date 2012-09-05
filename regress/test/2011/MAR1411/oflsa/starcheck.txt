@@ -86,7 +86,7 @@ OBSID = 13046 at 2011:074:10:40:06.367   4 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 12993 at 2011:074:11:43:27.615   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 13025 at 2011:075:02:15:54.557   4 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 2]
          ------  2011:075:05:15:01.285   OBC Load Segment Begins     CL075:0505 
-OBSID = 12929 at 2011:075:08:28:32.872   8 clean ACQ | 5 clean GUI | 
+OBSID = 12929 at 2011:075:08:28:32.872   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 12931 at 2011:075:12:19:54.472   8 clean ACQ | 5 clean GUI | 
 OBSID = 12500 at 2011:075:16:21:44.472   8 clean ACQ | 5 clean GUI | 
 OBSID = 12169 at 2011:075:17:08:52.488   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
@@ -104,7 +104,7 @@ OBSID = 12956 at 2011:077:06:55:05.051   8 clean ACQ | 5 clean GUI |
 OBSID = 13241 at 2011:077:21:28:39.803   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2011:078:12:00:00.000   OBC Load Segment Begins     CL078:1205 
 OBSID = 55584 at 2011:078:20:06:19.865   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
-OBSID = 55583 at 2011:078:20:17:53.159   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 55583 at 2011:078:20:17:53.159   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
 OBSID = 55582 at 2011:078:21:00:21.965   7 clean ACQ | 7 clean GUI | WARNINGS [ 2]
 OBSID = 55581 at 2011:079:02:46:36.000   7 clean ACQ | 7 clean GUI | WARNINGS [ 2]
 OBSID = 55580 at 2011:079:03:10:30.000   0 clean ACQ | 0 clean GUI | 
@@ -497,7 +497,7 @@ MP_STARCAT at 2011:074:10:40:06.367 (VCDU count = 16653677)
 >> WARNING: [10] Magnitude.  10.828
 >> WARNING: [11] Magnitude.  10.929
 >> WARNING: [12] Magnitude.  10.985
->> WARNING: [12] Bad Acquisition Star. 261621080 has  2 failed out of  3 attempts
+>> WARNING: [12] Bad Acquisition Star. 261621080 has  4 failed out of  6 attempts
 >> WARNING: [12] Marginal star. B-V = 0.700, Mag_Err = 0.41, Pos_Err = 0.30
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.608	-3.723	-2.210	
@@ -563,7 +563,7 @@ MP_STARCAT at 2011:075:02:15:54.557 (VCDU count = 95576)
 >> WARNING: [10] Magnitude.  10.828
 >> WARNING: [11] Magnitude.  10.929
 >> WARNING: [12] Magnitude.  10.985
->> WARNING: [12] Bad Acquisition Star. 261621080 has  2 failed out of  3 attempts
+>> WARNING: [12] Bad Acquisition Star. 261621080 has  4 failed out of  6 attempts
 >> WARNING: [12] Marginal star. B-V = 0.700, Mag_Err = 0.41, Pos_Err = 0.30
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.608	-3.723	-2.210	
@@ -594,8 +594,10 @@ MP_STARCAT at 2011:075:08:28:32.872 (VCDU count = 182828)
 [10]  1   552086800   ACQ  6x6   5.797   9.696  11.203    -43   1543  20   1  120    a2    
 [11]  2   552083344   ACQ  6x6   5.797   9.796  11.578   -812   1067  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.539	-6.539	-4.831	
-Acquisition Stars Expected  : 7.55
+>> WARNING: [11] Bad Acquisition Star. 552083344 has  1 failed out of  3 attempts
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.984	-6.006	-4.329	
+Acquisition Stars Expected  : 7.31
 ==================================================================================== 
 OBSID: 12931  AKARI-NEP-Deep Field   ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   268.910704    66.598145    85.476411
@@ -1058,10 +1060,11 @@ MP_STARCAT at 2011:078:20:17:53.159 (VCDU count = 1360429)
 
 >> WARNING: [ 1] Marginal star. B-V = 0.700, Mag_Err = 0.41, Pos_Err = 0.20
 >> WARNING: [ 1] Search spoiler.  260839240: Y,Z,Radial,Mag seps:  82   0  82 -0.6
+>> WARNING: [ 4] Bad Acquisition Star. 260849624 has  3 failed out of  3 attempts
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.60, Pos_Err = 0.20
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.105	-5.980	-4.146	
-Acquisition Stars Expected  : 6.89
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.440	-5.322	-3.499	
+Acquisition Stars Expected  : 6.10
 ==================================================================================== 
 OBSID: 55582  
 RA, Dec, Roll (deg):   150.700000     0.100000   270.896601

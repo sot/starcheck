@@ -72,29 +72,29 @@ Transponder A	before 2005:191:19:21:30.000
          ------  2005:191:10:40:00.000   OBC Load Segment Begins     CL191:1006 
 OBSID = 59574 at 2005:191:11:24:50.944   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 59573 at 2005:191:17:01:46.419   8 clean ACQ | 8 clean GUI | 
-OBSID = 59572 at 2005:191:18:49:07.803   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 5]
+OBSID = 59572 at 2005:191:18:49:07.803   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 59571 at 2005:191:19:15:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 59570 at 2005:191:19:34:36.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 5]
+OBSID = 59570 at 2005:191:19:34:36.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 59569 at 2005:191:19:58:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 59568 at 2005:191:20:17:36.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 5]
+OBSID = 59568 at 2005:191:20:17:36.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 59567 at 2005:191:20:41:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 59566 at 2005:191:21:00:36.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 5]
+OBSID = 59566 at 2005:191:21:00:36.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 59565 at 2005:191:21:24:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 59564 at 2005:191:21:43:36.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 5]
+OBSID = 59564 at 2005:191:21:43:36.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 59563 at 2005:191:22:07:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 59562 at 2005:191:22:26:36.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 5]
+OBSID = 59562 at 2005:191:22:26:36.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 59561 at 2005:191:22:50:36.000   8 clean ACQ | 8 clean GUI | 
-OBSID =  5368 at 2005:191:23:26:21.559   1 clean ACQ | 1 clean GUI | WARNINGS [ 2] WARNINGS [ 9]
-OBSID =  6338 at 2005:192:02:13:33.518   2 clean ACQ | 2 clean GUI | WARNINGS [ 2] WARNINGS [ 7]
-OBSID =  6339 at 2005:192:04:45:35.788   1 clean ACQ | 1 clean GUI | WARNINGS [ 3] WARNINGS [ 7]
-OBSID =  6340 at 2005:192:07:17:37.309   2 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 8]
+OBSID =  5368 at 2005:191:23:26:21.559   2 clean ACQ | 2 clean GUI | WARNINGS [ 2] WARNINGS [ 7]
+OBSID =  6338 at 2005:192:02:13:33.518   3 clean ACQ | 3 clean GUI | WARNINGS [ 2] WARNINGS [ 5]
+OBSID =  6339 at 2005:192:04:45:35.788   2 clean ACQ | 2 clean GUI | WARNINGS [ 3] WARNINGS [ 5]
+OBSID =  6340 at 2005:192:07:17:37.309   2 clean ACQ | 3 clean GUI | WARNINGS [ 3] WARNINGS [ 7]
 OBSID = 59560 at 2005:192:09:53:28.797   6 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
-OBSID = 59559 at 2005:192:10:10:21.619   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 59559 at 2005:192:10:10:21.619   6 clean ACQ | 6 clean GUI | WARNINGS [ 2]
 OBSID =  6336 at 2005:192:10:36:49.533   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2005:192:20:03:25.922   OBC Load Segment Begins     CL192:2006 
 OBSID = 59558 at 2005:192:20:06:31.922   8 clean ACQ | 8 clean GUI | 
 OBSID =  5580 at 2005:192:21:01:40.150   8 clean ACQ | 5 clean GUI | 
-OBSID =  5960 at 2005:193:04:43:14.360   6 clean ACQ | 5 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
+OBSID =  5960 at 2005:193:04:43:14.360   6 clean ACQ | 5 clean GUI | WARNINGS [ 2] 
 OBSID =  5600 at 2005:193:06:00:14.353   5 clean ACQ | 4 clean GUI | WARNINGS [ 3]
 OBSID = 59557 at 2005:193:18:30:29.953   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  6344 at 2005:193:19:08:07.016   6 clean ACQ | 3 clean GUI | WARNINGS [ 2]
@@ -208,7 +208,6 @@ MP_STARCAT at 2005:191:18:49:07.803 (VCDU count = 9818706)
 >> WARNING: [ 8] Magnitude.  10.714
 >> WARNING: [ 5] Search spoiler.  259147552: Y,Z,Radial,Mag seps:  72  86 113 -0.7
 >> WARNING: [ 6] Magnitude.  10.454
->> WARNING: [ 7] Bad Guide Star. 259149568 has bad data  6 of  6 attempts
 >> WARNING: [ 7] Marginal star. B-V = 1.500, Mag_Err = 0.59, Pos_Err = 0.18
 >> WARNING: [ 9] Centroid Perturbation Warning.  259146608: ASPQ1 = 20
 
@@ -254,7 +253,6 @@ MP_STARCAT at 2005:191:19:34:36.000 (VCDU count = 9829352)
 >> WARNING: [ 8] Magnitude.  10.714
 >> WARNING: [ 5] Search spoiler.  259147552: Y,Z,Radial,Mag seps:  73  86 113 -0.7
 >> WARNING: [ 6] Magnitude.  10.454
->> WARNING: [ 7] Bad Guide Star. 259149568 has bad data  6 of  6 attempts
 >> WARNING: [ 7] Marginal star. B-V = 1.500, Mag_Err = 0.59, Pos_Err = 0.18
 >> WARNING: [ 9] Centroid Perturbation Warning.  259146608: ASPQ1 = 20
 
@@ -300,7 +298,6 @@ MP_STARCAT at 2005:191:20:17:36.000 (VCDU count = 9839421)
 >> WARNING: [ 8] Magnitude.  10.714
 >> WARNING: [ 5] Search spoiler.  259147552: Y,Z,Radial,Mag seps:  73  86 113 -0.7
 >> WARNING: [ 6] Magnitude.  10.454
->> WARNING: [ 7] Bad Guide Star. 259149568 has bad data  6 of  6 attempts
 >> WARNING: [ 7] Marginal star. B-V = 1.500, Mag_Err = 0.59, Pos_Err = 0.18
 >> WARNING: [ 9] Centroid Perturbation Warning.  259146608: ASPQ1 = 20
 
@@ -346,7 +343,6 @@ MP_STARCAT at 2005:191:21:00:36.000 (VCDU count = 9849489)
 >> WARNING: [ 8] Magnitude.  10.714
 >> WARNING: [ 5] Search spoiler.  259147552: Y,Z,Radial,Mag seps:  73  86 113 -0.7
 >> WARNING: [ 6] Magnitude.  10.454
->> WARNING: [ 7] Bad Guide Star. 259149568 has bad data  6 of  6 attempts
 >> WARNING: [ 7] Marginal star. B-V = 1.500, Mag_Err = 0.59, Pos_Err = 0.18
 >> WARNING: [ 9] Centroid Perturbation Warning.  259146608: ASPQ1 = 20
 
@@ -392,7 +388,6 @@ MP_STARCAT at 2005:191:21:43:36.000 (VCDU count = 9859557)
 >> WARNING: [ 8] Magnitude.  10.714
 >> WARNING: [ 5] Search spoiler.  259147552: Y,Z,Radial,Mag seps:  73  86 113 -0.7
 >> WARNING: [ 6] Magnitude.  10.454
->> WARNING: [ 7] Bad Guide Star. 259149568 has bad data  6 of  6 attempts
 >> WARNING: [ 7] Marginal star. B-V = 1.500, Mag_Err = 0.59, Pos_Err = 0.18
 >> WARNING: [ 9] Centroid Perturbation Warning.  259146608: ASPQ1 = 20
 
@@ -438,7 +433,6 @@ MP_STARCAT at 2005:191:22:26:36.000 (VCDU count = 9869626)
 >> WARNING: [ 8] Magnitude.  10.714
 >> WARNING: [ 5] Search spoiler.  259147552: Y,Z,Radial,Mag seps:  73  86 113 -0.7
 >> WARNING: [ 6] Magnitude.  10.454
->> WARNING: [ 7] Bad Guide Star. 259149568 has bad data  6 of  6 attempts
 >> WARNING: [ 7] Marginal star. B-V = 1.500, Mag_Err = 0.59, Pos_Err = 0.18
 >> WARNING: [ 9] Centroid Perturbation Warning.  259146608: ASPQ1 = 20
 
@@ -498,18 +492,16 @@ MP_STARCAT at 2005:191:23:26:21.559 (VCDU count = 9883618)
 
 >> WARNING: [ 9] Magnitude.  10.700
 >> WARNING: [10] Magnitude.  10.710
->> WARNING: [ 4] Bad Acquisition Star. 728236176 has  4 failed out of  5 attempts
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.78, Pos_Err = 0.09
 >> WARNING: [ 4] Magnitude.  10.458
 >> WARNING: [ 5] Marginal star. B-V = 1.500, Mag_Err = 0.47, Pos_Err = 0.07
->> WARNING: [ 7] Bad Acquisition Star. 728246264 has  1 failed out of  3 attempts
 >> WARNING: [ 8] Magnitude.  10.329
 >> WARNING: [10] Search spoiler.  728236464: Y,Z,Radial,Mag seps:  66  55  86 -0.3
 >> WARNING: [11] Centroid Perturbation Warning.  728241624: ASPQ1 =  2
 >> WARNING: [11] Search spoiler.  728245576: Y,Z,Radial,Mag seps:   3  35  35 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-2.675	-1.624	-0.883	
-Acquisition Stars Expected  : 4.71
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.311	-2.171	-1.317	
+Acquisition Stars Expected  : 5.37
 ==================================================================================== 
 OBSID: 6338   
 RA, Dec, Roll (deg):   207.746549   -12.303057   255.562114
@@ -539,15 +531,13 @@ MP_STARCAT at 2005:192:02:13:33.518 (VCDU count = 9922767)
 >> WARNING: [10] Magnitude.  10.700
 >> WARNING: [11] Magnitude.  10.710
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.47, Pos_Err = 0.07
->> WARNING: [ 6] Bad Acquisition Star. 728246264 has  1 failed out of  3 attempts
 >> WARNING: [ 8] Magnitude.  10.329
->> WARNING: [ 9] Bad Acquisition Star. 728236176 has  4 failed out of  5 attempts
 >> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.78, Pos_Err = 0.09
 >> WARNING: [ 9] Magnitude.  10.458
 >> WARNING: [11] Search spoiler.  728236464: Y,Z,Radial,Mag seps:  71  47  86 -0.3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-2.923	-1.922	-1.173	
-Acquisition Stars Expected  : 5.34
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.539	-2.454	-1.611	
+Acquisition Stars Expected  : 6.01
 ==================================================================================== 
 OBSID: 6339   
 RA, Dec, Roll (deg):   207.794800   -12.345345   249.593330
@@ -578,15 +568,13 @@ MP_STARCAT at 2005:192:04:45:35.788 (VCDU count = 9958366)
 >> WARNING: [ 9] Magnitude.  10.700
 >> WARNING: [10] Magnitude.  10.710
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.47, Pos_Err = 0.07
->> WARNING: [ 5] Bad Acquisition Star. 728246264 has  1 failed out of  3 attempts
 >> WARNING: [ 7] Magnitude.  10.329
 >> WARNING: [10] Search spoiler.  728236464: Y,Z,Radial,Mag seps:  66  54  86 -0.3
->> WARNING: [11] Bad Acquisition Star. 728236176 has  4 failed out of  5 attempts
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.78, Pos_Err = 0.09
 >> WARNING: [11] Magnitude.  10.458
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-2.241	-1.355	-0.731	
-Acquisition Stars Expected  : 4.51
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-2.838	-1.848	-1.109	
+Acquisition Stars Expected  : 5.17
 ==================================================================================== 
 OBSID: 6340   
 RA, Dec, Roll (deg):   207.847691   -12.400007   263.582461
@@ -618,7 +606,6 @@ MP_STARCAT at 2005:192:07:17:37.309 (VCDU count = 9993962)
 >> WARNING: [10] Magnitude.  10.700
 >> WARNING: [11] Magnitude.  10.710
 >> WARNING: [ 7] Magnitude.  10.329
->> WARNING: [ 9] Bad Acquisition Star. 728236176 has  4 failed out of  5 attempts
 >> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.78, Pos_Err = 0.09
 >> WARNING: [ 9] Magnitude.  10.458
 >> WARNING: [11] Search spoiler.  728236464: Y,Z,Radial,Mag seps:  77  37  86 -0.3
@@ -626,8 +613,8 @@ MP_STARCAT at 2005:192:07:17:37.309 (VCDU count = 9993962)
 >> WARNING: [12] Magnitude.  10.420
 >> WARNING: [12] Search spoiler.  728630088: Y,Z,Radial,Mag seps:  25  65  70 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-2.774	-1.806	-1.089	
-Acquisition Stars Expected  : 5.24
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.198	-2.175	-1.396	
+Acquisition Stars Expected  : 5.76
 ==================================================================================== 
 OBSID: 59560  
 RA, Dec, Roll (deg):   208.400000   -12.300000   249.677222
@@ -680,12 +667,11 @@ MP_STARCAT at 2005:192:10:10:21.619 (VCDU count = 10034409)
 [ 8]  7   892865256   GUI  8x8   5.797   9.636  11.141   -823    250   1   1   25    g2    
 [ 9]  7   892868336   ACQ  8x8   5.797   9.718  11.656   1741   1076  20   1  120    a2    
 
->> WARNING: [ 3] Bad Acquisition Star. 892865992 has  3 failed out of  3 attempts
 >> WARNING: [ 3] Search spoiler.  892865856: Y,Z,Radial,Mag seps:  87  72 113 -0.8
 >> WARNING: [ 4] Search spoiler.  892866592: Y,Z,Radial,Mag seps:  59 121 135 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.965	-6.798	-4.903	
-Acquisition Stars Expected  : 6.80
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.13	-7.946	-6.018	
+Acquisition Stars Expected  : 7.73
 ==================================================================================== 
 OBSID: 6336   X1908+375: Low N_H     ACIS-S SIM Z offset:-2442 (-6.14mm) Grating: HETG 
 RA, Dec, Roll (deg):   287.715403     7.619510   184.496854
@@ -800,10 +786,9 @@ MP_STARCAT at 2005:193:04:43:14.360 (VCDU count = 10294985)
 
 >> WARNING: [11] Magnitude.  10.763
 >> WARNING: [12] Magnitude.  10.828
->> WARNING: [11] Bad Acquisition Star. 261625488 has  2 failed out of  6 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.580	-6.437	-4.576	
-Acquisition Stars Expected  : 7.10
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.508	-6.366	-4.506	
+Acquisition Stars Expected  : 7.04
 ==================================================================================== 
 OBSID: 5600   M81*                   ACIS-S SIM Z offset:0     (0.00mm) Grating: HETG 
 RA, Dec, Roll (deg):   148.807858    69.071268   316.075166
@@ -1220,12 +1205,12 @@ MP_STARCAT at 2005:195:17:20:59.891 (VCDU count = 11146753)
 >> WARNING: [10] Magnitude.  10.847
 >> WARNING: [ 4] Magnitude.  10.318
 >> WARNING: [ 7] Magnitude.  10.451
->> WARNING: [ 9] Bad Acquisition Star. 190843896 has  3 failed out of  5 attempts
->> WARNING: [10] Bad Acquisition Star. 190978048 has  4 failed out of  7 attempts
+>> WARNING: [ 9] Bad Acquisition Star. 190843896 has  1 failed out of  3 attempts
+>> WARNING: [10] Bad Acquisition Star. 190978048 has  3 failed out of  6 attempts
 >> WARNING: [11] Centroid Perturbation Warning.  190977952: ASPQ1 =  8
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.954	-3.270	-2.041	
-Acquisition Stars Expected  : 6.05
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.263	-3.570	-2.316	
+Acquisition Stars Expected  : 6.38
 ==================================================================================== 
 OBSID: 6347   M81*                   ACIS-S SIM Z offset:0     (0.00mm) Grating: HETG 
 RA, Dec, Roll (deg):   148.807858    69.071268   316.075166
