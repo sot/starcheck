@@ -18,20 +18,30 @@ TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # starcheck_characteristics tarball should be installed from
 # separate starcheck_characteristics project
 # with "make install_dist" from that project
-DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
+TEST_BACKSTOP = AUG0104A/CR214_0300.backstop 
 
-SHA_FILES = $(BIN) $(LIB) \
-	starcheck_data_local/ACABadPixels starcheck_data_local/agasc.bad \
+DATA_TGZ = $(INSTALL_DATA)/starcheck_characteristics.tar.gz
+# if there is no DATA_TGZ in INSTALL_DATA use the flight one
+ifeq ($(wildcard $(DATA_TGZ)),)
+	DATA_TGZ = /proj/sot/ska/data/starcheck/starcheck_characteristics.tar.gz
+endif
+
+DATA_FILES = starcheck_data_local/ACABadPixels starcheck_data_local/agasc.bad \
 	starcheck_data_local/fid_CHARACTERIS_JUL01 starcheck_data_local/fid_CHARACTERIS_FEB07 \
 	starcheck_data_local/fid_CHARACTERISTICS starcheck_data_local/characteristics.yaml \
 	starcheck_data_local/A.tlr starcheck_data_local/B.tlr starcheck_data_local/tlr.cfg
 
+SHA_FILES = $(BIN) $(LIB) $(DATA_FILES)
+
 # Calculate the SHA1 checksum of the set of files in SHA_FILES and return just the sum
 SHA = $(shell sha1sum $(SHA_FILES) | sha1sum | cut -c 1-40)
 
-test_data:
+$(TEST_BACKSTOP):
 	tar -zxvpf $(TEST_DATA_TGZ) 
 
+$(DATA_FILES): starcheck_data_local
+
+.PHONY: starcheck_data_local
 starcheck_data_local:
 	if [ -r characteristics_temp ] ; then rm -r characteristics_temp ; fi
 	if [ -r starcheck_data_local ] ; then rm -r starcheck_data_local ; fi
@@ -50,22 +60,20 @@ all:
 	# Nothing to make; "make install" to install to $(SKA)
 
 
-check: check_install all install
-	if [ -r test.html ] ; then rm test.html ; fi
-	if [ -r test.txt ] ; then rm test.txt ; fi
-	if [ -d test ] ; then rm -r test ; fi
-	$(INSTALL_BIN)/starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
-
+.PHONY: test
 # Basic aliveness test
-test: test_data starcheck_data_local
+test: $(TEST_BACKSTOP) $(DATA_FILES)
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
 	./sandbox_starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
 
+check: test
+
 
 # Comprehensive regression test
-regress: test_data starcheck_data_local
+.PHONY: regress
+regress: $(TEST_BACKSTOP) $(DATA_FILES)
 	$(SRC)/run_regress $(SHA)
 
 checklist:
