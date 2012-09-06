@@ -47,7 +47,7 @@ OBSID =  8476 at 2006:321:10:48:46.530   8 clean ACQ | 5 clean GUI |
 OBSID =  8474 at 2006:322:02:16:46.530   8 clean ACQ | 5 clean GUI | 
 OBSID = 58697 at 2006:322:05:28:42.291   5 clean ACQ | 4 clean GUI | WARNINGS [ 6] WARNINGS [ 3]
 OBSID =  7053 at 2006:322:06:18:04.436   7 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 1]
-OBSID = 62819 at 2006:322:06:58:44.881   0 clean ACQ | 0 clean GUI | WARNINGS [ 3] 
+OBSID = 62819 at 2006:322:06:58:44.881   0 clean ACQ | 0 clean GUI | WARNINGS [ 4] 
 OBSID =  7745 at 2006:322:20:48:10.881   8 clean ACQ | 5 clean GUI | 
 OBSID = 58696 at 2006:323:08:50:09.286   7 clean ACQ | 5 clean GUI | WARNINGS [ 3]
 ==================================================================================== 
@@ -575,7 +575,7 @@ MP_STARCAT at 2006:322:06:18:04.436 (VCDU count = 9107368)
 
 >> WARNING: [ 2] Angle Off CCD.
 >> WARNING: [ 3] Angle Off CCD.
->> WARNING: Next obsid has no manvr; checking dither until next obsid start time 
+>> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 >> WARNING: [13] Search spoiler. 1037566104: Y,Z,Radial,Mag seps: 143   2 143 -0.8
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.891	-6.809	-5.013	
@@ -585,6 +585,7 @@ OBSID: 62819
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 
+>> WARNING: Could not find obsid 62819 in processing summary
 >> WARNING: No Guide Star Summary for obsid 62819 (62819). 
 >> WARNING: No target/maneuver for obsid 62819 (62819). 
 >> WARNING: No star catalog for obsid 62819 (62819).

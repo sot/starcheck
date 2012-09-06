@@ -71,7 +71,7 @@ Transponder A	before 2009:279:23:05:05.949
 
          ------  2009:277:08:37:00.000   OBC Load Segment Begins     CL277:0801 
 OBSID = 56788 at 2009:277:08:40:06.000   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
-OBSID = 56787 at 2009:277:11:50:58.949   8 clean ACQ | 8 clean GUI | 
+OBSID = 56787 at 2009:277:11:50:58.949   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 56786 at 2009:277:18:05:33.178   0 clean ACQ | 0 clean GUI | 
 OBSID = 56785 at 2009:277:18:33:02.307   6 clean ACQ | 6 clean GUI | WARNINGS [ 2]
 OBSID = 56784 at 2009:277:19:04:14.811   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
@@ -97,7 +97,7 @@ OBSID = 56769 at 2009:280:02:10:11.949   8 clean ACQ | 8 clean GUI |
 OBSID = 56768 at 2009:280:02:34:11.949   8 clean ACQ | 8 clean GUI | 
          ------  2009:280:04:31:32.136   OBC Load Segment Begins     CL280:0401 
 OBSID = 56767 at 2009:280:04:34:38.136   6 clean ACQ | 7 clean GUI | WARNINGS [ 2]
-OBSID = 56766 at 2009:280:05:38:19.423   8 clean ACQ | 8 clean GUI | 
+OBSID = 56766 at 2009:280:05:38:19.423   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 56765 at 2009:280:08:45:06.702   0 clean ACQ | 0 clean GUI | 
 OBSID = 56764 at 2009:280:09:27:25.054   8 clean ACQ | 8 clean GUI | 
 OBSID = 11868 at 2009:280:11:00:38.801   8 clean ACQ | 5 clean GUI | 
@@ -109,7 +109,7 @@ OBSID = 56763 at 2009:282:12:45:19.295   8 clean ACQ | 8 clean GUI |
 OBSID = 56762 at 2009:282:12:55:25.729   6 clean ACQ | 8 clean GUI | WARNINGS [ 3]
 OBSID = 56761 at 2009:282:17:37:12.165   8 clean ACQ | 8 clean GUI | 
 OBSID = 56760 at 2009:282:23:22:49.708   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
-OBSID = 56759 at 2009:283:00:31:53.852   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 56759 at 2009:283:00:31:53.852   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 56758 at 2009:283:01:00:12.729   0 clean ACQ | 0 clean GUI | 
          ------  2009:283:01:00:12.729   OBC Load Segment Begins     CL283:0101 
 OBSID = 12001 at 2009:283:03:30:28.434   8 clean ACQ | 5 clean GUI | 
@@ -162,6 +162,8 @@ MP_STARCAT at 2009:277:11:50:58.949 (VCDU count = 6753466)
 [ 6]  5   695340496   BOT  8x8   5.797   7.451   8.953   1663  -1378  20   1  120          
 [ 7]  6   695342208   BOT  8x8   5.797   8.179   9.688   -869  -1953  20   1  120          
 [ 8]  7   695342616   BOT  8x8   5.797   9.180  10.688  -1417    -99  20   1  120          
+
+>> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.41	-8.181	-6.202	
 Acquisition Stars Expected  : 7.73
@@ -697,6 +699,8 @@ MP_STARCAT at 2009:280:05:38:19.423 (VCDU count = 7677721)
 [ 8]  7   230032072   GUI  8x8   5.797   9.398  10.906  -1682    989   1   1   25    g3    
 [ 9]  7   230031520   ACQ  8x8   5.797   9.834  11.344    812   -877  20   1  120    a2    
 
+>> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
+
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.172	-7.077	-5.261	
 Acquisition Stars Expected  : 7.61
 ==================================================================================== 
@@ -986,6 +990,7 @@ MP_STARCAT at 2009:283:00:31:53.852 (VCDU count = 8617485)
 [10]  6   692069528   ACQ  8x8   5.797   9.994  11.500   -766    823  20   1  120    a2    
 [11]  7   692457248   ACQ  8x8   5.797  10.171  11.672    442   1094  20   1  120    a2    
 
+>> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 >> WARNING: [ 7] Magnitude.  10.305
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.579	-4.810	-3.400	

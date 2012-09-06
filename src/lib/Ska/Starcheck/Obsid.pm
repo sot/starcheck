@@ -471,13 +471,72 @@ sub set_ps_times{
 	    }
 	}
     }
-
-    $self->{or_er_start} = date2time($or_er_start);
-    $self->{or_er_stop} = date2time($or_er_stop);
-
+    if (not defined $or_er_start or not defined $or_er_stop){
+        push @{$self->{warn}}, "$alarm Could not find obsid $obsid in processing summary\n";
+        $self->{or_er_start} = undef;
+        $self->{or_er_stop} = undef;
+    }
+    else{
+        $self->{or_er_start} = date2time($or_er_start);
+        $self->{or_er_stop} = date2time($or_er_stop);
+    }
 
 
 }
+
+#############################################################################################
+sub set_npm_times{
+# This needs to be run after the maneuvers for the *next* obsid have
+# been set, so it can't run in the setup loop in starcheck.pl that
+# calls set_maneuver().
+#############################################################################################
+    my $self = shift;
+
+    # NPM range that will be checked for momentum dumps
+    # duplicates check_dither range...
+    my ($obs_tstart, $obs_tstop);
+    
+    # as with dither, check for end of associated maneuver to this attitude
+    # and finding none, set start time as obsid start
+    my $manvr = find_command($self, "MP_TARGQUAT", -1);
+    if ((defined $manvr) and (defined $manvr->{tstop})){
+        $obs_tstart = $manvr->{tstop};
+    }
+    else{
+        $obs_tstart = date2time($self->{date});
+    }
+    
+    # set the observation stop as the beginning of the next maneuever
+    # or, if last obsid in load, use the processing summary or/er observation
+    # stop time
+    if (defined $self->{next}){
+        my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
+        if ((defined $next_manvr) & (defined $next_manvr->{tstart})){
+            $obs_tstop  = $next_manvr->{tstart};
+        }
+        else{
+            # if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
+            # just use next obsid start time
+            my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
+            if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
+		push @{$self->{warn}}, "$alarm Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)\n";
+                $obs_tstop = $next_cmd_obsid->{time};
+            }
+        }
+    }
+    else{
+        $obs_tstop = $self->{or_er_stop};
+    }
+
+    if (not defined $obs_tstart or not defined $obs_tstop){
+        push @{$self->{warn}}, "$alarm Could not determine obsid start and stop times for NPM checks (dither, momentum)\n";
+    }
+    else{
+        $self->{obs_tstart} = $obs_tstart;
+        $self->{obs_tstop} = $obs_tstop;
+    }
+}
+
 
 
 ##################################################################################
@@ -578,38 +637,16 @@ sub check_dither {
     if ( $self->{obsid} =~ /^\d*$/){
 	return if ($self->{obsid} > 50000); # For eng obs, don't have OR to specify dither
     }
-    unless ($manvr = find_command($self, "MP_TARGQUAT", -1) and defined $self->{DITHER_ON} and defined $manvr->{tstart}) {
+    unless (defined $self->{DITHER_ON} 
+            and $manvr = find_command($self, "MP_TARGQUAT", -1) 
+            and defined $manvr->{tstart}) {
 	push @{$self->{warn}}, "$alarm Dither status not checked\n";
 	return;
     }
 
     # set the observation start as the end of the maneuver
-    my $obs_tstart = $manvr->{tstop};
-    my $obs_tstop;
-
-    # set the observation stop as the beginning of the next maneuever
-    # or, if last obsid in load, use the processing summary or/er observation
-    # stop time
-    if (defined $self->{next}){
-	my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
-	if (defined $next_manvr){
-	    $obs_tstop  = $next_manvr->{tstart};
-	}
-	else{
-	    # if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
-	    # just use next obsid start time
-	    my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
-	    if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
-		push @{$self->{warn}}, "$alarm Next obsid has no manvr; checking dither until next obsid start time \n";
-		$obs_tstop = $next_cmd_obsid->{time};
-	    }
-	}
-
-    }
-    else{
-	$obs_tstop = $self->{or_er_stop};
-    }
-    
+    my $obs_tstart = $self->{obs_tstart};
+    my $obs_tstop = $self->{obs_tstop};
 
     # Determine current dither status by finding the last dither commanding before 
     # the start of observation (+ 8 minutes)
@@ -651,42 +688,8 @@ sub check_momentum_unload{
 #############################################################################################
     my $self = shift;
     my $backstop = shift;
-    
-    # NPM range that will be checked for momentum dumps
-    # duplicates check_dither range...
-    my ($obs_tstart, $obs_tstop);
-    
-    # as with dither, check for end of associated maneuver to this attitude
-    # and finding none, set start time as obsid start
-    my $manvr = find_command($self, "MP_TARGQUAT", -1);
-    if ((defined $manvr) and (defined $manvr->{tstop})){
-        $obs_tstart = $manvr->{tstop};
-    }
-    else{
-        $obs_tstart = date2time($self->{date});
-    }
-    
-    # set the observation stop as the beginning of the next maneuever
-    # or, if last obsid in load, use the processing summary or/er observation
-    # stop time
-    if (defined $self->{next}){
-        my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
-        if (defined $next_manvr){
-            $obs_tstop  = $next_manvr->{tstart};
-        }
-        else{
-            # if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
-            # just use next obsid start time
-            my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
-            if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
-                $obs_tstop = $next_cmd_obsid->{time};
-            }
-        }
-    }
-    else{
-        $obs_tstop = $self->{or_er_stop};
-    }
-
+    my $obs_tstart = $self->{obs_tstart};
+    my $obs_tstop = $self->{obs_tstop};
     
     if (not defined $obs_tstart or not defined $obs_tstop){
         push @{$self->{warn}}, "$alarm Momentum Unloads not checked.\n";

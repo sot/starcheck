@@ -39,7 +39,7 @@ OBSID = 56575 at 2009:356:15:12:18.103   6 clean ACQ | 8 clean GUI | WARNINGS [ 
 OBSID = 56574 at 2009:356:16:22:24.938   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 56573 at 2009:356:20:01:15.456   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 56572 at 2009:356:20:56:18.246   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
-OBSID = 56571 at 2009:357:00:07:49.177   6 clean ACQ | 8 clean GUI | WARNINGS [ 2]
+OBSID = 56571 at 2009:357:00:07:49.177   6 clean ACQ | 8 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 56570 at 2009:357:01:07:39.103   0 clean ACQ | 0 clean GUI | 
 OBSID = 12064 at 2009:357:03:32:22.942   7 clean ACQ | 4 clean GUI | WARNINGS [ 2]
 OBSID = 11027 at 2009:357:09:17:36.103   8 clean ACQ | 5 clean GUI | 
@@ -56,7 +56,7 @@ OBSID = 56568 at 2009:359:06:40:50.259   7 clean ACQ | 7 clean GUI | WARNINGS [ 
 OBSID = 56567 at 2009:359:08:22:41.970   8 clean ACQ | 8 clean GUI | 
 OBSID = 56566 at 2009:359:11:21:50.836   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 56565 at 2009:359:12:26:53.254   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
-OBSID = 56564 at 2009:359:16:24:52.393   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 56564 at 2009:359:16:24:52.393   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 56563 at 2009:359:17:20:27.259   0 clean ACQ | 0 clean GUI | 
 OBSID = 11241 at 2009:359:19:45:48.888   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 12042 at 2009:360:01:07:53.259   8 clean ACQ | 5 clean GUI | WARNINGS [ 2]
@@ -459,6 +459,7 @@ MP_STARCAT at 2009:357:00:07:49.177 (VCDU count = 8048)
 [11]  6   629279848   ACQ  8x8   5.797   9.671  11.172    871  -1459  20   1  120    a2    
 [12]  7    19402632   ACQ  8x8   5.797   9.772  11.281   -643    497  20   1  120    a2    
 
+>> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 >> WARNING: [11] Search spoiler.  629281464: Y,Z,Radial,Mag seps:  25  42  50 -0.5
 >> WARNING: [12] Search spoiler.   19400744: Y,Z,Radial,Mag seps:  95 121 154 -0.8
 
@@ -912,6 +913,7 @@ MP_STARCAT at 2009:359:16:24:52.393 (VCDU count = 911163)
 [ 9]  6   629279592   ACQ  8x8   5.797   9.611  11.719    569   -615  20   1  120    a2    
 [10]  7   629157064   ACQ  8x8   5.797   9.872  11.375  -1311   -849  20   1  120    a2    
 
+>> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 >> WARNING: [ 2] Search spoiler.   19400744: Y,Z,Radial,Mag seps:  83 130 154 -0.8
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.749	-6.730	-4.997	
