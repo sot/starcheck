@@ -85,7 +85,7 @@ OBSID = 56530 at 2010:012:18:43:53.109   8 clean ACQ | 8 clean GUI |
 OBSID = 56529 at 2010:012:18:54:19.078   8 clean ACQ | 8 clean GUI | 
 OBSID = 56528 at 2010:012:20:39:38.315   8 clean ACQ | 8 clean GUI | 
 OBSID = 56527 at 2010:012:23:55:18.959   8 clean ACQ | 8 clean GUI | 
-OBSID = 56526 at 2010:013:00:50:56.777   8 clean ACQ | 8 clean GUI | 
+OBSID = 56526 at 2010:013:00:50:56.777   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 56525 at 2010:013:04:34:04.078   0 clean ACQ | 0 clean GUI | 
 OBSID = 11562 at 2010:013:06:37:48.927   8 clean ACQ | 5 clean GUI | 
 OBSID = 11316 at 2010:013:13:39:04.078   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
@@ -557,6 +557,8 @@ MP_STARCAT at 2010:013:00:50:56.777 (VCDU count = 7098731)
 [ 7]  6   444477520   BOT  8x8   5.797   8.006   9.516  -1340    247  20   1  120          
 [ 8]  7   387199672   GUI  8x8   5.797   8.889  10.391   2007   1078   1   1   25          
 [ 9]  7   387329064   ACQ  8x8   5.797   6.535   8.031    674   1865  20   1  120    a2    
+
+>> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
 Acquisition Stars Expected  : 7.87

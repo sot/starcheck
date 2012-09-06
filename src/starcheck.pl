@@ -401,6 +401,10 @@ for my $obsid_idx (0 .. ($#obsid_id)){
     $obs{$obsid_id[$obsid_idx]}->{next} = ( $obsid_idx < $#obsid_id) ? $obs{$obsid_id[$obsid_idx+1]} : undef;
 }
 
+
+
+
+
 # Check that every Guide summary OFLS ID has a matching OFLS ID in DOT
 
 foreach my $oflsid (keys %guidesumm){
@@ -465,6 +469,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
+    $obs{$obsid}->set_npm_times();
     $obs{$obsid}->check_dither(\@dither);
 	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->count_good_stars();
