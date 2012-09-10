@@ -21,6 +21,7 @@ Using maneuver file /data/mpcrit1/mplogs/2005/MAR0705/oflsb/mps/mm066_0424.sum
 Using mech check file /data/mpcrit1/mplogs/2005/MAR0705/oflsb/output/TEST_mechcheck.txt
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_JUL01
 Using processing summary file /data/mpcrit1/mplogs/2005/MAR0705/oflsb/mps/ms066_0424.sum
+Using radmon file /data/mpcrit1/mplogs/2005/MAR0705/oflsb/History/RADMON.txt
 Using ACABadPixel file from 2008273 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -73,9 +74,9 @@ Transponder B	before 2005:070:02:21:30.349
 OBSID =  5705 at 2005:066:04:50:00.752   8 clean ACQ | 5 clean GUI | 
 OBSID =  4536 at 2005:066:06:16:28.689   8 clean ACQ | 5 clean GUI | 
 OBSID =  5659 at 2005:066:22:01:05.101   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID = 59765 at 2005:067:00:19:39.349   7 clean ACQ | 7 clean GUI | WARNINGS [ 2]
+OBSID = 59765 at 2005:067:00:19:39.349   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 59764 at 2005:067:04:52:49.349   8 clean ACQ | 8 clean GUI | 
-OBSID = 59763 at 2005:067:11:22:22.598   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 59763 at 2005:067:11:22:22.598   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
          ------  2005:067:15:10:20.083   OBC Load Segment Begins     CL067:1502 
 OBSID =  5428 at 2005:067:17:09:00.083   6 clean ACQ | 4 clean GUI | WARNINGS [ 2]
 OBSID = 59762 at 2005:068:04:50:13.594   5 clean ACQ | 4 clean GUI | WARNINGS [ 4]
@@ -89,18 +90,18 @@ OBSID =  5832 at 2005:069:07:27:33.067   8 clean ACQ | 5 clean GUI |
 OBSID =  5695 at 2005:069:10:41:22.400   5 clean ACQ | 4 clean GUI | WARNINGS [ 3]
 OBSID = 59760 at 2005:069:14:39:02.071   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 59759 at 2005:069:20:20:39.434   8 clean ACQ | 8 clean GUI | 
-OBSID = 59758 at 2005:070:00:27:54.652   5 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
-OBSID = 59757 at 2005:070:01:46:17.203   3 clean ACQ | 3 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
+OBSID = 59758 at 2005:070:00:27:54.652   5 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
+OBSID = 59757 at 2005:070:01:46:17.203   3 clean ACQ | 3 clean GUI | WARNINGS [ 5] WARNINGS [ 3]
 OBSID = 59756 at 2005:070:02:15:30.349   0 clean ACQ | 0 clean GUI | 
-OBSID = 59755 at 2005:070:02:34:36.349   3 clean ACQ | 3 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
+OBSID = 59755 at 2005:070:02:34:36.349   3 clean ACQ | 3 clean GUI | WARNINGS [ 5] WARNINGS [ 3]
 OBSID = 59754 at 2005:070:02:58:30.349   0 clean ACQ | 0 clean GUI | 
-OBSID = 59753 at 2005:070:03:18:10.022   3 clean ACQ | 3 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
+OBSID = 59753 at 2005:070:03:18:10.022   3 clean ACQ | 3 clean GUI | WARNINGS [ 5] WARNINGS [ 3]
 OBSID = 59752 at 2005:070:03:42:37.694   0 clean ACQ | 0 clean GUI | 
-OBSID = 59751 at 2005:070:04:01:43.694   3 clean ACQ | 3 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
+OBSID = 59751 at 2005:070:04:01:43.694   3 clean ACQ | 3 clean GUI | WARNINGS [ 5] WARNINGS [ 3]
 OBSID = 59750 at 2005:070:04:25:37.694   0 clean ACQ | 0 clean GUI | 
-OBSID = 59749 at 2005:070:04:45:45.534   3 clean ACQ | 3 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
+OBSID = 59749 at 2005:070:04:45:45.534   3 clean ACQ | 3 clean GUI | WARNINGS [ 5] WARNINGS [ 3]
 OBSID = 59748 at 2005:070:05:10:41.375   0 clean ACQ | 0 clean GUI | 
-OBSID = 59747 at 2005:070:05:30:14.880   3 clean ACQ | 3 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
+OBSID = 59747 at 2005:070:05:30:14.880   3 clean ACQ | 3 clean GUI | WARNINGS [ 5] WARNINGS [ 3]
 OBSID = 59746 at 2005:070:05:54:42.385   8 clean ACQ | 8 clean GUI | 
 OBSID =  6183 at 2005:070:08:04:12.071   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2005:070:12:35:00.000   OBC Load Segment Begins     CL070:1202 
@@ -110,7 +111,7 @@ OBSID =  5781 at 2005:071:03:38:56.973   8 clean ACQ | 5 clean GUI |
 OBSID =  5718 at 2005:071:12:44:52.422   4 clean ACQ | 4 clean GUI | WARNINGS [ 4]
 OBSID =  5766 at 2005:071:14:36:12.422   7 clean ACQ | 4 clean GUI | WARNINGS [ 2]
          ------  2005:071:20:30:01.285   OBC Load Segment Begins     CL071:2002 
-OBSID = 59744 at 2005:072:06:29:01.755   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 59744 at 2005:072:06:29:01.755   7 clean ACQ | 5 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 59743 at 2005:072:11:18:43.573   8 clean ACQ | 8 clean GUI |
 ==================================================================================== 
 OBSID: 5705   SDSS J093514.72+0335   ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
@@ -235,6 +236,7 @@ MP_STARCAT at 2005:067:00:19:39.349 (VCDU count = 1304190)
 [ 9]  6    33555136   ACQ  8x8   5.797   6.342   7.844  -1289    -56  20   1  120    a2    
 [10]  7    33555200   ACQ  8x8   5.797   9.955  11.453  -1519   -510  20   1  120    a3    
 
+>> WARNING: 2 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.49, Pos_Err = 0.10
 >> WARNING: [10] Search spoiler.   33554440: Y,Z,Radial,Mag seps: 146 131 196 -0.3
 
@@ -286,6 +288,7 @@ MP_STARCAT at 2005:067:11:22:22.598 (VCDU count = 1459363)
 [ 7]  6   111281680   BOT  8x8   5.797  10.268  11.766   -769   2170  20   1  120  a3g3    
 [ 8]  7   111285392   BOT  8x8   5.797  10.232  11.734  -2144   2095  20   1  120  a3g3    
 
+>> WARNING: 1 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 5] Magnitude.  10.433
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.102	-3.650	-2.510	
@@ -649,6 +652,7 @@ MP_STARCAT at 2005:070:00:27:54.652 (VCDU count = 2317635)
 [10]  7   113510544   ACQ  8x8   5.797  10.725  13.031  -2072   1924  20   1  120    a3   C
 
 >> WARNING: [10] Magnitude.  10.725
+>> WARNING: 2 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 4] Magnitude.  10.439
 >> WARNING: [ 9] Magnitude.  10.339
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.72, Pos_Err = 0.08
@@ -681,6 +685,7 @@ MP_STARCAT at 2005:070:01:46:17.203 (VCDU count = 2335986)
 >> WARNING: [ 6] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 7] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 8] Readout Size.  6x6 Should be 8x8
+>> WARNING: 1 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 5] Magnitude.  10.522
 >> WARNING: [ 8] Centroid Perturbation Warning.  113510176: ASPQ1 =  1
 >> WARNING: [ 8] Search spoiler.  113509560: Y,Z,Radial,Mag seps:  16  32  36 -0.9
@@ -725,6 +730,7 @@ MP_STARCAT at 2005:070:02:34:36.349 (VCDU count = 2347300)
 >> WARNING: [ 6] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 7] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 8] Readout Size.  6x6 Should be 8x8
+>> WARNING: 1 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 5] Magnitude.  10.522
 >> WARNING: [ 6] Centroid Perturbation Warning.  113510176: ASPQ1 =  1
 >> WARNING: [ 6] Search spoiler.  113509560: Y,Z,Radial,Mag seps:  16  32  36 -0.9
@@ -769,6 +775,7 @@ MP_STARCAT at 2005:070:03:18:10.022 (VCDU count = 2357500)
 >> WARNING: [ 6] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 7] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 8] Readout Size.  6x6 Should be 8x8
+>> WARNING: 1 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 5] Magnitude.  10.522
 >> WARNING: [ 8] Centroid Perturbation Warning.  113510176: ASPQ1 =  1
 >> WARNING: [ 8] Search spoiler.  113509560: Y,Z,Radial,Mag seps:  16  32  36 -0.9
@@ -813,6 +820,7 @@ MP_STARCAT at 2005:070:04:01:43.694 (VCDU count = 2367699)
 >> WARNING: [ 6] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 7] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 8] Readout Size.  6x6 Should be 8x8
+>> WARNING: 1 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 5] Magnitude.  10.522
 >> WARNING: [ 6] Centroid Perturbation Warning.  113510176: ASPQ1 =  1
 >> WARNING: [ 6] Search spoiler.  113509560: Y,Z,Radial,Mag seps:  16  32  36 -0.9
@@ -857,6 +865,7 @@ MP_STARCAT at 2005:070:04:45:45.534 (VCDU count = 2378009)
 >> WARNING: [ 6] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 7] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 8] Readout Size.  6x6 Should be 8x8
+>> WARNING: 1 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 5] Magnitude.  10.522
 >> WARNING: [ 6] Centroid Perturbation Warning.  113510176: ASPQ1 =  1
 >> WARNING: [ 6] Search spoiler.  113509560: Y,Z,Radial,Mag seps:  16  32  36 -0.9
@@ -901,6 +910,7 @@ MP_STARCAT at 2005:070:05:30:14.880 (VCDU count = 2388426)
 >> WARNING: [ 6] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 7] Readout Size.  6x6 Should be 8x8
 >> WARNING: [ 8] Readout Size.  6x6 Should be 8x8
+>> WARNING: 1 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 5] Magnitude.  10.522
 >> WARNING: [ 7] Centroid Perturbation Warning.  113510176: ASPQ1 =  1
 >> WARNING: [ 7] Search spoiler.  113509560: Y,Z,Radial,Mag seps:  16  32  36 -0.9
@@ -1147,6 +1157,7 @@ MP_STARCAT at 2005:072:06:29:01.755 (VCDU count = 3076531)
 [10]  7   330311888   ACQ  8x8   5.797   9.597  11.094    -69    -38  20   1  120    a2    
 
 >> WARNING: [ 8] Magnitude.  10.635
+>> WARNING: 2 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 6] Magnitude.  10.501
 >> WARNING: [ 7] Magnitude.  10.595
 

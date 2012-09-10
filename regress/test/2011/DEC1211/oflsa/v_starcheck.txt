@@ -21,6 +21,7 @@ Using maneuver file /data/mpcrit1/mplogs/2011/DEC1211/oflsa/mps/mm346_0006.sum
 Using mech check file /data/mpcrit1/mplogs/2011/DEC1211/oflsa/vehicle/output/V_TEST_mechcheck.txt
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2011/DEC1211/oflsa/mps/ms346_0006.sum
+Using radmon file /data/mpcrit1/mplogs/2011/DEC1211/oflsa/History/RADMON.txt
 Using ACABadPixel file from 2008273 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -96,9 +97,9 @@ OBSID = 12860 at 2011:348:01:08:56.202   8 clean ACQ | 5 clean GUI |
 OBSID = 13334 at 2011:348:07:43:45.435   6 clean ACQ | 4 clean GUI | WARNINGS [ 2]
 OBSID = 12715 at 2011:348:08:31:43.435   6 clean ACQ | 4 clean GUI | WARNINGS [ 2]
 OBSID = 13603 at 2011:348:11:38:23.435   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
-OBSID = 54986 at 2011:348:15:03:58.074   7 clean ACQ | 7 clean GUI | WARNINGS [ 2]
+OBSID = 54986 at 2011:348:15:03:58.074   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 54985 at 2011:348:16:06:00.377   8 clean ACQ | 8 clean GUI | 
-OBSID = 54984 at 2011:348:16:59:25.048   5 clean ACQ | 6 clean GUI | WARNINGS [ 4]
+OBSID = 54984 at 2011:348:16:59:25.048   5 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 4]
 OBSID = 54983 at 2011:348:19:16:12.129   8 clean ACQ | 8 clean GUI | 
          ------  2011:348:21:00:00.000   OBC Load Segment Begins     CL348:2107 
 OBSID = 54982 at 2011:348:21:47:52.368   8 clean ACQ | 8 clean GUI | 
@@ -107,7 +108,7 @@ OBSID = 14024 at 2011:348:23:26:07.985   8 clean ACQ | 5 clean GUI |
 OBSID = 13998 at 2011:350:14:21:03.368   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 14049 at 2011:350:23:14:34.533   8 clean ACQ | 5 clean GUI | 
 OBSID = 12910 at 2011:351:01:13:14.338   6 clean ACQ | 4 clean GUI | WARNINGS [ 3]
-OBSID = 54981 at 2011:351:06:31:33.830   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 54981 at 2011:351:06:31:33.830   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
 OBSID = 54980 at 2011:351:07:24:35.092   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 54979 at 2011:351:08:40:24.025   8 clean ACQ | 8 clean GUI | 
 OBSID = 54978 at 2011:351:10:47:21.827   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
@@ -682,6 +683,7 @@ MP_STARCAT at 2011:348:15:03:58.074 (VCDU count = 16663101)
 [ 8]  7   721170728   GUI  8x8   5.797  10.421  11.922  -2218   1443   1   1   25    g3    
 [ 9]  7   721170688   ACQ  8x8   5.797  10.210  12.266  -1599   -338  20   1  120    a3   C
 
+>> WARNING: 1 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Magnitude.  10.421
 >> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.63, Pos_Err = 0.08
 
@@ -737,6 +739,7 @@ MP_STARCAT at 2011:348:16:59:25.048 (VCDU count = 16690133)
 [ 8]  7    10099512   GUI  8x8   5.797   9.794  11.297   2370   2415   1   1   25    g3    
 [ 9]  7    10101728   ACQ  8x8   5.797  10.496  12.000    -71   1248  20   1  120    a3    
 
+>> WARNING: 2 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 4] Magnitude.  10.408
 >> WARNING: [ 6] Marginal star. B-V = 1.500, Mag_Err = 0.55, Pos_Err = 0.11
 >> WARNING: [ 6] Magnitude.  10.443
@@ -941,6 +944,7 @@ MP_STARCAT at 2011:351:06:31:33.830 (VCDU count = 777420)
 [ 8]  7   652223976   GUI  8x8   5.797  10.329  11.828   1734  -1287   1   1   25    g3    
 [ 9]  7   652214976   ACQ  8x8   5.797  10.279  11.781  -1125   -282  20   1  120    a3    
 
+>> WARNING: 1 stars brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 3] Magnitude.  10.316
 >> WARNING: [ 8] Magnitude.  10.329
 >> WARNING: [ 9] Bad Acquisition Star. 652214976 has  2 failed out of  6 attempts
