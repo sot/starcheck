@@ -17,7 +17,7 @@ use warnings;
 use Getopt::Long;
 use IO::File;
 use IO::All;
-
+use Sys::Hostname;
 use English;
 use File::Basename;
 use File::Copy;
@@ -487,17 +487,18 @@ my $out = '<TABLE><TD><PRE> ';
 my $date = `date`;
 chomp $date;
 
+my $hostname = hostname;
 $save_hash{run}{date} = $date;
 
 $out .= "------------  Starcheck $version    -----------------\n";
-$out .= " Run on $date by $ENV{USER} from $ENV{HOST}\n";
+$out .= " Run on $date by $ENV{USER} from $hostname\n";
 $out .= " Configuration:  Using AGASC at $agasc_dir\n";
 # ASCDS $ascds_version_name ($ascds_version)\n"
 #    if ($mp_agasc_version and $ascds_version_name);
 $out .= "\n";
 
 $save_hash{run}{user} = $ENV{USER};
-$save_hash{run}{host} = $ENV{HOST};
+$save_hash{run}{host} = $hostname;
 $save_hash{run}{agasc} = $agasc_dir;
 
 if ($mp_top_link){
