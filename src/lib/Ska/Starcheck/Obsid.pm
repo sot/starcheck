@@ -684,6 +684,60 @@ sub check_dither {
 }
 
 #############################################################################################
+sub check_bright_perigee{
+#############################################################################################
+    my $self = shift;
+    my $radmon = shift;
+    my $min_mag = 9.0;
+    my $min_n_stars = 3;
+
+    # if this is an OR, just return
+    return if (($self->{obsid} =~ /^\d+$/ && $self->{obsid} < 50000));
+
+    # set the observation start as the end of the maneuver
+    my $obs_tstart = $self->{obs_tstart};
+    my $obs_tstop = $self->{obs_tstop};
+
+    # is this obsid in perigee?  assume no to start
+    my $in_perigee = 0;
+
+    for my $rad (reverse @{$radmon}){
+      next if ($rad->{time} > $obs_tstop);
+      if ($rad->{state} eq 'DISA'){
+        $in_perigee = 1;
+        last;
+      }
+      last if ($rad->{time} < $obs_tstart);
+    }
+
+    # nothing to do if not in perigee
+    return if (not $in_perigee);
+
+    my $c = find_command($self, 'MP_STARCAT');
+    return if (not defined $c);
+    # check for at least N bright stars
+    my $bright_count = 0;
+    for my $i (0 .. 16){
+      my $type = $c->{"TYPE$i"};
+      next if ((not defined $type) or ($type eq 'NUL'));
+      if ($type =~ /BOT|GUI/){
+        my $mag  = $c->{"GS_MAG$i"};
+        if ($mag <= $min_mag){
+          $bright_count++;
+        }
+      }
+    }
+
+    if ($bright_count < $min_n_stars){
+      push @{$self->{warn}}, "$alarm $bright_count stars brighter than $min_mag mag. "
+      . "Perigee requires at least $min_n_stars\n";
+    }
+
+
+}
+
+
+#############################################################################################
 sub check_momentum_unload{
 #############################################################################################
     my $self = shift;
