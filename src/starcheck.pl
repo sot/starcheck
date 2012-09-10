@@ -115,6 +115,7 @@ my $mech_file  = get_file("$par{dir}/${sosa_dir_slash}output/${sosa_prefix}TEST_
 my $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither'); 
+my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
 
 my $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
 
@@ -306,10 +307,17 @@ if ($manerr_file) {
 # Read DITHER history file and backstop to determine expected dither state
 my ($dither_time_violation, @dither) = Ska::Parse_CM_File::dither($dither_file, \@bs);
 
+my ($radmon_time_violation, @radmon) = Ska::Parse_CM_File::radmon($radmon_file, \@bs);
+
 # if dither history runs into load
 if ($dither_time_violation){
     warning("Dither History runs into load!\n");
 } 
+
+# if radmon history runs into load
+if ($radmon_time_violation){
+  warning("Radmon History runs into load!\n");
+}
 
 # if fidsel history runs into load
 if ($fid_time_violation){
@@ -470,6 +478,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
     $obs{$obsid}->set_npm_times();
+    $obs{$obsid}->check_bright_perigee(\@radmon);
     $obs{$obsid}->check_dither(\@dither);
 	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->count_good_stars();
