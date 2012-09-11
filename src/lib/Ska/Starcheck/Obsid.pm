@@ -729,7 +729,7 @@ sub check_bright_perigee{
     }
 
     if ($bright_count < $min_n_stars){
-      push @{$self->{warn}}, "$alarm $bright_count stars brighter than $min_mag mag. "
+      push @{$self->{warn}}, "$alarm $bright_count star(s) brighter than $min_mag mag. "
       . "Perigee requires at least $min_n_stars\n";
     }
 
