@@ -187,8 +187,8 @@ sub radmon {
 	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (DISA|ENAB) \s+ (OORMPDS|OORMPEN)/x) {
 		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
 		my $time = date2time("$yr:$doy:$hr:$min:$sec");
-                my $date = "$yr:$doy:$hr:$min:$sec";
-                push @h_date, $date;
+		my $date = "$yr:$doy:$hr:$min:$sec";
+		push @h_date, $date;
 		push @h_state, $state;
 		push @h_time, $time;
 
