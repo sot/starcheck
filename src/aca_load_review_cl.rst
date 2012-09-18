@@ -344,6 +344,10 @@ Checks
 |       |Commanding        | | |commanding if present                      |    |calibration     |
 |       |                  | | |                                           |    |data            |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
+|ACA-046|Magnitude         |X|X|Perigee catalogs have 3 or more GS         |n/a |Possible Bright |
+|       |                  | | |magnitude 9.0 or brighter                  |    |Star Hold; NSM  |
+|       |                  | | |                                           |    |safing action   |
++-------+------------------+-+-+-------------------------------------------+----+----------------+
                            
                            
                            
