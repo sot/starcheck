@@ -1129,12 +1129,12 @@ sub check_star_catalog {
 	    next if (  $star->{id} eq $sid || 	
 		       ( abs($star->{yag} - $yag) < $ID_DIST_LIMIT 
 			 && abs($star->{zag} - $zag) < $ID_DIST_LIMIT 
-			 && abs($star->{mag} - $mag) < 0.1 ) );	
+			 && abs($star->{mag_aca} - $mag) < 0.1 ) );
 	    my $dy = abs($yag-$star->{yag});
 	    my $dz = abs($zag-$star->{zag});
 	    my $dr = sqrt($dz**2 + $dy**2);
-	    my $dm = $mag ne '---' ? $mag - $star->{mag} : 0.0;
-	    my $dm_string = $mag ne '---' ? sprintf("%4.1f", $mag - $star->{mag}) : '?';
+	    my $dm = $mag ne '---' ? $mag - $star->{mag_aca} : 0.0;
+	    my $dm_string = $mag ne '---' ? sprintf("%4.1f", $mag - $star->{mag_aca}) : '?';
 	    
 	    # Fid within $dither + 25 arcsec of a star (yellow) and within 4 mags (red) ACA-024
 	    if ($type eq 'FID'
@@ -1161,7 +1161,7 @@ sub check_star_catalog {
 		and ($star->{yag}/$yag) > 1.0 
 		and abs($star->{yag}) < 2500) {
 		push @warn,sprintf("$alarm [%2d] Common Column. %10d " .
-				   "at Y,Z,Mag: %5d %5d %5.2f\n",$i,$star->{id},$star->{yag},$star->{zag},$star->{mag});
+				   "at Y,Z,Mag: %5d %5d %5.2f\n",$i,$star->{id},$star->{yag},$star->{zag},$star->{mag_aca});
 	    }
 	}
     }
@@ -1845,9 +1845,9 @@ sub get_agasc_stars {
 	    class => $star->class(),
 	    ra  => $star->ra_pmcorrected(),
 	    dec => $star->dec_pmcorrected(),
-	    mag => $star->mag_aca(), 
+	    mag_aca => $star->mag_aca(),
 	    bv  => $star->color1(),
-	    magerr => $star->mag_aca_err(), 
+	    mag_aca_err => $star->mag_aca_err(),
 	    poserr  => $star->pos_err(),
 	    yag => $yag, 
 	    zag => $zag, 
@@ -1949,7 +1949,7 @@ sub identify_stars {
 		    $c->{"GS_ID$i"} = "*$star->{id}";	      
 		    $c->{"GS_RA$i"} = $star->{ra};
 		    $c->{"GS_DEC$i"} = $star->{dec};
-		    $c->{"GS_MAG$i"} = sprintf "%8.3f", $star->{mag};
+		    $c->{"GS_MAG$i"} = sprintf "%8.3f", $star->{mag_aca};
 		    $c->{"GS_YANG$i"} = $star->{yag};
 		    $c->{"GS_ZANG$i"} = $star->{zag};
 		    $c->{"GS_USEDBEFORE$i"} =  star_dbhist( $star->{id}, $obs_time );
@@ -2094,7 +2094,7 @@ sub star_image_map {
 	my $star_count_limit = 100;
 	my $star_count = 0;
     foreach my $star (values %{$self->{agasc_hash}}) {
-		next if ($star->{mag} > $faint_plot_mag);
+		next if ($star->{mag_aca} > $faint_plot_mag);
 		$plot_ids{$star->{id}} = 1;
 		last if $star_count > $star_count_limit;
 		$star_count++;
@@ -2125,7 +2125,7 @@ sub star_image_map {
 			. "'id=$sid <br/>" 
 			. sprintf("yag,zag=%.2f,%.2f <br />", $yag, $zag)
 			. "row,col=$pix_row,$pix_col <br/>" 
-			. sprintf("mag=%.2f <br />", $cat_star->{mag})
+			. sprintf("mag=%.2f <br />", $cat_star->{mag_aca})
 			. sprintf("class=%s <br />", $cat_star->{class})
 			. sprintf("color=%.3f <br />", $cat_star->{bv})
 			. sprintf("aspq1=%.1f <br />", $cat_star->{aspq})
@@ -2195,16 +2195,16 @@ sub plot_stars {
 
     # Plot field stars from AGASC
     foreach my $star (values %{$self->{agasc_hash}}) {
-	next if ($star->{mag} > $faint_plot_mag);
+	next if ($star->{mag_aca} > $faint_plot_mag);
 
 	# First set defaults
 	my $color = $pg_colors{red}; # By default, assume star is bad
 	my $symbol = $sym_type{field_star};
-	my $size = sym_size($star->{mag});
+	my $size = sym_size($star->{mag_aca});
 
-	$color = $pg_colors{magenta} if ($star->{class} == 0 and $star->{mag} >= 10.7);  # faint
-	$color = $pg_colors{white}   if ($star->{class} == 0 and $star->{mag} < 10.7);   # OK
-	if ($star->{mag} < -10) {                                                        # Bad mag
+	$color = $pg_colors{magenta} if ($star->{class} == 0 and $star->{mag_aca} >= 10.7);  # faint
+	$color = $pg_colors{white}   if ($star->{class} == 0 and $star->{mag_aca} < 10.7);   # OK
+	if ($star->{mag_aca} < -10) {                                                        # Bad mag
 	    $color=$pg_colors{red};
 	    $size=3.0;
 	    $symbol = $sym_type{bad_mag};
@@ -2304,12 +2304,12 @@ sub plot_star_field {
 	# First set defaults
 	my $color = $pg_colors{white};
 	my $symbol = $sym_type{field_star};
-	my $size = sym_size($star->{mag});
+	my $size = sym_size($star->{mag_aca});
 
 	pgsci($color);
 	pgsch($size); # Set character height
 
-	if ( $star->{mag} > $faint_plot_mag ){
+	if ( $star->{mag_aca} > $faint_plot_mag ){
 	    $symbol = $sym_type{very_faint};
 	}
 #	pgpoint(1, $star->{yag}, $star->{zag}, $symbol);
