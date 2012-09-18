@@ -210,24 +210,15 @@ sub radmon {
 	$time_violation = 1;
     }
 
-
     # Now make an array of hashes as the final output.  Keep track of where the info
-    # came from, for later use in Chex
-    my @radmon;
-    my $radmon_state;
+    # came from to assist in debugging
     my $bs_start = $bs_arr->[0]->{time};
- 
-    foreach (0 .. $#state) {
-      $radmon_state = $state[$_] if defined $state[$_];
-      push @radmon, { time => $time[$_],
-                      date => $date[$_],
-		      state => $radmon_state,
-		      source => $time[$_] < $bs_start ? 'history' : 'backstop',
-      };
-      
-      
-    }
-    return ($time_violation, @radmon);
+    my @radmon = map { { time => $time[$_],
+                         date => $date[$_],
+                         state => $state[$_],
+                         source => $time[$_] < $bs_start ? 'history' : 'backstop'}
+                     } (0 .. $#state);
+    return ($time_violation, \@radmon);
 
 }
 

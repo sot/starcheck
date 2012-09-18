@@ -307,7 +307,7 @@ if ($manerr_file) {
 # Read DITHER history file and backstop to determine expected dither state
 my ($dither_time_violation, @dither) = Ska::Parse_CM_File::dither($dither_file, \@bs);
 
-my ($radmon_time_violation, @radmon) = Ska::Parse_CM_File::radmon($radmon_file, \@bs);
+my ($radmon_time_violation, $radmon) = Ska::Parse_CM_File::radmon($radmon_file, \@bs);
 
 # if dither history runs into load
 if ($dither_time_violation){
@@ -478,7 +478,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
     $obs{$obsid}->set_npm_times();
-    $obs{$obsid}->check_bright_perigee(\@radmon);
+    $obs{$obsid}->check_bright_perigee($radmon);
     $obs{$obsid}->check_dither(\@dither);
 	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->count_good_stars();
