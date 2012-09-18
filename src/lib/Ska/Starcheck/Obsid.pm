@@ -644,6 +644,11 @@ sub check_dither {
 	return;
     }
 
+    unless (defined $dthr){
+      push @{$self->{warn}}, "$alarm Dither states unavailable. Dither not checked\n";
+      return;
+    }
+
     # set the observation start as the end of the maneuver
     my $obs_tstart = $self->{obs_tstart};
     my $obs_tstop = $self->{obs_tstop};

@@ -76,7 +76,6 @@ sub dither {
 		    'ENDITH' => 'ENAB', 
 		    'DITPAR' => undef);
     my %obs;
-    my $dither_time_violation = 0;
     # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
 	if ($bs->{cmd} =~ '(COMMAND_SW|MP_DITHER)') {
@@ -93,8 +92,7 @@ sub dither {
     # Parse lines like:
     # 2002262.094827395   | DSDITH  AODSDITH
     # 2002262.095427395   | ENDITH  AOENDITH
-
-    if ($dh_file && (my $dith_hist_fh = new IO::File $dh_file, "r")) {
+    my $dith_hist_fh = IO::File->new($dh_file, "r") or return (undef, undef); 
 	while (<$dith_hist_fh>) {
 	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (ENDITH|DSDITH)/x) {
 		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
@@ -103,26 +101,23 @@ sub dither {
 		push @dh_time, $time;
 		push @dh_params, {};
 	    }
-	}
-
+          }
 	$dith_hist_fh->close();
-    }
     
     my @ok = grep { $dh_time[$_] < $bs_arr->[0]->{time} } (0 .. $#dh_time);
     my @state = (@dh_state[@ok], @bs_state);
     my @time   = (@dh_time[@ok], @bs_time);
     my @params = (@dh_params[@ok], @bs_params);
 
-    
     # if the most recent/last entry in the dither file has a timestamp newer than
     # the first entry in the load
-    if ( $dh_time[-1] >= $bs_arr->[0]->{time} ){
-	$dither_time_violation = 1;
+    my $dither_time_violation = ($dh_time[-1] >= $bs_arr->[0]->{time});
+    if ($dither_time_violation){
+      return ($dither_time_violation, undef);
     }
 
-
     # Now make an array of hashes as the final output.  Keep track of where the info
-    # came from, for later use in Chex
+    # came from to assist in debugging.
     my @dither;
     my $dither_state;
     my $dither_ampl_p;
@@ -140,12 +135,8 @@ sub dither {
 		      source => $time[$_] < $bs_start ? 'history' : 'backstop',
 		      ampl_p => $dither_ampl_p,
 		      ampl_y => $dither_ampl_y};
-      
-    
-
     }
-    return ($dither_time_violation, @dither);
-
+    return ($dither_time_violation, \@dither);
 }
 
 

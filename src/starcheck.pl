@@ -307,7 +307,7 @@ if ($manerr_file) {
 } else { warning("Could not find Maneuver Error file in output/ directory\n") };
 
 # Read DITHER history file and backstop to determine expected dither state
-my ($dither_time_violation, @dither) = Ska::Parse_CM_File::dither($dither_file, \@bs);
+my ($dither_time_violation, $dither) = Ska::Parse_CM_File::dither($dither_file, \@bs);
 
 my ($radmon_time_violation, $radmon) = Ska::Parse_CM_File::radmon($radmon_file, \@bs);
 
@@ -481,7 +481,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
     $obs{$obsid}->set_npm_times();
     $obs{$obsid}->check_bright_perigee($radmon);
-    $obs{$obsid}->check_dither(\@dither);
+    $obs{$obsid}->check_dither($dither);
 	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->count_good_stars();
 
@@ -751,7 +751,7 @@ if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
 		 soe          => \%soe,
 		 OR           => \%or,
 		 backstop     => \@bs,
-		 dither       => \@dither,
+		 dither       => $dither,
 		);
 }
 
