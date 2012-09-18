@@ -726,25 +726,16 @@ sub check_bright_perigee{
 
     my $c = find_command($self, 'MP_STARCAT');
     return if (not defined $c);
-    # check for at least N bright stars
-    my $bright_count = 0;
-    for my $i (0 .. 16){
-      my $type = $c->{"TYPE$i"};
-      next if ((not defined $type) or ($type eq 'NUL'));
-      if ($type =~ /BOT|GUI/){
-        my $mag  = $c->{"GS_MAG$i"};
-        if ($mag <= $min_mag){
-          $bright_count++;
-        }
-      }
-    }
 
+    # check for at least N bright stars
+    my @bright_stars = grep { (defined $c->{"TYPE$_"})
+                              and ($c->{"TYPE$_"} =~ /BOT|GUI/)
+                              and ($c->{"GS_MAG$_"} < $min_mag) } (0 .. 16);
+    my $bright_count = scalar(@bright_stars);
     if ($bright_count < $min_n_stars){
       push @{$self->{warn}}, "$alarm $bright_count star(s) brighter than $min_mag mag. "
       . "Perigee requires at least $min_n_stars\n";
     }
-
-
 }
 
 
