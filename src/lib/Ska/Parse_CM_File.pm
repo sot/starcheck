@@ -182,7 +182,7 @@ sub radmon {
     # Parse lines like:
     # 2012222.011426269 | ENAB OORMPEN
     # 2012224.051225059 | DISA OORMPDS
-    if ($h_file && (my $hist_fh = new IO::File $h_file, "r")) {
+    my $hist_fh = IO::File->new($h_file, "r") or return (undef, undef); 
 	while (<$hist_fh>) {
 	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (DISA|ENAB) \s+ (OORMPDS|OORMPEN)/x) {
 		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
@@ -191,13 +191,10 @@ sub radmon {
 		push @h_date, $date;
 		push @h_state, $state;
 		push @h_time, $time;
-
-	    }
-	}
-
-	$hist_fh->close();
+        }
     }
-    
+	$hist_fh->close();
+
     my @ok = grep { $h_time[$_] < $bs_arr->[0]->{time} } (0 .. $#h_time);
     my @state = (@h_state[@ok], @bs_state);
     my @time   = (@h_time[@ok], @bs_time);
