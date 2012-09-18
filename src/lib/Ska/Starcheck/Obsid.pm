@@ -694,6 +694,12 @@ sub check_bright_perigee{
     # if this is an OR, just return
     return if (($self->{obsid} =~ /^\d+$/ && $self->{obsid} < 50000));
 
+    # if radmon is undefined, warn and return
+    if (not defined $radmon){
+      push @{$self->{warn}}, "$alarm Perigee bright stars not being checked, no rad zone info available\n";
+	return;
+    }
+
     # set the observation start as the end of the maneuver
     my $obs_tstart = $self->{obs_tstart};
     my $obs_tstop = $self->{obs_tstop};
