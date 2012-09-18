@@ -204,10 +204,11 @@ sub radmon {
     my @date   = (@h_date[@ok], @bs_date);
 
     # if the most recent/last entry in the dither file has a timestamp newer than
-    my $time_violation = 0;
-    # the first entry in the load
-    if ( $h_time[-1] >= $bs_arr->[0]->{time} ){
-	$time_violation = 1;
+    # the first backstop time, set the time violation flag and return undef for
+    # @radmon
+    my $time_violation = ($h_time[-1] >= $bs_arr->[0]->{time});
+    if ($time_violation){
+      return ($time_violation, undef);
     }
 
     # Now make an array of hashes as the final output.  Keep track of where the info
