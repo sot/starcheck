@@ -105,6 +105,10 @@ my %input_files = ();
 my $sosa_dir_slash = $par{vehicle} ? "vehicle/" : "";
 my $sosa_prefix = $par{vehicle} ? "V_" : "";
 
+
+# Set up for global warnings
+my @global_warn;
+
 # asterisk only include to make globs work correctly
 my $backstop   = get_file("$par{dir}/${sosa_dir_slash}*.backstop", 'backstop', 'required');
 my $guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
@@ -230,8 +234,6 @@ my %or = Ska::Parse_CM_File::OR($or_file) if ($or_file);
 
 my ($fid_time_violation, $error, @fidsel) = Ska::Parse_CM_File::fidsel($fidsel_file, \@bs) ;
 
-# Set up for global warnings
-my @global_warn;
 map { warning("$_\n") } @{$error};
 
 
@@ -988,9 +990,10 @@ sub get_file {
 
     my @files = glob($glob);
     if (@files != 1) {
-	print STDERR ((@files == 0) ?
-		      "$warning: No $name file matching $glob\n"
-		      : "$warning: Found more than one file matching $glob, using none\n");
+      my $warn = ((@files == 0) ?
+                  "$warning: No $name file matching $glob\n"
+                  : "$warning: Found more than one file matching $glob, using none\n");
+      warning($warn);
 	die "\n" if ($required);
 	return undef;
     } 
