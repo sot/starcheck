@@ -252,7 +252,7 @@ sub fidsel {
 	}
     }
     
-    return ($fid_time_violation, $error, @fs);
+    return ($fid_time_violation, $error, \@fs);
 }    
 
 ###############################################################

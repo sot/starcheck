@@ -232,8 +232,7 @@ my %or = Ska::Parse_CM_File::OR($or_file) if ($or_file);
 # Read FIDSEL (fid light) history file and ODB (for fid
 # characteristics) and parse; use fid_time_violation later (when global_warn set up
 
-my ($fid_time_violation, $error, @fidsel) = Ska::Parse_CM_File::fidsel($fidsel_file, \@bs) ;
-
+my ($fid_time_violation, $error, $fidsel) = Ska::Parse_CM_File::fidsel($fidsel_file, \@bs) ;
 map { warning("$_\n") } @{$error};
 
 
@@ -399,7 +398,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
     $obs{$obsid}->set_manerr(@manerr) if (@manerr);
     $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file, $tlr_file);
-    $obs{$obsid}->set_fids(@fidsel);
+    $obs{$obsid}->set_fids($fidsel);
     $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
 }

@@ -547,7 +547,7 @@ sub set_fids {
 #
 ##################################################################################
     my $self = shift;
-    my @fidsel = @_;
+    my $fidsel = shift;
     my $tstart;
     my $manvr;
     $self->{fidsel} = [];  # Init to know that fids have been set and should be checked
@@ -562,7 +562,7 @@ sub set_fids {
     # where fid is on at time $tstart
 
     for my $fid (1 .. 14) {
-	foreach my $fid_interval (@{$fidsel[$fid]}) {
+	foreach my $fid_interval (@{$fidsel->[$fid]}) {
 	    if ($fid_interval->{tstart} <= $tstart &&
 		(! exists $fid_interval->{tstop} || $tstart <= $fid_interval->{tstop}) ) {
 		push @{$self->{fidsel}}, $fid;
