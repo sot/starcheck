@@ -313,17 +313,17 @@ my ($radmon_time_violation, $radmon) = Ska::Parse_CM_File::radmon($radmon_file, 
 
 # if dither history runs into load
 if ($dither_time_violation){
-    warning("Dither History runs into load!\n");
+    warning("Dither History runs into load\n");
 } 
 
 # if radmon history runs into load
 if ($radmon_time_violation){
-  warning("Radmon History runs into load!\n");
+  warning("Radmon History runs into load\n");
 }
 
 # if fidsel history runs into load
 if ($fid_time_violation){
-    warning("Fidsel History runs into load!\n");
+    warning("Fidsel History runs into load\n");
 }
 
 
