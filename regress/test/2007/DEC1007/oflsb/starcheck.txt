@@ -21,6 +21,7 @@ Using maneuver file /data/mpcrit1/mplogs/2007/DEC1007/oflsb/mps/mm343_2316.sum
 Using mech check file /data/mpcrit1/mplogs/2007/DEC1007/oflsb/output/TEST_mechcheck.txt
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2007/DEC1007/oflsb/mps/ms343_2317.sum
+Using radmon file /data/mpcrit1/mplogs/2007/DEC1007/oflsb/History/RADMON.txt
 Using ACABadPixel file from 2008273 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -78,17 +79,17 @@ OBSID =  9159 at 2007:344:09:08:11.906   8 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 58089 at 2007:344:11:11:15.161   8 clean ACQ | 8 clean GUI | 
 OBSID = 58088 at 2007:344:16:01:38.357   8 clean ACQ | 8 clean GUI | 
 OBSID = 58087 at 2007:344:23:03:16.000   7 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID = 58086 at 2007:344:23:35:40.057   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 58086 at 2007:344:23:35:40.057   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 58085 at 2007:345:00:00:52.250   0 clean ACQ | 0 clean GUI | 
-OBSID = 58084 at 2007:345:00:19:58.250   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 58084 at 2007:345:00:19:58.250   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 58083 at 2007:345:00:43:52.250   0 clean ACQ | 0 clean GUI | 
-OBSID = 58082 at 2007:345:01:02:58.250   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 58082 at 2007:345:01:02:58.250   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 58081 at 2007:345:01:26:52.250   0 clean ACQ | 0 clean GUI | 
-OBSID = 58080 at 2007:345:01:45:58.250   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 58080 at 2007:345:01:45:58.250   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 58079 at 2007:345:02:09:52.250   0 clean ACQ | 0 clean GUI | 
-OBSID = 58078 at 2007:345:02:28:58.250   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 58078 at 2007:345:02:28:58.250   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 58077 at 2007:345:02:52:52.250   0 clean ACQ | 0 clean GUI | 
-OBSID = 58076 at 2007:345:03:11:58.250   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 58076 at 2007:345:03:11:58.250   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 58075 at 2007:345:03:35:58.250   8 clean ACQ | 8 clean GUI | 
 OBSID =  9450 at 2007:345:04:09:37.599   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2007:345:12:20:00.000   OBC Load Segment Begins     CL345:1209 
@@ -368,6 +369,7 @@ MP_STARCAT at 2007:344:23:35:40.057 (VCDU count = 5617656)
 [10]  6   250225752   ACQ  8x8   5.797  10.024  11.531    397   1461  20   1  120    a2    
 [11]  7   250349792   ACQ  8x8   5.797  10.115  11.625   -637  -1512  20   1  120    a2    
 
+>> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 3] Search spoiler.  250227056: Y,Z,Radial,Mag seps:  78  69 104 -1.0
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.736	-6.660	-4.871	
@@ -409,6 +411,7 @@ MP_STARCAT at 2007:345:00:19:58.250 (VCDU count = 5628029)
 [10]  6   250225752   ACQ  8x8   5.797  10.024  11.531    397   1461  20   1  120    a2    
 [11]  7   250349792   ACQ  8x8   5.797  10.115  11.625   -637  -1512  20   1  120    a2    
 
+>> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 3] Search spoiler.  250227056: Y,Z,Radial,Mag seps:  78  69 104 -1.0
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.736	-6.660	-4.871	
@@ -450,6 +453,7 @@ MP_STARCAT at 2007:345:01:02:58.250 (VCDU count = 5638097)
 [10]  6   250225752   ACQ  8x8   5.797  10.024  11.531    397   1461  20   1  120    a2    
 [11]  7   250349792   ACQ  8x8   5.797  10.115  11.625   -637  -1512  20   1  120    a2    
 
+>> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 3] Search spoiler.  250227056: Y,Z,Radial,Mag seps:  78  69 104 -1.0
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.736	-6.660	-4.871	
@@ -491,6 +495,7 @@ MP_STARCAT at 2007:345:01:45:58.250 (VCDU count = 5648166)
 [10]  6   250225752   ACQ  8x8   5.797  10.024  11.531    397   1461  20   1  120    a2    
 [11]  7   250349792   ACQ  8x8   5.797  10.115  11.625   -637  -1512  20   1  120    a2    
 
+>> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 3] Search spoiler.  250227056: Y,Z,Radial,Mag seps:  78  69 104 -1.0
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.736	-6.660	-4.871	
@@ -532,6 +537,7 @@ MP_STARCAT at 2007:345:02:28:58.250 (VCDU count = 5658234)
 [10]  6   250225752   ACQ  8x8   5.797  10.024  11.531    397   1461  20   1  120    a2    
 [11]  7   250349792   ACQ  8x8   5.797  10.115  11.625   -637  -1512  20   1  120    a2    
 
+>> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 3] Search spoiler.  250227056: Y,Z,Radial,Mag seps:  78  69 104 -1.0
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.736	-6.660	-4.871	
@@ -573,6 +579,7 @@ MP_STARCAT at 2007:345:03:11:58.250 (VCDU count = 5668302)
 [10]  6   250225752   ACQ  8x8   5.797  10.024  11.531    397   1461  20   1  120    a2    
 [11]  7   250349792   ACQ  8x8   5.797  10.115  11.625   -637  -1512  20   1  120    a2    
 
+>> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 3] Search spoiler.  250227056: Y,Z,Radial,Mag seps:  78  69 104 -1.0
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.736	-6.660	-4.871	

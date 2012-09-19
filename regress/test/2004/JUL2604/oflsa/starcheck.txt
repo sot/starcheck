@@ -21,6 +21,7 @@ Using maneuver file /data/mpcrit1/mplogs/2004/JUL2604/oflsa/mps/mm208_0831.sum
 Using mech check file /data/mpcrit1/mplogs/2004/JUL2604/oflsa/output/TEST_mechcheck.txt
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_JUL01
 Using processing summary file /data/mpcrit1/mplogs/2004/JUL2604/oflsa/mps/ms208_0831.sum
+Using radmon file /data/mpcrit1/mplogs/2004/JUL2604/oflsa/History/RADMON.txt
 Using ACABadPixel file from 2008273 Dark Cal 
 
 ------------  SUMMARY OF OBSIDS -----------------
@@ -54,7 +55,7 @@ OBSID =  5197 at 2004:212:07:54:08.949   6 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID =  4792 at 2004:212:16:25:28.949   6 clean ACQ | 4 clean GUI | WARNINGS [ 3]
 OBSID =  4452 at 2004:212:17:56:31.045   6 clean ACQ | 4 clean GUI | WARNINGS [ 4]
 OBSID =  4591 at 2004:213:00:01:42.819   8 clean ACQ | 5 clean GUI | 
-OBSID = 60107 at 2004:213:13:03:58.563   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 60107 at 2004:213:13:03:58.563   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
 OBSID = 60106 at 2004:213:14:51:42.164   8 clean ACQ | 8 clean GUI | 
 OBSID = 60105 at 2004:213:16:37:23.586   8 clean ACQ | 7 clean GUI | 
          ------  2004:213:23:36:48.167   OBC Load Segment Begins     CL213:2300 
@@ -759,6 +760,7 @@ MP_STARCAT at 2004:213:13:03:58.563 (VCDU count = 11191675)
 [ 9]  7   866393592   ACQ  8x8   5.797   9.376  10.875     -1   -953  20   1  120          
 
 >> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  43,  25,  51
+>> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.33	-9.025	-6.964	
 Acquisition Stars Expected  : 7.84
