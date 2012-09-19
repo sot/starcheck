@@ -1926,7 +1926,7 @@ sub identify_stars {
 
 	    $c->{"GS_IDENTIFIED$i"} = 1;
 	    $c->{"GS_BV$i"} = $star->{bv};
-	    $c->{"GS_MAGERR$i"} = $star->{magerr};
+	    $c->{"GS_MAGERR$i"} = $star->{mag_aca_err};
 	    $c->{"GS_POSERR$i"} = $star->{poserr};
 	    $c->{"GS_CLASS$i"} = $star->{class};
 	    $c->{"GS_ASPQ$i"} = $star->{aspq};
@@ -1942,7 +1942,7 @@ sub identify_stars {
 		    && abs($star->{zag} - $zag) < $ID_DIST_LIMIT) {
 		    $c->{"GS_IDENTIFIED$i"} = 1;
 		    $c->{"GS_BV$i"} = $star->{bv};
-		    $c->{"GS_MAGERR$i"} = $star->{magerr};
+		    $c->{"GS_MAGERR$i"} = $star->{mag_aca_err};
 		    $c->{"GS_POSERR$i"} = $star->{poserr};
 		    $c->{"GS_CLASS$i"} = $star->{class};
 		    $c->{"GS_ASPQ$i"} = $star->{aspq};
@@ -2125,7 +2125,8 @@ sub star_image_map {
 			. "'id=$sid <br/>" 
 			. sprintf("yag,zag=%.2f,%.2f <br />", $yag, $zag)
 			. "row,col=$pix_row,$pix_col <br/>" 
-			. sprintf("mag=%.2f <br />", $cat_star->{mag_aca})
+			. sprintf("mag_aca=%.2f <br />", $cat_star->{mag_aca})
+			. sprintf("mag_aca_err=%de-2 mag <br />", $cat_star->{mag_aca_err})
 			. sprintf("class=%s <br />", $cat_star->{class})
 			. sprintf("color=%.3f <br />", $cat_star->{bv})
 			. sprintf("aspq1=%.1f <br />", $cat_star->{aspq})
