@@ -26,7 +26,6 @@ use Time::JulianDay;
 use Time::DayOfYear;
 use Time::Local;
 use PoorTextFormat;
-use Chex;
 
 #use lib '/proj/axaf/simul/lib/perl';
 #use GrabEnv qw( grabenv );
@@ -60,9 +59,8 @@ my %par = (dir  => '.',
 		   chex => undef,
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
+		   log_file => undef,
 		   );
-
-my $log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
 
 my $agasc_parent_dir = '/proj/sot/ska/data/agasc';
 my $default_agasc_dir = '/proj/sot/ska/data/agasc1p6/';
@@ -82,9 +80,15 @@ GetOptions( \%par,
 			'chex=s',
 			'fid_char=s',
 			'config_file=s',
+			'log_file=s',
 			) ||
     exit( 1 );
 
+if (defined $par{chex}){
+	print STDERR "WARNING Chex has been removed.  -chex option has no effect.\n";
+}
+
+my $log_fh = defined $par{log_file} ? open_log_file($par{log_file}) : undef;
 my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
 
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
@@ -739,22 +743,6 @@ if ($par{text}) {
 }
 
   
-# Update the Chandra expected state file, if desired and possible
-
-if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
-   print STDERR "Updating Chandra expected state file\n";
-   print $log_fh "Updating Chandra expected state file\n" if ($log_fh);
-   my $chex = new Chex $par{chex};
-   $chex->update(mman         => \%mm,
-		 mech_check   => \@mc, 
-		 dot          => \%dot,
-		 soe          => \%soe,
-		 OR           => \%or,
-		 backstop     => \@bs,
-		 dither       => $dither,
-		);
-}
-
 ##***************************************************************************
 sub dark_cal_print{
 ##***************************************************************************
@@ -1084,6 +1072,10 @@ Default is '.'.
 
 Output reports will be <out>.html, <out>.txt.  Star plots will be 
 <out>/stars_<obsid>.png.  The default is <out> = 'STARCHECK'.
+
+=item B<-chex <chex state file>
+
+Chex has been removed from starcheck.  This now just prints a warning to STDERR.
 
 =item B<-vehicle>
 
