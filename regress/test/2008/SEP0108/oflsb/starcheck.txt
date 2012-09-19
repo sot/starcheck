@@ -21,6 +21,7 @@ Using maneuver file /data/mpcrit1/mplogs/2008/SEP0108/oflsb/mps/mm245_0124.sum
 Using mech check file /data/mpcrit1/mplogs/2008/SEP0108/oflsb/output/TEST_mechcheck.txt
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2008/SEP0108/oflsb/mps/ms245_0124.sum
+Using radmon file /data/mpcrit1/mplogs/2008/SEP0108/oflsb/History/RADMON.txt
 Using ACABadPixel file from 2008273 Dark Cal 
 
 ------------  SUMMARY OF OBSIDS -----------------
@@ -53,12 +54,12 @@ OBSID =  9678 at 2008:246:11:11:04.000   8 clean ACQ | 5 clean GUI |
 OBSID =  9679 at 2008:246:11:39:14.000   8 clean ACQ | 5 clean GUI | 
 OBSID =  9680 at 2008:246:12:07:24.000   8 clean ACQ | 5 clean GUI | 
 OBSID =  9681 at 2008:246:12:35:34.000   8 clean ACQ | 5 clean GUI | 
-OBSID = 57628 at 2008:246:13:18:44.796   8 clean ACQ | 7 clean GUI | 
-OBSID = 57627 at 2008:246:15:32:54.394   7 clean ACQ | 6 clean GUI | WARNINGS [ 1] 
-OBSID = 57626 at 2008:246:19:11:35.286   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 57628 at 2008:246:13:18:44.796   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 57627 at 2008:246:15:32:54.394   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] 
+OBSID = 57626 at 2008:246:19:11:35.286   6 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
          ------  2008:246:21:24:09.935   OBC Load Segment Begins     CL246:2108 
 OBSID = 57625 at 2008:246:21:27:15.935   8 clean ACQ | 7 clean GUI | 
-OBSID = 57624 at 2008:246:23:30:10.035   7 clean ACQ | 6 clean GUI | WARNINGS [ 1] 
+OBSID = 57624 at 2008:246:23:30:10.035   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] 
 OBSID =  9489 at 2008:247:05:58:47.866   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  9011 at 2008:247:22:57:45.972   8 clean ACQ | 5 clean GUI | 
 OBSID =  9898 at 2008:247:23:49:37.157   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
@@ -93,7 +94,7 @@ OBSID =  9657 at 2008:251:18:06:28.310   8 clean ACQ | 5 clean GUI |
 OBSID =  9658 at 2008:251:18:34:38.310   8 clean ACQ | 5 clean GUI | WARNINGS [ 4]
 OBSID =  9659 at 2008:251:19:02:48.310   8 clean ACQ | 5 clean GUI | 
 OBSID =  9660 at 2008:251:19:30:58.310   8 clean ACQ | 5 clean GUI | 
-OBSID = 57618 at 2008:251:20:14:08.863   8 clean ACQ | 7 clean GUI |
+OBSID = 57618 at 2008:251:20:14:08.863   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 ==================================================================================== 
 OBSID: 10571  V Puppis               HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   119.597148   -49.250500   128.028142
@@ -862,6 +863,7 @@ MP_STARCAT at 2008:246:13:18:44.796 (VCDU count = 7134966)
 [ 8]  7         ---   MON  8x8  13.938     ---  13.938    124  -1481   7   0   20    m1    
 [ 9]  7   153755696   ACQ  8x8   5.797   9.873  11.375  -1826   -257  20   1  120    a2    
 
+>> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Obsid contains flickering pixel MON
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.251	-6.273	-4.595	
@@ -892,6 +894,7 @@ MP_STARCAT at 2008:246:15:32:54.394 (VCDU count = 7166379)
 [11]  7   981599368   ACQ  8x8   5.797   9.900  11.406   1875  -2245  20   1  120    a2    
 
 >> WARNING: [ 2] Nearby ACA bad pixel. Y,Z,Radial seps:  25,  42,  49
+>> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Obsid contains flickering pixel MON
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2008:246:17:00:00.000
 
@@ -923,6 +926,7 @@ MP_STARCAT at 2008:246:19:11:35.286 (VCDU count = 7217582)
 [11]  7    79439512   ACQ  8x8   5.797  10.285  11.797   2184   1001  20   1  120    a3    
 
 >> WARNING: [10] Magnitude.  10.607
+>> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.73, Pos_Err = 0.17
 >> WARNING: [ 9] Magnitude.  10.530
 >> INFO   : Obsid contains flickering pixel MON
@@ -983,6 +987,7 @@ MP_STARCAT at 2008:246:23:30:10.035 (VCDU count = 7278128)
 [11]  7   912267472   ACQ  8x8   5.797   9.924  11.422  -2116    -15  20   1  120    a2    
 
 >> WARNING: [ 2] Nearby ACA bad pixel. Y,Z,Radial seps:  28,  16,  33
+>> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Obsid contains flickering pixel MON
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.338	-6.350	-4.660	
@@ -1943,6 +1948,7 @@ MP_STARCAT at 2008:251:20:14:08.863 (VCDU count = 8918084)
 [ 8]  7         ---   MON  8x8  13.938     ---  13.938   -659     24   7   0   20    m1    
 [ 9]  7   154417888   ACQ  8x8   5.797   9.901  11.406   -313   -906  20   1  120    a2    
 
+>> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Obsid contains flickering pixel MON
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.755	-6.684	-4.903	

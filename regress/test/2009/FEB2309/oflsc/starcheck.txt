@@ -21,6 +21,7 @@ Using maneuver file /data/mpcrit1/mplogs/2009/FEB2309/oflsc/mps/mm054_0028.sum
 Using mech check file /data/mpcrit1/mplogs/2009/FEB2309/oflsc/output/TEST_mechcheck.txt
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2009/FEB2309/oflsc/mps/ms054_0028.sum
+Using radmon file /data/mpcrit1/mplogs/2009/FEB2309/oflsc/History/RADMON.txt
 Using ACABadPixel file from 2008273 Dark Cal 
 
 ------------  SUMMARY OF OBSIDS -----------------
@@ -35,7 +36,7 @@ OBSID = 57274 at 2009:054:21:11:08.928   8 clean ACQ | 8 clean GUI |
 OBSID =  9071 at 2009:054:21:54:34.177   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 57273 at 2009:055:03:10:32.926   8 clean ACQ | 8 clean GUI | 
 OBSID = 57272 at 2009:055:03:20:39.360   8 clean ACQ | 8 clean GUI | 
-OBSID = 57271 at 2009:055:04:47:37.350   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 57271 at 2009:055:04:47:37.350   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
          ------  2009:055:13:15:01.542   OBC Load Segment Begins     CL055:1308 
 OBSID = 57270 at 2009:055:14:37:05.202   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 10860 at 2009:055:16:40:19.757   8 clean ACQ | 4 clean GUI | 
@@ -50,8 +51,8 @@ OBSID = 10684 at 2009:057:03:44:53.201   8 clean ACQ | 5 clean GUI |
 OBSID = 10502 at 2009:057:09:36:46.816   8 clean ACQ | 5 clean GUI | 
 OBSID =  9545 at 2009:057:10:41:42.187   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID = 57269 at 2009:057:18:39:45.657   6 clean ACQ | 6 clean GUI | WARNINGS [ 2]
-OBSID = 57268 at 2009:057:18:49:52.091   6 clean ACQ | 7 clean GUI | WARNINGS [ 2]
-OBSID = 57267 at 2009:057:19:05:39.771   6 clean ACQ | 6 clean GUI | WARNINGS [ 4]
+OBSID = 57268 at 2009:057:18:49:52.091   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 57267 at 2009:057:19:05:39.771   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 4]
 OBSID = 57266 at 2009:058:05:55:48.767   8 clean ACQ | 8 clean GUI | 
 OBSID =  8583 at 2009:058:08:16:37.968   8 clean ACQ | 5 clean GUI | 
          ------  2009:058:12:20:00.000   OBC Load Segment Begins     CL058:1208 
@@ -355,6 +356,7 @@ MP_STARCAT at 2009:055:04:47:37.350 (VCDU count = 15688519)
 [ 8]  7   329655208   BOT  8x8   5.797   5.970   7.469    507  -1901  20   1  120  a3g3    
 
 >> WARNING: [ 8] Magnitude.   5.970
+>> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 6] Magnitude.  10.357
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2009:055:08:00:00.000
 
@@ -741,6 +743,7 @@ MP_STARCAT at 2009:057:18:49:52.091 (VCDU count = 16560069)
 [ 8]  7   189283104   GUI  8x8   5.797   9.902  11.406   2421   -614   1   1   25    g3    
 [ 9]  7   189287616   ACQ  8x8   5.797  10.453  11.953   2264   -634  20   1  120    a3    
 
+>> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 5] Magnitude.  10.306
 >> WARNING: [ 9] Magnitude.  10.453
 
@@ -769,6 +772,7 @@ MP_STARCAT at 2009:057:19:05:39.771 (VCDU count = 16563767)
 [ 8]  7   260325616   GUI  8x8   5.797  10.385  11.891   -602  -2385   1   1   25    g4   C
 [ 9]  7   260320616   ACQ  8x8   5.797  10.342  11.844   -184  -2359  18   1  110    a3    
 
+>> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 7] Search spoiler.  260320584: Y,Z,Radial,Mag seps:  70  61  93 -0.6
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.49, Pos_Err = 0.09
 >> WARNING: [ 8] Magnitude.  10.385

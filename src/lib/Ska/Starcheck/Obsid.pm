@@ -547,7 +547,7 @@ sub set_fids {
 #
 ##################################################################################
     my $self = shift;
-    my @fidsel = @_;
+    my $fidsel = shift;
     my $tstart;
     my $manvr;
     $self->{fidsel} = [];  # Init to know that fids have been set and should be checked
@@ -562,7 +562,7 @@ sub set_fids {
     # where fid is on at time $tstart
 
     for my $fid (1 .. 14) {
-	foreach my $fid_interval (@{$fidsel[$fid]}) {
+	foreach my $fid_interval (@{$fidsel->[$fid]}) {
 	    if ($fid_interval->{tstart} <= $tstart &&
 		(! exists $fid_interval->{tstop} || $tstart <= $fid_interval->{tstop}) ) {
 		push @{$self->{fidsel}}, $fid;
@@ -644,6 +644,11 @@ sub check_dither {
 	return;
     }
 
+    unless (defined $dthr){
+      push @{$self->{warn}}, "$alarm Dither states unavailable. Dither not checked\n";
+      return;
+    }
+
     # set the observation start as the end of the maneuver
     my $obs_tstart = $self->{obs_tstart};
     my $obs_tstop = $self->{obs_tstop};
@@ -682,6 +687,57 @@ sub check_dither {
 	}
     }
 }
+
+#############################################################################################
+sub check_bright_perigee{
+#############################################################################################
+    my $self = shift;
+    my $radmon = shift;
+    my $min_mag = 9.0;
+    my $min_n_stars = 3;
+
+    # if this is an OR, just return
+    return if (($self->{obsid} =~ /^\d+$/ && $self->{obsid} < 50000));
+
+    # if radmon is undefined, warn and return
+    if (not defined $radmon){
+      push @{$self->{warn}}, "$alarm Perigee bright stars not being checked, no rad zone info available\n";
+	return;
+    }
+
+    # set the observation start as the end of the maneuver
+    my $obs_tstart = $self->{obs_tstart};
+    my $obs_tstop = $self->{obs_tstop};
+
+    # is this obsid in perigee?  assume no to start
+    my $in_perigee = 0;
+
+    for my $rad (reverse @{$radmon}){
+      next if ($rad->{time} > $obs_tstop);
+      if ($rad->{state} eq 'DISA'){
+        $in_perigee = 1;
+        last;
+      }
+      last if ($rad->{time} < $obs_tstart);
+    }
+
+    # nothing to do if not in perigee
+    return if (not $in_perigee);
+
+    my $c = find_command($self, 'MP_STARCAT');
+    return if (not defined $c);
+
+    # check for at least N bright stars
+    my @bright_stars = grep { (defined $c->{"TYPE$_"})
+                              and ($c->{"TYPE$_"} =~ /BOT|GUI/)
+                              and ($c->{"GS_MAG$_"} < $min_mag) } (0 .. 16);
+    my $bright_count = scalar(@bright_stars);
+    if ($bright_count < $min_n_stars){
+      push @{$self->{warn}}, "$alarm $bright_count star(s) brighter than $min_mag mag. "
+      . "Perigee requires at least $min_n_stars\n";
+    }
+}
+
 
 #############################################################################################
 sub check_momentum_unload{
