@@ -2126,7 +2126,7 @@ sub star_image_map {
 			. sprintf("yag,zag=%.2f,%.2f <br />", $yag, $zag)
 			. "row,col=$pix_row,$pix_col <br/>" 
 			. sprintf("mag_aca=%.2f <br />", $cat_star->{mag_aca})
-			. sprintf("mag_aca_err=%de-2 mag <br />", $cat_star->{mag_aca_err})
+			. sprintf("mag_aca_err=%.2f <br />", $cat_star->{mag_aca_err} / 100.0)
 			. sprintf("class=%s <br />", $cat_star->{class})
 			. sprintf("color=%.3f <br />", $cat_star->{bv})
 			. sprintf("aspq1=%.1f <br />", $cat_star->{aspq})
