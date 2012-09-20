@@ -56,7 +56,6 @@ my %par = (dir  => '.',
 		   html => 1,
 		   text => 1,
 		   yaml => 1,
-		   chex => undef,
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
 		   log_file => undef,
@@ -77,16 +76,12 @@ GetOptions( \%par,
 			'agasc=s',
 			'agasc_dir=s',
 			'sc_data=s',
-			'chex=s',
 			'fid_char=s',
 			'config_file=s',
 			'log_file=s',
 			) ||
     exit( 1 );
 
-if (defined $par{chex}){
-	print STDERR "WARNING Chex has been removed.  -chex option has no effect.\n";
-}
 
 my $log_fh = defined $par{log_file} ? open_log_file($par{log_file}) : undef;
 my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
@@ -1072,10 +1067,6 @@ Default is '.'.
 
 Output reports will be <out>.html, <out>.txt.  Star plots will be 
 <out>/stars_<obsid>.png.  The default is <out> = 'STARCHECK'.
-
-=item B<-chex <chex state file>
-
-Chex has been removed from starcheck.  This now just prints a warning to STDERR.
 
 =item B<-vehicle>
 
