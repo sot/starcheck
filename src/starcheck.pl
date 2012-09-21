@@ -482,6 +482,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_bright_perigee($radmon);
     $obs{$obsid}->check_dither($dither);
 	$obs{$obsid}->check_momentum_unload(\@bs);
+    $obs{$obsid}->check_for_special_case_er();
     $obs{$obsid}->count_good_stars();
 
 # Make sure there is only one star catalog per obsid
@@ -580,29 +581,38 @@ for my $obs_idx (0 .. $#obsid_id) {
     my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};
 
     # if Obsid is numeric, print tally info
-    if ($obs{$obsid}->{obsid} =~ /^\d*$/ ){
-		
-		# minumum requirements for acq and guide for ERs and ORs
-		# should be set by config...
-		my $min_num_acq = ($obs{$obsid}->{obsid} > 40000 ) ? 5 : 4;
-		my $min_num_gui = ($obs{$obsid}->{obsid} > 40000 ) ? 6 : 4;
-		if (defined $obs{$obsid}->{ok_no_starcat}){
-			$min_num_acq = 0;
-			$min_num_gui = 0;
-		}
-		my $acq_font_start = ($good_acq_count < $min_num_acq) ? $red_font_start
-			: $empty_font_start;
-		my $gui_font_start = ($good_guide_count < $min_num_gui) ? $red_font_start
-			: $empty_font_start;
+    if ($obs{$obsid}->{obsid} =~ /^\d+$/ ){
 
-		$out .= "$acq_font_start";
-		$out .= sprintf "$good_acq_count clean ACQ | ";
-		$out .= "$font_stop";
+        # minumum requirements for acq and guide for ERs and ORs
+        # should be set by config...
+        my $min_num_acq = ($obs{$obsid}->{obsid} > 40000 ) ? 5 : 4;
+        my $min_num_gui = ($obs{$obsid}->{obsid} > 40000 ) ? 6 : 4;
 
-		$out .= "$gui_font_start";
-		$out .= sprintf "$good_guide_count clean GUI | ";
-		$out .= "$font_stop";
+        # if there is no star catalog and that's ok
+        if (not ($obs{$obsid}->find_command("MP_STARCAT"))
+            and $obs{$obsid}->{ok_no_starcat}){
+            $min_num_acq = 0;
+            $min_num_gui = 0;
+        }
 
+        # use the 'special case' ER rules from ACA-044
+        if ($obs{$obsid}->{special_case_er}){
+            $min_num_acq = 4;
+            $min_num_gui = 4;
+        }
+
+        my $acq_font_start = ($good_acq_count < $min_num_acq) ? $red_font_start
+        : $empty_font_start;
+        my $gui_font_start = ($good_guide_count < $min_num_gui) ? $red_font_start
+        : $empty_font_start;
+
+        $out .= "$acq_font_start";
+        $out .= sprintf "$good_acq_count clean ACQ | ";
+        $out .= "$font_stop";
+
+        $out .= "$gui_font_start";
+        $out .= sprintf "$good_guide_count clean GUI | ";
+        $out .= "$font_stop";
 	
     }
     # if Obsid is non-numeric, print "Unknown"

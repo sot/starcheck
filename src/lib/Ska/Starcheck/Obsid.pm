@@ -763,6 +763,34 @@ sub check_momentum_unload{
 }
 
 #############################################################################################
+sub check_for_special_case_er{
+#############################################################################################
+    my $self = shift;
+    # if the previous obsid is an OR and the current one is an ER
+    # and the obsid is < 10 minutes in duration (we've got a <10 min NPM criterion)
+    # and there is a star catalog to check
+    # and the last obsid had a star catalog
+    # and the pointings are the same
+    # it is a special case ER
+    $self->{special_case_er} = 0;
+    if ($self->{obsid} =~ /^\d+$/
+        and $self->{obsid} > 40000
+        and $self->find_command("MP_STARCAT")
+        and $self->{prev}
+        and $self->{prev}->{obsid} =~ /^\d+$/
+        and $self->{prev}->{obsid} < 40000
+        and $self->{prev}->find_command("MP_STARCAT")
+        and $self->{obs_tstop} - $self->{obs_tstart} < 10*60
+        and abs($self->{ra} - $self->{prev}->{ra}) < 0.001
+        and abs($self->{dec} - $self->{prev}->{dec}) < 0.001
+        and abs($self->{roll} - $self->{prev}->{roll}) < 0.001){
+      $self->{special_case_er} = 1;
+      push @{$self->{fyi}}, "$info Special Case ER";
+    }
+}
+
+
+#############################################################################################
 sub check_sim_position {
 #############################################################################################
     my $self = shift;
