@@ -26,7 +26,6 @@ use Time::JulianDay;
 use Time::DayOfYear;
 use Time::Local;
 use PoorTextFormat;
-use Chex;
 
 #use lib '/proj/axaf/simul/lib/perl';
 #use GrabEnv qw( grabenv );
@@ -57,12 +56,9 @@ my %par = (dir  => '.',
 		   html => 1,
 		   text => 1,
 		   yaml => 1,
-		   chex => undef,
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
 		   );
-
-my $log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
 
 my $agasc_parent_dir = '/proj/sot/ska/data/agasc';
 my $default_agasc_dir = '/proj/sot/ska/data/agasc1p6/';
@@ -79,11 +75,11 @@ GetOptions( \%par,
 			'agasc=s',
 			'agasc_dir=s',
 			'sc_data=s',
-			'chex=s',
 			'fid_char=s',
 			'config_file=s',
 			) ||
     exit( 1 );
+
 
 my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
 
@@ -152,7 +148,7 @@ if ( defined $par{agasc} or defined $par{agasc_dir}){
     }
 }
 print STDERR "Using AGASC from $agasc_dir \n";
-print $log_fh "Using AGASC from $agasc_dir \n" if ($log_fh);
+
 
 
 my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
@@ -173,14 +169,12 @@ my $ACA_badpix_firstline =  io($ACA_bad_pixel_file)->getline;
 if ($ACA_badpix_firstline =~ /Bad Pixel.*\d{7}\s+\d{7}\s+(\d{7}).*/ ){
     $ACA_badpix_date = $1;
     print STDERR "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
-    print $log_fh "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n" if ($log_fh);
 }
 
 
 unless (-e $STARCHECK) {
     die "Couldn't make directory $STARCHECK\n" unless (mkdir $STARCHECK, 0777);
     print STDERR "Created plot directory $STARCHECK\n";
-    print $log_fh "Created plot directory $STARCHECK\n" if ($log_fh);
 }
 
 # copy over the up and down gifs and overlib
@@ -739,22 +733,6 @@ if ($par{text}) {
 }
 
   
-# Update the Chandra expected state file, if desired and possible
-
-if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
-   print STDERR "Updating Chandra expected state file\n";
-   print $log_fh "Updating Chandra expected state file\n" if ($log_fh);
-   my $chex = new Chex $par{chex};
-   $chex->update(mman         => \%mm,
-		 mech_check   => \@mc, 
-		 dot          => \%dot,
-		 soe          => \%soe,
-		 OR           => \%or,
-		 backstop     => \@bs,
-		 dither       => $dither,
-		);
-}
-
 ##***************************************************************************
 sub dark_cal_print{
 ##***************************************************************************
@@ -999,7 +977,6 @@ sub get_file {
     } 
     $input_files{$name}=$files[0];
     print STDERR "Using $name file $files[0]\n";
-    print $log_fh "Using $name file $files[0]\n" if ($log_fh);
     return $files[0];
 }
 
@@ -1024,23 +1001,6 @@ sub warning {
     print STDERR $text;
 }
 
-##***************************************************************************
-sub open_log_file {
-##***************************************************************************
-    my $log_file = shift;
-    my $log_fh;
-
-    if ($log_fh = new IO::File ">> $log_file") {
-	my $date = `date`;
-	chomp $date;
-	print $log_fh "\nStarcheck run at $date by $ENV{USER}\n";
-	print $log_fh "DIR: $ENV{PWD}\n";
-	print $log_fh "CMD: $0 @ARGV\n\n";
-    } else {
-	warn "Couldn't open $log_file for appending\n";
-    }
-    return $log_fh;
-}
 
 ##***************************************************************************
 sub usage
