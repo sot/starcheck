@@ -471,13 +471,72 @@ sub set_ps_times{
 	    }
 	}
     }
-
-    $self->{or_er_start} = date2time($or_er_start);
-    $self->{or_er_stop} = date2time($or_er_stop);
-
+    if (not defined $or_er_start or not defined $or_er_stop){
+        push @{$self->{warn}}, "$alarm Could not find obsid $obsid in processing summary\n";
+        $self->{or_er_start} = undef;
+        $self->{or_er_stop} = undef;
+    }
+    else{
+        $self->{or_er_start} = date2time($or_er_start);
+        $self->{or_er_stop} = date2time($or_er_stop);
+    }
 
 
 }
+
+#############################################################################################
+sub set_npm_times{
+# This needs to be run after the maneuvers for the *next* obsid have
+# been set, so it can't run in the setup loop in starcheck.pl that
+# calls set_maneuver().
+#############################################################################################
+    my $self = shift;
+
+    # NPM range that will be checked for momentum dumps
+    # duplicates check_dither range...
+    my ($obs_tstart, $obs_tstop);
+    
+    # as with dither, check for end of associated maneuver to this attitude
+    # and finding none, set start time as obsid start
+    my $manvr = find_command($self, "MP_TARGQUAT", -1);
+    if ((defined $manvr) and (defined $manvr->{tstop})){
+        $obs_tstart = $manvr->{tstop};
+    }
+    else{
+        $obs_tstart = date2time($self->{date});
+    }
+    
+    # set the observation stop as the beginning of the next maneuever
+    # or, if last obsid in load, use the processing summary or/er observation
+    # stop time
+    if (defined $self->{next}){
+        my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
+        if ((defined $next_manvr) & (defined $next_manvr->{tstart})){
+            $obs_tstop  = $next_manvr->{tstart};
+        }
+        else{
+            # if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
+            # just use next obsid start time
+            my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
+            if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
+		push @{$self->{warn}}, "$alarm Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)\n";
+                $obs_tstop = $next_cmd_obsid->{time};
+            }
+        }
+    }
+    else{
+        $obs_tstop = $self->{or_er_stop};
+    }
+
+    if (not defined $obs_tstart or not defined $obs_tstop){
+        push @{$self->{warn}}, "$alarm Could not determine obsid start and stop times for NPM checks (dither, momentum)\n";
+    }
+    else{
+        $self->{obs_tstart} = $obs_tstart;
+        $self->{obs_tstop} = $obs_tstop;
+    }
+}
+
 
 
 ##################################################################################
@@ -488,7 +547,7 @@ sub set_fids {
 #
 ##################################################################################
     my $self = shift;
-    my @fidsel = @_;
+    my $fidsel = shift;
     my $tstart;
     my $manvr;
     $self->{fidsel} = [];  # Init to know that fids have been set and should be checked
@@ -503,7 +562,7 @@ sub set_fids {
     # where fid is on at time $tstart
 
     for my $fid (1 .. 14) {
-	foreach my $fid_interval (@{$fidsel[$fid]}) {
+	foreach my $fid_interval (@{$fidsel->[$fid]}) {
 	    if ($fid_interval->{tstart} <= $tstart &&
 		(! exists $fid_interval->{tstop} || $tstart <= $fid_interval->{tstop}) ) {
 		push @{$self->{fidsel}}, $fid;
@@ -578,38 +637,21 @@ sub check_dither {
     if ( $self->{obsid} =~ /^\d*$/){
 	return if ($self->{obsid} > 50000); # For eng obs, don't have OR to specify dither
     }
-    unless ($manvr = find_command($self, "MP_TARGQUAT", -1) and defined $self->{DITHER_ON} and defined $manvr->{tstart}) {
+    unless (defined $self->{DITHER_ON} 
+            and $manvr = find_command($self, "MP_TARGQUAT", -1) 
+            and defined $manvr->{tstart}) {
 	push @{$self->{warn}}, "$alarm Dither status not checked\n";
 	return;
     }
 
+    unless (defined $dthr){
+      push @{$self->{warn}}, "$alarm Dither states unavailable. Dither not checked\n";
+      return;
+    }
+
     # set the observation start as the end of the maneuver
-    my $obs_tstart = $manvr->{tstop};
-    my $obs_tstop;
-
-    # set the observation stop as the beginning of the next maneuever
-    # or, if last obsid in load, use the processing summary or/er observation
-    # stop time
-    if (defined $self->{next}){
-	my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
-	if (defined $next_manvr){
-	    $obs_tstop  = $next_manvr->{tstart};
-	}
-	else{
-	    # if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
-	    # just use next obsid start time
-	    my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
-	    if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
-		push @{$self->{warn}}, "$alarm Next obsid has no manvr; checking dither until next obsid start time \n";
-		$obs_tstop = $next_cmd_obsid->{time};
-	    }
-	}
-
-    }
-    else{
-	$obs_tstop = $self->{or_er_stop};
-    }
-    
+    my $obs_tstart = $self->{obs_tstart};
+    my $obs_tstop = $self->{obs_tstop};
 
     # Determine current dither status by finding the last dither commanding before 
     # the start of observation (+ 8 minutes)
@@ -647,46 +689,63 @@ sub check_dither {
 }
 
 #############################################################################################
+sub check_bright_perigee{
+#############################################################################################
+    my $self = shift;
+    my $radmon = shift;
+    my $min_mag = 9.0;
+    my $min_n_stars = 3;
+
+    # if this is an OR, just return
+    return if (($self->{obsid} =~ /^\d+$/ && $self->{obsid} < 50000));
+
+    # if radmon is undefined, warn and return
+    if (not defined $radmon){
+      push @{$self->{warn}}, "$alarm Perigee bright stars not being checked, no rad zone info available\n";
+	return;
+    }
+
+    # set the observation start as the end of the maneuver
+    my $obs_tstart = $self->{obs_tstart};
+    my $obs_tstop = $self->{obs_tstop};
+
+    # is this obsid in perigee?  assume no to start
+    my $in_perigee = 0;
+
+    for my $rad (reverse @{$radmon}){
+      next if ($rad->{time} > $obs_tstop);
+      if ($rad->{state} eq 'DISA'){
+        $in_perigee = 1;
+        last;
+      }
+      last if ($rad->{time} < $obs_tstart);
+    }
+
+    # nothing to do if not in perigee
+    return if (not $in_perigee);
+
+    my $c = find_command($self, 'MP_STARCAT');
+    return if (not defined $c);
+
+    # check for at least N bright stars
+    my @bright_stars = grep { (defined $c->{"TYPE$_"})
+                              and ($c->{"TYPE$_"} =~ /BOT|GUI/)
+                              and ($c->{"GS_MAG$_"} < $min_mag) } (0 .. 16);
+    my $bright_count = scalar(@bright_stars);
+    if ($bright_count < $min_n_stars){
+      push @{$self->{warn}}, "$alarm $bright_count star(s) brighter than $min_mag mag. "
+      . "Perigee requires at least $min_n_stars\n";
+    }
+}
+
+
+#############################################################################################
 sub check_momentum_unload{
 #############################################################################################
     my $self = shift;
     my $backstop = shift;
-    
-    # NPM range that will be checked for momentum dumps
-    # duplicates check_dither range...
-    my ($obs_tstart, $obs_tstop);
-    
-    # as with dither, check for end of associated maneuver to this attitude
-    # and finding none, set start time as obsid start
-    my $manvr = find_command($self, "MP_TARGQUAT", -1);
-    if ((defined $manvr) and (defined $manvr->{tstop})){
-        $obs_tstart = $manvr->{tstop};
-    }
-    else{
-        $obs_tstart = date2time($self->{date});
-    }
-    
-    # set the observation stop as the beginning of the next maneuever
-    # or, if last obsid in load, use the processing summary or/er observation
-    # stop time
-    if (defined $self->{next}){
-        my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
-        if (defined $next_manvr){
-            $obs_tstop  = $next_manvr->{tstart};
-        }
-        else{
-            # if the next obsid doesn't have a maneuver (ACIS undercover or whatever)
-            # just use next obsid start time
-            my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
-            if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
-                $obs_tstop = $next_cmd_obsid->{time};
-            }
-        }
-    }
-    else{
-        $obs_tstop = $self->{or_er_stop};
-    }
-
+    my $obs_tstart = $self->{obs_tstart};
+    my $obs_tstop = $self->{obs_tstop};
     
     if (not defined $obs_tstart or not defined $obs_tstop){
         push @{$self->{warn}}, "$alarm Momentum Unloads not checked.\n";
@@ -702,6 +761,34 @@ sub check_momentum_unload{
         }
     }
 }
+
+#############################################################################################
+sub check_for_special_case_er{
+#############################################################################################
+    my $self = shift;
+    # if the previous obsid is an OR and the current one is an ER
+    # and the obsid is < 10 minutes in duration (we've got a <10 min NPM criterion)
+    # and there is a star catalog to check
+    # and the last obsid had a star catalog
+    # and the pointings are the same
+    # it is a special case ER
+    $self->{special_case_er} = 0;
+    if ($self->{obsid} =~ /^\d+$/
+        and $self->{obsid} > 40000
+        and $self->find_command("MP_STARCAT")
+        and $self->{prev}
+        and $self->{prev}->{obsid} =~ /^\d+$/
+        and $self->{prev}->{obsid} < 40000
+        and $self->{prev}->find_command("MP_STARCAT")
+        and $self->{obs_tstop} - $self->{obs_tstart} < 10*60
+        and abs($self->{ra} - $self->{prev}->{ra}) < 0.001
+        and abs($self->{dec} - $self->{prev}->{dec}) < 0.001
+        and abs($self->{roll} - $self->{prev}->{roll}) < 0.001){
+      $self->{special_case_er} = 1;
+      push @{$self->{fyi}}, "$info Special Case ER";
+    }
+}
+
 
 #############################################################################################
 sub check_sim_position {
@@ -908,6 +995,7 @@ sub check_star_catalog {
 	my $mag  = $c->{"GS_MAG$i"};
 	my $maxmag = $c->{"MAXMAG$i"};
 	my $halfw= $c->{"HALFW$i"};
+	my $db_stats = $c->{"GS_USEDBEFORE${i}"};
 
 	# Search error for ACQ is the slew error, for fid, guide or mon it is about 4 arcsec
 	my $search_err = ( (defined $type) and ($type =~ /BOT|ACQ/)) ? $slew_err : 4.0;
@@ -932,23 +1020,37 @@ sub check_star_catalog {
 	push @yellow_warn, sprintf "$alarm [%2d] Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n", 
 	$i, $sid, $c->{"GS_ASPQ$i"} 
 	if ($type =~ /BOT|ACQ|GUI/ && defined $c->{"GS_ASPQ$i"} && $c->{"GS_ASPQ$i"} != 0);
-	
+
+	my $obs_min_cnt = 2;
+	my $obs_bad_frac = 0.3;
 	# Bad Acquisition Star
-	if ( ($type =~ /BOT|ACQ|GUI/)
-	     && ($bad_acqs{$sid}{'n_noids'} && $bad_acqs{$sid}{'n_obs'} > 2  
-		 && $bad_acqs{$sid}{'n_noids'}/$bad_acqs{$sid}{'n_obs'} > 0.3)){	
-	    push @yellow_warn, sprintf 
+	if ($type =~ /BOT|ACQ|GUI/){
+	my $n_obs = $bad_acqs{$sid}{n_obs};
+	    my $n_noids = $bad_acqs{$sid}{n_noids};
+	    if (defined $db_stats->{acq}){
+	        $n_obs = $db_stats->{acq};
+	        $n_noids = $db_stats->{acq_noid};
+	    }
+	    if ($n_noids && $n_obs > $obs_min_cnt && $n_noids/$n_obs > $obs_bad_frac){
+	        push @yellow_warn, sprintf 
 		"$alarm [%2d] Bad Acquisition Star. %s has %2d failed out of %2d attempts\n",
-		$i, $sid, $bad_acqs{$sid}{'n_noids'}, $bad_acqs{$sid}{'n_obs'};
+		$i, $sid, $n_noids, $n_obs;
+	    }
 	}
 	 
 	# Bad Guide Star
-	if ( ($type =~ /BOT|GUI/)
-	     && ( $bad_gui{$sid}{'n_nbad'} && $bad_gui{$sid}{'n_obs'} > 2  
-		  && $bad_gui{$sid}{'n_nbad'}/$bad_gui{$sid}{'n_obs'} > 0.3)){	
-	    push @yellow_warn, sprintf 
+	if ($type =~ /BOT|GUI/){
+	    my $n_obs = $bad_gui{$sid}{n_obs};
+	    my $n_nbad = $bad_gui{$sid}{n_nbad};
+	    if (defined $db_stats->{gui}){
+	        $n_obs = $db_stats->{gui};
+	        $n_nbad = $db_stats->{gui_bad};
+	    }
+	    if ($n_nbad && $n_obs > $obs_min_cnt && $n_nbad/$n_obs > $obs_bad_frac){
+	        push @yellow_warn, sprintf 
 		"$alarm [%2d] Bad Guide Star. %s has bad data %2d of %2d attempts\n",
-		$i, $sid, $bad_gui{$sid}{'n_nbad'}, $bad_gui{$sid}{'n_obs'};
+		$i, $sid, $n_nbad, $n_obs;
+	    }
 	}
 	    
 	# Bad AGASC ID ACA-031
@@ -1111,12 +1213,12 @@ sub check_star_catalog {
 	    next if (  $star->{id} eq $sid || 	
 		       ( abs($star->{yag} - $yag) < $ID_DIST_LIMIT 
 			 && abs($star->{zag} - $zag) < $ID_DIST_LIMIT 
-			 && abs($star->{mag} - $mag) < 0.1 ) );	
+			 && abs($star->{mag_aca} - $mag) < 0.1 ) );
 	    my $dy = abs($yag-$star->{yag});
 	    my $dz = abs($zag-$star->{zag});
 	    my $dr = sqrt($dz**2 + $dy**2);
-	    my $dm = $mag ne '---' ? $mag - $star->{mag} : 0.0;
-	    my $dm_string = $mag ne '---' ? sprintf("%4.1f", $mag - $star->{mag}) : '?';
+	    my $dm = $mag ne '---' ? $mag - $star->{mag_aca} : 0.0;
+	    my $dm_string = $mag ne '---' ? sprintf("%4.1f", $mag - $star->{mag_aca}) : '?';
 	    
 	    # Fid within $dither + 25 arcsec of a star (yellow) and within 4 mags (red) ACA-024
 	    if ($type eq 'FID'
@@ -1143,7 +1245,7 @@ sub check_star_catalog {
 		and ($star->{yag}/$yag) > 1.0 
 		and abs($star->{yag}) < 2500) {
 		push @warn,sprintf("$alarm [%2d] Common Column. %10d " .
-				   "at Y,Z,Mag: %5d %5d %5.2f\n",$i,$star->{id},$star->{yag},$star->{zag},$star->{mag});
+				   "at Y,Z,Mag: %5d %5d %5.2f\n",$i,$star->{id},$star->{yag},$star->{zag},$star->{mag_aca});
 	    }
 	}
     }
@@ -1166,8 +1268,8 @@ sub check_flick_pix_mon {
 #############################################################################################
     my $self = shift;
 
-    # only check ERs for these MONS
-    return if ( $self->{obsid} =~ /NONE/ or $self->{obsid} < 50000 );
+    # this only applies to ERs (and they should have numeric obsids)
+    return unless ( $self->{obsid} =~ /^\d+$/ and $self->{obsid} > 50000 );
 
     my $c;
     # Check for existence of a star catalog
@@ -1827,9 +1929,9 @@ sub get_agasc_stars {
 	    class => $star->class(),
 	    ra  => $star->ra_pmcorrected(),
 	    dec => $star->dec_pmcorrected(),
-	    mag => $star->mag_aca(), 
+	    mag_aca => $star->mag_aca(),
 	    bv  => $star->color1(),
-	    magerr => $star->mag_aca_err(), 
+	    mag_aca_err => $star->mag_aca_err(),
 	    poserr  => $star->pos_err(),
 	    yag => $yag, 
 	    zag => $zag, 
@@ -1908,7 +2010,7 @@ sub identify_stars {
 
 	    $c->{"GS_IDENTIFIED$i"} = 1;
 	    $c->{"GS_BV$i"} = $star->{bv};
-	    $c->{"GS_MAGERR$i"} = $star->{magerr};
+	    $c->{"GS_MAGERR$i"} = $star->{mag_aca_err};
 	    $c->{"GS_POSERR$i"} = $star->{poserr};
 	    $c->{"GS_CLASS$i"} = $star->{class};
 	    $c->{"GS_ASPQ$i"} = $star->{aspq};
@@ -1924,14 +2026,14 @@ sub identify_stars {
 		    && abs($star->{zag} - $zag) < $ID_DIST_LIMIT) {
 		    $c->{"GS_IDENTIFIED$i"} = 1;
 		    $c->{"GS_BV$i"} = $star->{bv};
-		    $c->{"GS_MAGERR$i"} = $star->{magerr};
+		    $c->{"GS_MAGERR$i"} = $star->{mag_aca_err};
 		    $c->{"GS_POSERR$i"} = $star->{poserr};
 		    $c->{"GS_CLASS$i"} = $star->{class};
 		    $c->{"GS_ASPQ$i"} = $star->{aspq};
 		    $c->{"GS_ID$i"} = "*$star->{id}";	      
 		    $c->{"GS_RA$i"} = $star->{ra};
 		    $c->{"GS_DEC$i"} = $star->{dec};
-		    $c->{"GS_MAG$i"} = sprintf "%8.3f", $star->{mag};
+		    $c->{"GS_MAG$i"} = sprintf "%8.3f", $star->{mag_aca};
 		    $c->{"GS_YANG$i"} = $star->{yag};
 		    $c->{"GS_ZANG$i"} = $star->{zag};
 		    $c->{"GS_USEDBEFORE$i"} =  star_dbhist( $star->{id}, $obs_time );
@@ -2076,7 +2178,7 @@ sub star_image_map {
 	my $star_count_limit = 100;
 	my $star_count = 0;
     foreach my $star (values %{$self->{agasc_hash}}) {
-		next if ($star->{mag} > $faint_plot_mag);
+		next if ($star->{mag_aca} > $faint_plot_mag);
 		$plot_ids{$star->{id}} = 1;
 		last if $star_count > $star_count_limit;
 		$star_count++;
@@ -2107,7 +2209,8 @@ sub star_image_map {
 			. "'id=$sid <br/>" 
 			. sprintf("yag,zag=%.2f,%.2f <br />", $yag, $zag)
 			. "row,col=$pix_row,$pix_col <br/>" 
-			. sprintf("mag=%.2f <br />", $cat_star->{mag})
+			. sprintf("mag_aca=%.2f <br />", $cat_star->{mag_aca})
+			. sprintf("mag_aca_err=%.2f <br />", $cat_star->{mag_aca_err} / 100.0)
 			. sprintf("class=%s <br />", $cat_star->{class})
 			. sprintf("color=%.3f <br />", $cat_star->{bv})
 			. sprintf("aspq1=%.1f <br />", $cat_star->{aspq})
@@ -2177,16 +2280,16 @@ sub plot_stars {
 
     # Plot field stars from AGASC
     foreach my $star (values %{$self->{agasc_hash}}) {
-	next if ($star->{mag} > $faint_plot_mag);
+	next if ($star->{mag_aca} > $faint_plot_mag);
 
 	# First set defaults
 	my $color = $pg_colors{red}; # By default, assume star is bad
 	my $symbol = $sym_type{field_star};
-	my $size = sym_size($star->{mag});
+	my $size = sym_size($star->{mag_aca});
 
-	$color = $pg_colors{magenta} if ($star->{class} == 0 and $star->{mag} >= 10.7);  # faint
-	$color = $pg_colors{white}   if ($star->{class} == 0 and $star->{mag} < 10.7);   # OK
-	if ($star->{mag} < -10) {                                                        # Bad mag
+	$color = $pg_colors{magenta} if ($star->{class} == 0 and $star->{mag_aca} >= 10.7);  # faint
+	$color = $pg_colors{white}   if ($star->{class} == 0 and $star->{mag_aca} < 10.7);   # OK
+	if ($star->{mag_aca} < -10) {                                                        # Bad mag
 	    $color=$pg_colors{red};
 	    $size=3.0;
 	    $symbol = $sym_type{bad_mag};
@@ -2286,12 +2389,12 @@ sub plot_star_field {
 	# First set defaults
 	my $color = $pg_colors{white};
 	my $symbol = $sym_type{field_star};
-	my $size = sym_size($star->{mag});
+	my $size = sym_size($star->{mag_aca});
 
 	pgsci($color);
 	pgsch($size); # Set character height
 
-	if ( $star->{mag} > $faint_plot_mag ){
+	if ( $star->{mag_aca} > $faint_plot_mag ){
 	    $symbol = $sym_type{very_faint};
 	}
 #	pgpoint(1, $star->{yag}, $star->{zag}, $symbol);

@@ -13,8 +13,8 @@ RunRegression()
   agasc=${1}
   fid_char=${2}
 
-  test=$home/regress/${OSTYPE}_test/$load
-  release=$home/regress/${OSTYPE}_release/$load
+  test=$regtestdir/$load
+  release=$home/regress/release/$load
 
   # Make sure we have a clean test directory
   if [ -d $test ]
@@ -26,15 +26,62 @@ RunRegression()
   echo "mkdir -p $test"
   mkdir -p $test
 
+  # Vehicle Block
+
+  if [ -d $mphome/$load/vehicle ]
+  then
+    echo "cd $test"
+    cd $test
+
+
+  # Run test version.  Use the 'starcheck' launcher to activate the dev environment
+  #
+    echo "Running: ${home}/sandbox_starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+    echo "******************** (TEST VEHICLE) $load *******************" >> $vlog
+    ${home}/sandbox_starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
+    # cut first 4 lines and replace test ska with release to make cleaner diffs
+    perl -n -i.bak -e 'print if $. > 3' $test/v_starcheck.txt
+    perl -p -i -e "s{$SKA}{$RELEASE}" $test/v_starcheck.txt
+    perl -p -i -e "s{$local_data}{$release_data}" $test/v_starcheck.txt
+    perl -p -i -e "s{$RELEASE/data/starcheck/bad_acq_stars.rdb}{$RELEASE/data/acq_stats/bad_acq_stars.rdb}" $test/v_starcheck.txt
+
+  # Now run current release version if not already there
+  #
+    if [ ! -r $release/v_starcheck.txt ]
+    then
+      echo "mkdir -p $release"
+      mkdir -p $release
+      
+      echo "cd $release"
+      cd $release
+      
+      echo "Running: $RELEASE/bin/starcheck.pl -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+      echo "**** (RELEASE VEHICLE) $load ****" >> $vlog
+      env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck.pl -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
+      perl -n -i.bak -e 'print if $. > 3' $release/v_starcheck.txt
+    fi  
+
+
+  # Now compare with release version
+    
+    echo "diff -u $release/v_starcheck.txt $test/v_starcheck.txt >> $vdiffs"
+    echo "********************* $load vehicle ********************" >> $vdiffs
+    diff -u $release/v_starcheck.txt $test/v_starcheck.txt >> $vdiffs
+  fi
+
   echo "cd $test"
   cd $test
 
   # Run test version.  Use the 'starcheck' launcher to activate the dev environment
   #
-  echo "Running: $SKA/bin/starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+  echo "Running: ${home}/sandbox_starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
   echo "******************** (TEST) $load *******************" >> $log
-  $SKA/bin/starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
-  perl -p -i.bak -e "s{$SKA}{$RELEASE}" $test/starcheck.txt
+  ${home}/sandbox_starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
+  # cut first 4 lines and replace test ska with release to make cleaner diffs
+  perl -n -i.bak -e 'print if $. > 3' $test/starcheck.txt
+  perl -p -i -e "s{$SKA}{$RELEASE}" $test/starcheck.txt
+  perl -p -i -e "s{$local_data}{$release_data}" $test/starcheck.txt
+  perl -p -i -e "s{$RELEASE/data/starcheck/bad_acq_stars.rdb}{$RELEASE/data/acq_stats/bad_acq_stars.rdb}" $test/starcheck.txt
 
   # Now run current release version if not already there
   #
@@ -49,14 +96,16 @@ RunRegression()
     echo "Running: $RELEASE/bin/starcheck.pl -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
     echo "**** (RELEASE) $load ****" >> $log
     env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck.pl -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
+    perl -n -i.bak -e 'print if $. > 3' $release/starcheck.txt
   fi  
 
 
   # Now compare with release version
 
-  echo "diff $test/starcheck.txt $release/starcheck.txt >> $diffs"
+  echo "diff -u $release/starcheck.txt $test/starcheck.txt >> $diffs"
   echo "********************* $load ********************" >> $diffs
-  diff $test/starcheck.txt $release/starcheck.txt >> $diffs
+  diff -u $release/starcheck.txt $test/starcheck.txt >> $diffs
+
 
   cd $home
 }
@@ -64,20 +113,47 @@ RunRegression()
 
 # Define the files and directories
 home=$PWD
+sha=${1}
+regtestdir=$home/regress/${sha}
+
+
 mphome=/data/mpcrit1/mplogs
-log=$home/${OSTYPE}_regress_log
-diffs=$home/${OSTYPE}_regress_diffs
+vlog=$home/vehicle_regress_log
+log=$home/regress_log
+vdiffs=$home/vehicle_regress_diffs
+diffs=$home/regress_diffs
 
 RELEASE=/proj/sot/ska
+local_data=$home/starcheck_data_local
+release_data=$RELEASE/data/starcheck
 
-
-if [ "$SKA" = "$RELEASE" ] ; then
-  echo "Error - test bin is the same as the release bin."
+if [ -d $regtestdir ]
+then
+  echo "*****************************************"
+  echo "Regression test output for this code already exists."
+  echo "    Delete to rerun regression tests:"
+  echo "    rm -r $regtestdir"
+  echo "*****************************************"
   exit 1
 fi
 
+# Make a file to store the file SHA and the current git commit
+if [ -w $regtestdir/version ]
+then 
+    echo "rm ${regtestdir}/version"
+    rm ${regtestdir}/version
+fi
+mkdir -p $regtestdir
+echo "echo 'file SHA: $sha' > ${regtestdir}/version"
+echo "file SHA: $sha" >> ${regtestdir}/version
+echo "echo -n git commit SHA: >> ${regtestdir}/version"
+echo -n "git commit SHA: " >> ${regtestdir}/version
+echo "git rev-parse --short HEAD >> ${regtestdir}/version"
+git rev-parse --short HEAD >> ${regtestdir}/version
+
+
 # Remove existing log and diffs files
-for file in $log $diffs
+for file in $log $diffs $vlog $vdiffs
 do
   if [ -w $file ]
   then
@@ -150,10 +226,19 @@ for load in \
     2010/OCT2510/oflsb \
     2011/JAN1711/oflsa \
     2011/MAR1411/oflsa \
-    2011/APR0411/oflsa
+    2011/APR0411/oflsa \
+    2011/DEC1211/oflsa \
+    2012/JAN3012/oflsa
 do
   RunRegression 1p6 fid_CHARACTERIS_FEB07
 done
 
-
-
+# Copy log and diffs to version directory
+for file in $log $diffs $vlog $vdiffs
+do
+  if [ -r $file ]
+  then
+    echo "cp $file $regtestdir"
+    cp $file $regtestdir
+  fi
+done

@@ -1,3 +1,4 @@
+
 package Ska::Parse_CM_File;
 
 ###############################################################
@@ -75,7 +76,6 @@ sub dither {
 		    'ENDITH' => 'ENAB', 
 		    'DITPAR' => undef);
     my %obs;
-    my $dither_time_violation = 0;
     # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
 	if ($bs->{cmd} =~ '(COMMAND_SW|MP_DITHER)') {
@@ -92,8 +92,7 @@ sub dither {
     # Parse lines like:
     # 2002262.094827395   | DSDITH  AODSDITH
     # 2002262.095427395   | ENDITH  AOENDITH
-
-    if ($dh_file && (my $dith_hist_fh = new IO::File $dh_file, "r")) {
+    my $dith_hist_fh = IO::File->new($dh_file, "r") or return (undef, undef); 
 	while (<$dith_hist_fh>) {
 	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (ENDITH|DSDITH)/x) {
 		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
@@ -102,26 +101,23 @@ sub dither {
 		push @dh_time, $time;
 		push @dh_params, {};
 	    }
-	}
-
+          }
 	$dith_hist_fh->close();
-    }
     
     my @ok = grep { $dh_time[$_] < $bs_arr->[0]->{time} } (0 .. $#dh_time);
     my @state = (@dh_state[@ok], @bs_state);
     my @time   = (@dh_time[@ok], @bs_time);
     my @params = (@dh_params[@ok], @bs_params);
 
-    
     # if the most recent/last entry in the dither file has a timestamp newer than
     # the first entry in the load
-    if ( $dh_time[-1] >= $bs_arr->[0]->{time} ){
-	$dither_time_violation = 1;
+    my $dither_time_violation = ($dh_time[-1] >= $bs_arr->[0]->{time});
+    if ($dither_time_violation){
+      return ($dither_time_violation, undef);
     }
 
-
     # Now make an array of hashes as the final output.  Keep track of where the info
-    # came from, for later use in Chex
+    # came from to assist in debugging.
     my @dither;
     my $dither_state;
     my $dither_ampl_p;
@@ -139,13 +135,82 @@ sub dither {
 		      source => $time[$_] < $bs_start ? 'history' : 'backstop',
 		      ampl_p => $dither_ampl_p,
 		      ampl_y => $dither_ampl_y};
-      
-    
-
     }
-    return ($dither_time_violation, @dither);
+    return ($dither_time_violation, \@dither);
+}
+
+
+###############################################################
+sub radmon { 
+###############################################################
+    my $h_file = shift;      # Radmon history file name
+    my $bs_arr = shift;               # Backstop array reference
+    my $bs;
+    my @bs_state;
+    my @bs_time;
+    my @bs_date;
+    my @bs_params;
+    my @h_state;
+    my @h_time;
+    my @h_date;
+    my %cmd = ('DS' => 'DISA', 
+	       'EN' => 'ENAB');
+    my %obs;
+    # First get everything from backstop
+    foreach $bs (@{$bs_arr}) {
+	if ($bs->{cmd} =~ '(COMMAND_SW)') {
+	    my %params = %{$bs->{command}};
+	    if ($params{TLMSID} =~ 'OORMP(DS|EN)') {
+		push @bs_state, $cmd{$1};
+		push @bs_time, $bs->{time};  # see comment below about timing
+		push @bs_date, $bs->{date};
+		push @bs_params, { %params };
+	    }
+	}
+    }
+    
+    # Now get everything from RADMON.txt
+    # Parse lines like:
+    # 2012222.011426269 | ENAB OORMPEN
+    # 2012224.051225059 | DISA OORMPDS
+    my $hist_fh = IO::File->new($h_file, "r") or return (undef, undef); 
+	while (<$hist_fh>) {
+	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (DISA|ENAB) \s+ (OORMPDS|OORMPEN)/x) {
+		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
+		my $time = date2time("$yr:$doy:$hr:$min:$sec");
+		my $date = "$yr:$doy:$hr:$min:$sec";
+		push @h_date, $date;
+		push @h_state, $state;
+		push @h_time, $time;
+        }
+    }
+	$hist_fh->close();
+
+    my @ok = grep { $h_time[$_] < $bs_arr->[0]->{time} } (0 .. $#h_time);
+    my @state = (@h_state[@ok], @bs_state);
+    my @time   = (@h_time[@ok], @bs_time);
+    my @date   = (@h_date[@ok], @bs_date);
+
+    # if the most recent/last entry in the dither file has a timestamp newer than
+    # the first backstop time, set the time violation flag and return undef for
+    # @radmon
+    my $time_violation = ($h_time[-1] >= $bs_arr->[0]->{time});
+    if ($time_violation){
+      return ($time_violation, undef);
+    }
+
+    # Now make an array of hashes as the final output.  Keep track of where the info
+    # came from to assist in debugging
+    my $bs_start = $bs_arr->[0]->{time};
+    my @radmon = map { { time => $time[$_],
+                         date => $date[$_],
+                         state => $state[$_],
+                         source => $time[$_] < $bs_start ? 'history' : 'backstop'}
+                     } (0 .. $#state);
+    return ($time_violation, \@radmon);
 
 }
+
 
 ###############################################################
 sub fidsel {
@@ -187,7 +252,7 @@ sub fidsel {
 	}
     }
     
-    return ($fid_time_violation, $error, @fs);
+    return ($fid_time_violation, $error, \@fs);
 }    
 
 ###############################################################

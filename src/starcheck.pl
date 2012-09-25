@@ -8,7 +8,7 @@
 ##*******************************************************************************
 
 
-my $version = '2012-Aug-Release';
+my $version = '2012-Sep-Release';
 
 # Set defaults and get command line options
 
@@ -17,7 +17,7 @@ use warnings;
 use Getopt::Long;
 use IO::File;
 use IO::All;
-
+use Sys::Hostname;
 use English;
 use File::Basename;
 use File::Copy;
@@ -26,7 +26,6 @@ use Time::JulianDay;
 use Time::DayOfYear;
 use Time::Local;
 use PoorTextFormat;
-use Chex;
 
 #use lib '/proj/axaf/simul/lib/perl';
 #use GrabEnv qw( grabenv );
@@ -51,20 +50,15 @@ chomp($OS);
 
 # Set some global vars with directory locations
 my $SKA = $ENV{SKA} || '/proj/sot/ska';
-my $Starcheck_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
-my $Starcheck_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
 my %par = (dir  => '.',
 		   plot => 1,
 		   html => 1,
 		   text => 1,
 		   yaml => 1,
-		   chex => undef,
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
 		   );
-
-my $log_fh = open_log_file("$SKA/ops/Chex/starcheck.log");
 
 my $agasc_parent_dir = '/proj/sot/ska/data/agasc';
 my $default_agasc_dir = '/proj/sot/ska/data/agasc1p6/';
@@ -80,11 +74,14 @@ GetOptions( \%par,
 			'vehicle!',
 			'agasc=s',
 			'agasc_dir=s',
-			'chex=s',
+			'sc_data=s',
 			'fid_char=s',
 			'config_file=s',
 			) ||
     exit( 1 );
+
+
+my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
 
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
@@ -104,6 +101,10 @@ my %input_files = ();
 my $sosa_dir_slash = $par{vehicle} ? "vehicle/" : "";
 my $sosa_prefix = $par{vehicle} ? "V_" : "";
 
+
+# Set up for global warnings
+my @global_warn;
+
 # asterisk only include to make globs work correctly
 my $backstop   = get_file("$par{dir}/${sosa_dir_slash}*.backstop", 'backstop', 'required');
 my $guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
@@ -114,6 +115,7 @@ my $mech_file  = get_file("$par{dir}/${sosa_dir_slash}output/${sosa_prefix}TEST_
 my $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither'); 
+my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
 
 my $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
 
@@ -146,7 +148,7 @@ if ( defined $par{agasc} or defined $par{agasc_dir}){
     }
 }
 print STDERR "Using AGASC from $agasc_dir \n";
-print $log_fh "Using AGASC from $agasc_dir \n" if ($log_fh);
+
 
 
 my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
@@ -155,7 +157,7 @@ my $tlr_file   = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required')
 
 my $bad_agasc_file = get_file("$Starcheck_Data/agasc.bad", 'banned_agasc');
 my $ACA_bad_pixel_file = get_file("$Starcheck_Data/ACABadPixels", 'bad_pixel');
-my $bad_acqs_file = get_file( $ENV{'SKA_DATA'}."/acq_stats/bad_acq_stars.rdb", 'acq_star_rdb');
+my $bad_acqs_file = get_file( "$Starcheck_Data/bad_acq_stars.rdb", 'acq_star_rdb');
 my $bad_gui_file = get_file( "$Starcheck_Data/bad_gui_stars.rdb", 'gui_star_rdb');
 
 
@@ -167,14 +169,12 @@ my $ACA_badpix_firstline =  io($ACA_bad_pixel_file)->getline;
 if ($ACA_badpix_firstline =~ /Bad Pixel.*\d{7}\s+\d{7}\s+(\d{7}).*/ ){
     $ACA_badpix_date = $1;
     print STDERR "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
-    print $log_fh "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n" if ($log_fh);
 }
 
 
 unless (-e $STARCHECK) {
     die "Couldn't make directory $STARCHECK\n" unless (mkdir $STARCHECK, 0777);
     print STDERR "Created plot directory $STARCHECK\n";
-    print $log_fh "Created plot directory $STARCHECK\n" if ($log_fh);
 }
 
 # copy over the up and down gifs and overlib
@@ -226,10 +226,7 @@ my %or = Ska::Parse_CM_File::OR($or_file) if ($or_file);
 # Read FIDSEL (fid light) history file and ODB (for fid
 # characteristics) and parse; use fid_time_violation later (when global_warn set up
 
-my ($fid_time_violation, $error, @fidsel) = Ska::Parse_CM_File::fidsel($fidsel_file, \@bs) ;
-
-# Set up for global warnings
-my @global_warn;
+my ($fid_time_violation, $error, $fidsel) = Ska::Parse_CM_File::fidsel($fidsel_file, \@bs) ;
 map { warning("$_\n") } @{$error};
 
 
@@ -264,7 +261,8 @@ else{
 use Ska::Starcheck::Dark_Cal_Checker;
 my $dark_cal_checker;
 eval{
-    $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir} });
+    $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir},
+                                                                app_data => $Starcheck_Data});
 };
 if ($@){
 	unless ($@ =~ /No ACA commanding found/){
@@ -302,16 +300,23 @@ if ($manerr_file) {
 } else { warning("Could not find Maneuver Error file in output/ directory\n") };
 
 # Read DITHER history file and backstop to determine expected dither state
-my ($dither_time_violation, @dither) = Ska::Parse_CM_File::dither($dither_file, \@bs);
+my ($dither_time_violation, $dither) = Ska::Parse_CM_File::dither($dither_file, \@bs);
+
+my ($radmon_time_violation, $radmon) = Ska::Parse_CM_File::radmon($radmon_file, \@bs);
 
 # if dither history runs into load
 if ($dither_time_violation){
-    warning("Dither History runs into load!\n");
+    warning("Dither History runs into load\n");
 } 
+
+# if radmon history runs into load
+if ($radmon_time_violation){
+  warning("Radmon History runs into load\n");
+}
 
 # if fidsel history runs into load
 if ($fid_time_violation){
-    warning("Fidsel History runs into load!\n");
+    warning("Fidsel History runs into load\n");
 }
 
 
@@ -387,7 +392,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
     $obs{$obsid}->set_manerr(@manerr) if (@manerr);
     $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file, $tlr_file);
-    $obs{$obsid}->set_fids(@fidsel);
+    $obs{$obsid}->set_fids($fidsel);
     $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
 }
@@ -398,6 +403,10 @@ for my $obsid_idx (0 .. ($#obsid_id)){
     $obs{$obsid_id[$obsid_idx]}->{prev} = ( $obsid_idx > 0 ) ? $obs{$obsid_id[$obsid_idx-1]} : undef;
     $obs{$obsid_id[$obsid_idx]}->{next} = ( $obsid_idx < $#obsid_id) ? $obs{$obsid_id[$obsid_idx+1]} : undef;
 }
+
+
+
+
 
 # Check that every Guide summary OFLS ID has a matching OFLS ID in DOT
 
@@ -463,8 +472,11 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
-    $obs{$obsid}->check_dither(\@dither);
+    $obs{$obsid}->set_npm_times();
+    $obs{$obsid}->check_bright_perigee($radmon);
+    $obs{$obsid}->check_dither($dither);
 	$obs{$obsid}->check_momentum_unload(\@bs);
+    $obs{$obsid}->check_for_special_case_er();
     $obs{$obsid}->count_good_stars();
 
 # Make sure there is only one star catalog per obsid
@@ -480,17 +492,18 @@ my $out = '<TABLE><TD><PRE> ';
 my $date = `date`;
 chomp $date;
 
+my $hostname = hostname;
 $save_hash{run}{date} = $date;
 
 $out .= "------------  Starcheck $version    -----------------\n";
-$out .= " Run on $date by $ENV{USER} from $ENV{HOST}\n";
+$out .= " Run on $date by $ENV{USER} from $hostname\n";
 $out .= " Configuration:  Using AGASC at $agasc_dir\n";
 # ASCDS $ascds_version_name ($ascds_version)\n"
 #    if ($mp_agasc_version and $ascds_version_name);
 $out .= "\n";
 
 $save_hash{run}{user} = $ENV{USER};
-$save_hash{run}{host} = $ENV{HOST};
+$save_hash{run}{host} = $hostname;
 $save_hash{run}{agasc} = $agasc_dir;
 
 if ($mp_top_link){
@@ -562,29 +575,38 @@ for my $obs_idx (0 .. $#obsid_id) {
     my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};
 
     # if Obsid is numeric, print tally info
-    if ($obs{$obsid}->{obsid} =~ /^\d*$/ ){
-		
-		# minumum requirements for acq and guide for ERs and ORs
-		# should be set by config...
-		my $min_num_acq = ($obs{$obsid}->{obsid} > 40000 ) ? 5 : 4;
-		my $min_num_gui = ($obs{$obsid}->{obsid} > 40000 ) ? 6 : 4;
-		if (defined $obs{$obsid}->{ok_no_starcat}){
-			$min_num_acq = 0;
-			$min_num_gui = 0;
-		}
-		my $acq_font_start = ($good_acq_count < $min_num_acq) ? $red_font_start
-			: $empty_font_start;
-		my $gui_font_start = ($good_guide_count < $min_num_gui) ? $red_font_start
-			: $empty_font_start;
+    if ($obs{$obsid}->{obsid} =~ /^\d+$/ ){
 
-		$out .= "$acq_font_start";
-		$out .= sprintf "$good_acq_count clean ACQ | ";
-		$out .= "$font_stop";
+        # minumum requirements for acq and guide for ERs and ORs
+        # should be set by config...
+        my $min_num_acq = ($obs{$obsid}->{obsid} > 40000 ) ? 5 : 4;
+        my $min_num_gui = ($obs{$obsid}->{obsid} > 40000 ) ? 6 : 4;
 
-		$out .= "$gui_font_start";
-		$out .= sprintf "$good_guide_count clean GUI | ";
-		$out .= "$font_stop";
+        # if there is no star catalog and that's ok
+        if (not ($obs{$obsid}->find_command("MP_STARCAT"))
+            and $obs{$obsid}->{ok_no_starcat}){
+            $min_num_acq = 0;
+            $min_num_gui = 0;
+        }
 
+        # use the 'special case' ER rules from ACA-044
+        if ($obs{$obsid}->{special_case_er}){
+            $min_num_acq = 4;
+            $min_num_gui = 4;
+        }
+
+        my $acq_font_start = ($good_acq_count < $min_num_acq) ? $red_font_start
+        : $empty_font_start;
+        my $gui_font_start = ($good_guide_count < $min_num_gui) ? $red_font_start
+        : $empty_font_start;
+
+        $out .= "$acq_font_start";
+        $out .= sprintf "$good_acq_count clean ACQ | ";
+        $out .= "$font_stop";
+
+        $out .= "$gui_font_start";
+        $out .= sprintf "$good_guide_count clean GUI | ";
+        $out .= "$font_stop";
 	
     }
     # if Obsid is non-numeric, print "Unknown"
@@ -721,22 +743,6 @@ if ($par{text}) {
 }
 
   
-# Update the Chandra expected state file, if desired and possible
-
-if ($mech_file && $mm_file && $dot_file && $soe_file && $par{chex}) {
-   print STDERR "Updating Chandra expected state file\n";
-   print $log_fh "Updating Chandra expected state file\n" if ($log_fh);
-   my $chex = new Chex $par{chex};
-   $chex->update(mman         => \%mm,
-		 mech_check   => \@mc, 
-		 dot          => \%dot,
-		 soe          => \%soe,
-		 OR           => \%or,
-		 backstop     => \@bs,
-		 dither       => \@dither,
-		);
-}
-
 ##***************************************************************************
 sub dark_cal_print{
 ##***************************************************************************
@@ -972,15 +978,15 @@ sub get_file {
 
     my @files = glob($glob);
     if (@files != 1) {
-	print STDERR ((@files == 0) ?
-		      "$warning: No $name file matching $glob\n"
-		      : "$warning: Found more than one file matching $glob, using none\n");
+      my $warn = ((@files == 0) ?
+                  "$warning: No $name file matching $glob\n"
+                  : "$warning: Found more than one file matching $glob, using none\n");
+      warning($warn);
 	die "\n" if ($required);
 	return undef;
     } 
     $input_files{$name}=$files[0];
     print STDERR "Using $name file $files[0]\n";
-    print $log_fh "Using $name file $files[0]\n" if ($log_fh);
     return $files[0];
 }
 
@@ -1005,23 +1011,6 @@ sub warning {
     print STDERR $text;
 }
 
-##***************************************************************************
-sub open_log_file {
-##***************************************************************************
-    my $log_file = shift;
-    my $log_fh;
-
-    if ($log_fh = new IO::File ">> $log_file") {
-	my $date = `date`;
-	chomp $date;
-	print $log_fh "\nStarcheck run at $date by $ENV{USER}\n";
-	print $log_fh "DIR: $ENV{PWD}\n";
-	print $log_fh "CMD: $0 @ARGV\n\n";
-    } else {
-	warn "Couldn't open $log_file for appending\n";
-    }
-    return $log_fh;
-}
 
 ##***************************************************************************
 sub usage
@@ -1096,6 +1085,12 @@ Specify directory path to agasc.  Overrides -agasc option.
 =item B<-fid_char <fid characteristics file>>
 
 Specify file name of the fid characteristics file to use.  This must be in the SKA/data/starcheck/ directory.
+
+=item B<-sc_data <starcheck data directory>>
+
+Specify directory which contains starcheck data files including agasc.bad and fid characteristics.  Default is SKA/data/starcheck.
+
+Specify YAML configuration file in starcheck data directory.  Default is SKA/data/starcheck/characteristics.yaml
 
 =item B<-config_file <config file>>
 
