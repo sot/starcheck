@@ -8,7 +8,7 @@ ACA Load Review Checklist
 
 Date: 2012-Sep-26
 
-Version: 3.0
+Version: 3.1
 
 Author: E. Martin, S. Bucher, T. Aldcroft, J. Connelly
 
@@ -54,6 +54,8 @@ Load Input Files
   - Fidsel: ./History/FIDSEL.txt
 
   - Dither: ./History/DITHER.txt
+
+  - Radmon: ./History/RADMON.txt
 
   - Maneuver Error: ./output/MMMddyyv_ManErr.txt
 
