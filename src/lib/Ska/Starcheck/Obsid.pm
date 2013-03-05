@@ -2259,7 +2259,7 @@ sub plot_stars {
 		  field_star => 1);
 
     # Setup pgplot
-    my $dev = "/png"; # unless defined $dev;  # "?" will prompt for device
+    my $dev = $self->{plot_file} . "/png"; # unless defined $dev;  # "?" will prompt for device
     pgbegin(0,$dev,1,1);  # Open plot device 
     pgpap(5.0, 1.0);
     pgscf(1);             # Set character font
@@ -2335,7 +2335,6 @@ sub plot_stars {
     }
     pgend();				# Close plot
     
-    rename "pgplot.png", $self->{plot_file};
 #    print STDERR "Created star chart $self->{plot_file}\n";
 }
 
@@ -2365,7 +2364,7 @@ sub plot_star_field {
 		    bad_mag => 12);
 
     # Setup pgplot
-    my $dev = "/png"; # unless defined $dev;  # "?" will prompt for device
+    my $dev = $self->{plot_field_file} . "/png"; # unless defined $dev;  # "?" will prompt for device
     pgbegin(0,$dev,1,1);  # Open plot device 
     pgpap(2.7, 1.0);
     pgscf(1);             # Set character font
@@ -2403,8 +2402,7 @@ sub plot_star_field {
     }
 
     pgend();				# Close plot
-    
-    rename "pgplot.png", $self->{plot_field_file};
+
 #    print STDERR "Created star chart $self->{plot_file}\n";
 }
 
@@ -2424,7 +2422,7 @@ sub plot_compass{
     $self->{compass_file} = shift;
     
     # Setup pgplot
-    my $dev = "/png"; # unless defined $dev;  # "?" will prompt for device
+    my $dev = $self->{compass_file} . "/png"; # unless defined $dev;  # "?" will prompt for device
     pgbegin(0,$dev,1,1);  # Open plot device 
     pgpap(1.8, 1.0);
     pgscf(1);             # Set character font
@@ -2505,10 +2503,6 @@ sub plot_compass{
 
 
     pgend();				# Close plot
-    
-    rename "pgplot.png", $self->{compass_file};
-
-
 }
 
 
