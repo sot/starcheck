@@ -2334,7 +2334,9 @@ sub plot_stars {
 	pgpoint(1, $x[$_], $y[$_], $sym_type{field_star});
     }
     pgend();				# Close plot
-    
+    unless (-s $self->{plot_file}){
+      die("$self->{plot_file} was not created");
+    }
 #    print STDERR "Created star chart $self->{plot_file}\n";
 }
 
@@ -2402,6 +2404,9 @@ sub plot_star_field {
     }
 
     pgend();				# Close plot
+    unless (-s $self->{plot_field_file}){
+      die("$self->{plot_field_file} was not created");
+    }
 
 #    print STDERR "Created star chart $self->{plot_file}\n";
 }
@@ -2503,6 +2508,10 @@ sub plot_compass{
 
 
     pgend();				# Close plot
+    unless (-s $self->{compass_file}){
+      die("$self->{compass_file} was not created");
+    }
+
 }
 
 
