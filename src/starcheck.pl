@@ -455,10 +455,10 @@ foreach (@bs) {
 
 # Do main checking
 foreach my $obsid (@obsid_id) {
+    $obs{$obsid}->get_agasc_stars($agasc_dir);
+    $obs{$obsid}->identify_stars();
     if ($par{plot}) {
 	eval{
-	    $obs{$obsid}->get_agasc_stars($agasc_dir);
-	    $obs{$obsid}->identify_stars();
 	    $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.png") ;
 	    $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.png") ;
 	    $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.png");
