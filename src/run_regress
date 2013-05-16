@@ -14,7 +14,7 @@ RunRegression()
   fid_char=${2}
 
   test=$regtestdir/$load
-  release=$home/regress/release/$load
+  release=$home/test_regress/release/$load
 
   # Make sure we have a clean test directory
   if [ -d $test ]
@@ -114,7 +114,7 @@ RunRegression()
 # Define the files and directories
 home=$PWD
 sha=${1}
-regtestdir=$home/regress/${sha}
+regtestdir=$home/test_regress/${sha}
 
 
 mphome=/data/mpcrit1/mplogs
