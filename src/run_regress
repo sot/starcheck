@@ -148,6 +148,13 @@ echo "echo -n git commit SHA: >> ${regtestdir}/version"
 echo -n "git commit SHA: " >> ${regtestdir}/version
 echo "git rev-parse --short HEAD >> ${regtestdir}/version"
 git rev-parse --short HEAD >> ${regtestdir}/version
+echo "echo -n skare_version:  >> ${regtestdir}/version"
+echo -n "skare_version: " >> ${regtestdir}/version
+echo "ska_version >> ${regtestdir}/version"
+ska_version >> ${regtestdir}/version
+echo "echo -n SKA: $SKA > ${regtestdir}/version"
+echo "SKA: $SKA"  >> ${regtestdir}/version
+
 
 
 # Remove existing log and diffs files
