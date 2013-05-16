@@ -1,7 +1,7 @@
 TASK = starcheck
 FLIGHT_ENV = SKA
 
-SRC = $(PWD)/src
+SRC = src
 
 include $(SKA)/include/Makefile.FLIGHT
 
@@ -31,10 +31,14 @@ DATA_FILES = starcheck_data_local/ACABadPixels starcheck_data_local/agasc.bad \
 	starcheck_data_local/fid_CHARACTERISTICS starcheck_data_local/characteristics.yaml \
 	starcheck_data_local/A.tlr starcheck_data_local/B.tlr starcheck_data_local/tlr.cfg
 
-SHA_FILES = $(BIN) $(LIB) $(DATA_FILES)
 
-# Calculate the SHA1 checksum of the set of files in SHA_FILES and return just the sum
+SHA_FILES = ${SKA_ARCH_OS}/bin/ska_version ${SKA_ARCH_OS}/pkgs.manifest $(BIN) $(LIB) \
+	$(DATA_FILES)
+
+# Calculate the SHA1 checksum of the set of files in SHA_FILES and return the abbreviated sum
 SHA = $(shell sha1sum $(SHA_FILES) | sha1sum | cut -c 1-40)
+HOSTNAME = $(shell hostname)
+
 
 $(TEST_BACKSTOP):
 	tar -zxvpf $(TEST_DATA_TGZ) 
@@ -74,7 +78,7 @@ check: test
 # Comprehensive regression test
 .PHONY: regress
 regress: $(TEST_BACKSTOP) $(DATA_FILES)
-	$(SRC)/run_regress $(SHA)
+	$(SRC)/run_regress "$(HOSTNAME)_$(SHA)"
 
 checklist:
 ifdef DOC_RST

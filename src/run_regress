@@ -43,7 +43,6 @@ RunRegression()
     perl -n -i.bak -e 'print if $. > 3' $test/v_starcheck.txt
     perl -p -i -e "s{$SKA}{$RELEASE}" $test/v_starcheck.txt
     perl -p -i -e "s{$local_data}{$release_data}" $test/v_starcheck.txt
-    perl -p -i -e "s{$RELEASE/data/starcheck/bad_acq_stars.rdb}{$RELEASE/data/acq_stats/bad_acq_stars.rdb}" $test/v_starcheck.txt
 
   # Now run current release version if not already there
   #
@@ -81,7 +80,6 @@ RunRegression()
   perl -n -i.bak -e 'print if $. > 3' $test/starcheck.txt
   perl -p -i -e "s{$SKA}{$RELEASE}" $test/starcheck.txt
   perl -p -i -e "s{$local_data}{$release_data}" $test/starcheck.txt
-  perl -p -i -e "s{$RELEASE/data/starcheck/bad_acq_stars.rdb}{$RELEASE/data/acq_stats/bad_acq_stars.rdb}" $test/starcheck.txt
 
   # Now run current release version if not already there
   #
@@ -150,6 +148,13 @@ echo "echo -n git commit SHA: >> ${regtestdir}/version"
 echo -n "git commit SHA: " >> ${regtestdir}/version
 echo "git rev-parse --short HEAD >> ${regtestdir}/version"
 git rev-parse --short HEAD >> ${regtestdir}/version
+echo "echo -n skare_version:  >> ${regtestdir}/version"
+echo -n "skare_version: " >> ${regtestdir}/version
+echo "ska_version >> ${regtestdir}/version"
+ska_version >> ${regtestdir}/version
+echo "echo -n SKA: $SKA > ${regtestdir}/version"
+echo "SKA: $SKA"  >> ${regtestdir}/version
+
 
 
 # Remove existing log and diffs files
