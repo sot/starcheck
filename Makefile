@@ -1,7 +1,7 @@
 TASK = starcheck
 FLIGHT_ENV = SKA
 
-SRC = $(PWD)/src
+SRC = src
 
 include $(SKA)/include/Makefile.FLIGHT
 
