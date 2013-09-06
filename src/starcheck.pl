@@ -455,18 +455,33 @@ foreach (@bs) {
 
 # Do main checking
 foreach my $obsid (@obsid_id) {
+    $obs{$obsid}->get_agasc_stars($agasc_dir);
+    $obs{$obsid}->identify_stars();
     if ($par{plot}) {
 	eval{
-	    $obs{$obsid}->get_agasc_stars($agasc_dir);
-	    $obs{$obsid}->identify_stars();
 	    $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.png") ;
 	    $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.png") ;
 	    $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.png");
 	};
 	if ($@){
-	    warning ("Could not create plots for Obsid $obsid:\n $@ \n");
-	}
-    }
+	    print STDERR "Problem with plots for Obsid $obs{$obsid}->{obsid}\n error: $@ will wait 5 sec and retry...\n";
+            sleep(5);
+            # repeat the block using an ugly code copy
+            eval{
+              $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.png") ;
+              $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.png") ;
+              $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.png");
+            };
+            if ($@){
+              print STDERR " Retry not successful for $obs{$obsid}->{obsid}\n";
+              warning ("Could not create plots for Obsid $obs{$obsid}->{obsid}.\n error $@");
+            }
+            else{
+              print STDERR " Retry successful for $obs{$obsid}->{obsid}\n";
+            }
+          }
+      }
+
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_flick_pix_mon();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
