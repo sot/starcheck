@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2008/AUG1808/oflsa/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2008/AUG1808/oflsa/mps/ms230_1908.sum
 Using radmon file /data/mpcrit1/mplogs/2008/AUG1808/oflsa/History/RADMON.txt
-Using ACABadPixel file from 2008273 Dark Cal 
+Using ACABadPixel file from 2013191 Dark Cal 
 
 ------------  SUMMARY OF OBSIDS -----------------
 
@@ -30,7 +30,7 @@ Using ACABadPixel file from 2008273 Dark Cal
 OBSID = 57647 at 2008:230:19:26:13.529   8 clean ACQ | 8 clean GUI | 
 OBSID = 57646 at 2008:231:00:06:15.248   8 clean ACQ | 8 clean GUI | 
 OBSID = 57645 at 2008:231:05:29:52.903   8 clean ACQ | 8 clean GUI | 
-OBSID =  9482 at 2008:231:09:06:43.420   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID =  9482 at 2008:231:09:06:43.420   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  9841 at 2008:232:01:29:46.221   8 clean ACQ | 5 clean GUI | 
          ------  2008:232:05:15:01.285   OBC Load Segment Begins     CL232:0500 
 OBSID =  9484 at 2008:232:06:24:26.221   8 clean ACQ | 5 clean GUI | 
@@ -162,6 +162,7 @@ MP_STARCAT at 2008:231:09:06:43.420 (VCDU count = 6495136)
 [11]  1  1130644984   ACQ  6x6   5.797   8.788  10.297  -2131   -330  20   1  120          
 [12]  2  1174027824   ACQ  6x6   5.797   9.223  10.734   -593    945  20   1  120          
 
+>> WARNING: [10] Bad AGASC ID.  1130635848
 >> WARNING: [10] Bad Acquisition Star. 1130635848 has 27 failed out of 35 attempts
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.14	-7.863	-5.833	

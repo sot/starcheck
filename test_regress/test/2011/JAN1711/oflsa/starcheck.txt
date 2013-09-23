@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2011/JAN1711/oflsa/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2011/JAN1711/oflsa/mps/ms017_1042.sum
 Using radmon file /data/mpcrit1/mplogs/2011/JAN1711/oflsa/History/RADMON.txt
-Using ACABadPixel file from 2008273 Dark Cal 
+Using ACABadPixel file from 2013191 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
@@ -100,9 +100,9 @@ OBSID = 12845 at 2011:018:21:34:29.312   8 clean ACQ | 5 clean GUI |
 OBSID = 12732 at 2011:019:09:20:11.987   8 clean ACQ | 5 clean GUI | 
 OBSID = 13132 at 2011:019:12:08:24.273   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID = 12837 at 2011:019:20:24:35.273   8 clean ACQ | 5 clean GUI | 
-OBSID = 12393 at 2011:019:22:14:39.133   6 clean ACQ | 5 clean GUI | WARNINGS [ 2] 
+OBSID = 12393 at 2011:019:22:14:39.133   5 clean ACQ | 4 clean GUI | WARNINGS [ 3] 
          ------  2011:020:12:55:00.000   OBC Load Segment Begins     CL020:1202 
-OBSID = 55711 at 2011:020:16:16:53.865   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 1]
+OBSID = 55711 at 2011:020:16:16:53.865   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 1]
 OBSID = 55710 at 2011:020:16:28:27.159   8 clean ACQ | 8 clean GUI | 
 OBSID = 55709 at 2011:020:17:57:11.748   8 clean ACQ | 8 clean GUI | 
 OBSID = 55708 at 2011:020:19:47:01.526   8 clean ACQ | 8 clean GUI | 
@@ -873,6 +873,7 @@ MP_STARCAT at 2011:019:22:14:39.133 (VCDU count = 15049129)
 [10]  1   735713728   ACQ  6x6   5.797  10.633  12.141   1403  -1188  20   1  120    a4    
 [11]  2   735712056   ACQ  6x6   5.797  10.883  12.391  -1647   1257  20   1  120    a4    
 
+>> WARNING: [ 7] Nearby ACA bad pixel. Y,Z,Radial seps:  13,   8,  15
 >> WARNING: [10] Magnitude.  10.633
 >> WARNING: [11] Magnitude.  10.883
 
@@ -901,6 +902,7 @@ MP_STARCAT at 2011:020:16:16:53.865 (VCDU count = 15302533)
 [ 8]  7   735707432   GUI  8x8   5.797  10.666  12.172  -2263  -2312   1   1   25    g5    
 [ 9]  7   735713728   ACQ  8x8   5.797  10.633  12.141   1403  -1188  20   1  120    a4    
 
+>> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  13,   8,  15
 >> WARNING: [ 8] Magnitude.  10.666
 >> WARNING: [ 9] Magnitude.  10.633
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3

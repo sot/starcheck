@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2010/JAN1110/oflsa/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2010/JAN1110/oflsa/mps/ms011_0309.sum
 Using radmon file /data/mpcrit1/mplogs/2010/JAN1110/oflsa/History/RADMON.txt
-Using ACABadPixel file from 2008273 Dark Cal 
+Using ACABadPixel file from 2013191 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
@@ -96,7 +96,7 @@ OBSID = 11450 at 2010:014:01:26:55.008   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 11044 at 2010:014:02:32:52.798   8 clean ACQ | 5 clean GUI | 
 OBSID = 11058 at 2010:014:11:28:07.695   8 clean ACQ | 4 clean GUI | 
          ------  2010:015:10:08:27.483   OBC Load Segment Begins     CL015:1003 
-OBSID = 56524 at 2010:015:10:11:33.483   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 56524 at 2010:015:10:11:33.483   8 clean ACQ | 6 clean GUI | WARNINGS [ 3] 
 OBSID = 56523 at 2010:015:10:21:36.558   8 clean ACQ | 8 clean GUI | 
 OBSID = 56522 at 2010:015:12:16:30.250   8 clean ACQ | 8 clean GUI | 
 OBSID = 56521 at 2010:015:15:36:55.697   8 clean ACQ | 8 clean GUI | 
@@ -773,6 +773,7 @@ MP_STARCAT at 2010:015:10:11:33.483 (VCDU count = 7904337)
 [10]  7  1186202864   ACQ  8x8   5.797   9.538  11.047    -89  -2173  20   1  120    a2    
 
 >> WARNING: [ 8] Monitor Commanding. DTS should be set to self
+>> WARNING: [ 7] Nearby ACA bad pixel. Y,Z,Radial seps:  40,  12,  42
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Obsid contains flickering pixel MON
 >> INFO   : Special Case ER

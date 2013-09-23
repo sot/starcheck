@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2009/NOV3009/oflsb/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2009/NOV3009/oflsb/mps/ms332_2133.sum
 Using radmon file /data/mpcrit1/mplogs/2009/NOV3009/oflsb/History/RADMON.txt
-Using ACABadPixel file from 2008273 Dark Cal 
+Using ACABadPixel file from 2013191 Dark Cal 
 
 ------------  SUMMARY OF OBSIDS -----------------
 
@@ -41,8 +41,8 @@ OBSID = 12038 at 2009:333:15:00:47.881   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 56632 at 2009:333:18:16:03.911   8 clean ACQ | 8 clean GUI | 
 OBSID = 11713 at 2009:333:18:55:38.103   8 clean ACQ | 5 clean GUI | 
          ------  2009:334:12:00:00.000   OBC Load Segment Begins     CL334:1204 
-OBSID = 12034 at 2009:335:03:18:11.861   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
-OBSID = 56631 at 2009:335:11:19:22.754   7 clean ACQ | 7 clean GUI | WARNINGS [ 2]
+OBSID = 12034 at 2009:335:03:18:11.861   6 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 56631 at 2009:335:11:19:22.754   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 56630 at 2009:335:11:29:27.547   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 56629 at 2009:335:12:05:55.515   8 clean ACQ | 8 clean GUI | 
 OBSID = 56628 at 2009:335:16:11:38.950   8 clean ACQ | 8 clean GUI | 
@@ -51,12 +51,12 @@ OBSID = 56627 at 2009:335:17:44:28.666   8 clean ACQ | 8 clean GUI |
 OBSID = 56626 at 2009:335:19:16:28.554   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 56625 at 2009:335:21:36:51.321   8 clean ACQ | 8 clean GUI | 
 OBSID = 56624 at 2009:335:22:09:56.399   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID = 12035 at 2009:336:00:27:19.224   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
+OBSID = 12035 at 2009:336:00:27:19.224   6 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 12036 at 2009:336:07:29:55.547   8 clean ACQ | 5 clean GUI | 
 OBSID = 11715 at 2009:336:21:32:37.147   8 clean ACQ | 5 clean GUI | 
          ------  2009:337:04:30:01.285   OBC Load Segment Begins     CL337:0404 
-OBSID = 12032 at 2009:337:18:37:53.147   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
-OBSID = 56623 at 2009:338:02:45:56.117   7 clean ACQ | 7 clean GUI | WARNINGS [ 2]
+OBSID = 12032 at 2009:337:18:37:53.147   6 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 56623 at 2009:338:02:45:56.117   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 56622 at 2009:338:02:56:00.910   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 56621 at 2009:338:06:53:16.855   8 clean ACQ | 8 clean GUI | 
 OBSID = 56620 at 2009:338:07:50:06.000   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
@@ -462,6 +462,7 @@ MP_STARCAT at 2009:335:03:18:11.861 (VCDU count = 9412085)
 [11]  1   465963816   ACQ  6x6   5.797   9.304  11.297   -552   2040  20   1  120    a2    
 [12]  2   465444912   ACQ  6x6   5.797   9.437  10.938   1248   -514  20   1  120    a2    
 
+>> WARNING: [10] Bad AGASC ID.  465456712
 >> WARNING: [10] Bad Acquisition Star. 465456712 has  5 failed out of  5 attempts
 >> WARNING: [12] Search spoiler.  465443648: Y,Z,Radial,Mag seps: 178  59 187 -1.0
 
@@ -491,6 +492,7 @@ MP_STARCAT at 2009:335:11:19:22.754 (VCDU count = 9524751)
 [ 9]  6   465450624   ACQ  8x8   5.797   7.518   9.016   1301    629  20   1  120    a2    
 [10]  7   465963816   ACQ  8x8   5.797   9.304  11.297   -552   2040  20   1  120    a2    
 
+>> WARNING: [ 6] Bad AGASC ID.  465456712
 >> WARNING: [ 6] Bad Acquisition Star. 465456712 has  5 failed out of  5 attempts
 >> WARNING: [ 6] Bad Guide Star. 465456712 has bad data  5 of  5 attempts
 >> INFO   : Special Case ER
@@ -711,6 +713,7 @@ MP_STARCAT at 2009:336:00:27:19.224 (VCDU count = 9709245)
 [11]  1   465963816   ACQ  6x6   5.797   9.304  11.297   -552   2040  20   1  120    a2    
 [12]  2   465444912   ACQ  6x6   5.797   9.437  10.938   1248   -514  20   1  120    a2    
 
+>> WARNING: [10] Bad AGASC ID.  465456712
 >> WARNING: [10] Bad Acquisition Star. 465456712 has  5 failed out of  5 attempts
 >> WARNING: [12] Search spoiler.  465443648: Y,Z,Radial,Mag seps: 178  59 187 -1.0
 
@@ -802,6 +805,7 @@ MP_STARCAT at 2009:337:18:37:53.147 (VCDU count = 10301768)
 [11]  1   465963816   ACQ  6x6   5.797   9.304  11.297   -552   2040  20   1  120    a2    
 [12]  2   465444912   ACQ  6x6   5.797   9.437  10.938   1248   -514  20   1  120    a2    
 
+>> WARNING: [10] Bad AGASC ID.  465456712
 >> WARNING: [10] Bad Acquisition Star. 465456712 has  8 failed out of  8 attempts
 >> WARNING: [12] Search spoiler.  465443648: Y,Z,Radial,Mag seps: 178  59 187 -1.0
 
@@ -831,6 +835,7 @@ MP_STARCAT at 2009:338:02:45:56.117 (VCDU count = 10416043)
 [ 9]  6   465450624   ACQ  8x8   5.797   7.518   9.016   1301    629  20   1  120    a2    
 [10]  7   465963816   ACQ  8x8   5.797   9.304  11.297   -552   2040  20   1  120    a2    
 
+>> WARNING: [ 6] Bad AGASC ID.  465456712
 >> WARNING: [ 6] Bad Acquisition Star. 465456712 has  8 failed out of  8 attempts
 >> WARNING: [ 6] Bad Guide Star. 465456712 has bad data  6 of  6 attempts
 >> INFO   : Special Case ER

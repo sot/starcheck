@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2009/FEB1609/oflsa/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2009/FEB1609/oflsa/mps/ms047_0622.sum
 Using radmon file /data/mpcrit1/mplogs/2009/FEB1609/oflsa/History/RADMON.txt
-Using ACABadPixel file from 2008273 Dark Cal 
+Using ACABadPixel file from 2013191 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
@@ -86,17 +86,17 @@ OBSID = 57294 at 2009:049:20:22:15.791   8 clean ACQ | 8 clean GUI | WARNINGS [ 
 OBSID = 57293 at 2009:049:23:33:37.079   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
          ------  2009:050:02:45:00.000   OBC Load Segment Begins     CL050:0200 
 OBSID = 57292 at 2009:050:04:58:05.701   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID = 57291 at 2009:050:05:32:39.000   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 57291 at 2009:050:05:32:39.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 57290 at 2009:050:05:56:33.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57289 at 2009:050:06:15:39.000   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 57289 at 2009:050:06:15:39.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 57288 at 2009:050:06:39:33.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57287 at 2009:050:06:58:39.000   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 57287 at 2009:050:06:58:39.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 57286 at 2009:050:07:22:33.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57285 at 2009:050:07:41:39.000   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 57285 at 2009:050:07:41:39.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 57284 at 2009:050:08:05:33.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57283 at 2009:050:08:24:39.000   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 57283 at 2009:050:08:24:39.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 57282 at 2009:050:08:48:33.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57281 at 2009:050:09:07:39.000   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 57281 at 2009:050:09:07:39.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 57280 at 2009:050:09:31:39.000   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 10414 at 2009:050:09:40:19.000   5 clean ACQ | 5 clean GUI | WARNINGS [ 3]
 OBSID = 10131 at 2009:050:13:01:05.791   8 clean ACQ | 5 clean GUI | 
@@ -518,6 +518,7 @@ MP_STARCAT at 2009:050:05:32:39.000 (VCDU count = 14013208)
 [ 7]  6   189022480   BOT  8x8   5.797   9.501  11.000   1002   1969  20   1  120  a2g2    
 [ 8]  7   189025192   BOT  8x8   5.797  10.031  11.531   1590  -1894  20   1  120  a2g3    
 
+>> WARNING: [ 5] Nearby ACA bad pixel. Y,Z,Radial seps:  11,  15,  19
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 2] Magnitude.  10.366
 
@@ -557,6 +558,7 @@ MP_STARCAT at 2009:050:06:15:39.000 (VCDU count = 14023277)
 [ 7]  6   189022480   BOT  8x8   5.797   9.501  11.000   1003   1969  20   1  120  a2g2    
 [ 8]  7   189025192   BOT  8x8   5.797  10.031  11.531   1590  -1895  20   1  120  a2g3    
 
+>> WARNING: [ 5] Nearby ACA bad pixel. Y,Z,Radial seps:  12,  15,  19
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 2] Magnitude.  10.366
 
@@ -596,6 +598,7 @@ MP_STARCAT at 2009:050:06:58:39.000 (VCDU count = 14033345)
 [ 7]  6   189022480   BOT  8x8   5.797   9.501  11.000   1004   1968  20   1  120  a2g2    
 [ 8]  7   189025192   BOT  8x8   5.797  10.031  11.531   1589  -1896  20   1  120  a2g3    
 
+>> WARNING: [ 5] Nearby ACA bad pixel. Y,Z,Radial seps:  13,  14,  20
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 2] Magnitude.  10.366
 
@@ -635,6 +638,7 @@ MP_STARCAT at 2009:050:07:41:39.000 (VCDU count = 14043413)
 [ 7]  6   189022480   BOT  8x8   5.797   9.501  11.000   1005   1968  20   1  120  a2g2    
 [ 8]  7   189025192   BOT  8x8   5.797  10.031  11.531   1588  -1896  20   1  120  a2g3    
 
+>> WARNING: [ 5] Nearby ACA bad pixel. Y,Z,Radial seps:  15,  13,  20
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 2] Magnitude.  10.366
 
@@ -674,6 +678,7 @@ MP_STARCAT at 2009:050:08:24:39.000 (VCDU count = 14053481)
 [ 7]  6   189022480   BOT  8x8   5.797   9.501  11.000   1006   1967  20   1  120  a2g2    
 [ 8]  7   189025192   BOT  8x8   5.797  10.031  11.531   1587  -1897  20   1  120  a2g3    
 
+>> WARNING: [ 5] Nearby ACA bad pixel. Y,Z,Radial seps:  16,  13,  21
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 2] Magnitude.  10.366
 
@@ -714,6 +719,7 @@ MP_STARCAT at 2009:050:09:07:39.000 (VCDU count = 14063550)
 [ 8]  7   189019864   GUI  8x8   5.797   9.767  11.266   1286  -2446   1   1   25    g2    
 [ 9]  7   114168856   ACQ  8x8   5.797  10.557  12.062  -2232   1518  20   1  120    a3    
 
+>> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  17,  12,  21
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 2] Magnitude.  10.366
 >> WARNING: [ 9] Magnitude.  10.557

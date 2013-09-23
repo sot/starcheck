@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/mps/ms188_1108.sum
 Using radmon file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/History/RADMON.txt
-Using ACABadPixel file from 2008273 Dark Cal 
+Using ACABadPixel file from 2013191 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
@@ -96,7 +96,7 @@ OBSID = 57698 at 2008:191:00:29:04.244   8 clean ACQ | 8 clean GUI | WARNINGS [ 
 OBSID = 57697 at 2008:191:02:40:41.008   8 clean ACQ | 8 clean GUI | 
 OBSID = 57696 at 2008:191:07:03:07.409   8 clean ACQ | 8 clean GUI | 
          ------  2008:191:10:13:15.931   OBC Load Segment Begins     CL191:1004 
-OBSID = 57695 at 2008:191:10:16:21.931   8 clean ACQ | 8 clean GUI | 
+OBSID = 57695 at 2008:191:10:16:21.931   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID =  9729 at 2008:191:16:32:54.097   5 clean ACQ | 5 clean GUI | WARNINGS [ 4]
 OBSID =  9108 at 2008:192:06:34:43.513   8 clean ACQ | 5 clean GUI | 
 OBSID =  9284 at 2008:192:16:48:44.805   8 clean ACQ | 5 clean GUI | 
@@ -696,6 +696,7 @@ MP_STARCAT at 2008:191:10:16:21.931 (VCDU count = 9801830)
 [ 9]  6    58590360   ACQ  8x8   5.797   9.981  11.484   1727  -1991  20   1  120    a2    
 [10]  7    58592312   ACQ  8x8   5.797  10.022  11.531   1343   1147  20   1  120    a2    
 
+>> WARNING: [ 5] Nearby ACA bad pixel. Y,Z,Radial seps:  39,  28,  48
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2008:191:16:00:00.000
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.191	-6.207	-4.524	

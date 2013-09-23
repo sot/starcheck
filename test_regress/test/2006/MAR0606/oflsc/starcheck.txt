@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2006/MAR0606/oflsc/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_JUL01
 Using processing summary file /data/mpcrit1/mplogs/2006/MAR0606/oflsc/mps/ms064_0736.sum
 Using radmon file /data/mpcrit1/mplogs/2006/MAR0606/oflsc/History/RADMON.txt
-Using ACABadPixel file from 2008273 Dark Cal 
+Using ACABadPixel file from 2013191 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
@@ -110,7 +110,7 @@ OBSID =  7290 at 2006:068:22:49:40.616   8 clean ACQ | 5 clean GUI |
 OBSID = 59068 at 2006:069:07:09:20.616   8 clean ACQ | 8 clean GUI | 
 OBSID =  6913 at 2006:069:07:39:21.668   8 clean ACQ | 5 clean GUI | 
 OBSID =  6429 at 2006:069:09:46:12.502   8 clean ACQ | 5 clean GUI | 
-OBSID = 59067 at 2006:069:13:13:29.765   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
+OBSID = 59067 at 2006:069:13:13:29.765   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
          ------  2006:069:23:23:31.056   OBC Load Segment Begins     CL069:2307 
 OBSID = 59066 at 2006:069:23:26:37.056   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID =  5436 at 2006:070:06:18:26.237   8 clean ACQ | 5 clean GUI | 
@@ -1113,7 +1113,6 @@ MP_STARCAT at 2006:069:13:13:29.765 (VCDU count = 7786526)
 [ 9]  6   716837368   ACQ  8x8   5.797   9.873  11.375   -442   -306  15   1   95    a2    
 [10]  7   717357480   ACQ  8x8   5.797   9.622  11.125    944    -51  20   1  120    a3    
 
->> WARNING: [ 4] Nearby ACA bad pixel. Y,Z,Radial seps:   4,  38,  39
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Magnitude.  10.425
 

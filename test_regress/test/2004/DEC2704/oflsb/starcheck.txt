@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2004/DEC2704/oflsb/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_JUL01
 Using processing summary file /data/mpcrit1/mplogs/2004/DEC2704/oflsb/mps/ms361_1725.sum
 Using radmon file /data/mpcrit1/mplogs/2004/DEC2704/oflsb/History/RADMON.txt
-Using ACABadPixel file from 2008273 Dark Cal 
+Using ACABadPixel file from 2013191 Dark Cal 
 
 ------------  SUMMARY OF OBSIDS -----------------
 
@@ -84,7 +84,7 @@ OBSID = 59872 at 2005:006:09:09:23.949   8 clean ACQ | 8 clean GUI |
 OBSID = 59871 at 2005:006:16:02:10.743   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
          ------  2005:006:17:30:01.285   OBC Load Segment Begins     CL006:1703 
 OBSID =  5416 at 2005:006:21:57:20.743   5 clean ACQ | 4 clean GUI | WARNINGS [ 5]
-OBSID =  5758 at 2005:007:02:27:25.141   6 clean ACQ | 3 clean GUI | WARNINGS [ 2]
+OBSID =  5758 at 2005:007:02:27:25.141   6 clean ACQ | 3 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID =  5791 at 2005:007:07:08:58.083   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID =  5414 at 2005:007:13:12:23.481   8 clean ACQ | 5 clean GUI | 
 OBSID =  5624 at 2005:007:19:14:18.640   8 clean ACQ | 5 clean GUI | 
@@ -1607,6 +1607,7 @@ MP_STARCAT at 2005:007:02:27:25.141 (VCDU count = 14658294)
 [10]  1   849219800   ACQ  6x6   5.797   9.897  11.406   1151  -1739  20   1  120    a2    
 [11]  2   849223784   ACQ  6x6   5.797   9.655  11.156     35    750  20   1  120    a2    
 
+>> WARNING: [ 8] Bad AGASC ID.  849226688
 >> WARNING: [ 5] Bad Acquisition Star. 849223080 has  1 failed out of  3 attempts
 >> WARNING: [ 8] Bad Acquisition Star. 849226688 has  3 failed out of  3 attempts
 

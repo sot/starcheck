@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2011/MAR1411/oflsa/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2011/MAR1411/oflsa/mps/ms073_1508.sum
 Using radmon file /data/mpcrit1/mplogs/2011/MAR1411/oflsa/History/RADMON.txt
-Using ACABadPixel file from 2008273 Dark Cal 
+Using ACABadPixel file from 2013191 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
@@ -72,7 +72,7 @@ Transponder A	before 2011:079:03:16:30.000
 
          ------  2011:073:15:07:00.000   OBC Load Segment Begins     CL073:1505 
 OBSID = 55594 at 2011:073:15:10:06.000   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
-OBSID = 55593 at 2011:073:16:05:38.707   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 55593 at 2011:073:16:05:38.707   8 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 55592 at 2011:073:16:59:43.760   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 55591 at 2011:073:18:55:34.309   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 55590 at 2011:073:20:52:59.547   5 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 5]
@@ -83,9 +83,9 @@ OBSID = 13032 at 2011:074:08:42:40.119   8 clean ACQ | 5 clean GUI |
 OBSID = 13033 at 2011:074:09:24:36.367   8 clean ACQ | 5 clean GUI | 
 OBSID = 13034 at 2011:074:09:49:46.367   8 clean ACQ | 5 clean GUI | 
 OBSID = 13035 at 2011:074:10:14:56.367   8 clean ACQ | 5 clean GUI | 
-OBSID = 13046 at 2011:074:10:40:06.367   4 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 2]
+OBSID = 13046 at 2011:074:10:40:06.367   4 clean ACQ | 5 clean GUI | WARNINGS [ 5] WARNINGS [ 2]
 OBSID = 12993 at 2011:074:11:43:27.615   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID = 13025 at 2011:075:02:15:54.557   4 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 2]
+OBSID = 13025 at 2011:075:02:15:54.557   4 clean ACQ | 5 clean GUI | WARNINGS [ 5] WARNINGS [ 2]
          ------  2011:075:05:15:01.285   OBC Load Segment Begins     CL075:0505 
 OBSID = 12929 at 2011:075:08:28:32.872   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 12931 at 2011:075:12:19:54.472   8 clean ACQ | 5 clean GUI | 
@@ -171,6 +171,7 @@ MP_STARCAT at 2011:073:16:05:38.707 (VCDU count = 16392730)
 [ 9]  6   185737128   ACQ  8x8   5.797   9.307  10.812     37  -2047  20   1  120          
 [10]  7   185860760   ACQ  8x8   5.797   9.870  11.375    157    902  20   1  120    a2    
 
+>> WARNING: [ 7] Bad AGASC ID.  185871616
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.28, Pos_Err = 0.07
 
@@ -501,6 +502,7 @@ MP_STARCAT at 2011:074:10:40:06.367 (VCDU count = 16653677)
 >> WARNING: [ 9] Magnitude.  10.724
 >> WARNING: [10] Magnitude.  10.828
 >> WARNING: [11] Magnitude.  10.929
+>> WARNING: [12] Bad AGASC ID.  261621080
 >> WARNING: [12] Magnitude.  10.985
 >> WARNING: [12] Bad Acquisition Star. 261621080 has  4 failed out of  6 attempts
 >> WARNING: [12] Marginal star. B-V = 0.700, Mag_Err = 0.41, Pos_Err = 0.30
@@ -567,6 +569,7 @@ MP_STARCAT at 2011:075:02:15:54.557 (VCDU count = 95576)
 >> WARNING: [ 9] Magnitude.  10.724
 >> WARNING: [10] Magnitude.  10.828
 >> WARNING: [11] Magnitude.  10.929
+>> WARNING: [12] Bad AGASC ID.  261621080
 >> WARNING: [12] Magnitude.  10.985
 >> WARNING: [12] Bad Acquisition Star. 261621080 has  4 failed out of  6 attempts
 >> WARNING: [12] Marginal star. B-V = 0.700, Mag_Err = 0.41, Pos_Err = 0.30

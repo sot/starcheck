@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2011/DEC1211/oflsa/vehicle/output/V_T
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2011/DEC1211/oflsa/mps/ms346_0006.sum
 Using radmon file /data/mpcrit1/mplogs/2011/DEC1211/oflsa/History/RADMON.txt
-Using ACABadPixel file from 2008273 Dark Cal 
+Using ACABadPixel file from 2013191 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
@@ -110,7 +110,7 @@ OBSID = 14049 at 2011:350:23:14:34.533   8 clean ACQ | 5 clean GUI |
 OBSID = 12910 at 2011:351:01:13:14.338   6 clean ACQ | 4 clean GUI | WARNINGS [ 3]
 OBSID = 54981 at 2011:351:06:31:33.830   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
 OBSID = 54980 at 2011:351:07:24:35.092   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
-OBSID = 54979 at 2011:351:08:40:24.025   8 clean ACQ | 8 clean GUI | 
+OBSID = 54979 at 2011:351:08:40:24.025   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 54978 at 2011:351:10:47:21.827   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 54977 at 2011:351:13:10:16.838   8 clean ACQ | 8 clean GUI | 
 OBSID = 14205 at 2011:351:15:03:23.183   8 clean ACQ | 5 clean GUI | 
@@ -1003,6 +1003,8 @@ MP_STARCAT at 2011:351:08:40:24.025 (VCDU count = 807586)
 [ 8]  7    10492600   GUI  8x8   5.797   9.872  11.375  -1340   2188   1   1   25    g3    
 [ 9]  6    10491184   ACQ  8x8   5.797   9.742  11.250   1513   -821  20   1  120    a2    
 [10]  7    10629352   ACQ  8x8   5.797   9.870  11.375   1748   1199  20   1  120    a2    
+
+>> WARNING: [ 7] Nearby ACA bad pixel. Y,Z,Radial seps:  37,  42,  56
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.756	-7.587	-5.686	
 Acquisition Stars Expected  : 7.67
