@@ -37,7 +37,7 @@ OBSID = 12704 at 2011:094:14:02:06.543   8 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 55543 at 2011:094:17:16:49.408   8 clean ACQ | 8 clean GUI | 
 OBSID = 55542 at 2011:094:17:28:40.877   5 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 4]
 OBSID = 55541 at 2011:094:19:22:39.005   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
-OBSID = 55540 at 2011:094:23:47:47.510   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 55540 at 2011:094:23:47:47.510   8 clean ACQ | 8 clean GUI | 
 OBSID = 55539 at 2011:095:01:40:43.877   0 clean ACQ | 0 clean GUI | 
 OBSID = 55538 at 2011:095:01:50:52.598   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
 OBSID = 12952 at 2011:095:04:04:28.070   8 clean ACQ | 5 clean GUI | 
@@ -50,7 +50,7 @@ OBSID = 55537 at 2011:097:08:43:09.572   8 clean ACQ | 8 clean GUI | WARNINGS [ 
 OBSID = 55536 at 2011:097:08:55:01.015   5 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 4]
 OBSID = 55535 at 2011:097:10:37:09.928   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 55534 at 2011:097:15:19:00.051   8 clean ACQ | 8 clean GUI | 
-OBSID = 55533 at 2011:097:16:15:23.094   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
+OBSID = 55533 at 2011:097:16:15:23.094   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
 OBSID = 55532 at 2011:097:16:51:41.015   0 clean ACQ | 0 clean GUI | 
 OBSID = 12953 at 2011:097:19:14:38.321   8 clean ACQ | 5 clean GUI | 
          ------  2011:098:05:10:01.285   OBC Load Segment Begins     CL098:0500 
@@ -59,7 +59,7 @@ OBSID = 55531 at 2011:100:00:10:20.140   8 clean ACQ | 8 clean GUI |
 OBSID = 55530 at 2011:100:00:21:53.434   8 clean ACQ | 8 clean GUI | 
 OBSID = 55529 at 2011:100:01:09:54.720   5 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 4]
 OBSID = 55528 at 2011:100:03:19:59.223   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
-OBSID = 55527 at 2011:100:06:55:10.227   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 55527 at 2011:100:06:55:10.227   8 clean ACQ | 8 clean GUI | 
 OBSID = 55526 at 2011:100:08:58:00.434   0 clean ACQ | 0 clean GUI | 
 OBSID = 55525 at 2011:100:08:58:10.873   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 4]
 OBSID = 12891 at 2011:100:11:05:04.784   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
@@ -381,7 +381,7 @@ MP_STARCAT at 2011:094:23:47:47.510 (VCDU count = 6804309)
 [ 9]  6   950283896   ACQ  8x8   5.797  10.172  11.672    698    558  20   1  120    a2    
 [10]  7   950809456   ACQ  8x8   5.797   9.985  11.484    690   -230  20   1  120    a3    
 
->> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
+>> INFO   : Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.713	-5.766	-4.136	
 Acquisition Stars Expected  : 7.34
@@ -687,11 +687,11 @@ MP_STARCAT at 2011:097:16:15:23.094 (VCDU count = 7709892)
 [ 8]  7  1018959408   GUI  8x8   5.797  10.509  12.016  -1422   1008   1   1   25    g4   C
 [ 9]  7  1020660952   ACQ  8x8   5.797  10.569  12.078    550   -116  20   1  120    a3    
 
->> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.35, Pos_Err = 0.10
 >> WARNING: [ 8] Magnitude.  10.509
 >> WARNING: [ 9] Magnitude.  10.569
+>> INFO   : Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.646	-4.098	-2.854	
 Acquisition Stars Expected  : 6.86
@@ -870,7 +870,7 @@ MP_STARCAT at 2011:100:06:55:10.227 (VCDU count = 8590232)
 [ 8]  7   950281048   GUI  8x8   5.797   8.694  10.203   2321   1911   1   1   25          
 [ 9]  7   950283896   ACQ  8x8   5.797  10.172  11.672    575    684  20   1  120    a2    
 
->> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
+>> INFO   : Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.766	-5.816	-4.181	
 Acquisition Stars Expected  : 7.35

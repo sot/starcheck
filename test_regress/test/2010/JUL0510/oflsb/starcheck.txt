@@ -102,7 +102,7 @@ OBSID = 56134 at 2010:190:02:00:42.433   0 clean ACQ | 0 clean GUI |
 OBSID = 56133 at 2010:190:02:19:48.433   7 clean ACQ | 8 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 56132 at 2010:190:02:43:42.433   0 clean ACQ | 0 clean GUI | 
 OBSID = 56131 at 2010:190:03:02:48.433   7 clean ACQ | 8 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
-OBSID = 56130 at 2010:190:03:26:48.433   7 clean ACQ | 8 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
+OBSID = 56130 at 2010:190:03:26:48.433   7 clean ACQ | 8 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 56129 at 2010:190:08:52:13.573   0 clean ACQ | 0 clean GUI | 
          ------  2010:190:08:52:13.573   OBC Load Segment Begins     CL190:0800 
 OBSID = 12054 at 2010:190:11:19:40.203   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
@@ -904,8 +904,8 @@ MP_STARCAT at 2010:190:03:26:48.433 (VCDU count = 16482794)
 [11]  7  1044120680   ACQ  8x8   5.797  10.287  11.797  -1198   1741  20   1  120    a3    
 
 >> WARNING: [10] Bad AGASC ID.  1044122248
->> WARNING: Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.68, Pos_Err = 0.15
+>> INFO   : Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.224	-5.379	-3.854	
 Acquisition Stars Expected  : 7.26
