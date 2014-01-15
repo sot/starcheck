@@ -35,6 +35,7 @@ use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
 use Carp;
 use YAML;
+use JSON;
 
 use Ska::Convert qw( date2time );
 use Cwd qw( abs_path );
@@ -498,6 +499,27 @@ foreach my $obsid (@obsid_id) {
     warning ("More than one star catalog assigned to Obsid $obsid\n")
 	if ($obs{$obsid}->find_command('MP_STARCAT',2));
 }
+
+
+# Write out Obsid objects as JSON
+my @all_obs;
+my %exclude = ('next' => 1, 'prev' => 1, 'agasc_hash' => 1);
+foreach my $obsid (@obsid_id){
+  my $obs_obj = $obs{$obsid};
+  my %obj = ();
+  for my $tkey (keys(%{$obs_obj})){
+      if (not defined $exclude{$tkey}){
+          $obj{$tkey} = $obs_obj->{$tkey};
+      }
+  }
+  push @all_obs, \%obj;
+}
+
+my $json_text = to_json(\@all_obs, {pretty => 1});
+open (my $JSON_OUT, "> $STARCHECK.json")
+   or die "Couldn't open $STARCHECK.json for writing\n";
+print $JSON_OUT $json_text;
+close($JSON_OUT);
 
 
 # Produce final report
