@@ -35,7 +35,7 @@ use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
 use Carp;
 use YAML;
-use JSON;
+use JSON ();
 
 use Ska::Convert qw( date2time );
 use Cwd qw( abs_path );
@@ -515,7 +515,7 @@ foreach my $obsid (@obsid_id){
   push @all_obs, \%obj;
 }
 
-my $json_text = to_json(\@all_obs, {pretty => 1});
+my $json_text = JSON::to_json(\@all_obs, {pretty => 1});
 open (my $JSON_OUT, "> $STARCHECK.json")
    or die "Couldn't open $STARCHECK.json for writing\n";
 print $JSON_OUT $json_text;
