@@ -21,6 +21,7 @@ use Sys::Hostname;
 use English;
 use File::Basename;
 use File::Copy;
+use Scalar::Util qw(looks_like_number);
 
 use Time::JulianDay;
 use Time::DayOfYear;
@@ -502,6 +503,21 @@ foreach my $obsid (@obsid_id) {
 
 
 # Write out Obsid objects as JSON
+# include a routine to change the internal context to a float/int
+# for everything that looks like a number
+sub force_numbers {
+    if (ref $_[0] eq ""){
+        if ( looks_like_number($_[0]) ){
+            $_[0] += 0;
+        }
+    } elsif ( ref $_[0] eq 'ARRAY' ){
+        force_numbers($_) for @{$_[0]};
+    } elsif ( ref $_[0] eq 'HASH' ) {
+        force_numbers($_) for values %{$_[0]};
+    }
+    return $_[0];
+}
+
 my @all_obs;
 my %exclude = ('next' => 1, 'prev' => 1, 'agasc_hash' => 1);
 foreach my $obsid (@obsid_id){
@@ -515,7 +531,7 @@ foreach my $obsid (@obsid_id){
   push @all_obs, \%obj;
 }
 
-my $json_text = JSON::to_json(\@all_obs, {pretty => 1});
+my $json_text = JSON::to_json(force_numbers(\@all_obs), {pretty => 1});
 open (my $JSON_OUT, "> $STARCHECK/obsids.json")
    or die "Couldn't open $STARCHECK/obsids.json for writing\n";
 print $JSON_OUT $json_text;
