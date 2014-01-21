@@ -521,11 +521,10 @@ sub force_numbers {
 my @all_obs;
 my %exclude = ('next' => 1, 'prev' => 1, 'agasc_hash' => 1);
 foreach my $obsid (@obsid_id){
-  my $obs_obj = $obs{$obsid};
   my %obj = ();
-  for my $tkey (keys(%{$obs_obj})){
+  for my $tkey (keys(%{$obs{$obsid}})){
       if (not defined $exclude{$tkey}){
-          $obj{$tkey} = $obs_obj->{$tkey};
+          $obj{$tkey} = $obs{$obsid}->{$tkey};
       }
   }
   push @all_obs, \%obj;
