@@ -516,8 +516,8 @@ foreach my $obsid (@obsid_id){
 }
 
 my $json_text = JSON::to_json(\@all_obs, {pretty => 1});
-open (my $JSON_OUT, "> $STARCHECK.json")
-   or die "Couldn't open $STARCHECK.json for writing\n";
+open (my $JSON_OUT, "> $STARCHECK/obsids.json")
+   or die "Couldn't open $STARCHECK/obsids.json for writing\n";
 print $JSON_OUT $json_text;
 close($JSON_OUT);
 
