@@ -2686,22 +2686,17 @@ sub check_idx_warn{
 sub set_ccd_temps{
 ###################################################################################
     my $self = shift;
-    my $ccd_temps = shift;
-    my $max_temp = -99;
-    my $tstop = $self->{obs_tstop};
-    # if there is no following maneuver, use the next obsid's
-    # end time for this max
+    my $obsid_temps = shift;
+    # if there is no following maneuver, use max temp of this and the
+    # next obsid
     if (defined $self->{next} and $self->{no_following_manvr}){
-        $tstop = $self->{next}->{obs_tstop};
+        my $a = $obsid_temps->{$self->{obsid}};
+        my $b = $obsid_temps->{$self->{next}->{obsid}};
+        $self->{ccd_temp} = $a > $b ? $a : $b;
         $self->{ccd_temp_note} = '(max through end of following obsid)';
     }
-    for my $temp (@{$ccd_temps}){
-        next if $temp->{time} < $self->{obs_tstart};
-        if ($temp->{aacccdpt} > $max_temp){
-            $max_temp = $temp->{aacccdpt};
-        }
-        last if $temp->{time} > $tstop;
+    else{
+        $self->{ccd_temp} = $obsid_temps->{$self->{obsid}};
     }
-    $self->{ccd_temp} = $max_temp;
     return;
 }

@@ -132,7 +132,8 @@ def main(opt):
     if opt.oflsdir is not None:
         pred = make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db)
     else:
-        pred = dict(plots=None, times=None, states=None, temps=None)
+        pred = dict(plots=None, times=None, temps=None,
+                    obsids=None, obstemps=None)
 
 
 def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=None):
@@ -212,16 +213,34 @@ def make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db):
 
     model = calc_model(opt.model_spec, states, state0['tstart'], tstop,
                        state0['aacccdpt'], state0['tstart'])
+    temps = {'aca': model.comp['aacccdpt'].mvals}
+    from Chandra.cmd_states import reduce_states
+    obstemps = []
+    obsids = np.unique(states['obsid'])
+    for obsid in obsids:
+        # find extent of NPNT
+        match = states[(states['obsid'] == obsid)
+                       & (states['pcad_mode'] == 'NPNT')]
+        tstart = np.min(match['tstart'])
+        tstop = np.max(match['tstop'])
+        # treat the model samples as temperature intervals
+        # and find the max during each obsid npnt interval
+        tok = np.zeros(len(temps['aca']), dtype=bool)
+        tok[:-1] = ((model.times[:-1] < tstop)
+                    & (model.times[1:] > tstart))
+        obstemps.append(np.max(temps['aca'][tok]))
 
     # Make the limit check plots and data files
     plt.rc("axes", labelsize=10, titlesize=12)
     plt.rc("xtick", labelsize=10)
     plt.rc("ytick", labelsize=10)
-    temps = {'aca': model.comp['aacccdpt'].mvals}
+
     plots = make_check_plots(opt, states, model.times, temps, tstart)
     write_temps(opt, model.times, temps)
+    write_obstemps(opt, obsids, obstemps)
 
-    return dict(opt=opt, times=model.times, temps=temps, plots=plots)
+    return dict(opt=opt, times=model.times, temps=temps,
+                obsids=obsids, obstemps=obstemps, plots=plots, )
 
 
 def get_bs_cmds(oflsdir):
@@ -316,6 +335,20 @@ def write_temps(opt, times, temps):
 
     fmt = {'aacccdpt': '%.2f',
            'time': '%.2f'}
+    out = open(outfile, 'w')
+    Ska.Numpy.pprint(temp_array, fmt, out)
+    out.close()
+
+
+def write_obstemps(opt, obsids, temps):
+    """Write temperature predictions to file temperatures.dat"""
+    outfile = os.path.join(opt.outdir, 'obsid_temperatures.dat')
+    logger.info('Writing obsid temperatures to %s' % outfile)
+    temp_recs = [(obsids[i], temps[i])
+                 for i in xrange(len(obsids))]
+    temp_array = np.rec.fromrecords(
+        temp_recs, names=('obsid', 'aacccdpt'))
+    fmt = {'aacccdpt': '%.2f'}
     out = open(outfile, 'w')
     Ska.Numpy.pprint(temp_array, fmt, out)
     out.close()

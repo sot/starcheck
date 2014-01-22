@@ -292,10 +292,11 @@ my @aca_check = ("$SKA/bin/python",
 #                 "--model-spec", "$Starcheck_Data/aca_spec.json");
 print STDERR map {$_ . " "} @aca_check;
 print STDERR "\n";
-my $ccd_temps;
+my $obsid_temps = ();
 if (system(@aca_check) == 0){
-    my $ccd_temp_file   = get_file("$STARCHECK/temperatures.dat", "ccdtemp", 'required');
-    $ccd_temps = Data::ParseTable::parse_table($ccd_temp_file);
+    my $obsid_temp_file   = get_file("$STARCHECK/obsid_temperatures.dat", "ccdtemp", 'required');
+    my $obsid_temp_list = Data::ParseTable::parse_table($obsid_temp_file);
+    map {$obsid_temps->{$_->{obsid}} = $_->{aacccdpt}} @{$obsid_temp_list};
 }
 else{
     push @global_warn, "aca_check xija model failed with code $?.  No temperatures.\n";
@@ -527,7 +528,7 @@ foreach my $obsid (@obsid_id) {
 # to get the (n+1) obs stop time for setting max temperatures
 # this is just run it its own loop
 foreach my $obsid (@obsid_id) {
-    $obs{$obsid}->set_ccd_temps($ccd_temps) if ($ccd_temps);
+    $obs{$obsid}->set_ccd_temps($obsid_temps) if ($obsid_temps);
 }
 
 # Write out Obsid objects as JSON
@@ -627,7 +628,7 @@ if ($dark_cal_checker->{dark_cal_present}){
 }
 
 # CCD temperature plot
-if ($ccd_temps){
+if ($obsid_temps){
     $out .= "------------  CCD TEMPERATURE PREDICTION -----------------\n\n";
     $out .= "<IMG SRC='$STARCHECK/aacccdpt.png'>\n";
 }
