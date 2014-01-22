@@ -40,12 +40,7 @@ import xija
 import chandra_models
 
 MSID = dict(aca='AACCCDPT')
-YELLOW = dict(aca=-15)
-MARGIN = dict(aca=0)
-
-
 TASK_DATA = os.path.dirname(__file__)
-
 logger = logging.getLogger('aca_check')
 
 try:
@@ -99,7 +94,6 @@ def main(opt):
     proc = dict(run_user=os.environ['USER'],
                 run_time=time.ctime(),
                 errors=[],
-                aca_limit=YELLOW['aca'] - MARGIN['aca'],
                 )
     logger.info('##############################'
                 '#######################################')
@@ -138,8 +132,7 @@ def main(opt):
     if opt.oflsdir is not None:
         pred = make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db)
     else:
-        pred = dict(plots=None, viols=None, times=None, states=None,
-                    temps=None)
+        pred = dict(plots=None, times=None, states=None, temps=None)
 
 
 def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=None):
@@ -226,13 +219,9 @@ def make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db):
     plt.rc("ytick", labelsize=10)
     temps = {'aca': model.comp['aacccdpt'].mvals}
     plots = make_check_plots(opt, states, model.times, temps, tstart)
-    viols = make_viols(opt, states, model.times, temps)
-    write_states(opt, states)
     write_temps(opt, model.times, temps)
 
-    return dict(opt=opt, states=states, times=model.times, temps=temps,
-               plots=plots, viols=viols)
-
+    return dict(opt=opt, times=model.times, temps=temps, plots=plots)
 
 
 def get_bs_cmds(oflsdir):
@@ -282,37 +271,6 @@ def get_telem_values(tstart, msids, days=7, name_map={}):
     return out
 
 
-def rst_to_html(opt, proc):
-    """Run rst2html.py to render index.rst as HTML"""
-
-    # First copy CSS files to outdir
-    import Ska.Shell
-    import docutils.writers.html4css1
-    dirname = os.path.dirname(docutils.writers.html4css1.__file__)
-    shutil.copy2(os.path.join(dirname, 'html4css1.css'), opt.outdir)
-
-    shutil.copy2(os.path.join(TASK_DATA, 'pftank2t_check.css'), opt.outdir)
-
-    spawn = Ska.Shell.Spawn(stdout=None)
-    infile = os.path.join(opt.outdir, 'index.rst')
-    outfile = os.path.join(opt.outdir, 'index.html')
-    status = spawn.run(['rst2html.py',
-                        '--stylesheet-path={}'
-                        .format(os.path.join(opt.outdir, 'pftank2t_check.css')),
-                        infile, outfile])
-    if status != 0:
-        proc['errors'].append('rst2html.py failed with status {}: see run log'
-                              .format(status))
-        logger.error('rst2html.py failed')
-        logger.error(''.join(spawn.outlines) + '\n')
-
-    # Remove the stupid <colgroup> field that docbook inserts.  This
-    # <colgroup> prevents HTML table auto-sizing.
-    del_colgroup = re.compile(r'<colgroup>.*?</colgroup>', re.DOTALL)
-    outtext = del_colgroup.sub('', open(outfile).read())
-    open(outfile, 'w').write(outtext)
-
-
 def config_logging(outdir, verbose):
     """Set up file and console logger.
     See http://docs.python.org/library/logging.html
@@ -346,23 +304,6 @@ def config_logging(outdir, verbose):
     logger.addHandler(filehandler)
 
 
-def write_states(opt, states):
-    """Write states recarray to file states.dat"""
-    outfile = os.path.join(opt.outdir, 'states.dat')
-    logger.info('Writing states to %s' % outfile)
-    out = open(outfile, 'w')
-    fmt = {'power': '%.1f',
-           'pitch': '%.2f',
-           'tstart': '%.2f',
-           'tstop': '%.2f',
-           }
-    newcols = list(states.dtype.names)
-    newcols.remove('aacccdpt')
-    newstates = np.rec.fromarrays([states[x] for x in newcols], names=newcols)
-    Ska.Numpy.pprint(newstates, fmt, out)
-    out.close()
-
-
 def write_temps(opt, times, temps):
     """Write temperature predictions to file temperatures.dat"""
     outfile = os.path.join(opt.outdir, 'temperatures.dat')
@@ -378,67 +319,6 @@ def write_temps(opt, times, temps):
     out = open(outfile, 'w')
     Ska.Numpy.pprint(temp_array, fmt, out)
     out.close()
-
-
-def write_index_rst(opt, proc, plots_validation, valid_viols=None,
-                    plots=None, viols=None):
-    """
-    Make output text (in ReST format) in opt.outdir.
-    """
-    # Django setup (used for template rendering)
-    import django.template
-    import django.conf
-    try:
-        django.conf.settings.configure()
-    except RuntimeError, msg:
-        print msg
-
-    outfile = os.path.join(opt.outdir, 'index.rst')
-    logger.info('Writing report file %s' % outfile)
-    django_context = django.template.Context(
-        {'opt': opt,
-         'plots': plots,
-         'viols': viols,
-         'valid_viols': valid_viols,
-         'proc': proc,
-         'plots_validation': plots_validation,
-         })
-    index_template_file = ('index_template.rst'
-                           if opt.oflsdir else
-                           'index_template_val_only.rst')
-    index_template = open(os.path.join(TASK_DATA, index_template_file)).read()
-    index_template = re.sub(r' %}\n', ' %}', index_template)
-    template = django.template.Template(index_template)
-    open(outfile, 'w').write(template.render(django_context))
-
-
-def make_viols(opt, states, times, temps):
-    """
-    Find limit violations where predicted temperature is above the
-    yellow limit minus margin.
-    """
-    logger.info('Checking for limit violations')
-
-    viols = dict((x, []) for x in MSID)
-    for msid in MSID:
-        temp = temps[msid]
-        plan_limit = YELLOW[msid] - MARGIN[msid]
-        bad = np.concatenate(([False],
-                             temp >= plan_limit,
-                             [False]))
-        changes = np.flatnonzero(bad[1:] != bad[:-1]).reshape(-1, 2)
-
-        for change in changes:
-            viol = {'datestart': DateTime(times[change[0]]).date,
-                    'datestop': DateTime(times[change[1] - 1]).date,
-                    'maxtemp': temp[change[0]:change[1]].max()
-                    }
-            logger.info('WARNING: %s exceeds planning limit of %.2f '
-                        'degC from %s to %s'
-                        % (MSID[msid], plan_limit, viol['datestart'],
-                           viol['datestop']))
-            viols[msid].append(viol)
-    return viols
 
 
 def plot_two(fig_id, x, y, x2, y2,
@@ -526,10 +406,6 @@ def make_check_plots(opt, states, times, temps, tstart):
                                   label1_size=7)
         plt.tight_layout()
         plt.subplots_adjust(top=.85)
-        plots[msid]['ax'].axhline(YELLOW[msid], linestyle='-', color='y',
-                                  linewidth=2.0)
-        plots[msid]['ax'].axhline(YELLOW[msid] - MARGIN[msid], linestyle='--',
-                                  color='y', linewidth=2.0)
         plots[msid]['ax'].axvline(load_start, linestyle=':', color='g',
                                   linewidth=1.0)
         filename = MSID[msid].lower() + '.png'
@@ -561,9 +437,6 @@ def get_states(datestart, datestop, db):
     logger.debug('Query command: %s' % cmd)
     states = db.fetchall(cmd)
     logger.info('Found %d commanded states' % len(states))
-
-    # Add power columns to states and tlm
-    # states = Ska.Numpy.add_column(states, 'power', get_power(states))
 
     # Set start and end state date/times to match telemetry span.  Extend the
     # state durations by a small amount because of a precision issue converting
