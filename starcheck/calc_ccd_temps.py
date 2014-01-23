@@ -139,7 +139,6 @@ def main(opt):
 
     plots = make_check_plots(opt, pred['states'], pred['times'],
                              pred['temps'], pred['tstart'])
-    write_temps(opt, pred['times'], pred['temps'])
     write_obstemps(opt, pred['obstemps'])
 
 
@@ -356,23 +355,6 @@ def config_logging(outdir, verbose):
         filename=os.path.join(outdir, 'run.dat'), mode='w')
     filehandler.setFormatter(formatter)
     logger.addHandler(filehandler)
-
-
-def write_temps(opt, times, temps):
-    """Write temperature predictions to file temperatures.dat"""
-    outfile = os.path.join(opt.outdir, 'temperatures.dat')
-    logger.info('Writing temperatures to %s' % outfile)
-    aca = temps['aca']
-    temp_recs = [(times[i], DateTime(times[i]).date, aca[i])
-                 for i in xrange(len(times))]
-    temp_array = np.rec.fromrecords(
-        temp_recs, names=('time', 'date', 'aacccdpt'))
-
-    fmt = {'aacccdpt': '%.2f',
-           'time': '%.2f'}
-    out = open(outfile, 'w')
-    Ska.Numpy.pprint(temp_array, fmt, out)
-    out.close()
 
 
 class NumpyAwareJSONEncoder(json.JSONEncoder):
