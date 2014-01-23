@@ -44,6 +44,10 @@ TASK_DATA = os.path.dirname(__file__)
 TASK_NAME = 'calc_ccd_temps'
 logger = logging.getLogger(TASK_NAME)
 
+plt.rc("axes", labelsize=10, titlesize=12)
+plt.rc("xtick", labelsize=10)
+plt.rc("ytick", labelsize=10)
+
 try:
     _versionfile = os.path.join(os.path.dirname(__file__), 'VERSION')
     VERSION = open(_versionfile).read().strip()
@@ -127,6 +131,11 @@ def main(opt):
                            name_map={'aosares1': 'pitch'})
 
     pred = make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db)
+    plots = make_check_plots(opt, pred['states'], pred['times'],
+                             pred['temps'], pred['tstart'])
+    write_temps(opt, pred['times'], pred['temps'])
+    write_obstemps(opt, pred['obsids'], pred['obstemps'])
+
 
 
 def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=None):
@@ -141,9 +150,7 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
     model.calc()
     return model
 
-
-def make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db):
-
+def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
     # Try to make initial state0 from cmd line options
     state0 = dict((x, getattr(opt, x))
                   for x in ('pitch', 'T_aca'))
@@ -198,6 +205,13 @@ def make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db):
     states[-1].tstop = bs_cmds[-1]['time']
     logger.info('Found %d commanded states from %s to %s' %
                  (len(states), states[0]['datestart'], states[-1]['datestop']))
+    return states
+
+
+def make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db):
+
+    states = get_week_states(opt, tstart, tstop, bs_cmds, tlm, db)
+    state0 = states[0]
 
     # Create array of times at which to calculate ACA temps, then do it.
     logger.info('Calculating ACA thermal model')
@@ -223,17 +237,8 @@ def make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db):
                     & (model.times[1:] > tstart))
         obstemps.append(np.max(temps['aca'][tok]))
 
-    # Make the limit check plots and data files
-    plt.rc("axes", labelsize=10, titlesize=12)
-    plt.rc("xtick", labelsize=10)
-    plt.rc("ytick", labelsize=10)
-
-    plots = make_check_plots(opt, states, model.times, temps, tstart)
-    write_temps(opt, model.times, temps)
-    write_obstemps(opt, obsids, obstemps)
-
-    return dict(opt=opt, times=model.times, temps=temps,
-                obsids=obsids, obstemps=obstemps, plots=plots, )
+    return dict(opt=opt, states=states, times=model.times, temps=temps,
+                tstart=tstart, obsids=obsids, obstemps=obstemps)
 
 
 def get_bs_cmds(oflsdir):
