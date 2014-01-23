@@ -36,6 +36,7 @@ use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
 use Carp;
 use YAML;
+use JSON ();
 
 use Ska::Convert qw( date2time );
 use Cwd qw( abs_path );
@@ -293,9 +294,8 @@ print STDERR map {$_ . " "} @aca_check;
 print STDERR "\n";
 my $obsid_temps = ();
 if (system(@aca_check) == 0){
-    my $obsid_temp_file   = get_file("$STARCHECK/obsid_temperatures.dat", "ccdtemp", 'required');
-    my $obsid_temp_list = Data::ParseTable::parse_table($obsid_temp_file);
-    map {$obsid_temps->{$_->{obsid}} = $_->{aacccdpt}} @{$obsid_temp_list};
+    my $obsid_temp_file   = get_file("$STARCHECK/obsid_temperatures.json", "ccdtemp", 'required');
+    $obsid_temps = JSON::from_json(io($obsid_temp_file)->slurp());
 }
 else{
     push @global_warn, "aca_check xija model failed with code $?.  No temperatures.\n";

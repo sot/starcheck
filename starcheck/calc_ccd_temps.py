@@ -18,6 +18,7 @@ import time
 import shutil
 import pickle
 import numpy as np
+import json
 
 # Matplotlib setup
 # Use Agg backend for command-line (non-interactive) operation
@@ -139,7 +140,7 @@ def main(opt):
     plots = make_check_plots(opt, pred['states'], pred['times'],
                              pred['temps'], pred['tstart'])
     write_temps(opt, pred['times'], pred['temps'])
-    write_obstemps(opt, pred['obsids'], pred['obstemps'])
+    write_obstemps(opt, pred['obstemps'])
 
 
 def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=None):
@@ -226,7 +227,7 @@ def make_week_predict(opt, states, tstop):
                        state0['aacccdpt'], state0['tstart'])
     temps = {'aca': model.comp['aacccdpt'].mvals}
 
-    obstemps = []
+    obstemps = {}
     obsids = np.unique(states['obsid'])
     for obsid in obsids:
         # find extent of NPNT
@@ -239,7 +240,7 @@ def make_week_predict(opt, states, tstop):
         tok = np.zeros(len(temps['aca']), dtype=bool)
         tok[:-1] = ((model.times[:-1] < tstop)
                     & (model.times[1:] > tstart))
-        obstemps.append(np.max(temps['aca'][tok]))
+        obstemps["{}".format(obsid)] = {'temp': np.max(temps['aca'][tok])}
 
     return dict(opt=opt, states=states, times=model.times, temps=temps,
                 tstart=tstart, obsids=obsids, obstemps=obstemps)
@@ -258,7 +259,7 @@ def mock_telem_predict(opt, states):
     temps = {'aca': tlm['aacccdpt'].vals}
     times = tlm['aacccdpt'].times
 
-    obstemps = []
+    obstemps = {}
     obsids = np.unique(states['obsid'])
     for obsid in obsids:
         # find extent of NPNT
@@ -271,7 +272,7 @@ def mock_telem_predict(opt, states):
         tok = np.zeros(len(temps['aca']), dtype=bool)
         tok[:-1] = ((times[:-1] < tstop)
                     & (times[1:] > tstart))
-        obstemps.append(np.max(temps['aca'][tok]))
+        obstemps["{}".format(obsid)] = {'temp': np.max(temps['aca'][tok])}
 
     return dict(opt=opt, states=states, times=times, temps=temps,
                 tstart=tstart, obsids=obsids, obstemps=obstemps)
@@ -374,18 +375,21 @@ def write_temps(opt, times, temps):
     out.close()
 
 
-def write_obstemps(opt, obsids, temps):
-    """Write temperature predictions to file temperatures.dat"""
-    outfile = os.path.join(opt.outdir, 'obsid_temperatures.dat')
+class NumpyAwareJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, 'tolist'):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
+
+def write_obstemps(opt, obstemps):
+    """Write temperature predictions to file"""
+    outfile = os.path.join(opt.outdir, 'obsid_temperatures.json')
     logger.info('Writing obsid temperatures to %s' % outfile)
-    temp_recs = [(obsids[i], temps[i])
-                 for i in xrange(len(obsids))]
-    temp_array = np.rec.fromrecords(
-        temp_recs, names=('obsid', 'aacccdpt'))
-    fmt = {'aacccdpt': '%.2f'}
-    out = open(outfile, 'w')
-    Ska.Numpy.pprint(temp_array, fmt, out)
-    out.close()
+    jfile = open(outfile, 'w')
+    jfile.write(json.dumps(obstemps, sort_keys=True, indent=4,
+                           cls=NumpyAwareJSONEncoder))
+    jfile.close()
 
 
 def plot_two(fig_id, x, y, x2, y2,
