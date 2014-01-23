@@ -52,40 +52,40 @@ except:
 
 
 def get_options():
-    from optparse import OptionParser
-    parser = OptionParser()
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
     parser.set_defaults()
-    parser.add_option("--outdir",
-                      default="out",
-                      help="Output directory")
-    parser.add_option("--oflsdir",
+    parser.add_argument("oflsdir",
                        help="Load products OFLS directory")
-    parser.add_option("--model-spec",
-                      default=chandra_models.get_xija_model_file('aca'),
-                     help="model specification file")
-    parser.add_option("--traceback",
-                      default=True,
-                      help='Enable tracebacks')
-    parser.add_option("--verbose",
-                      type='int',
-                      default=1,
-                      help="Verbosity (0=quiet, 1=normal, 2=debug)")
-    parser.add_option("--pitch",
-                      default=150.0,
-                      type='float',
-                      help="Starting pitch (deg)")
-    parser.add_option("--T-aca",
-                      type='float',
-                      help="Starting ACA CCD temperature (degC)")
-    parser.add_option("--version",
-                      action='store_true',
-                      help="Print version")
-
-    opt, args = parser.parse_args()
-    return opt, args
+    parser.add_argument("--outdir",
+                       default="out",
+                       help="Output directory")
+    parser.add_argument("--model-spec",
+                        default=chandra_models.get_xija_model_file('aca'),
+                        help="model specification file")
+    parser.add_argument("--traceback",
+                        default=True,
+                        help='Enable tracebacks')
+    parser.add_argument("--verbose",
+                        type=int,
+                        default=1,
+                        help="Verbosity (0=quiet, 1=normal, 2=debug)")
+    parser.add_argument("--pitch",
+                        default=150.0,
+                        type=float,
+                        help="Starting pitch (deg)")
+    parser.add_argument("--T-aca",
+                        type=float,
+                        help="Starting ACA CCD temperature (degC)")
+    parser.add_argument("--version",
+                        action='version',
+                        version=VERSION)
+    args = parser.parse_args()
+    return args
 
 
 def main(opt):
+
     if not os.path.exists(opt.outdir):
         os.mkdir(opt.outdir)
 
@@ -113,28 +113,20 @@ def main(opt):
                      database='aca')
 
     tnow = DateTime().secs
-    if opt.oflsdir is not None:
-        # Get tstart, tstop, commands from backstop file in opt.oflsdir
-        bs_cmds = get_bs_cmds(opt.oflsdir)
-        tstart = bs_cmds[0]['time']
-        tstop = bs_cmds[-1]['time']
 
-        proc.update(dict(datestart=DateTime(tstart).date,
-                         datestop=DateTime(tstop).date))
-    else:
-        tstart = tnow
+    # Get tstart, tstop, commands from backstop file in opt.oflsdir
+    bs_cmds = get_bs_cmds(opt.oflsdir)
+    tstart = bs_cmds[0]['time']
+    tstop = bs_cmds[-1]['time']
+    proc.update(dict(datestart=DateTime(tstart).date,
+                     datestop=DateTime(tstop).date))
 
     # Get temperature telemetry for 3 weeks prior to min(tstart, NOW)
     tlm = get_telem_values(min(tstart, tnow),
                            ['aacccdpt', 'aosares1'],
                            name_map={'aosares1': 'pitch'})
 
-    # make predictions on oflsdir if defined
-    if opt.oflsdir is not None:
-        pred = make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db)
-    else:
-        pred = dict(plots=None, times=None, temps=None,
-                    obsids=None, obstemps=None)
+    pred = make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db)
 
 
 def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=None):
@@ -505,11 +497,7 @@ def globfile(pathglob):
 
 
 if __name__ == '__main__':
-    opt, args = get_options()
-    if opt.version:
-        print VERSION
-        sys.exit(0)
-
+    opt = get_options()
     try:
         main(opt)
     except Exception, msg:
