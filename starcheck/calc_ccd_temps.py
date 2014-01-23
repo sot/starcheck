@@ -17,24 +17,22 @@ import re
 import time
 import shutil
 import pickle
-
 import numpy as np
-import Ska.DBI
-import Ska.Table
-import Ska.Numpy
-import Ska.engarchive.fetch_sci as fetch
-from Chandra.Time import DateTime
 
-import Chandra.cmd_states as cmd_states
 # Matplotlib setup
 # Use Agg backend for command-line (non-interactive) operation
 import matplotlib
 if __name__ == '__main__':
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
 import Ska.Matplotlib
 from Ska.Matplotlib import cxctime2plotdate as cxc2pd
-
+import Ska.DBI
+import Ska.Numpy
+import Ska.engarchive.fetch_sci as fetch
+from Chandra.Time import DateTime
+import Chandra.cmd_states as cmd_states
 import lineid_plot
 import xija
 import chandra_models
@@ -227,7 +225,7 @@ def make_week_predict(opt, states, tstop):
     model = calc_model(opt.model_spec, states, state0['tstart'], tstop,
                        state0['aacccdpt'], state0['tstart'])
     temps = {'aca': model.comp['aacccdpt'].mvals}
-    from Chandra.cmd_states import reduce_states
+
     obstemps = []
     obsids = np.unique(states['obsid'])
     for obsid in obsids:
@@ -260,8 +258,6 @@ def mock_telem_predict(opt, states):
     temps = {'aca': tlm['aacccdpt'].vals}
     times = tlm['aacccdpt'].times
 
-
-    from Chandra.cmd_states import reduce_states
     obstemps = []
     obsids = np.unique(states['obsid'])
     for obsid in obsids:
