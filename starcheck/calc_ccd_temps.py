@@ -41,7 +41,8 @@ import chandra_models
 
 MSID = dict(aca='AACCCDPT')
 TASK_DATA = os.path.dirname(__file__)
-logger = logging.getLogger('aca_check')
+TASK_NAME = 'calc_ccd_temps'
+logger = logging.getLogger(TASK_NAME)
 
 try:
     _versionfile = os.path.join(os.path.dirname(__file__), 'VERSION')
@@ -97,9 +98,9 @@ def main(opt):
                 )
     logger.info('##############################'
                 '#######################################')
-    logger.info('# aca_check.py run at %s by %s'
-                % (proc['run_time'], proc['run_user']))
-    logger.info('# aca_check version = {}'.format(VERSION))
+    logger.info('# %s run at %s by %s'
+                % (TASK_NAME, proc['run_time'], proc['run_user']))
+    logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
     logger.info('###############################'
                 '######################################\n')
     logger.info('Command line options:\n%s\n' % pformat(opt.__dict__))
@@ -308,7 +309,7 @@ def config_logging(outdir, verbose):
                 1: logging.INFO,
                 2: logging.DEBUG}.get(verbose, logging.INFO)
 
-    logger = logging.getLogger('aca_check')
+    logger = logging.getLogger(TASK_NAME)
     logger.setLevel(loglevel)
 
     formatter = logging.Formatter('%(message)s')
