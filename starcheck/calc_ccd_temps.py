@@ -42,6 +42,8 @@ import chandra_models
 MSID = dict(aca='AACCCDPT')
 TASK_DATA = os.path.dirname(__file__)
 TASK_NAME = 'calc_ccd_temps'
+# the model is reasonable from around Jan-2011
+MODEL_VALID_FROM = '2011:001:00:00:00.000'
 logger = logging.getLogger(TASK_NAME)
 
 plt.rc("axes", labelsize=10, titlesize=12)
@@ -130,12 +132,16 @@ def main(opt):
                            ['aacccdpt', 'aosares1'],
                            name_map={'aosares1': 'pitch'})
 
-    pred = make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db)
+    states = get_week_states(opt, tstart, tstop, bs_cmds, tlm, db)
+    if tstart >  DateTime(MODEL_VALID_FROM).secs:
+        pred = make_week_predict(opt, states, tstop)
+    else:
+        pred = mock_telem_predict(opt, states)
+
     plots = make_check_plots(opt, pred['states'], pred['times'],
                              pred['temps'], pred['tstart'])
     write_temps(opt, pred['times'], pred['temps'])
     write_obstemps(opt, pred['obsids'], pred['obstemps'])
-
 
 
 def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=None):
@@ -149,6 +155,7 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
     model.make()
     model.calc()
     return model
+
 
 def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
     # Try to make initial state0 from cmd line options
@@ -208,9 +215,8 @@ def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
     return states
 
 
-def make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db):
+def make_week_predict(opt, states, tstop):
 
-    states = get_week_states(opt, tstart, tstop, bs_cmds, tlm, db)
     state0 = states[0]
 
     # Create array of times at which to calculate ACA temps, then do it.
@@ -238,6 +244,40 @@ def make_week_predict(opt, tstart, tstop, bs_cmds, tlm, db):
         obstemps.append(np.max(temps['aca'][tok]))
 
     return dict(opt=opt, states=states, times=model.times, temps=temps,
+                tstart=tstart, obsids=obsids, obstemps=obstemps)
+
+def mock_telem_predict(opt, states):
+
+    state0 = states[0]
+
+    # Get temperature telemetry over the interval
+    logger.info('Fetching telemetry between %s and %s' % (states[0]['tstart'],
+                                                          states[-1]['tstop']))
+    tlm = fetch.MSIDset(['aacccdpt'],
+                        states[0]['tstart'],
+                        states[-1]['tstop'],
+                        stat='5min')
+    temps = {'aca': tlm['aacccdpt'].vals}
+    times = tlm['aacccdpt'].times
+
+
+    from Chandra.cmd_states import reduce_states
+    obstemps = []
+    obsids = np.unique(states['obsid'])
+    for obsid in obsids:
+        # find extent of NPNT
+        match = states[(states['obsid'] == obsid)
+                       & (states['pcad_mode'] == 'NPNT')]
+        tstart = np.min(match['tstart'])
+        tstop = np.max(match['tstop'])
+        # treat the model samples as temperature intervals
+        # and find the max during each obsid npnt interval
+        tok = np.zeros(len(temps['aca']), dtype=bool)
+        tok[:-1] = ((times[:-1] < tstop)
+                    & (times[1:] > tstart))
+        obstemps.append(np.max(temps['aca'][tok]))
+
+    return dict(opt=opt, states=states, times=times, temps=temps,
                 tstart=tstart, obsids=obsids, obstemps=obstemps)
 
 
