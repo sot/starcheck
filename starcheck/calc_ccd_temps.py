@@ -138,7 +138,7 @@ def main(opt):
         pred = mock_telem_predict(opt, states)
 
     plots = make_check_plots(opt, pred['states'], pred['times'],
-                             pred['temps'], pred['tstart'])
+                             pred['temps'], tstart)
     write_obstemps(opt, pred['obstemps'])
 
 
@@ -232,20 +232,20 @@ def make_week_predict(opt, states, tstop):
         # find extent of NPNT
         match = states[(states['obsid'] == obsid)
                        & (states['pcad_mode'] == 'NPNT')]
-        tstart = np.min(match['tstart'])
-        tstop = np.max(match['tstop'])
         # if there is, strangely, no NPNT, just use the full obsid interval
         if not len(match):
             match = states[(states['obsid'] == obsid)]
+        otstart = np.min(match['tstart'])
+        otstop = np.max(match['tstop'])
         # treat the model samples as temperature intervals
         # and find the max during each obsid npnt interval
         tok = np.zeros(len(temps['aca']), dtype=bool)
-        tok[:-1] = ((model.times[:-1] < tstop)
-                    & (model.times[1:] > tstart))
+        tok[:-1] = ((model.times[:-1] < otstop)
+                    & (model.times[1:] > otstart))
         obstemps["{}".format(obsid)] = {'temp': np.max(temps['aca'][tok])}
 
     return dict(opt=opt, states=states, times=model.times, temps=temps,
-                tstart=tstart, obsids=obsids, obstemps=obstemps)
+                obsids=obsids, obstemps=obstemps)
 
 def mock_telem_predict(opt, states):
 
@@ -267,20 +267,20 @@ def mock_telem_predict(opt, states):
         # find extent of NPNT
         match = states[(states['obsid'] == obsid)
                        & (states['pcad_mode'] == 'NPNT')]
-        tstart = np.min(match['tstart'])
-        tstop = np.max(match['tstop'])
         # if there is, strangely, no NPNT, just use the full obsid interval
         if not len(match):
             match = states[(states['obsid'] == obsid)]
+        otstart = np.min(match['tstart'])
+        otstop = np.max(match['tstop'])
         # treat the model samples as temperature intervals
         # and find the max during each obsid npnt interval
         tok = np.zeros(len(temps['aca']), dtype=bool)
-        tok[:-1] = ((times[:-1] < tstop)
-                    & (times[1:] > tstart))
+        tok[:-1] = ((times[:-1] < otstop)
+                    & (times[1:] > otstart))
         obstemps["{}".format(obsid)] = {'temp': np.max(temps['aca'][tok])}
 
     return dict(opt=opt, states=states, times=times, temps=temps,
-                tstart=tstart, obsids=obsids, obstemps=obstemps)
+                obsids=obsids, obstemps=obstemps)
 
 
 def get_bs_cmds(oflsdir):
