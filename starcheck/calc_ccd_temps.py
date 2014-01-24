@@ -19,6 +19,7 @@ import shutil
 import pickle
 import numpy as np
 import json
+from operator import itemgetter
 
 # Matplotlib setup
 # Use Agg backend for command-line (non-interactive) operation
@@ -132,10 +133,54 @@ def main(opt):
                            name_map={'aosares1': 'pitch'})
 
     states = get_week_states(opt, tstart, tstop, bs_cmds, tlm, db)
+    starcat_times = []
+    for cmd in bs_cmds:
+        if 'TLMSID' in cmd['params']:
+            if cmd['params']['TLMSID'] == 'AOSTRCAT':
+                starcat_times.append(cmd['time'])
+    starcat_times = np.array(starcat_times)
+    obsids = np.unique(states['obsid'])
+    obsinfo = []
+    for obsid in obsids:
+        # find extent of NPNT
+        match = states[(states['obsid'] == obsid)
+                       & (states['pcad_mode'] == 'NPNT')]
+        if not len(match):
+            match = states[(states['obsid'] == obsid)]
+        otstart = np.min(match['tstart'])
+        otstop = np.max(match['tstop'])
+        obsinfo.append(dict(obsid=obsid,
+                            q1=match['q1'][0],
+                            q2=match['q2'][0],
+                            q3=match['q3'][0],
+                            q4=match['q4'][0],
+                            tstart=otstart,
+                            tstop=otstop,
+                            temp_tstop=otstop))
+    obsinfo.sort(key=itemgetter('tstart'))
+    for idx in range(len(obsinfo)):
+        if obsinfo[idx]['tstart'] < bs_cmds[0]['time']:
+            continue
+        if (idx+1) >= len(obsinfo):
+            break
+        if obsinfo[idx + 1]['obsid'] < 40000:
+            continue
+        tmatch = starcat_times[(starcat_times > obsinfo[idx]['tstop'])
+                               & (starcat_times < obsinfo[idx + 1]['tstart'])]
+        # if there is no starcat between the obsids
+        if not len(tmatch):
+            # and they seem to have the same pointing
+            i = obsinfo[idx]
+            j = obsinfo[idx + 1]
+            if np.sum([abs(i[q] - j[q]) for q in ['q1', 'q2', 'q3', 'q4']]) < 1e-9:
+                obsinfo[idx]['no_following_manvr'] = True
+                obsinfo[idx]['comment'] = '(max through end of following obsid)'
+                obsinfo[idx]['temp_tstop'] = obsinfo[idx + 1]['tstop']
+
     if tstart >  DateTime(MODEL_VALID_FROM).secs:
-        pred = make_week_predict(opt, states, tstop)
+        pred = make_week_predict(opt, states, tstop, obsinfo)
     else:
-        pred = mock_telem_predict(opt, states)
+        pred = mock_telem_predict(opt, states, obsinfo)
 
     plots = make_check_plots(opt, pred['states'], pred['times'],
                              pred['temps'], tstart)
@@ -213,7 +258,7 @@ def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
     return states
 
 
-def make_week_predict(opt, states, tstop):
+def make_week_predict(opt, states, tstop, obsinfo):
 
     state0 = states[0]
 
@@ -225,29 +270,27 @@ def make_week_predict(opt, states, tstop):
     model = calc_model(opt.model_spec, states, state0['tstart'], tstop,
                        state0['aacccdpt'], state0['tstart'])
     temps = {'aca': model.comp['aacccdpt'].mvals}
-
     obstemps = {}
-    obsids = np.unique(states['obsid'])
-    for obsid in obsids:
-        # find extent of NPNT
-        match = states[(states['obsid'] == obsid)
-                       & (states['pcad_mode'] == 'NPNT')]
-        # if there is, strangely, no NPNT, just use the full obsid interval
-        if not len(match):
-            match = states[(states['obsid'] == obsid)]
-        otstart = np.min(match['tstart'])
-        otstop = np.max(match['tstop'])
+    for obs in obsinfo:
+        otstart = obs['tstart']
+        # the obsid tstop for temperatures.  end of following obsid
+        # if there is no maneuver after this obsid
+        otstop = obs['temp_tstop']
         # treat the model samples as temperature intervals
         # and find the max during each obsid npnt interval
         tok = np.zeros(len(temps['aca']), dtype=bool)
         tok[:-1] = ((model.times[:-1] < otstop)
                     & (model.times[1:] > otstart))
-        obstemps["{}".format(obsid)] = {'temp': np.max(temps['aca'][tok])}
+        obsid = "{}".format(obs['obsid'])
+        obstemps[obsid] = {'temp': np.max(temps['aca'][tok])}
+        if 'comment' in obs:
+            obstemps[obsid]['comment'] = obs['comment']
+        obs['ccd_temp'] = np.max(temps['aca'][tok])
 
     return dict(opt=opt, states=states, times=model.times, temps=temps,
-                obsids=obsids, obstemps=obstemps)
+                obstemps=obstemps)
 
-def mock_telem_predict(opt, states):
+def mock_telem_predict(opt, states, obsinfo):
 
     state0 = states[0]
 
@@ -262,26 +305,24 @@ def mock_telem_predict(opt, states):
     times = tlm['aacccdpt'].times
 
     obstemps = {}
-    obsids = np.unique(states['obsid'])
-    for obsid in obsids:
-        # find extent of NPNT
-        match = states[(states['obsid'] == obsid)
-                       & (states['pcad_mode'] == 'NPNT')]
-        # if there is, strangely, no NPNT, just use the full obsid interval
-        if not len(match):
-            match = states[(states['obsid'] == obsid)]
-        otstart = np.min(match['tstart'])
-        otstop = np.max(match['tstop'])
+    for obs in obsinfo:
+        otstart = obs['tstart']
+        # the obsid tstop for temperatures.  end of following obsid
+        # if there is no maneuver after this obsid
+        otstop = obs['temp_tstop']
         # treat the model samples as temperature intervals
         # and find the max during each obsid npnt interval
         tok = np.zeros(len(temps['aca']), dtype=bool)
         tok[:-1] = ((times[:-1] < otstop)
                     & (times[1:] > otstart))
-        obstemps["{}".format(obsid)] = {'temp': np.max(temps['aca'][tok])}
+        obsid = "{}".format(obs['obsid'])
+        obstemps[obsid] = {'temp': np.max(temps['aca'][tok])}
+        if 'comment' in obs:
+            obstemps[obsid]['comment'] = obs['comment']
+        obs['ccd_temp'] = np.max(temps['aca'][tok])
 
     return dict(opt=opt, states=states, times=times, temps=temps,
-                obsids=obsids, obstemps=obstemps)
-
+                obstemps=obstemps)
 
 def get_bs_cmds(oflsdir):
     """Return commands for the backstop file in opt.oflsdir.

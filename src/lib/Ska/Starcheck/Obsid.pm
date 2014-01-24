@@ -2659,16 +2659,21 @@ sub set_ccd_temps{
 ###################################################################################
     my $self = shift;
     my $obsid_temps = shift;
-    # if there is no following maneuver, use max temp of this and the
-    # next obsid
+    my $obs_temp_info = $obsid_temps->{$self->{obsid}};
+    $self->{ccd_temp} = $obs_temp_info->{temp};
+    if (defined $obs_temp_info->{comment}){
+        $self->{ccd_temp_note} = $obs_temp_info->{comment};
+    }
+    # add some extra validation
     if (defined $self->{next} and $self->{no_following_manvr}){
-        my $a = $obsid_temps->{$self->{obsid}};
-        my $b = $obsid_temps->{$self->{next}->{obsid}};
-        $self->{ccd_temp} = $a > $b ? $a : $b;
-        $self->{ccd_temp_note} = '(max through end of following obsid)';
+        if (not defined $self->{ccd_temp_note}){
+            push @{$self->{warn}}, "Temperatures not correctly checked through following obsid. (no maneuver case)\n";
+        }
     }
     else{
-        $self->{ccd_temp} = $obsid_temps->{$self->{obsid}};
+        if (defined $self->{ccd_temp_note}){
+            push @{$self->{warn}}, "Temperatures incorrectly checked through following obsid.\n";
+        }
     }
     return;
 }
