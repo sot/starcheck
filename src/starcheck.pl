@@ -21,6 +21,7 @@ use Sys::Hostname;
 use English;
 use File::Basename;
 use File::Copy;
+use Scalar::Util qw(looks_like_number);
 
 use Time::JulianDay;
 use Time::DayOfYear;
@@ -35,6 +36,7 @@ use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
 use Carp;
 use YAML;
+use JSON ();
 
 use Ska::Convert qw( date2time );
 use Cwd qw( abs_path );
@@ -498,6 +500,41 @@ foreach my $obsid (@obsid_id) {
     warning ("More than one star catalog assigned to Obsid $obsid\n")
 	if ($obs{$obsid}->find_command('MP_STARCAT',2));
 }
+
+
+# Write out Obsid objects as JSON
+# include a routine to change the internal context to a float/int
+# for everything that looks like a number
+sub force_numbers {
+    if (ref $_[0] eq ""){
+        if ( looks_like_number($_[0]) ){
+            $_[0] += 0;
+        }
+    } elsif ( ref $_[0] eq 'ARRAY' ){
+        force_numbers($_) for @{$_[0]};
+    } elsif ( ref $_[0] eq 'HASH' ) {
+        force_numbers($_) for values %{$_[0]};
+    }
+    return $_[0];
+}
+
+my @all_obs;
+my %exclude = ('next' => 1, 'prev' => 1, 'agasc_hash' => 1);
+foreach my $obsid (@obsid_id){
+  my %obj = ();
+  for my $tkey (keys(%{$obs{$obsid}})){
+      if (not defined $exclude{$tkey}){
+          $obj{$tkey} = $obs{$obsid}->{$tkey};
+      }
+  }
+  push @all_obs, \%obj;
+}
+
+my $json_text = JSON::to_json(force_numbers(\@all_obs), {pretty => 1});
+open (my $JSON_OUT, "> $STARCHECK/obsids.json")
+   or die "Couldn't open $STARCHECK/obsids.json for writing\n";
+print $JSON_OUT $json_text;
+close($JSON_OUT);
 
 
 # Produce final report
