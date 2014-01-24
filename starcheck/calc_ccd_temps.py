@@ -234,6 +234,9 @@ def make_week_predict(opt, states, tstop):
                        & (states['pcad_mode'] == 'NPNT')]
         tstart = np.min(match['tstart'])
         tstop = np.max(match['tstop'])
+        # if there is, strangely, no NPNT, just use the full obsid interval
+        if not len(match):
+            match = states[(states['obsid'] == obsid)]
         # treat the model samples as temperature intervals
         # and find the max during each obsid npnt interval
         tok = np.zeros(len(temps['aca']), dtype=bool)
@@ -266,6 +269,9 @@ def mock_telem_predict(opt, states):
                        & (states['pcad_mode'] == 'NPNT')]
         tstart = np.min(match['tstart'])
         tstop = np.max(match['tstop'])
+        # if there is, strangely, no NPNT, just use the full obsid interval
+        if not len(match):
+            match = states[(states['obsid'] == obsid)]
         # treat the model samples as temperature intervals
         # and find the max during each obsid npnt interval
         tok = np.zeros(len(temps['aca']), dtype=bool)
