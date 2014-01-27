@@ -495,7 +495,7 @@ sub set_npm_times{
 
     # NPM range that will be checked for momentum dumps
     # duplicates check_dither range...
-    my ($obs_tstart, $obs_tstop, $no_manvr);
+    my ($obs_tstart, $obs_tstop);
     
     # as with dither, check for end of associated maneuver to this attitude
     # and finding none, set start time as obsid start
@@ -522,7 +522,7 @@ sub set_npm_times{
             if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
 		push @{$self->{fyi}}, "$info Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)\n";
                 $obs_tstop = $next_cmd_obsid->{time};
-                $no_manvr = 1;
+                $self->{no_following_manvr} = 1;
             }
         }
     }
@@ -536,7 +536,7 @@ sub set_npm_times{
     else{
         $self->{obs_tstart} = $obs_tstart;
         $self->{obs_tstop} = $obs_tstop;
-        $self->{no_following_manvr} = $no_manvr;
+
     }
 }
 

@@ -284,25 +284,6 @@ if ($dot_touched_by_sausage == 0 ){
 }
 
 
-print STDERR "Running ACA temperature model\n";
-my @aca_check = ("$SKA/bin/python",
-                 "$Starcheck_Share/calc_ccd_temps.py",
-                 "--out", "$STARCHECK",
-                 "$par{dir}");
-
-#                 "--model-spec", "$Starcheck_Data/aca_spec.json");
-print STDERR map {$_ . " "} @aca_check;
-print STDERR "\n";
-my $obsid_temps = ();
-if (system(@aca_check) == 0){
-    my $obsid_temp_file   = get_file("$STARCHECK/obsid_temperatures.json", "ccdtemp", 'required');
-    $obsid_temps = JSON::from_json(io($obsid_temp_file)->slurp());
-}
-else{
-    push @global_warn, "aca_check xija model failed with code $?.  No temperatures.\n";
-}
-
-
 
 Ska::Starcheck::Obsid::setcolors({ red => $red_font_start,
 				   blue => $blue_font_start,
@@ -524,12 +505,6 @@ foreach my $obsid (@obsid_id) {
 	if ($obs{$obsid}->find_command('MP_STARCAT',2));
 }
 
-# Since we need set_npm_times to have run on all obsids
-# to get the (n+1) obs stop time for setting max temperatures
-# this is just run it its own loop
-foreach my $obsid (@obsid_id) {
-    $obs{$obsid}->set_ccd_temps($obsid_temps) if ($obsid_temps);
-}
 
 # Write out Obsid objects as JSON
 # include a routine to change the internal context to a float/int
@@ -564,6 +539,32 @@ open (my $JSON_OUT, "> $STARCHECK/obsids.json")
    or die "Couldn't open $STARCHECK/obsids.json for writing\n";
 print $JSON_OUT $json_text;
 close($JSON_OUT);
+
+print STDERR "Running ACA temperature model\n";
+my @aca_check = ("$SKA/bin/python",
+                 "$Starcheck_Share/calc_ccd_temps.py",
+                 "--out", "$STARCHECK",
+                 "$par{dir}");
+
+#                 "--model-spec", "$Starcheck_Data/aca_spec.json");
+print STDERR map {$_ . " "} @aca_check;
+print STDERR "\n";
+my $obsid_temps = ();
+if (system(@aca_check) == 0){
+    my $obsid_temp_file   = get_file("$STARCHECK/obsid_temperatures.json", "ccdtemp", 'required');
+    $obsid_temps = JSON::from_json(io($obsid_temp_file)->slurp());
+}
+else{
+    push @global_warn, "aca_check xija model failed with code $?.  No temperatures.\n";
+}
+
+# Since we need set_npm_times to have run on all obsids
+# to get the (n+1) obs stop time for setting max temperatures
+# this is just run it its own loop
+foreach my $obsid (@obsid_id) {
+    $obs{$obsid}->set_ccd_temps($obsid_temps) if ($obsid_temps);
+}
+
 
 
 # Produce final report

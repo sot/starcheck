@@ -132,14 +132,34 @@ def main(opt):
                            name_map={'aosares1': 'pitch'})
 
     states = get_week_states(opt, tstart, tstop, bs_cmds, tlm, db)
-    if tstart >  DateTime(MODEL_VALID_FROM).secs:
-        pred = make_week_predict(opt, states, tstop)
-    else:
-        pred = mock_telem_predict(opt, states)
 
-    plots = make_check_plots(opt, pred['states'], pred['times'],
-                             pred['temps'], tstart)
-    write_obstemps(opt, pred['obstemps'])
+    import yaml
+    sc_obsids = yaml.load(open(os.path.join(opt.outdir, 'obsids.json')))
+
+    if tstart >  DateTime(MODEL_VALID_FROM).secs:
+        times, ccd_temp = make_week_predict(opt, states, tstop)
+    else:
+        times, ccd_temp = mock_telem_predict(opt, states)
+
+    obstemps = {}
+    for idx in range(len(sc_obsids)):
+        obs = sc_obsids[idx]
+        obs_tstart = obs['obs_tstart']
+        obs_tstop = obs['obs_tstop']
+        if 'no_following_manvr' in obs:
+            obs_tstop = sc_obsids[idx + 1]['obs_tstop']
+        # treat the model samples as temperature intervals
+        # and find the max during each obsid npnt interval
+        tok = np.zeros(len(ccd_temp), dtype=bool)
+        tok[:-1] = ((times[:-1] < obs_tstop)
+                    & (times[1:] > obs_tstart))
+        obsid = "{}".format(obs['obsid'])
+        obstemps[obsid] = np.max(ccd_temp[tok])
+
+
+    make_check_plots(opt, states, times,
+                     ccd_temp, tstart)
+    write_obstemps(opt, obstemps)
 
 
 def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=None):
@@ -224,33 +244,13 @@ def make_week_predict(opt, states, tstop):
 
     model = calc_model(opt.model_spec, states, state0['tstart'], tstop,
                        state0['aacccdpt'], state0['tstart'])
-    temps = {'aca': model.comp['aacccdpt'].mvals}
 
-    obstemps = {}
-    obsids = np.unique(states['obsid'])
-    for obsid in obsids:
-        # find extent of NPNT
-        match = states[(states['obsid'] == obsid)
-                       & (states['pcad_mode'] == 'NPNT')]
-        # if there is, strangely, no NPNT, just use the full obsid interval
-        if not len(match):
-            match = states[(states['obsid'] == obsid)]
-        otstart = np.min(match['tstart'])
-        otstop = np.max(match['tstop'])
-        # treat the model samples as temperature intervals
-        # and find the max during each obsid npnt interval
-        tok = np.zeros(len(temps['aca']), dtype=bool)
-        tok[:-1] = ((model.times[:-1] < otstop)
-                    & (model.times[1:] > otstart))
-        obstemps["{}".format(obsid)] = {'temp': np.max(temps['aca'][tok])}
+    return model.times, model.comp['aacccdpt'].mvals
 
-    return dict(opt=opt, states=states, times=model.times, temps=temps,
-                obsids=obsids, obstemps=obstemps)
 
 def mock_telem_predict(opt, states):
 
     state0 = states[0]
-
     # Get temperature telemetry over the interval
     logger.info('Fetching telemetry between %s and %s' % (states[0]['tstart'],
                                                           states[-1]['tstop']))
@@ -259,28 +259,8 @@ def mock_telem_predict(opt, states):
                         states[-1]['tstop'],
                         stat='5min')
     temps = {'aca': tlm['aacccdpt'].vals}
-    times = tlm['aacccdpt'].times
+    return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
 
-    obstemps = {}
-    obsids = np.unique(states['obsid'])
-    for obsid in obsids:
-        # find extent of NPNT
-        match = states[(states['obsid'] == obsid)
-                       & (states['pcad_mode'] == 'NPNT')]
-        # if there is, strangely, no NPNT, just use the full obsid interval
-        if not len(match):
-            match = states[(states['obsid'] == obsid)]
-        otstart = np.min(match['tstart'])
-        otstop = np.max(match['tstop'])
-        # treat the model samples as temperature intervals
-        # and find the max during each obsid npnt interval
-        tok = np.zeros(len(temps['aca']), dtype=bool)
-        tok[:-1] = ((times[:-1] < otstop)
-                    & (times[1:] > otstart))
-        obstemps["{}".format(obsid)] = {'temp': np.max(temps['aca'][tok])}
-
-    return dict(opt=opt, states=states, times=times, temps=temps,
-                obsids=obsids, obstemps=obstemps)
 
 
 def get_bs_cmds(oflsdir):
@@ -446,7 +426,7 @@ def make_check_plots(opt, states, times, temps, tstart):
     for fig_id, msid in enumerate(('aca',)):
         plots[msid] = plot_two(fig_id=fig_id + 1,
                                x=times,
-                               y=temps[msid],
+                               y=temps,
                                x2=pointpair(states['tstart'], states['tstop']),
                                y2=pointpair(states['pitch']),
                                xlabel='Date',
