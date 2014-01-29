@@ -19,6 +19,7 @@ import shutil
 import pickle
 import numpy as np
 import json
+import yaml
 
 # Matplotlib setup
 # Use Agg backend for command-line (non-interactive) operation
@@ -34,6 +35,8 @@ import Ska.Numpy
 import Ska.engarchive.fetch_sci as fetch
 from Chandra.Time import DateTime
 import Chandra.cmd_states as cmd_states
+from Chandra.cmd_states import get_cmd_states
+#import Chandra.cmd_states as cmd_states
 import lineid_plot
 import xija
 import chandra_models
@@ -57,6 +60,7 @@ except:
 
 
 def get_options():
+    import argparse
     from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.set_defaults()
@@ -65,6 +69,10 @@ def get_options():
     parser.add_argument("--outdir",
                        default="out",
                        help="Output directory")
+    parser.add_argument('--json-obsids', nargs='?', type=argparse.FileType('r'),
+                        default=sys.stdin)
+    parser.add_argument('--output-temps', nargs='?', type=argparse.FileType('w'),
+                        default=sys.stdout)
     parser.add_argument("--model-spec",
                         default=chandra_models.get_xija_model_file('aca'),
                         help="model specification file")
@@ -112,6 +120,10 @@ def main(opt):
     # save spec file in out directory
     shutil.copy(opt.model_spec, opt.outdir)
 
+    # the yaml subset of json is sufficient for the
+    # JSON we have from the Perl code
+    sc_obsids = yaml.load(opt.json_obsids)
+
     # Connect to database (NEED TO USE aca_read)
     logger.info('Connecting to database to get cmd_states')
     db = Ska.DBI.DBI(dbi='sybase', server='sybase', user='aca_read',
@@ -132,9 +144,6 @@ def main(opt):
                            name_map={'aosares1': 'pitch'})
 
     states = get_week_states(opt, tstart, tstop, bs_cmds, tlm, db)
-
-    import yaml
-    sc_obsids = yaml.load(open(os.path.join(opt.outdir, 'obsids.json')))
 
     if tstart >  DateTime(MODEL_VALID_FROM).secs:
         times, ccd_temp = make_week_predict(opt, states, tstop)
@@ -351,10 +360,8 @@ class NumpyAwareJSONEncoder(json.JSONEncoder):
 
 
 def write_obstemps(opt, obstemps):
-    """Write temperature predictions to file"""
-    outfile = os.path.join(opt.outdir, 'obsid_temperatures.json')
-    logger.info('Writing obsid temperatures to %s' % outfile)
-    jfile = open(outfile, 'w')
+    """JSON write temperature predictions"""
+    jfile = opt.output_temps
     jfile.write(json.dumps(obstemps, sort_keys=True, indent=4,
                            cls=NumpyAwareJSONEncoder))
     jfile.close()
@@ -517,5 +524,5 @@ if __name__ == '__main__':
         if opt.traceback:
             raise
         else:
-            print "ERROR:", msg
+            sys.stderr.write("ERROR:{}".format(msg))
             sys.exit(1)

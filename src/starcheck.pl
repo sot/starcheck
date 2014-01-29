@@ -22,6 +22,8 @@ use English;
 use File::Basename;
 use File::Copy;
 use Scalar::Util qw(looks_like_number);
+use IPC::Open3 qw(open3);
+use Symbol qw(gensym);
 
 use Time::JulianDay;
 use Time::DayOfYear;
@@ -89,6 +91,8 @@ my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/s
 my $Starcheck_Share = $par{sc_share} || "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
+
+
 
 my $empty_font_start = qq{<font>};
 my $red_font_start = qq{<font color="#FF0000">};
@@ -522,50 +526,113 @@ sub force_numbers {
     return $_[0];
 }
 
-my @all_obs;
-my %exclude = ('next' => 1, 'prev' => 1, 'agasc_hash' => 1);
-foreach my $obsid (@obsid_id){
-  my %obj = ();
-  for my $tkey (keys(%{$obs{$obsid}})){
-      if (not defined $exclude{$tkey}){
-          $obj{$tkey} = $obs{$obsid}->{$tkey};
-      }
-  }
-  push @all_obs, \%obj;
+
+sub json_obsids{
+
+    my @all_obs;
+    my %exclude = ('next' => 1, 'prev' => 1, 'agasc_hash' => 1);
+    foreach my $obsid (@obsid_id){
+        my %obj = ();
+        for my $tkey (keys(%{$obs{$obsid}})){
+            if (not defined $exclude{$tkey}){
+                $obj{$tkey} = $obs{$obsid}->{$tkey};
+            }
+        }
+        push @all_obs, \%obj;
+    }
+
+    return JSON::to_json(force_numbers(\@all_obs), {pretty => 1});
 }
 
-my $json_text = JSON::to_json(force_numbers(\@all_obs), {pretty => 1});
-open (my $JSON_OUT, "> $STARCHECK/obsids.json")
-   or die "Couldn't open $STARCHECK/obsids.json for writing\n";
-print $JSON_OUT $json_text;
-close($JSON_OUT);
 
-print STDERR "Running ACA temperature model\n";
+sub run_code_with_json_input{
+    my ($json_in, @code_and_args) = @_;
+    my $warn;
+    my $py_out;
+    my $pid;
+
+    eval {
+        local $SIG{ALRM} = sub { die "external python timeout\n";
+                                 };
+        alarm 120;
+
+        local *PY_OUT = IO::File->new_tmpfile;
+        print STDERR map {$_ . " "} @code_and_args;
+        print STDERR "\n";
+
+        unless($pid = open3(\*PY_IN, ">&PY_OUT", \*PY_ERR,
+                            @code_and_args)){
+            die "open3 failed to open to run code\n";
+        }
+
+        # send the JSON to the python script
+        print PY_IN $json_in;
+        close(PY_IN);
+
+        # read and print python script'ss stderr
+        while( <PY_ERR> ){
+            print STDERR $_;
+        }
+
+        # when the python script is done, capture exit status
+        waitpid($pid, 0);
+        my $py_exit_status = $? >> 8;
+        if ($py_exit_status != 0){
+            die "non-zero exit status\n";
+        }
+        # read out the output values from the temporary file
+        seek PY_OUT, 0, 0;
+        my $out_json;
+        while (<PY_OUT>){
+            $out_json .= $_;
+        }
+
+        # if anything was returned, parse it as JSON
+        if ($out_json){
+            eval{
+                $py_out = JSON::from_json($out_json);
+            };
+            # if the JSON parsing didn't work, go on
+            if ($@){
+               die "Could not parse JSON\n";
+            }
+        }
+        alarm 0;
+    };
+    if ($@){
+        $warn = "ERROR $@\n";
+        kill(9, $pid);
+    }
+
+    return $py_out, $warn;
+}
+
+
+
 my @aca_check = ("$SKA/bin/python",
                  "$Starcheck_Share/calc_ccd_temps.py",
-                 "--out", "$STARCHECK",
+                 "--outdir", "$STARCHECK",
                  "$par{dir}");
 
-#                 "--model-spec", "$Starcheck_Data/aca_spec.json");
-print STDERR map {$_ . " "} @aca_check;
-print STDERR "\n";
-my $obsid_temps = ();
-if (system(@aca_check) == 0){
-    my $obsid_temp_file   = get_file("$STARCHECK/obsid_temperatures.json", "ccdtemp", 'required');
-    $obsid_temps = JSON::from_json(io($obsid_temp_file)->slurp());
-}
-else{
-    push @global_warn, "aca_check xija model failed with code $?.  No temperatures.\n";
-}
+
+my $json_text = json_obsids();
+my ($obsid_temps, $py_warn) = run_code_with_json_input($json_text, @aca_check);
+push @global_warn, $py_warn if $py_warn;
 
 # Since we need set_npm_times to have run on all obsids
 # to get the (n+1) obs stop time for setting max temperatures
 # this is just run it its own loop
-foreach my $obsid (@obsid_id) {
-    $obs{$obsid}->set_ccd_temps($obsid_temps) if ($obsid_temps);
+if ($obsid_temps){
+    foreach my $obsid (@obsid_id) {
+        $obs{$obsid}->set_ccd_temps($obsid_temps);
+    }
 }
 
-
+my $final_json = json_obsids();
+open(my $JSON_OUT, "> $STARCHECK/obsids.json")
+     or die "Couldn't open $STARCHECK/obsids.json for writing\n";
+print $JSON_OUT $final_json;
+close($JSON_OUT);
 
 # Produce final report
 my %save_hash;
