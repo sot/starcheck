@@ -610,7 +610,7 @@ sub run_code_with_json_input{
 
 
 my @aca_check = ("$SKA/bin/python",
-                 "$Starcheck_Share/calc_ccd_temps.py",
+                 "-m", "starcheck.calc_ccd_temps",
                  "--outdir", "$STARCHECK",
                  "$par{dir}");
 
