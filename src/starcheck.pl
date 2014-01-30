@@ -546,7 +546,7 @@ sub json_obsids{
 
 
 sub run_code_with_json_input{
-    my ($json_in, @code_and_args) = @_;
+    my ($name, $json_in, @code_and_args) = @_;
     my $warn;
     my $py_out;
     my $pid;
@@ -600,7 +600,7 @@ sub run_code_with_json_input{
         alarm 0;
     };
     if ($@){
-        $warn = "ERROR $@\n";
+        $warn = "ERROR $name: $@\n";
         kill(9, $pid);
     }
 
@@ -612,11 +612,13 @@ sub run_code_with_json_input{
 my @aca_check = ("$SKA/bin/python",
                  "-m", "starcheck.calc_ccd_temps",
                  "--outdir", "$STARCHECK",
+                 "--model-spec", "$Starcheck_Data/aca_spec.json",
                  "$par{dir}");
 
 
 my $json_text = json_obsids();
-my ($obsid_temps, $py_warn) = run_code_with_json_input($json_text, @aca_check);
+my ($obsid_temps, $py_warn) = run_code_with_json_input('python CCD temp calculation',
+                                                       $json_text, @aca_check);
 push @global_warn, $py_warn if $py_warn;
 
 # Since we need set_npm_times to have run on all obsids
