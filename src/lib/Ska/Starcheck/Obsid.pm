@@ -2692,17 +2692,7 @@ sub set_ccd_temps{
         push @{$self->{warn}}, "No CCD temperature prediction for obsid\n";
         return;
     }
-    # set the temperature to the max at the current obsid
+    # set the temperature to the value for the current obsid
     $self->{ccd_temp} = $obsid_temps->{$self->{obsid}};
-    # if there is no following maneuver, use max temp of this and the
-    # next obsid
-    if (defined $self->{next}
-        and $self->{no_following_manvr}
-        and defined $obsid_temps->{$self->{next}->{obsid}}){
-        my $a = $obsid_temps->{$self->{obsid}};
-        my $b = $obsid_temps->{$self->{next}->{obsid}};
-        $self->{ccd_temp} = $a > $b ? $a : $b;
-        $self->{ccd_temp_note} = '(max through end of following obsid)';
-    }
     return;
 }
