@@ -2693,6 +2693,10 @@ sub set_ccd_temps{
         return;
     }
     # set the temperature to the value for the current obsid
-    $self->{ccd_temp} = $obsid_temps->{$self->{obsid}};
+    $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
+    # and include any comment
+    if (defined $obsid_temps->{$self->{obsid}}->{text}){
+        $self->{ccd_temp_note} = $obsid_temps->{$self->{obsid}}->{text};
+    }
     return;
 }

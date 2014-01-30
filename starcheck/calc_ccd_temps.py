@@ -165,7 +165,9 @@ def get_interval_temps(intervals, times, ccd_temp):
         tok[:-1] = ((times[:-1] < interval['tstop'])
                     & (times[1:] > interval['tstart']))
         obsid = "{}".format(interval['obsid'])
-        obstemps[obsid] = np.max(ccd_temp[tok])
+        obs = dict(ccd_temp=np.max(ccd_temp[tok]))
+        obs.update(interval)
+        obstemps[obsid] = obs
     return obstemps
 
 
