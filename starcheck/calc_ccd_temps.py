@@ -362,7 +362,7 @@ def write_obstemps(opt, obstemps):
     jfile = opt.output_temps
     jfile.write(json.dumps(obstemps, sort_keys=True, indent=4,
                            cls=NumpyAwareJSONEncoder))
-    jfile.close()
+    jfile.flush()
 
 
 def plot_two(fig_id, x, y, x2, y2,
