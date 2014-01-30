@@ -148,25 +148,41 @@ def main(opt):
     else:
         times, ccd_temp = mock_telem_predict(opt, states)
 
+    make_check_plots(opt, states, times,
+                     ccd_temp, tstart)
+
+    intervals = get_obs_intervals(sc_obsids)
+    obstemps = get_interval_temps(intervals, times, ccd_temp)
+    write_obstemps(opt, obstemps)
+
+
+def get_interval_temps(intervals, times, ccd_temp):
     obstemps = {}
-    for idx in range(len(sc_obsids)):
-        obs = sc_obsids[idx]
-        obs_tstart = obs['obs_tstart']
-        obs_tstop = obs['obs_tstop']
-        if 'no_following_manvr' in obs:
-            obs_tstop = sc_obsids[idx + 1]['obs_tstop']
+    for interval in intervals:
         # treat the model samples as temperature intervals
         # and find the max during each obsid npnt interval
         tok = np.zeros(len(ccd_temp), dtype=bool)
-        tok[:-1] = ((times[:-1] < obs_tstop)
-                    & (times[1:] > obs_tstart))
-        obsid = "{}".format(obs['obsid'])
+        tok[:-1] = ((times[:-1] < interval['tstop'])
+                    & (times[1:] > interval['tstart']))
+        obsid = "{}".format(interval['obsid'])
         obstemps[obsid] = np.max(ccd_temp[tok])
+    return obstemps
 
 
-    make_check_plots(opt, states, times,
-                     ccd_temp, tstart)
-    write_obstemps(opt, obstemps)
+def get_obs_intervals(sc_obsids):
+    intervals = []
+    for idx in range(len(sc_obsids)):
+        obs = sc_obsids[idx]
+        interval = dict(
+            obsid=obs['obsid'],
+            tstart=obs['obs_tstart'],
+            tstop=obs['obs_tstop'])
+        if 'no_following_manvr' in obs:
+            interval.update(dict(
+                tstop=sc_obsids[idx + 1]['obs_tstop'],
+                text='(max through following obsid)'))
+        intervals.append(interval)
+    return intervals
 
 
 def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=None):
