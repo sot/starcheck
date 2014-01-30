@@ -39,7 +39,6 @@ from Chandra.cmd_states import get_cmd_states
 #import Chandra.cmd_states as cmd_states
 import lineid_plot
 import xija
-import chandra_models
 from starcheck.version import version
 
 MSID = dict(aca='AACCCDPT')
@@ -74,7 +73,6 @@ def get_options():
     parser.add_argument('--output-temps', nargs='?', type=argparse.FileType('w'),
                         default=sys.stdout)
     parser.add_argument("--model-spec",
-                        default=chandra_models.get_xija_model_file('aca'),
                         help="model specification file")
     parser.add_argument("--traceback",
                         default=True,
