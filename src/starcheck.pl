@@ -23,7 +23,6 @@ use File::Basename;
 use File::Copy;
 use Scalar::Util qw(looks_like_number);
 use IPC::Open3 qw(open3);
-use Symbol qw(gensym);
 
 use Time::JulianDay;
 use Time::DayOfYear;
@@ -34,7 +33,6 @@ use PoorTextFormat;
 #use GrabEnv qw( grabenv );
 #use Shell::GetEnv;
 
-use Data::ParseTable;
 use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
 use Carp;
