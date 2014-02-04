@@ -1810,11 +1810,7 @@ sub print_report {
 
     $o .= sprintf("\n");
     if (defined $self->{ccd_temp}){
-        $o .= sprintf("PREDICTED MAX AACCCDPT(C): %.2f  ", $self->{ccd_temp});
-        if (defined $self->{ccd_temp_note}){
-            $o .= $self->{ccd_temp_note};
-        }
-        $o .= "\n";
+        $o .= sprintf("PREDICTED MAX AACCCDPT(C): %.2f \n", $self->{ccd_temp});
     }
     else{
         $o .= sprintf("NO AACCCDPT(C) PREDICTION\n")
@@ -2694,9 +2690,5 @@ sub set_ccd_temps{
     }
     # set the temperature to the value for the current obsid
     $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
-    # and include any comment
-    if (defined $obsid_temps->{$self->{obsid}}->{text}){
-        $self->{ccd_temp_note} = $obsid_temps->{$self->{obsid}}->{text};
-    }
     return;
 }
