@@ -699,7 +699,7 @@ if ($dark_cal_checker->{dark_cal_present}){
 # CCD temperature plot
 if ($obsid_temps){
     $out .= "------------  CCD TEMPERATURE PREDICTION -----------------\n\n";
-    $out .= "<IMG SRC='$STARCHECK/aacccdpt.png'>\n";
+    $out .= "<IMG SRC='$STARCHECK/ccd_temperature.png'>\n";
 }
 
 

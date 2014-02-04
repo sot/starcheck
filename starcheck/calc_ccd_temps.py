@@ -44,6 +44,7 @@ from starcheck.version import version
 MSID = dict(aca='AACCCDPT')
 TASK_DATA = os.path.dirname(__file__)
 TASK_NAME = 'calc_ccd_temps'
+MSID_PLOT_NAME = dict(aca='ccd_temperature.png')
 # the model is reasonable from around Jan-2011
 MODEL_VALID_FROM = '2011:001:00:00:00.000'
 logger = logging.getLogger(TASK_NAME)
@@ -470,7 +471,7 @@ def make_check_plots(opt, states, times, temps, tstart):
         plt.subplots_adjust(top=.85)
         plots[msid]['ax'].axvline(load_start, linestyle=':', color='g',
                                   linewidth=1.0)
-        filename = MSID[msid].lower() + '.png'
+        filename = MSID_PLOT_NAME[msid]
         outfile = os.path.join(opt.outdir, filename)
         logger.info('Writing plot file %s' % outfile)
         plots[msid]['fig'].savefig(outfile)
