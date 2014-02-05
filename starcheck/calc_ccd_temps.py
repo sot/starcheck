@@ -39,6 +39,8 @@ from Chandra.cmd_states import get_cmd_states
 #import Chandra.cmd_states as cmd_states
 import lineid_plot
 import xija
+from starcheck.config import config as defaultconfig
+from starcheck.config import configvars
 from starcheck.version import version
 
 MSID = dict(aca='AACCCDPT')
@@ -61,29 +63,28 @@ except:
 
 def get_options():
     import argparse
-    from argparse import ArgumentParser
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.set_defaults()
     parser.add_argument("oflsdir",
                        help="Load products OFLS directory")
     parser.add_argument("--outdir",
-                       default="out",
+                       default=defaultconfig['outdir'],
                        help="Output directory")
-    parser.add_argument('--json-obsids', nargs='?', type=argparse.FileType('r'),
-                        default=sys.stdin)
-    parser.add_argument('--output-temps', nargs='?', type=argparse.FileType('w'),
-                        default=sys.stdout)
+    parser.add_argument('--json-obsids', nargs="?", type=argparse.FileType('r'),
+                        default=defaultconfig['json_obsids'])
+    parser.add_argument('--output-temps', nargs="?", type=argparse.FileType('w'),
+                        default=defaultconfig['output_temps'])
     parser.add_argument("--model-spec",
                         help="model specification file")
     parser.add_argument("--traceback",
-                        default=True,
+                        default=defaultconfig['traceback'],
                         help='Enable tracebacks')
     parser.add_argument("--verbose",
                         type=int,
-                        default=1,
+                        default=defaultconfig['verbose'],
                         help="Verbosity (0=quiet, 1=normal, 2=debug)")
     parser.add_argument("--pitch",
-                        default=150.0,
+                        default=defaultconfig['pitch'],
                         type=float,
                         help="Starting pitch (deg)")
     parser.add_argument("--T-aca",
@@ -96,12 +97,16 @@ def get_options():
     return args
 
 
-def main(opt):
+def get_ccd_temps(config=dict()):
+    # for any unset configuration variables, use the defaults
+    for entry in configvars:
+        if entry not in config:
+            config[entry] = defaultconfig[entry]
 
-    if not os.path.exists(opt.outdir):
-        os.mkdir(opt.outdir)
+    if not os.path.exists(config['outdir']):
+        os.mkdir(config['outdir'])
 
-    config_logging(opt.outdir, opt.verbose)
+    config_logging(config['outdir'], config['verbose'])
 
     # Store info relevant to processing for use in outputs
     proc = dict(run_user=os.environ['USER'],
@@ -115,13 +120,13 @@ def main(opt):
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
     logger.info('###############################'
                 '######################################\n')
-    logger.info('Command line options:\n%s\n' % pformat(opt.__dict__))
+    #logger.info('Options:\n%s\n' % pformat(config))
     # save spec file in out directory
-    shutil.copy(opt.model_spec, opt.outdir)
+    shutil.copy(config['model_spec'], config['outdir'])
 
     # the yaml subset of json is sufficient for the
     # JSON we have from the Perl code
-    sc_obsids = yaml.load(opt.json_obsids)
+    sc_obsids = yaml.load(config['json_obsids'])
 
     # Connect to database (NEED TO USE aca_read)
     logger.info('Connecting to database to get cmd_states')
@@ -131,7 +136,7 @@ def main(opt):
     tnow = DateTime().secs
 
     # Get tstart, tstop, commands from backstop file in opt.oflsdir
-    bs_cmds = get_bs_cmds(opt.oflsdir)
+    bs_cmds = get_bs_cmds(config['oflsdir'])
     tstart = bs_cmds[0]['time']
     tstop = bs_cmds[-1]['time']
     proc.update(dict(datestart=DateTime(tstart).date,
@@ -142,20 +147,21 @@ def main(opt):
                            ['aacccdpt', 'aosares1'],
                            name_map={'aosares1': 'pitch'})
 
-    states = get_week_states(opt, tstart, tstop, bs_cmds, tlm, db)
+    states = get_week_states(config, tstart, tstop, bs_cmds, tlm, db)
 
     if tstart >  DateTime(MODEL_VALID_FROM).secs:
-        times, ccd_temp = make_week_predict(opt, states, tstop)
+        times, ccd_temp = make_week_predict(config, states, tstop)
     else:
-        times, ccd_temp = mock_telem_predict(opt, states)
+        times, ccd_temp = mock_telem_predict(config, states)
 
-    make_check_plots(opt, states, times,
+    make_check_plots(config, states, times,
                      ccd_temp, tstart)
 
     intervals = get_obs_intervals(sc_obsids)
     obstemps = get_interval_temps(intervals, times, ccd_temp)
-    write_obstemps(opt, obstemps)
-
+    #write_obstemps(config, obstemps)
+    return json.dumps(obstemps, sort_keys=True, indent=4,
+	                  cls=NumpyAwareJSONEncoder)
 
 def get_interval_temps(intervals, times, ccd_temp):
     obstemps = {}
@@ -203,7 +209,7 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
 
 def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
     # Try to make initial state0 from cmd line options
-    state0 = dict((x, getattr(opt, x))
+    state0 = dict((x, opt.get(x))
                   for x in ('pitch', 'T_aca'))
     state0.update({'tstart': tstart - 30,
                    'tstop': tstart,
@@ -268,7 +274,7 @@ def make_week_predict(opt, states, tstop):
     logger.info('Propagation initial time and ACA: {} {:.2f}'.format(
             DateTime(state0['tstart']).date, state0['aacccdpt']))
 
-    model = calc_model(opt.model_spec, states, state0['tstart'], tstop,
+    model = calc_model(opt['model_spec'], states, state0['tstart'], tstop,
                        state0['aacccdpt'], state0['tstart'])
 
     return model.times, model.comp['aacccdpt'].mvals
@@ -378,7 +384,7 @@ class NumpyAwareJSONEncoder(json.JSONEncoder):
 
 def write_obstemps(opt, obstemps):
     """JSON write temperature predictions"""
-    jfile = opt.output_temps
+    jfile = opt['output_temps']
     jfile.write(json.dumps(obstemps, sort_keys=True, indent=4,
                            cls=NumpyAwareJSONEncoder))
     jfile.flush()
@@ -472,7 +478,7 @@ def make_check_plots(opt, states, times, temps, tstart):
         plots[msid]['ax'].axvline(load_start, linestyle=':', color='g',
                                   linewidth=1.0)
         filename = MSID_PLOT_NAME[msid]
-        outfile = os.path.join(opt.outdir, filename)
+        outfile = os.path.join(opt['outdir'], filename)
         logger.info('Writing plot file %s' % outfile)
         plots[msid]['fig'].savefig(outfile)
         plots[msid]['filename'] = filename
@@ -536,7 +542,7 @@ def globfile(pathglob):
 if __name__ == '__main__':
     opt = get_options()
     try:
-        main(opt)
+        get_ccd_temps(vars(opt))
     except Exception, msg:
         if opt.traceback:
             raise
