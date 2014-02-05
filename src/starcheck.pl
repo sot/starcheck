@@ -22,7 +22,6 @@ use English;
 use File::Basename;
 use File::Copy;
 use Scalar::Util qw(looks_like_number);
-use IPC::Open3 qw(open3);
 
 use Time::JulianDay;
 use Time::DayOfYear;
