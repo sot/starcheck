@@ -1,6 +1,7 @@
 #!/bin/sh
 
 DIR=`dirname $0`
+export PYTHONHOME=$SKA_ARCH_OS
 export PYTHONPATH=$DIR:$PYTHONPATH
 exec perl -I ${DIR}/src/lib ${DIR}/src/starcheck.pl -sc_data ${DIR}/starcheck_data "$@"
 exit 1

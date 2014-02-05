@@ -2,6 +2,7 @@
 
 SKA_bin=`dirname $0`
 eval `${SKA_bin}/flt_envs -shell sh`
+export PYTHONHOME=$SKA_ARCH_OS
 exec perl ${SKA_bin}/starcheck.pl "$@"
 
 exit 1

@@ -46,6 +46,21 @@ use HTML::TableExtract;
 
 use Ska::AGASC;
 
+
+use Inline Python => q{
+import sys
+import perl
+# this provides an interface back to the Perl namespace
+
+def ccd_temp_wrapper(*args):
+    try:
+        from starcheck.calc_ccd_temps import get_ccd_temps
+    except ImportError as err:
+        # write errors to starcheck's global warnings and STDERR
+        perl.warning("Error with Inline::Python imports {}\n".format(err))
+    return get_ccd_temps(*args)
+};
+
 # cheat to get the OS (major)
 my $OS = `uname`;
 chomp($OS);
@@ -542,81 +557,18 @@ sub json_obsids{
 }
 
 
-sub run_code_with_json_input{
-    my ($name, $json_in, @code_and_args) = @_;
-    my $warn;
-    my $py_out;
-    my $pid;
-
-    eval {
-        local $SIG{ALRM} = sub { die "external python timeout\n";
-                                 };
-        alarm 120;
-
-        local *PY_OUT = IO::File->new_tmpfile;
-        print STDERR map {$_ . " "} @code_and_args;
-        print STDERR "\n";
-
-        unless($pid = open3(\*PY_IN, ">&PY_OUT", \*PY_ERR,
-                            @code_and_args)){
-            die "open3 failed to open to run code\n";
-        }
-
-        # send the JSON to the python script
-        print PY_IN $json_in;
-        close(PY_IN);
-
-        # read and print python script'ss stderr
-        while( <PY_ERR> ){
-            print STDERR $_;
-        }
-
-        # when the python script is done, capture exit status
-        waitpid($pid, 0);
-        my $py_exit_status = $? >> 8;
-        if ($py_exit_status != 0){
-            die "non-zero exit status\n";
-        }
-        # read out the output values from the temporary file
-        seek PY_OUT, 0, 0;
-        my $out_json;
-        while (<PY_OUT>){
-            $out_json .= $_;
-        }
-
-        # if anything was returned, parse it as JSON
-        if ($out_json){
-            eval{
-                $py_out = JSON::from_json($out_json);
-            };
-            # if the JSON parsing didn't work, go on
-            if ($@){
-               die "Could not parse JSON\n";
-            }
-        }
-        alarm 0;
-    };
-    if ($@){
-        $warn = "ERROR $name: $@\n";
-        kill(9, $pid);
-    }
-
-    return $py_out, $warn;
-}
-
-
-
-my @aca_check = ("$SKA/bin/python",
-                 "-m", "starcheck.calc_ccd_temps",
-                 "--outdir", "$STARCHECK",
-                 "--model-spec", "$Starcheck_Data/aca_spec.json",
-                 "$par{dir}");
-
-
 my $json_text = json_obsids();
-my ($obsid_temps, $py_warn) = run_code_with_json_input('python CCD temp calculation',
-                                                       $json_text, @aca_check);
-push @global_warn, $py_warn if $py_warn;
+my $obsid_temps;
+eval{
+    my $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
+                                             outdir=>$par{out},
+                                             json_obsids => $json_text,
+                                             model_spec => "$Starcheck_Data/aca_spec.json"});
+    $obsid_temps = JSON::from_json($json_obsid_temps);
+};
+if ($@){
+    push @global_warn, "ERROR: $@\n";
+}
 
 # Since we need set_npm_times to have run on all obsids
 # to get the (n+1) obs stop time for setting max temperatures
