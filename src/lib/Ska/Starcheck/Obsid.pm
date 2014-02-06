@@ -1749,6 +1749,12 @@ sub print_report {
 	    }
 	    for my $field_idx (0 .. $#fields){
 		my $curr_format = $format[$field_idx];
+                # override mag formatting if it lost its 3
+                # decimal places during JSONifying
+                if (($fields[$field_idx] eq 'GS_MAG')
+                    and ($c->{"$fields[$field_idx]$i"} ne '---')){
+                    $curr_format = "%8.3f";
+                }
 #		if (($curr_format =~ /link_target/) and ($color)){
 #		    # turn off the color before the link
 #		    $curr_format = " \\${color}_end " . $curr_format;
@@ -1802,7 +1808,10 @@ sub print_report {
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
 	$o .= "$red_font_start" if $bad_FOM;
 	$o .= "Probability of acquiring 2,3, and 4 or fewer stars (10^x):\t";
-	foreach (2..4) { $o .= "$probs[$_]\t" }
+        # override formatting to match pre-JSON strings
+        foreach (2..4) {
+            $o .= substr(sprintf("%.4f", "$probs[$_]"), 0, 6) . "\t";
+        }
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
 	$o .= "Acquisition Stars Expected  : $self->{figure_of_merit}->{expected}\n";
