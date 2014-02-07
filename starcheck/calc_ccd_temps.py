@@ -63,7 +63,8 @@ except:
 
 def get_options():
     import argparse
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Get CCD temps from xija model for starcheck")
     parser.set_defaults()
     parser.add_argument("oflsdir",
                        help="Load products OFLS directory")
@@ -71,11 +72,13 @@ def get_options():
                        default=defaultconfig['outdir'],
                        help="Output directory")
     parser.add_argument('--json-obsids', nargs="?", type=argparse.FileType('r'),
-                        default=defaultconfig['json_obsids'])
+                        default=defaultconfig['json_obsids'],
+                        help="JSON-ified starcheck Obsid objects, as file or stdin")
     parser.add_argument('--output-temps', nargs="?", type=argparse.FileType('w'),
-                        default=defaultconfig['output_temps'])
+                        default=defaultconfig['output_temps'],
+                        help="output destination for temperature JSON, file or stdout")
     parser.add_argument("--model-spec",
-                        help="model specification file")
+                        help="xija ACA model specification file")
     parser.add_argument("--traceback",
                         default=defaultconfig['traceback'],
                         help='Enable tracebacks')
@@ -98,6 +101,15 @@ def get_options():
 
 
 def get_ccd_temps(config=dict()):
+    """
+    Using the cmds and cmd_states sybase databases, available telemetry, and
+    the pitches determined from the planning products, calculate xija ACA model
+    temperatures for the given week.
+
+    Takes a dictionary of configuration options which match the arguments
+    from get_options()
+    """
+
     # for any unset configuration variables, use the defaults
     for entry in configvars:
         if entry not in config:
@@ -163,7 +175,17 @@ def get_ccd_temps(config=dict()):
     return json.dumps(obstemps, sort_keys=True, indent=4,
 	                  cls=NumpyAwareJSONEncoder)
 
+
 def get_interval_temps(intervals, times, ccd_temp):
+    """
+    Determine the max temperature over each interval.
+
+    :param intervals: list of dictionaries describing obsid/catalog intervals
+    :param times: times of the temperature samples
+    :param ccd_temp: ccd temperature values
+
+    :returns: dictionary (keyed by obsid) of intervals with max ccd_temps
+    """
     obstemps = {}
     for interval in intervals:
         # treat the model samples as temperature intervals
@@ -179,6 +201,14 @@ def get_interval_temps(intervals, times, ccd_temp):
 
 
 def get_obs_intervals(sc_obsids):
+    """
+    For the list of Obsid objects from starcheck, determine the interval of
+    each star catalog (as in, for obsids with no following maneuver, the catalog
+    will apply to an interval that spans that obsid and the next one)
+
+    :param sc_obsids: starcheck Obsid list
+    :returns: list of dictionaries containing obsid/tstart/tstop
+    """
     intervals = []
     for idx in range(len(sc_obsids)):
         obs = sc_obsids[idx]
@@ -195,6 +225,20 @@ def get_obs_intervals(sc_obsids):
 
 
 def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=None):
+    """
+    Run the xija aca thermal model over the interval requested
+
+    :param model_spec: aca model spec file
+    :param states: generated command states spanning the interval from
+                   last available telemetry through the planning week being
+                   evaluated
+    :param start: start time
+    :param stop: stop time
+    :param aacccdpt: an available aaaccdpt data sample
+    :param aacccdpt_times: time of the given sample
+    :returns: xija.Thermalmodel
+    """
+
     model = xija.ThermalModel('aca', start=start, stop=stop,
                               model_spec=model_spec)
     times = np.array([states['tstart'], states['tstop']])
@@ -208,6 +252,18 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
 
 
 def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
+    """
+    Make states from last available telemetry through the end of the backstop commands
+
+    :param opt: options dictionary from get_options()
+    :param tstart: start time from first backstop command
+    :param tstop: stop time from last backstop command
+    :param bs_cmds: backstop commands for products under review
+    :param tlm: available pitch and aacccdpt telemetry recarray from fetch
+    :param db: sybase database handle
+    :returns: numpy recarray of states
+    """
+
     # Try to make initial state0 from cmd line options
     state0 = dict((x, opt.get(x))
                   for x in ('pitch', 'T_aca'))
@@ -266,6 +322,13 @@ def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
 
 
 def make_week_predict(opt, states, tstop):
+    """
+    Get model predictions over the desired states
+    :param opt: options dictionary containing at least opt['model_spec']
+    :param states: states from get_states()
+    :param tstop: stop time for model calculation
+    :returns: (times, temperature vals) as numpy arrays
+    """
 
     state0 = states[0]
 
@@ -281,6 +344,13 @@ def make_week_predict(opt, states, tstop):
 
 
 def mock_telem_predict(opt, states):
+    """
+    Fetch AACCCDPT telem over the interval of the given states and return values
+    as if they had been calculated by the xija ThermalModel.
+
+    :param states: states as generated from get_states
+    :returns: (times, temperature vals) as numpy arrays
+    """
 
     state0 = states[0]
     # Get temperature telemetry over the interval
