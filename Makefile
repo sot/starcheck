@@ -9,7 +9,7 @@ RELATED_LIB = $(SRC)/StarcheckParser.pm
 BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
 LIB = $(SRC)/lib/Ska/Starcheck/Obsid.pm $(SRC)/lib/Ska/Starcheck/FigureOfMerit.pm \
 	$(SRC)/lib/Ska/Starcheck/Dark_Cal_Checker.pm $(SRC)/lib/Ska/Parse_CM_File.pm
-
+PYTHON = starcheck/calc_ccd_temps.py
 DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
 
@@ -27,7 +27,7 @@ DATA_FILES = starcheck_data/ACABadPixels starcheck_data/agasc.bad \
 
 
 SHA_FILES = ${SKA_ARCH_OS}/bin/ska_version ${SKA_ARCH_OS}/pkgs.manifest $(BIN) $(LIB) \
-	$(DATA_FILES)
+	$(DATA_FILES) $(PYTHON)
 
 # Calculate the SHA1 checksum of the set of files in SHA_FILES and return the abbreviated sum
 SHA = $(shell sha1sum $(SHA_FILES) | sha1sum | cut -c 1-40)
