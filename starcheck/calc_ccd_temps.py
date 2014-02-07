@@ -13,10 +13,8 @@ import os
 import glob
 import logging
 from pprint import pformat
-import re
 import time
 import shutil
-import pickle
 import numpy as np
 import json
 import yaml
@@ -35,10 +33,9 @@ import Ska.Numpy
 import Ska.engarchive.fetch_sci as fetch
 from Chandra.Time import DateTime
 import Chandra.cmd_states as cmd_states
-from Chandra.cmd_states import get_cmd_states
-#import Chandra.cmd_states as cmd_states
-import lineid_plot
 import xija
+
+import lineid_plot
 from starcheck.config import config as defaultconfig
 from starcheck.config import configvars
 from starcheck.version import version
@@ -165,7 +162,7 @@ def get_ccd_temps(config=dict()):
     if tstart >  DateTime(MODEL_VALID_FROM).secs:
         times, ccd_temp = make_week_predict(config, states, tstop)
     else:
-        times, ccd_temp = mock_telem_predict(config, states)
+        times, ccd_temp = mock_telem_predict(states)
 
     make_check_plots(config, states, times,
                      ccd_temp, tstart)
@@ -287,7 +284,7 @@ def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
         state0.update({'aacccdpt': np.mean(tlm['aacccdpt'][ok])})
 
     logger.debug('state0 at %s is\n%s' % (DateTime(state0['tstart']).date,
-                                           pformat(state0)))
+                                          pformat(state0)))
 
     # Get commands after end of state0 through first backstop command time
     cmds_datestart = state0['datestop']
@@ -344,7 +341,7 @@ def make_week_predict(opt, states, tstop):
     return model.times, model.comp['aacccdpt'].mvals
 
 
-def mock_telem_predict(opt, states):
+def mock_telem_predict(states):
     """
     Fetch AACCCDPT telem over the interval of the given states and return values
     as if they had been calculated by the xija ThermalModel.
