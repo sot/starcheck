@@ -157,6 +157,7 @@ def get_ccd_temps(config=dict()):
     # Get temperature telemetry for 3 weeks prior to min(tstart, NOW)
     tlm = get_telem_values(min(tstart, tnow),
                            ['aacccdpt', 'aosares1'],
+                           days=21,
                            name_map={'aosares1': 'pitch'})
 
     states = get_week_states(config, tstart, tstop, bs_cmds, tlm, db)
