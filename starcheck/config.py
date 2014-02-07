@@ -5,6 +5,7 @@ config = {'verbose': 1,
           'pitch': 150,
           'json_obsids': sys.stdin,
           'output_temps': sys.stdout,
+          'outdir': 'out',
           }
 
 configvars = config.keys()
