@@ -1,0 +1,2542 @@
+
+Short Term Schedule: SEP2212B
+
+------------  PROCESSING FILES  -----------------
+
+Using DOT file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/mps/md266_1321.dot
+Using OR file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/mps/or/SEP2212_A.or
+Using SOE file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/mps/soe/ms266_1323.soe
+Using TLR file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/vehicle/VR266_1310.tlr
+Using acq_star_rdb file /proj/sot/ska/data/starcheck/bad_acq_stars.rdb
+Using backstop file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/vehicle/VR266_1310.backstop
+Using bad_pixel file /proj/sot/ska/data/starcheck/ACABadPixels
+Using banned_agasc file /proj/sot/ska/data/starcheck/agasc.bad
+Using config file /proj/sot/ska/data/starcheck/characteristics.yaml
+Using dither file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/History/DITHER.txt
+Using fidsel file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/History/FIDSEL.txt
+Using gui_star_rdb file /proj/sot/ska/data/starcheck/bad_gui_stars.rdb
+Using guide summary file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/mps/mg266_1323.sum
+Using manerr file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/output/SEP2212B_ManErr.txt
+Using maneuver file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/mps/mm266_1323.sum
+Using mech check file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/vehicle/output/V_TEST_mechcheck.txt
+Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
+Using processing summary file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/mps/ms266_1323.sum
+Using radmon file /data/mpcrit1/mplogs/2012/SEP2212/oflsb/History/RADMON.txt
+Using ACABadPixel file from 2013191 Dark Cal 
+
+------------  SUMMARY OF OBSIDS -----------------
+
+         ------  2012:266:13:13:39.000   OBC Load Segment Begins     CL266:1310 
+OBSID = 54310 at 2012:266:13:16:45.000   6 clean ACQ | 5 clean GUI | WARNINGS [ 3]
+OBSID = 54309 at 2012:266:13:26:15.031   6 clean ACQ | 5 clean GUI | WARNINGS [ 3]
+OBSID = 54308 at 2012:266:13:37:48.325   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 54307 at 2012:266:14:38:04.276   8 clean ACQ | 8 clean GUI | 
+OBSID = 54306 at 2012:266:17:18:46.007   8 clean ACQ | 8 clean GUI | 
+OBSID = 54305 at 2012:266:18:33:26.952   8 clean ACQ | 8 clean GUI | 
+OBSID = 54304 at 2012:266:20:36:20.096   7 clean ACQ | 6 clean GUI | WARNINGS [ 2]
+OBSID = 54303 at 2012:266:21:25:31.229   8 clean ACQ | 8 clean GUI | 
+OBSID = 14634 at 2012:266:23:10:33.734   8 clean ACQ | 5 clean GUI | 
+OBSID = 13815 at 2012:267:07:56:09.660   8 clean ACQ | 5 clean GUI | 
+         ------  2012:268:02:20:00.000   OBC Load Segment Begins     CL268:0210 
+OBSID = 13593 at 2012:268:03:25:42.196   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
+OBSID = 14471 at 2012:268:05:16:19.196   3 clean ACQ | 4 clean GUI | WARNINGS [ 2] WARNINGS [ 6]
+OBSID = 14278 at 2012:268:09:28:15.529   8 clean ACQ | 5 clean GUI | 
+OBSID = 14279 at 2012:268:10:48:20.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14280 at 2012:268:11:13:30.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14281 at 2012:268:11:38:40.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14282 at 2012:268:12:03:50.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14283 at 2012:268:12:29:00.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14284 at 2012:268:12:54:10.188   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID = 14285 at 2012:268:13:19:20.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14286 at 2012:268:13:44:30.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14287 at 2012:268:14:09:40.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14288 at 2012:268:14:34:50.188   8 clean ACQ | 4 clean GUI | WARNINGS [ 1] 
+OBSID = 14289 at 2012:268:15:00:00.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14290 at 2012:268:15:25:10.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14291 at 2012:268:15:50:20.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14292 at 2012:268:16:15:30.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14293 at 2012:268:16:40:40.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14294 at 2012:268:17:05:50.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14295 at 2012:268:17:31:00.188   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
+         ------  2012:268:17:39:48.188   OBC Load Segment Begins     CL268:1710 
+OBSID = 14296 at 2012:268:17:56:10.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14297 at 2012:268:18:21:20.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 14298 at 2012:268:18:46:30.188   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
+OBSID = 14012 at 2012:268:19:11:40.188   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID = 13289 at 2012:269:01:46:20.188   8 clean ACQ | 5 clean GUI | 
+OBSID = 54302 at 2012:269:04:50:27.532   8 clean ACQ | 8 clean GUI | 
+OBSID = 54301 at 2012:269:05:02:23.242   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
+OBSID = 54300 at 2012:269:05:46:54.439   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 54299 at 2012:269:09:09:20.810   8 clean ACQ | 8 clean GUI | 
+OBSID = 54298 at 2012:269:09:56:56.118   8 clean ACQ | 8 clean GUI | 
+OBSID = 54297 at 2012:269:12:09:06.422   6 clean ACQ | 7 clean GUI | WARNINGS [ 2]
+OBSID = 15541 at 2012:269:14:18:12.409   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
+         ------  2012:269:22:45:00.000   OBC Load Segment Begins     CL269:2210 
+OBSID = 13663 at 2012:270:02:25:30.242   8 clean ACQ | 5 clean GUI | 
+OBSID = 13816 at 2012:270:04:47:27.242   8 clean ACQ | 5 clean GUI | 
+OBSID = 14299 at 2012:271:02:13:28.805   8 clean ACQ | 5 clean GUI | 
+OBSID = 14300 at 2012:271:03:36:07.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14301 at 2012:271:04:01:17.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14302 at 2012:271:04:26:27.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14303 at 2012:271:04:51:37.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14304 at 2012:271:05:16:47.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14305 at 2012:271:05:41:57.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14306 at 2012:271:06:07:07.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14307 at 2012:271:06:32:17.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14308 at 2012:271:06:57:27.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14309 at 2012:271:07:22:37.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14310 at 2012:271:07:47:47.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14311 at 2012:271:08:12:57.308   8 clean ACQ | 5 clean GUI | 
+         ------  2012:271:08:35:01.308   OBC Load Segment Begins     CL271:0810 
+OBSID = 14312 at 2012:271:08:38:07.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14313 at 2012:271:09:03:17.308   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID = 14314 at 2012:271:09:28:27.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14315 at 2012:271:09:53:37.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14316 at 2012:271:10:18:47.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14317 at 2012:271:10:43:57.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14318 at 2012:271:11:09:07.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 14319 at 2012:271:11:34:17.308   8 clean ACQ | 5 clean GUI | 
+OBSID = 13997 at 2012:271:11:59:27.308   4 clean ACQ | 4 clean GUI | WARNINGS [ 5]
+OBSID = 54295 at 2012:271:20:16:44.435   4 clean ACQ | 4 clean GUI | WARNINGS [ 5]
+OBSID = 54294 at 2012:271:20:28:40.145   8 clean ACQ | 8 clean GUI | 
+OBSID = 54293 at 2012:272:00:22:15.442   8 clean ACQ | 8 clean GUI | 
+OBSID = 54292 at 2012:272:01:40:30.419   8 clean ACQ | 8 clean GUI | 
+OBSID = 54291 at 2012:272:03:34:16.840   8 clean ACQ | 8 clean GUI | 
+OBSID = 54290 at 2012:272:04:33:23.728   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 13476 at 2012:272:06:01:08.197   8 clean ACQ | 5 clean GUI | 
+OBSID = 13881 at 2012:272:17:43:07.145   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID = 15538 at 2012:272:21:47:25.765   4 clean ACQ | 4 clean GUI | WARNINGS [ 5]
+         ------  2012:273:04:00:00.000   OBC Load Segment Begins     CL273:0410 
+OBSID = 13288 at 2012:274:00:38:19.399   8 clean ACQ | 5 clean GUI | 
+OBSID = 13860 at 2012:274:04:12:59.007   8 clean ACQ | 5 clean GUI | 
+OBSID = 54289 at 2012:274:11:48:40.528   8 clean ACQ | 8 clean GUI | 
+OBSID = 54288 at 2012:274:12:00:13.822   8 clean ACQ | 8 clean GUI | 
+OBSID = 54287 at 2012:274:12:37:01.572   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 54286 at 2012:274:15:34:40.436   8 clean ACQ | 8 clean GUI | 
+         ------  2012:274:17:08:35.672   OBC Load Segment Begins     CL274:1710 
+OBSID = 54285 at 2012:274:17:11:41.672   8 clean ACQ | 8 clean GUI | 
+OBSID = 54284 at 2012:274:19:04:23.015   8 clean ACQ | 8 clean GUI | 
+OBSID = 54283 at 2012:274:19:57:43.266   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 13795 at 2012:274:21:41:37.194   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
+==================================================================================== 
+OBSID: 54310  
+RA, Dec, Roll (deg):   202.000000    47.000000   330.797750
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:266:13:16:43.357 (VCDU count = 5258478)
+  Q1,Q2,Q3,Q4: -0.42289287  0.15330505  -0.89031820  0.07065893
+  MANVR: Angle=   0.57 deg  Duration= 240 sec  Slew err= 20.4 arcsec
+
+MP_STARCAT at 2012:266:13:16:45.000 (VCDU count = 5258484)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   453511320   BOT  8x8   5.797   9.721  11.219  -1483    918  20   1  120  a2g2    
+[ 2]  1   453511800   BOT  8x8   5.797   9.166  10.672    -60   -774  20   1  120          
+[ 3]  2   453512136   BOT  8x8   5.797  10.384  11.891   1120  -1429  20   1  120  a3g3    
+[ 4]  3   453513272   BOT  8x8   5.797   8.316   9.812   1815  -1577  20   1  120          
+[ 5]  4   453513296   BOT  8x8   5.797  10.078  11.578   1499  -2129  20   1  120  a2g3   C
+[ 6]  5   453516144   BOT  8x8   5.797   9.636  11.141  -1069  -1515  20   1  120  a2g2    
+[ 7]  6   453904608   BOT  8x8   5.797   7.341   8.844   1680   1923  20   1  120          
+[ 8]  7   453513528   GUI  8x8   5.797  10.485  11.984  -1777   1604   1   1   25    g4    
+[ 9]  7   453515000   ACQ  8x8   5.797  10.275  11.781  -1098    -46  20   1  120    a3    
+
+>> WARNING: [ 3] Magnitude.  10.384
+>> WARNING: [ 5] Marginal star. B-V = 1.500, Mag_Err = 0.32, Pos_Err = 0.05
+>> WARNING: [ 8] Magnitude.  10.485
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.488	-5.540	-3.912	
+Acquisition Stars Expected  : 7.20
+==================================================================================== 
+OBSID: 54309  
+RA, Dec, Roll (deg):   202.000000    47.000000   330.797750
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:266:13:26:13.388 (VCDU count = 5260702)
+  Q1,Q2,Q3,Q4: -0.42289287  0.15330505  -0.89031820  0.07065893
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:266:13:26:15.031 (VCDU count = 5260709)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   453511320   BOT  8x8   5.797   9.721  11.219  -1483    918  20   1  120  a2g2    
+[ 2]  1   453511800   BOT  8x8   5.797   9.166  10.672    -60   -774  20   1  120          
+[ 3]  2   453512136   BOT  8x8   5.797  10.384  11.891   1120  -1429  20   1  120  a3g3    
+[ 4]  3   453513272   BOT  8x8   5.797   8.316   9.812   1815  -1577  20   1  120          
+[ 5]  4   453513296   BOT  8x8   5.797  10.078  11.578   1499  -2129  20   1  120  a2g3   C
+[ 6]  5   453516144   BOT  8x8   5.797   9.636  11.141  -1069  -1515  20   1  120  a2g2    
+[ 7]  6   453904608   BOT  8x8   5.797   7.341   8.844   1680   1923  20   1  120          
+[ 8]  7   453513528   GUI  8x8   5.797  10.485  11.984  -1777   1604   1   1   25    g4    
+[ 9]  7   453515000   ACQ  8x8   5.797  10.275  11.781  -1098    -46  20   1  120    a3    
+
+>> WARNING: [ 3] Magnitude.  10.384
+>> WARNING: [ 5] Marginal star. B-V = 1.500, Mag_Err = 0.32, Pos_Err = 0.05
+>> WARNING: [ 8] Magnitude.  10.485
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.488	-5.540	-3.912	
+Acquisition Stars Expected  : 7.20
+==================================================================================== 
+OBSID: 54308  
+RA, Dec, Roll (deg):   120.300000   -16.600000    99.629345
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:266:13:37:46.682 (VCDU count = 5263408)
+  Q1,Q2,Q3,Q4: 0.29547463  0.70202979  0.49890307  0.41345451
+  MANVR: Angle= 128.77 deg  Duration= 2377 sec  Slew err= 67.1 arcsec
+
+MP_STARCAT at 2012:266:13:37:48.325 (VCDU count = 5263414)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   784097096   BOT  8x8   5.797   7.865   9.375    -22   1669  20   1  120          
+[ 2]  1   784614024   BOT  8x8   5.797   8.220   9.719   -860   2103  20   1  120          
+[ 3]  2   785790720   BOT  8x8   5.797   8.696  10.203   -101  -2203  20   1  120          
+[ 4]  3   786301648   BOT  8x8   5.797   9.586  11.094  -2065  -2185  20   1  120  a2g2    
+[ 5]  4   786303648   BOT  8x8   5.797   9.377  10.875  -1601  -1703  20   1  120  a2g2    
+[ 6]  5   786306704   BOT  8x8   5.797   8.852  10.359  -1978    359  20   1  120          
+[ 7]  6   784086528   GUI  8x8   5.797   9.340  10.844   1788   1573   1   1   25    g2    
+[ 8]  7   785792816   GUI  8x8   5.797   9.384  10.891   2367  -2166   1   1   25    g2    
+[ 9]  6   785785824   ACQ  8x8   5.797   9.490  11.000    174  -1681  20   1  120    a2    
+[10]  7   786312064   ACQ  8x8   5.797   9.555  11.062  -1870  -1892  20   1  120    a2    
+
+>> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  30,  27,  40
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.77	-8.524	-6.524	
+Acquisition Stars Expected  : 7.79
+==================================================================================== 
+OBSID: 54307  
+RA, Dec, Roll (deg):    20.100000   -13.300000    58.143839
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:266:14:38:02.633 (VCDU count = 5277519)
+  Q1,Q2,Q3,Q4: 0.45756969  0.18388481  0.09608868  0.86462901
+  MANVR: Angle=  95.91 deg  Duration= 1939 sec  Slew err= 69.0 arcsec
+
+MP_STARCAT at 2012:266:14:38:04.276 (VCDU count = 5277525)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   691544112   BOT  8x8   5.797   8.844  10.344   1986    603  20   1  120          
+[ 2]  1   691545032   BOT  8x8   5.797   9.059  10.562   -143  -1541  20   1  120          
+[ 3]  2   691545168   BOT  8x8   5.797   9.443  10.953    522  -1978  20   1  120  a2g2    
+[ 4]  3   691545744   BOT  8x8   5.797   8.962  10.469   -528    605  20   1  120          
+[ 5]  4   691546224   BOT  8x8   5.797   7.397   8.906  -1077   1071  20   1  120          
+[ 6]  5   691547320   BOT  8x8   5.797   7.751   9.250   2245  -1341  20   1  120  a2g2    
+[ 7]  6   691552592   BOT  8x8   5.797   6.698   8.203  -1675  -1327  20   1  120          
+[ 8]  7   691545920   GUI  8x8   5.797   9.245  10.750   -257    514   1   1   25          
+[ 9]  7   691551568   ACQ  8x8   5.797   9.637  11.141    185   -420  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.21	-8.916	-6.862	
+Acquisition Stars Expected  : 7.82
+==================================================================================== 
+OBSID: 54306  
+RA, Dec, Roll (deg):    28.000000   -12.600000    67.783300
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:266:17:18:44.364 (VCDU count = 5315145)
+  Q1,Q2,Q3,Q4: 0.51575623  0.22247080  0.14023218  0.81537549
+  MANVR: Angle=  11.02 deg  Duration= 657 sec  Slew err= 23.8 arcsec
+
+MP_STARCAT at 2012:266:17:18:46.007 (VCDU count = 5315152)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   692060328   BOT  8x8   5.797   6.220   7.719  -1533   1019  20   1  120  a2g2    
+[ 2]  1   692062080   BOT  8x8   5.797   8.135   9.641   -887   1411  20   1  120          
+[ 3]  2   692062720   BOT  8x8   5.797   7.701   9.203    351   1586  20   1  120          
+[ 4]  3   692063240   BOT  8x8   5.797   8.249   9.750   1030  -1095  20   1  120          
+[ 5]  4   692063400   BOT  8x8   5.797   8.381   9.891    850    470  20   1  120          
+[ 6]  5   692064552   BOT  8x8   5.797   9.575  11.078   1109   -529  20   1  120  a2g2    
+[ 7]  6   692065096   BOT  8x8   5.797   9.219  10.719  -1612  -2249  20   1  120          
+[ 8]  7   692067096   BOT  8x8   5.797   6.333   7.844  -2222   -593  20   1  120  a2g2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.27	-8.973	-6.916	
+Acquisition Stars Expected  : 7.83
+==================================================================================== 
+OBSID: 54305  
+RA, Dec, Roll (deg):    63.000000    23.000000   101.262984
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:266:18:33:25.309 (VCDU count = 5332632)
+  Q1,Q2,Q3,Q4: 0.71200347  0.28800024  0.45618596  0.44944553
+  MANVR: Angle=  60.98 deg  Duration= 1473 sec  Slew err= 47.0 arcsec
+
+MP_STARCAT at 2012:266:18:33:26.952 (VCDU count = 5332638)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   237900784   BOT  8x8   5.797   7.058   8.562   1713   -996  20   1  120          
+[ 2]  1   237901440   BOT  8x8   5.797   9.298  10.797    922  -2334  18   1  110          
+[ 3]  2   237902296   BOT  8x8   5.797   9.307  10.812    140   -951  20   1  120          
+[ 4]  3   237903728   BOT  8x8   5.797   8.752  10.250   -643  -1943  20   1  120          
+[ 5]  4   237904672   BOT  8x8   5.797   9.128  10.625  -1155   -951  20   1  120          
+[ 6]  5   237905312   BOT  8x8   5.797   8.479   9.984  -1349  -1411  20   1  120          
+[ 7]  6   165551528   GUI  8x8   5.797   7.204   8.703  -2338  -1661   1   1   25          
+[ 8]  7   237899816   GUI  8x8   5.797   8.070   9.578   1624  -2460   1   1   25          
+[ 9]  6   165554144   ACQ  8x8   5.797   6.452   7.953  -2209   -284  20   1  120    a2    
+[10]  7   237905528   ACQ  8x8   5.797   9.637  11.141  -1154   -274  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.21	-8.916	-6.862	
+Acquisition Stars Expected  : 7.82
+==================================================================================== 
+OBSID: 54304  
+RA, Dec, Roll (deg):     9.700000    26.300000   159.027542
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:266:20:36:18.453 (VCDU count = 5361405)
+  Q1,Q2,Q3,Q4: 0.95758670  0.03969859  0.23788470  0.15767882
+  MANVR: Angle=  58.47 deg  Duration= 1440 sec  Slew err= 45.9 arcsec
+
+MP_STARCAT at 2012:266:20:36:20.096 (VCDU count = 5361411)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   228199392   BOT  8x8   5.797   8.789  10.297   1232    924  20   1  120          
+[ 2]  1   228200616   BOT  8x8   5.797   8.458   9.969    551    898  20   1  120    a2    
+[ 3]  2   228201288   BOT  8x8   5.797   8.686  10.188    798    188  20   1  120          
+[ 4]  3   228201960   BOT  8x8   5.797   8.879  10.391   1654   1171   8   1   60          
+[ 5]  4   228206528   BOT  8x8   5.797   8.265   9.766   -673  -1671  20   1  120          
+[ 6]  5   228204960   GUI  8x8   5.797   9.214  10.719    507    973   1   1   25          
+[ 7]  6   228208672   GUI  8x8   5.797   9.241  10.750  -1166   1748   1   1   25          
+[ 8]  7   228205656   GUI  8x8   5.797   8.961  10.469  -1660  -2430   1   1   25          
+[ 9]  5   228202360   ACQ  8x8   5.797   9.339  10.844    494   -322  20   1  120          
+[10]  6   228197016   ACQ  8x8   5.797   8.884  10.391     59  -1660  20   1  120          
+[11]  7   228198856   ACQ  8x8   5.797   6.468   7.969    -88   -125  20   1  120    a2    
+
+>> WARNING: [ 2] Search spoiler.  228204960: Y,Z,Radial,Mag seps:  44  75  87 -0.8
+>> WARNING: [ 7] Bad Acquisition Star. 228208672 has  1 failed out of  3 attempts
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 54303  
+RA, Dec, Roll (deg):   332.683542    -7.642021   284.494073
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:266:21:25:29.586 (VCDU count = 5372922)
+  Q1,Q2,Q3,Q4: -0.58118044  0.19545033  -0.14663590  0.77622573
+  MANVR: Angle= 125.06 deg  Duration= 2328 sec  Slew err= 42.6 arcsec
+
+MP_STARCAT at 2012:266:21:25:31.229 (VCDU count = 5372928)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   685512064   BOT  8x8   5.797   9.024  10.531  -1725   -908  20   1  120          
+[ 2]  1   685517552   BOT  8x8   5.797   8.308   9.812  -1632  -2172  20   1  120          
+[ 3]  2   685518192   BOT  8x8   5.797   8.552  10.062  -1221  -1839  20   1  120          
+[ 4]  3   685647080   BOT  8x8   5.797   8.535  10.031  -1655   1896  20   1  120  a2g2    
+[ 5]  4   760623392   BOT  8x8   5.797   9.183  10.688   -268  -1753  20   1  120          
+[ 6]  5   760624080   BOT  8x8   5.797   6.867   8.375   1608  -1598  20   1  120          
+[ 7]  6   760623768   GUI  8x8   5.797   9.523  11.031  -1022  -2091   1   1   25    g2    
+[ 8]  7   760611656   GUI  8x8   5.797   9.657  11.156    701    278   1   1   25    g2    
+[ 9]  6   760613696   ACQ  8x8   5.797   8.881  10.391   1384    -22   9   1   65          
+[10]  7   760623552   ACQ  8x8   5.797   9.457  10.969   -646  -2002  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14634  Swift J1910.2-0546     ACIS-S SIM Z offset:-2442 (-6.14mm) Grating: HETG 
+RA, Dec, Roll (deg):   287.582720    -5.777422   271.899444
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:266:23:10:32.091 (VCDU count = 5397517)
+  Q1,Q2,Q3,Q4: -0.53889923  0.43943038  -0.39576124  0.59988466
+  MANVR: Angle=  45.33 deg  Duration= 1266 sec  Slew err= 44.4 arcsec
+
+MP_STARCAT at 2012:266:23:10:33.734 (VCDU count = 5397523)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    922  -1864   1   1   25          
+[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140     40   1   1   25          
+[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1826     34   1   1   25          
+[ 4]  3   673322088   BOT  6x6   5.797   8.151   9.656  -1240   1947  16   1  100          
+[ 5]  4   673327336   BOT  6x6   5.797   8.437   9.938  -1661  -1819  20   1  120          
+[ 6]  5   673856224   BOT  6x6   5.797   9.189  10.688   -340   -950  19   1  115          
+[ 7]  6   673858800   BOT  6x6   5.797   9.342  10.844    966  -1006  20   1  120          
+[ 8]  7   673328024   GUI  6x6   5.797   9.369  10.875  -2015  -2436   1   1   25          
+[ 9]  7   673848528   ACQ  6x6   5.797   9.281  10.781    160    -98  20   1  120          
+[10]  0   673846096   ACQ  6x6   5.797   9.580  11.438    601   1132  20   1  120    a2    
+[11]  1   673850160   ACQ  6x6   5.797   9.632  11.141   1037   1005  20   1  120    a2    
+[12]  2   673857280   ACQ  6x6   5.797   9.729  11.234    482  -1189  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.06	-7.878	-5.957	
+Acquisition Stars Expected  : 7.72
+==================================================================================== 
+OBSID: 13815  M51                    ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   202.478120    47.180465   334.878796
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:267:07:56:08.017 (VCDU count = 5520584)
+  Q1,Q2,Q3,Q4: -0.42196763  0.11934413  -0.89430594  0.08897856
+  MANVR: Angle=  93.19 deg  Duration= 1903 sec  Slew err= 51.0 arcsec
+
+MP_STARCAT at 2012:267:07:56:09.660 (VCDU count = 5520590)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    922  -1737   1   1   25          
+[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   453509920   BOT  6x6   5.797   7.216   8.719  -1503   1946  20   1  120          
+[ 5]  4   453511800   BOT  6x6   5.797   9.166  10.672   -908  -1850  20   1  120          
+[ 6]  5   453904608   BOT  6x6   5.797   7.341   8.844   1035    704  20   1  120          
+[ 7]  6   454303504   BOT  6x6   5.797   9.661  11.172   -194   2009  20   1  120  a2g2    
+[ 8]  7   453911496   GUI  6x6   5.797  10.027  11.531   2401   1930   1   1   25    g3    
+[ 9]  7   453511320   ACQ  6x6   5.797   9.721  11.219  -2196    -52  20   1  120    a2    
+[10]  0   453515000   ACQ  6x6   5.797  10.275  11.781  -1887  -1045  20   1  120    a3    
+[11]  1   453510208   ACQ  6x6   5.797   9.927  11.438  -1114   1815  20   1  120    a3    
+[12]  2   454303528   ACQ  6x6   5.797  10.251  11.750   -732   1874  20   1  120    a3    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.662	-5.708	-4.070	
+Acquisition Stars Expected  : 7.28
+==================================================================================== 
+OBSID: 13593  A773                   ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   139.154460    51.548982    48.750003
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:03:25:40.553 (VCDU count = 5794428)
+  Q1,Q2,Q3,Q4: 0.50085990  0.21008048  0.83130715  0.11804231
+  MANVR: Angle=  46.38 deg  Duration= 1280 sec  Slew err= 39.8 arcsec
+
+MP_STARCAT at 2012:268:03:25:42.196 (VCDU count = 5794434)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8   5.797   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8   5.797   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   449708784   BOT  6x6   5.797   9.211  10.719   -425   -752  20   1  120          
+[ 5]  4   449709864   BOT  6x6   5.797   7.671   9.172    267  -1101  20   1  120          
+[ 6]  5   449712184   BOT  6x6   5.797   9.346  10.844  -1606   -276  20   1  120          
+[ 7]  6   449712984   BOT  6x6   5.797   8.670  10.172   1189   -885  20   1  120          
+[ 8]  7   449580800   GUI  6x6   5.797   9.739  11.250   1301   2381   1   1   25    g2    
+[ 9]  7   449708392   ACQ  6x6   5.797  10.015  11.516   1234   1039  20   1  120    a2    
+[10]  0   449712088   ACQ  6x6   5.797   9.525  11.031   1976    102  20   1  120    a2    
+[11]  1   449709024   ACQ  6x6   5.797  10.538  12.047    717   1642  20   1  120    a3    
+[12]  2   449708720   ACQ  6x6   5.797  10.389  11.891   1746   2207  20   1  120    a3    
+
+>> WARNING: [11] Magnitude.  10.538
+>> WARNING: [12] Magnitude.  10.389
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.091	-6.031	-4.269	
+Acquisition Stars Expected  : 7.20
+==================================================================================== 
+OBSID: 14471  Holmberg IX X-1        ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   149.516672    69.060105    33.430300
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:05:16:17.553 (VCDU count = 5820328)
+  Q1,Q2,Q3,Q4: 0.58608231  0.08589002  0.80412525  0.05012992
+  MANVR: Angle=  19.21 deg  Duration= 846 sec  Slew err= 29.5 arcsec
+
+MP_STARCAT at 2012:268:05:16:19.196 (VCDU count = 5820335)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8   5.797   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   574489776   BOT  6x6   5.797  10.048  11.547  -1299    818  20   1  120  a2g3    
+[ 5]  4   574491280   BOT  6x6   5.797   9.266  10.766   -177   1808  20   1  120          
+[ 6]  5   574496080   BOT  6x6   5.797   9.866  11.375   1283   2352   8   1   60  a2g3    
+[ 7]  6   574496312   BOT  6x6   5.797  10.449  11.953   -644  -1049  20   1  120  a3g4    
+[ 8]  7   574493848   GUI  6x6   5.797  10.092  11.594  -2344   1500   1   1   25    g3    
+[ 9]  7   574497368   ACQ  6x6   5.797  10.545  12.047    343   2125  20   1  120    a3    
+[10]  0   574495368   ACQ  6x6   5.797  10.475  11.984   1809    324  20   1  120    a3    
+[11]  1   574490368   ACQ  6x6   5.797  10.625  12.125   -138    554  20   1  120    a4   c
+[12]  2   574497128   ACQ  6x6   5.797  10.639  12.141   1447   -217  20   1  120    a4   C
+
+>> WARNING: [11] Magnitude.  10.625
+>> WARNING: [12] Magnitude.  10.639
+>> WARNING: [ 7] Magnitude.  10.449
+>> WARNING: [ 9] Magnitude.  10.545
+>> WARNING: [10] Magnitude.  10.475
+>> WARNING: [11] Bad Acquisition Star. 574490368 has  2 failed out of  3 attempts
+>> WARNING: [11] Marginal star. B-V = 0.700, Mag_Err = 0.41, Pos_Err = 0.30
+>> WARNING: [12] Marginal star. B-V = 1.500, Mag_Err = 0.41, Pos_Err = 0.10
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.970	-2.644	-1.664	
+Acquisition Stars Expected  : 5.87
+==================================================================================== 
+OBSID: 14278  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.177762    45.766593   218.406164
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:09:28:13.886 (VCDU count = 5879319)
+  Q1,Q2,Q3,Q4: -0.87526779  0.08502111  -0.42930205  0.20585783
+  MANVR: Angle=  65.60 deg  Duration= 1535 sec  Slew err= 52.4 arcsec
+
+MP_STARCAT at 2012:268:09:28:15.529 (VCDU count = 5879325)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1864    185  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -595  -2297  13   1   85          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -857    235  20   1  120          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -2192   -237  20   1  120          
+[ 8]  7   472525528   GUI  6x6   5.797   6.560   8.062   2399    469   1   1   25    g2    
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641     69     55  20   1  120    a2    
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1271   1018  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -141  -1235  20   1  120    a2    
+[12]  2   472653792   ACQ  6x6   5.797   9.415  11.766    421   1599  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14279  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.215172    45.787318   218.421631
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:10:48:18.545 (VCDU count = 5898069)
+  Q1,Q2,Q3,Q4: -0.87521637  0.08460825  -0.42939344  0.20605587
+  MANVR: Angle=   0.05 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:10:48:20.188 (VCDU count = 5898075)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1984    184  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -477  -2296  17   1  105          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -737    236  20   1  120          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -2073   -235  20   1  120          
+[ 8]  7   472654568   GUI  6x6   5.797   9.406  10.906   1660   2008   1   1   25    g2    
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641    189     55  20   1  120    a2    
+[10]  0   472661712   ACQ  6x6   5.797   9.275  10.781    -22  -1235  20   1  120    a2    
+[11]  1   472653792   ACQ  6x6   5.797   9.415  11.766    542   1599  20   1  120    a2    
+[12]  2   472655704   ACQ  6x6   5.797   9.499  11.000   1218   1340  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14280  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.147950    45.792686   218.517404
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:11:13:28.545 (VCDU count = 5903961)
+  Q1,Q2,Q3,Q4: -0.87498100  0.08474470  -0.42962333  0.20651967
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:11:13:30.188 (VCDU count = 5903968)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1864    302  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -599  -2175  17   1  105          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -857    356  20   1  120          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -2193   -114  20   1  120          
+[ 8]  7   472525528   GUI  6x6   5.797   6.560   8.062   2399    586   1   1   25    g2    
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641     69    175  20   1  120    a2    
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1272   1136  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -143  -1115  20   1  120    a2    
+[12]  2   472654568   ACQ  6x6   5.797   9.406  10.906   1542   2127  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14281  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.140319    45.745830   218.570444
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:11:38:38.545 (VCDU count = 5909854)
+  Q1,Q2,Q3,Q4: -0.87499541  0.08476099  -0.42934381  0.20703260
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:11:38:40.188 (VCDU count = 5909861)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   2379   2076   6   1   50          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1744    181  20   1  120          
+[ 6]  5   472533912   BOT  6x6   5.797   9.129  10.641   -720  -2295  17   1  105          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -2313   -232   7   1   55          
+[ 8]  7   472655152   GUI  6x6   5.797   9.382  10.891   -977    237   1   1   25          
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641    -50     55  20   1  120    a2    
+[10]  0   472525528   ACQ  6x6   5.797   6.560   8.062   2279    464  20   1  120    a2    
+[11]  1   472649352   ACQ  6x6   5.797   9.214  10.719   1153   1015  20   1  120    a2    
+[12]  2   472661712   ACQ  6x6   5.797   9.275  10.781   -264  -1235  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14282  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.207439    45.740530   218.517675
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:12:03:48.545 (VCDU count = 5915747)
+  Q1,Q2,Q3,Q4: -0.87515337  0.08446383  -0.42914600  0.20689649
+  MANVR: Angle=   0.05 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:12:03:50.188 (VCDU count = 5915753)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1864     61  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -600  -2415   5   1   45          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -857    117  20   1  120          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -2193   -352  20   1  120          
+[ 8]  7   472525528   GUI  6x6   5.797   6.560   8.062   2399    344   1   1   25    g2    
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641     69    -64  20   1  120    a2    
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1273    895  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -144  -1355  20   1  120    a2    
+[12]  2   472653792   ACQ  6x6   5.797   9.415  11.766    425   1478  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14283  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.244824    45.761278   218.486176
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:12:28:58.545 (VCDU count = 5921640)
+  Q1,Q2,Q3,Q4: -0.87518643  0.08422694  -0.42920266  0.20673561
+  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:12:29:00.188 (VCDU count = 5921646)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1984     61  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -480  -2415   5   1   45          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -737    117   6   1   50          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -2073   -352  20   1  120          
+[ 8]  7   472654568   GUI  6x6   5.797   9.406  10.906   1663   1886   1   1   25    g2    
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641    189    -64  20   1  120    a2    
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1393    896  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781    -24  -1355  20   1  120    a2    
+[12]  2   472653792   ACQ  6x6   5.797   9.415  11.766    545   1478  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14284  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.185262    45.813449   218.550279
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:12:54:08.545 (VCDU count = 5927532)
+  Q1,Q2,Q3,Q4: -0.87489786  0.08426708  -0.42972762  0.20685011
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:12:54:10.188 (VCDU count = 5927539)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25    f2    
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1984    300  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -481  -2175  17   1  105          
+[ 6]  5   472654568   BOT  6x6   5.797   9.406  10.906   1664   2126  20   1  120  a2g2    
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -737    357  20   1  120          
+[ 8]  7   472665256   BOT  6x6   5.797   9.072  10.578  -2073   -111  20   1  120          
+[ 9]  0   472651904   ACQ  6x6   5.797   6.141   7.641    189    175  20   1  120    a2    
+[10]  1   472661712   ACQ  6x6   5.797   9.275  10.781    -25  -1114  20   1  120    a2    
+[11]  2   472653792   ACQ  6x6   5.797   9.415  11.766    545   1718  20   1  120    a2    
+
+>> WARNING: [ 1] Fid spoiler.   472657400: Y,Z,Radial,Mag seps:   0  24  24 -4.3
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14285  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.110461    45.771825   218.677503
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:13:19:18.545 (VCDU count = 5933425)
+  Q1,Q2,Q3,Q4: -0.87471550  0.08450054  -0.42966132  0.20766222
+  MANVR: Angle=   0.10 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:13:19:20.188 (VCDU count = 5933431)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   2382   2192   6   1   50          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1745    298  20   1  120          
+[ 6]  5   472533912   BOT  6x6   5.797   9.129  10.641   -724  -2174  17   1  105          
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -977    359  16   1  100          
+[ 8]  7   472665256   BOT  6x6   5.797   9.072  10.578  -2314   -108   7   1   55          
+[ 9]  0   472651904   ACQ  6x6   5.797   6.141   7.641    -50    175  20   1  120    a2    
+[10]  1   472525528   ACQ  6x6   5.797   6.560   8.062   2280    580  20   1  120    a2    
+[11]  2   472649352   ACQ  6x6   5.797   9.214  10.719   1155   1134  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14286  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.170146    45.719765   218.656133
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:13:44:28.545 (VCDU count = 5939318)
+  Q1,Q2,Q3,Q4: -0.87492658  0.08429958  -0.42916807  0.20787456
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:13:44:30.188 (VCDU count = 5939324)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          14   FID  8x8   5.797   7.000   8.000   1223    563   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   2383   1951   5   1   45          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1745     57  20   1  120          
+[ 6]  5   472533912   BOT  6x6   5.797   9.129  10.641   -725  -2414   5   1   45          
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -977    119   5   1   45          
+[ 8]  7   472665256   BOT  6x6   5.797   9.072  10.578  -2314   -347   7   1   55          
+[ 9]  0   472651904   ACQ  6x6   5.797   6.141   7.641    -50    -64  20   1  120    a2    
+[10]  1   472525528   ACQ  6x6   5.797   6.560   8.062   2280    339  20   1  120    a2    
+[11]  2   472649352   ACQ  6x6   5.797   9.214  10.719   1155    893  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14287  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.282179    45.782097   218.518823
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:14:09:38.545 (VCDU count = 5945210)
+  Q1,Q2,Q3,Q4: -0.87510333  0.08374979  -0.42930698  0.20706438
+  MANVR: Angle=   0.12 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:14:09:40.188 (VCDU count = 5945217)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 2]  1          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 3]  2          14   FID  8x8   5.797   7.000   8.000   1223    563   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   2104     59  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -363  -2414   5   1   45          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -617    118   6   1   50          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -1953   -350  20   1  120          
+[ 8]  7   472663080   GUI  6x6   5.797   9.348  10.859  -2271  -1377   1   1   25    g2    
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641    309    -64  20   1  120    a2    
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1514    894  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781     94  -1354  20   1  120    a2    
+[12]  2   472654568   ACQ  6x6   5.797   9.406  10.906   1785   1885  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14288  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.252364    45.808195   218.561548
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:14:34:48.545 (VCDU count = 5951103)
+  Q1,Q2,Q3,Q4: -0.87493970  0.08373008  -0.42957736  0.20720303
+  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:14:34:50.188 (VCDU count = 5951109)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   2105    179  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -363  -2294  17   1  105          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -617    238  20   1  120          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -1954   -229  20   1  120          
+[ 8]  7   472663080   GUI  6x6   5.797   9.348  10.859  -2271  -1256   1   1   25    g2    
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641    309     55  20   1  120    a2    
+[10]  0   472661712   ACQ  6x6   5.797   9.275  10.781     93  -1234  20   1  120    a2    
+[11]  1   472654568   ACQ  6x6   5.797   9.406  10.906   1786   2004  20   1  120    a2    
+[12]  2   472653792   ACQ  6x6   5.797   9.415  11.766    667   1598  20   1  120    a2    
+
+>> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:   8,  35,  36
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14289  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.289780    45.828960   218.529932
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:14:59:58.545 (VCDU count = 5956996)
+  Q1,Q2,Q3,Q4: -0.87497270  0.08349347  -0.42963405  0.20704155
+  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:15:00:00.188 (VCDU count = 5957002)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   2225    179  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -243  -2294  17   1  105          
+[ 6]  5   472651904   BOT  6x6   5.797   6.141   7.641    429     55  20   1  120  a2g2    
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -497    238  20   1  120          
+[ 8]  7   472665256   BOT  6x6   5.797   9.072  10.578  -1833   -229  20   1  120          
+[ 9]  0   472661712   ACQ  6x6   5.797   9.275  10.781    213  -1234  20   1  120    a2    
+[10]  1   472663080   ACQ  6x6   5.797   9.348  10.859  -2151  -1257  20   1  120    a2    
+[11]  2   472654568   ACQ  6x6   5.797   9.406  10.906   1906   2004  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14290  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.222443    45.834282   218.625662
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:15:25:08.545 (VCDU count = 5962888)
+  Q1,Q2,Q3,Q4: -0.87473725  0.08363073  -0.42986343  0.20750439
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:15:25:10.188 (VCDU count = 5962895)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   2105    297  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -365  -2174  17   1  105          
+[ 6]  5   472651904   BOT  6x6   5.797   6.141   7.641    309    175  20   1  120  a2g2    
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -617    359  20   1  120          
+[ 8]  7   472665256   BOT  6x6   5.797   9.072  10.578  -1954   -107  20   1  120          
+[ 9]  0   472661712   ACQ  6x6   5.797   9.275  10.781     92  -1114  20   1  120    a2    
+[10]  1   472654568   ACQ  6x6   5.797   9.406  10.906   1787   2123  20   1  120    a2    
+[11]  2   472653792   ACQ  6x6   5.797   9.415  11.766    668   1718  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14291  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.073134    45.750806   218.858386
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:15:50:18.545 (VCDU count = 5968781)
+  Q1,Q2,Q3,Q4: -0.87441097  0.08417781  -0.42971330  0.20896417
+  MANVR: Angle=   0.18 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:15:50:20.188 (VCDU count = 5968787)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   2268   2185  20   1  120          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1625    293  20   1  120          
+[ 6]  5   472533912   BOT  6x6   5.797   9.129  10.641   -850  -2172  17   1  105          
+[ 7]  6   472651904   BOT  6x6   5.797   6.141   7.641   -170    175  20   1  120  a2g2    
+[ 8]  7   472655152   BOT  6x6   5.797   9.382  10.891  -1096    361  17   1  105          
+[ 9]  0   472525528   ACQ  6x6   5.797   6.560   8.062   2161    574  20   1  120    a2    
+[10]  1   472649352   ACQ  6x6   5.797   9.214  10.719   1037   1130  20   1  120    a2    
+[11]  2   472661712   ACQ  6x6   5.797   9.275  10.781   -390  -1114  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14292  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.103100    45.724828   218.858208
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:16:15:28.545 (VCDU count = 5974674)
+  Q1,Q2,Q3,Q4: -0.87449717  0.08403727  -0.42947440  0.20915110
+  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:16:15:30.188 (VCDU count = 5974680)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   2268   2064  20   1  120          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1625    173  20   1  120          
+[ 6]  5   472525528   BOT  6x6   5.797   6.560   8.062   2161    453  20   1  120  a2g2    
+[ 7]  6   472533912   BOT  6x6   5.797   9.129  10.641   -851  -2292  17   1  105          
+[ 8]  7   472651904   BOT  6x6   5.797   6.141   7.641   -170     55  20   1  120  a2g2    
+[ 9]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1038   1010  20   1  120    a2    
+[10]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -390  -1234  20   1  120    a2    
+[11]  2   472654568   ACQ  6x6   5.797   9.406  10.906   1312   1999  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14293  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.065978    45.703849   218.932163
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:16:40:38.545 (VCDU count = 5980566)
+  Q1,Q2,Q3,Q4: -0.87438632  0.08411407  -0.42944782  0.20963767
+  MANVR: Angle=   0.06 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:16:40:40.188 (VCDU count = 5980573)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   2150   2062  20   1  120          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1505    171  20   1  120          
+[ 6]  5   472525528   BOT  6x6   5.797   6.560   8.062   2042    451  20   1  120  a2g2    
+[ 7]  6   472533912   BOT  6x6   5.797   9.129  10.641   -973  -2291  18   1  110          
+[ 8]  7   472655152   BOT  6x6   5.797   9.382  10.891  -1216    242  18   1  110          
+[ 9]  0   472651904   ACQ  6x6   5.797   6.141   7.641   -290     55  20   1  120    a2    
+[10]  1   472649352   ACQ  6x6   5.797   9.214  10.719    918   1009  20   1  120    a2    
+[11]  2   472661712   ACQ  6x6   5.797   9.275  10.781   -511  -1233  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14294  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.133089    45.698849   218.879255
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:17:05:48.545 (VCDU count = 5986459)
+  Q1,Q2,Q3,Q4: -0.87454453  0.08381702  -0.42925088  0.20949999
+  MANVR: Angle=   0.05 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:17:05:50.188 (VCDU count = 5986465)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 2]  1          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 3]  2          14   FID  8x8   5.797   7.000   8.000   1223    563   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   2270   1943  20   1  120          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1625     51  20   1  120          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891  -1096    122   5   1   45          
+[ 7]  6   472533912   GUI  6x6   5.797   9.129  10.641   -853  -2411   1   1   25          
+[ 8]  7   472659832   GUI  6x6   5.797   9.540  11.047  -2164   -109   1   1   25    g2    
+[ 9]  6   472651904   ACQ  6x6   5.797   6.141   7.641   -170    -64  20   1  120    a2    
+[10]  7   472525528   ACQ  6x6   5.797   6.560   8.062   2162    331  20   1  120    a2    
+[11]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1038    889  20   1  120    a2    
+[12]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -391  -1353  20   1  120    a2    
+[13]  2   472654568   ACQ  6x6   5.797   9.406  10.906   1314   1878  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14295  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.022019    45.635847   219.058332
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:17:30:58.545 (VCDU count = 5992352)
+  Q1,Q2,Q3,Q4: -0.87428924  0.08420639  -0.42913937  0.21063478
+  MANVR: Angle=   0.14 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:17:31:00.188 (VCDU count = 5992358)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 3]  2          14   FID  8x8   5.797   7.000   8.000   1223    563   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   1913   1938  20   1  120          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1265     48  20   1  120          
+[ 6]  5   472527720   BOT  6x6   5.797   6.950   8.453   2292    559  20   1  120          
+[ 7]  6   472533912   BOT  6x6   5.797   9.129  10.641  -1217  -2410   6   1   50          
+[ 8]  7   472655152   BOT  6x6   5.797   9.382  10.891  -1456    124  20   1  120          
+[ 9]  0   472525528   ACQ  6x6   5.797   6.560   8.062   1802    327  20   1  120    a2    
+[10]  1   472649352   ACQ  6x6   5.797   9.214  10.719    680    887  20   1  120    a2    
+[11]  2   472661712   ACQ  6x6   5.797   9.275  10.781   -753  -1353  20   1  120    a2    
+
+>> WARNING: [10] Common Column.  472537336 at Y,Z,Mag:  2422   910  4.41
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14296  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.394206    45.844629   218.551672
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:17:56:08.545 (VCDU count = 5998244)
+  Q1,Q2,Q3,Q4: -0.87497016  0.08256224  -0.42957213  0.20755355
+  MANVR: Angle=   0.41 deg  Duration= 240 sec  Slew err= 20.4 arcsec
+
+MP_STARCAT at 2012:268:17:56:10.188 (VCDU count = 5998251)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          14   FID  8x8   5.797   7.000   8.000   1223    563   1   1   25          
+[ 4]  3   472649352   BOT  6x6   5.797   9.214  10.719   1876    892  20   1  120  a2g2    
+[ 5]  4   472654568   BOT  6x6   5.797   9.406  10.906   2149   1882  20   1  120  a2g2    
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -256    120  20   1  120          
+[ 7]  6   472663080   BOT  6x6   5.797   9.348  10.859  -1913  -1372  20   1  120  a2g2    
+[ 8]  7   472665256   BOT  6x6   5.797   9.072  10.578  -1594   -345  20   1  120          
+[ 9]  0   472533912   ACQ  6x6   5.797   9.129  10.641     -7  -2413   6   1   50          
+[10]  1   472651904   ACQ  6x6   5.797   6.141   7.641    669    -64  20   1  120    a2    
+[11]  2   472661712   ACQ  6x6   5.797   9.275  10.781    451  -1354  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14297  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.334425    45.896792   218.615784
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:18:21:18.545 (VCDU count = 6004137)
+  Q1,Q2,Q3,Q4: -0.87468142  0.08260366  -0.43009688  0.20766735
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:268:18:21:20.188 (VCDU count = 6004144)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          14   FID  8x8   5.797   7.000   8.000   1223    563   1   1   25          
+[ 4]  3   472651904   BOT  6x6   5.797   6.141   7.641    669    175  20   1  120  a2g2    
+[ 5]  4   472654568   BOT  6x6   5.797   9.406  10.906   2150   2121  20   1  120  a2g2    
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -256    360  20   1  120          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -1594   -104  20   1  120          
+[ 8]  7   472663080   GUI  6x6   5.797   9.348  10.859  -1914  -1131   1   1   25    g2    
+[ 9]  7   472533912   ACQ  6x6   5.797   9.129  10.641     -8  -2173  17   1  105          
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1876   1131  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781    451  -1114  20   1  120    a2    
+[12]  2   472653792   ACQ  6x6   5.797   9.415  11.766   1030   1717  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14298  ArLac                  HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   331.961973    45.687436   219.164852
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:18:46:28.545 (VCDU count = 6010030)
+  Q1,Q2,Q3,Q4: -0.87392304  0.08409066  -0.42969331  0.21107096
+  MANVR: Angle=   0.44 deg  Duration= 240 sec  Slew err= 20.4 arcsec
+
+MP_STARCAT at 2012:268:18:46:30.188 (VCDU count = 6010036)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   1916   2176  20   1  120          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1265    286  20   1  120          
+[ 6]  5   472527720   BOT  6x6   5.797   6.950   8.453   2293    796  20   1  120          
+[ 7]  6   472533912   BOT  6x6   5.797   9.129  10.641  -1220  -2169  18   1  110          
+[ 8]  7   472655152   BOT  6x6   5.797   9.382  10.891  -1455    365   8   1   60          
+[ 9]  0   472525528   ACQ  6x6   5.797   6.560   8.062   1803    565  20   1  120    a2    
+[10]  1   472649352   ACQ  6x6   5.797   9.214  10.719    681   1125  20   1  120    a2    
+[11]  2   472661712   ACQ  6x6   5.797   9.275  10.781   -755  -1113  20   1  120    a2    
+
+>> WARNING: [10] Common Column.  472537336 at Y,Z,Mag:  2423  1146  4.41
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14012  RXJ0027.6+2616         ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):     6.921724    26.364631   168.285526
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:268:19:11:38.545 (VCDU count = 6015922)
+  Q1,Q2,Q3,Q4: 0.96820465  0.03523904  0.23244413  0.08548503
+  MANVR: Angle=  44.66 deg  Duration= 1257 sec  Slew err= 37.3 arcsec
+
+MP_STARCAT at 2012:268:19:11:40.188 (VCDU count = 6015929)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8   5.797   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8   5.797   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   227281968   BOT  6x6   5.797   7.609   9.109    127    343  20   1  120          
+[ 5]  4   227284168   BOT  6x6   5.797   8.448   9.953   -940  -2061  20   1  120          
+[ 6]  5   227286408   BOT  6x6   5.797   8.501  10.000  -1263   -744  20   1  120          
+[ 7]  6   227288248   BOT  6x6   5.797   8.879  10.391   -491   -655  20   1  120          
+[ 8]  7   227289528   BOT  6x6   5.797   9.149  10.656    171   -140  20   1  120          
+[ 9]  0   227286224   ACQ  6x6   5.797   9.462  10.969    797   1973  20   1  120    a2    
+[10]  1   227279496   ACQ  6x6   5.797  10.015  11.516    676  -1952  20   1  120    a2    
+[11]  2   227280496   ACQ  6x6   5.797  10.108  11.609   2168    606  20   1  120    a2    
+
+>> WARNING: Guide stars fit in 1435 x 2404 square arc-second box
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.932	-7.709	-5.751	
+Acquisition Stars Expected  : 7.60
+==================================================================================== 
+OBSID: 13289  PSR J0248+6021         ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):    42.120495    60.354723   135.598039
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:269:01:46:18.545 (VCDU count = 6108332)
+  Q1,Q2,Q3,Q4: 0.81517670  0.11036494  0.55170425  0.13758252
+  MANVR: Angle=  42.14 deg  Duration= 1223 sec  Slew err= 42.5 arcsec
+
+MP_STARCAT at 2012:269:01:46:20.188 (VCDU count = 6108339)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8   5.797   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8   5.797   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   530449776   BOT  6x6   5.797   8.454   9.953   1407   2099  16   1  100          
+[ 5]  4   530460136   BOT  6x6   5.797   8.962  10.469   2187    836  20   1  120          
+[ 6]  5   530460184   BOT  6x6   5.797   6.636   8.141    962   -147  20   1  120          
+[ 7]  6   530588672   BOT  6x6   5.797   8.960  10.469  -1940  -2012  20   1  120          
+[ 8]  7   530593936   GUI  6x6   5.797   7.644   9.141  -2228  -2441   1   1   25          
+[ 9]  7   530470448   ACQ  6x6   5.797   8.753  10.250    188  -1014  20   1  120          
+[10]  0   530462192   ACQ  6x6   5.797   9.212  10.719   1188    608  20   1  120    a2    
+[11]  1   530590760   ACQ  6x6   5.797   9.432  10.938  -1626   -888  20   1  120    a2    
+[12]  2   530468608   ACQ  6x6   5.797   9.621  11.125   -545   -776  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.23	-8.930	-6.876	
+Acquisition Stars Expected  : 7.83
+==================================================================================== 
+OBSID: 54302  
+RA, Dec, Roll (deg):    42.120495    60.354723   135.598039
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:269:04:50:25.889 (VCDU count = 6151444)
+  Q1,Q2,Q3,Q4: 0.81517670  0.11036494  0.55170425  0.13758252
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:269:04:50:27.532 (VCDU count = 6151450)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   530449776   BOT  8x8   5.797   8.454   9.953   1407   2099  20   1  120          
+[ 2]  1   530459080   BOT  8x8   5.797   9.325  10.828   1101  -1019  20   1  120          
+[ 3]  2   530460136   BOT  8x8   5.797   8.962  10.469   2187    836  20   1  120          
+[ 4]  3   530460184   BOT  8x8   5.797   6.636   8.141    962   -147  20   1  120          
+[ 5]  4   530470448   BOT  8x8   5.797   8.753  10.250    188  -1014  20   1  120          
+[ 6]  5   530588672   BOT  8x8   5.797   8.960  10.469  -1940  -2012  20   1  120          
+[ 7]  6   530592472   BOT  8x8   5.797   9.343  10.844  -1275  -1742   8   1   60          
+[ 8]  7   530593936   BOT  8x8   5.797   7.644   9.141  -2228  -2441   2   1   30          
+
+>> INFO   : Special Case ER
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 54301  
+RA, Dec, Roll (deg):    35.000000     3.000000    92.880795
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:269:05:02:21.599 (VCDU count = 6154237)
+  Q1,Q2,Q3,Q4: 0.69630607  0.20063029  0.22523937  0.65128533
+  MANVR: Angle=  73.04 deg  Duration= 1634 sec  Slew err= 53.8 arcsec
+
+MP_STARCAT at 2012:269:05:02:23.242 (VCDU count = 6154243)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0     4990248   BOT  8x8   5.797   8.250   9.750  -1826    176  20   1  120          
+[ 2]  1     5118600   BOT  8x8   5.797   8.205   9.703  -2067  -1942  20   1  120          
+[ 3]  2     5375888   BOT  8x8   5.797   6.981   8.484  -1175    666  20   1  120          
+[ 4]  3     5377024   BOT  8x8   5.797   7.177   8.688   -622    500  20   1  120          
+[ 5]  4     5377272   BOT  8x8   5.797   7.336   8.844   1967    645  20   1  120          
+[ 6]  5     5382568   BOT  8x8   5.797   9.999  11.500   2082   2047  20   1  120  a2g3    
+[ 7]  6     5516296   BOT  8x8   5.797   8.900  10.406   1999   -801  20   1  120          
+[ 8]  7     4990264   GUI  8x8   5.797  10.256  11.766  -2157   2037   1   1   25    g3    
+[ 9]  7     5117584   ACQ  8x8   5.797  10.178  12.422  -2029  -2187  20   1  120    a3   C
+
+>> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.70, Pos_Err = 0.08
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.896	-7.673	-5.716	
+Acquisition Stars Expected  : 7.59
+==================================================================================== 
+OBSID: 54300  
+RA, Dec, Roll (deg):   335.430527     6.185365   260.039409
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:269:05:46:52.796 (VCDU count = 6164661)
+  Q1,Q2,Q3,Q4: -0.75457963  0.12880796  -0.17699384  0.61862046
+  MANVR: Angle= 164.30 deg  Duration= 2851 sec  Slew err= 50.1 arcsec
+
+MP_STARCAT at 2012:269:05:46:54.439 (VCDU count = 6164667)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0    74187816   BOT  8x8   5.797   8.003   9.500    507   1835  20   1  120          
+[ 2]  1    74189016   BOT  8x8   5.797   9.043  10.547  -1183   1226  20   1  120          
+[ 3]  2    74189872   BOT  8x8   5.797   9.196  10.734  -2207  -1767  20   1  120  a2g2    
+[ 4]  3    74190320   BOT  8x8   5.797   8.209   9.719   -418   2016  20   1  120          
+[ 5]  4    74190736   BOT  8x8   5.797   7.950   9.453  -1328   -877  20   1  120          
+[ 6]  5    74191168   BOT  8x8   5.797   8.581  10.078   1684    -80  20   1  120          
+[ 7]  6    74193416   BOT  8x8   5.797   8.877  10.375   -513   -641  20   1  120    a2    
+[ 8]  7    74198920   BOT  8x8   5.797   7.249   8.750  -1543   1356  19   1  115          
+
+>> WARNING: [ 7] Search spoiler.   74192696: Y,Z,Radial,Mag seps:  11  99 100 -0.9
+>> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2012:269:07:45:02.000
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 54299  
+RA, Dec, Roll (deg):   324.900000    26.500000   240.889926
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:269:09:09:19.167 (VCDU count = 6212061)
+  Q1,Q2,Q3,Q4: -0.83512652  0.14230795  -0.33712505  0.41068094
+  MANVR: Angle=  31.60 deg  Duration= 1067 sec  Slew err= 32.6 arcsec
+
+MP_STARCAT at 2012:269:09:09:20.810 (VCDU count = 6212068)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   287442040   BOT  8x8   5.797   7.967   9.469    896   1202  20   1  120          
+[ 2]  1   287446072   BOT  8x8   5.797   8.587  10.094   1347   1260  20   1  120          
+[ 3]  2   287973816   BOT  8x8   5.797   9.095  10.594  -1554  -2405   7   1   55          
+[ 4]  3   287974304   BOT  8x8   5.797   7.953   9.453  -2074   1311  20   1  120          
+[ 5]  4   287975928   BOT  8x8   5.797   7.740   9.250  -2027   -649  20   1  120          
+[ 6]  5   287978504   BOT  8x8   5.797   7.458   8.969  -1378    619  16   1  100          
+[ 7]  6   287980280   BOT  8x8   5.797   7.912   9.422   -221   -278  20   1  120          
+[ 8]  7   287849400   GUI  8x8   5.797   8.321   9.828    505  -2447   1   1   25          
+[ 9]  7   287971664   ACQ  8x8   5.797   8.604  10.109    844    -30  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 54298  
+RA, Dec, Roll (deg):    68.540761    22.963169    98.773185
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:269:09:56:54.475 (VCDU count = 6223204)
+  Q1,Q2,Q3,Q4: 0.68773727  0.31182658  0.48408665  0.44208794
+  MANVR: Angle= 118.46 deg  Duration= 2239 sec  Slew err= 54.8 arcsec
+
+MP_STARCAT at 2012:269:09:56:56.118 (VCDU count = 6223211)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   167512680   BOT  8x8   5.797   8.517  10.219  -2138   -113  20   1  120  a2g2    
+[ 2]  1   239730760   BOT  8x8   5.797   9.560  11.062   2277   1128  20   1  120  a2g2    
+[ 3]  2   239733224   BOT  8x8   5.797   8.978  10.484   -948   -180  14   1   90          
+[ 4]  3   239734216   BOT  8x8   5.797   8.915  10.422    149   -964  20   1  120          
+[ 5]  4   239736384   BOT  8x8   5.797   8.887  10.391   1967     50  20   1  120          
+[ 6]  5   239736664   BOT  8x8   5.797   9.393  10.891    480   -332  20   1  120          
+[ 7]  6   239878784   BOT  8x8   5.797   6.187   7.688   1054  -2105  20   1  120  a2g2    
+[ 8]  7   239733304   GUI  8x8   5.797   9.584  11.094   2152  -1557   1   1   25    g2    
+[ 9]  7   239732072   ACQ  8x8   5.797   6.253   7.750   1739   2192  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.29	-8.987	-6.929	
+Acquisition Stars Expected  : 7.83
+==================================================================================== 
+OBSID: 54297  
+RA, Dec, Roll (deg):    28.000000   -11.700000    64.981285
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:269:12:09:04.779 (VCDU count = 6254152)
+  Q1,Q2,Q3,Q4: 0.49769318  0.21269189  0.14986977  0.82740722
+  MANVR: Angle=  64.24 deg  Duration= 1517 sec  Slew err= 48.2 arcsec
+
+MP_STARCAT at 2012:269:12:09:06.422 (VCDU count = 6254158)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   692061256   BOT  8x8   5.797   8.780  10.281   -207   -370  19   1  115  a2g2    
+[ 2]  1   692061416   BOT  8x8   5.797  10.558  12.062  -1219   1859  20   1  120  a3g4    
+[ 3]  2   692061856   BOT  8x8   5.797   8.866  10.375  -1509   1477  20   1  120          
+[ 4]  3   692062744   BOT  8x8   5.797   7.860   9.359   1068  -1687  20   1  120    a3    
+[ 5]  4   692063400   BOT  8x8   5.797   8.381   9.891  -2109   -858  19   1  115          
+[ 6]  5   692064552   BOT  8x8   5.797   9.575  11.078  -1802  -1845  20   1  120  a2g2    
+[ 7]  6   692066912   BOT  8x8   5.797   7.891   9.391    381  -2105  20   1  120          
+[ 8]  7   692063240   GUI  8x8   5.797   8.249   9.750  -1853  -2413   1   1   25          
+[ 9]  7   692062264   ACQ  8x8   5.797  10.066  12.312   -878    -57  20   1  120    a3   C
+
+>> WARNING: [ 2] Magnitude.  10.558
+>> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.70, Pos_Err = 0.18
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.116	-6.961	-5.083	
+Acquisition Stars Expected  : 7.40
+==================================================================================== 
+OBSID: 15541  GRB 120711A            ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):    94.712091   -71.021234    88.531767
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:269:14:18:10.766 (VCDU count = 6284380)
+  Q1,Q2,Q3,Q4: 0.07893368  0.69971637  0.15412700  0.69311712
+  MANVR: Angle=  76.61 deg  Duration= 1682 sec  Slew err= 60.7 arcsec
+
+MP_STARCAT at 2012:269:14:18:12.409 (VCDU count = 6284386)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8   5.797   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3  1201668472   BOT  6x6   5.797   9.301  10.812   1703   -496  20   1  120          
+[ 5]  4  1201673112   BOT  6x6   5.797   9.006  10.516   1980   1202  20   1  120          
+[ 6]  5  1201677552   BOT  6x6   5.797   9.320  10.828   1480   1236  20   1  120    a3    
+[ 7]  6  1202196968   BOT  6x6   5.797   9.195  10.703  -1287   -312  20   1  120          
+[ 8]  7  1203896600   BOT  6x6   5.797   9.868  11.375  -1874  -1893  20   1  120  a3g2    
+[ 9]  0  1201678424   ACQ  6x6   5.797   9.965  11.469    296    728  20   1  120    a2    
+[10]  1  1201675480   ACQ  6x6   5.797  10.064  11.562    788    387  20   1  120    a2    
+[11]  2  1201670280   ACQ  6x6   5.797   9.700  11.203   -669    282  20   1  120    a2    
+
+>> WARNING: [ 8] Search spoiler. 1203899224: Y,Z,Radial,Mag seps:  73  18  75 -0.3
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.632	-6.565	-4.789	
+Acquisition Stars Expected  : 7.48
+==================================================================================== 
+OBSID: 13663  HD 102117              ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   176.255111   -58.695369   172.028206
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:270:02:25:28.599 (VCDU count = 6454674)
+  Q1,Q2,Q3,Q4: -0.00563745  0.87020215  0.04458236  0.49064127
+  MANVR: Angle=  34.36 deg  Duration= 1110 sec  Slew err= 36.5 arcsec
+
+MP_STARCAT at 2012:270:02:25:30.242 (VCDU count = 6454680)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8   5.797   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3  1132205320   BOT  6x6   5.797   8.820  10.328   1761  -2263  20   1  120          
+[ 5]  4  1132205472   BOT  6x6   5.797   8.125   9.625   1061  -2356  16   1  100          
+[ 6]  5  1132725272   BOT  6x6   5.797   7.138   8.641   2114   1432  20   1  120          
+[ 7]  6  1132730160   BOT  6x6   5.797   7.443   8.953     79     42  20   1  120          
+[ 8]  7  1132725112   GUI  6x6   5.797   8.642  10.141   -220   2360   1   1   25          
+[ 9]  7  1132728672   ACQ  6x6   5.797   8.140   9.641   1228   1745  20   1  120          
+[10]  0  1132730368   ACQ  6x6   5.797   6.944   8.453    489   -854  20   1  120          
+[11]  1  1132732216   ACQ  6x6   5.797   8.761  10.266    323  -1519  20   1  120          
+[12]  2  1132725552   ACQ  6x6   5.797   8.188   9.688   -436    368  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 13816  M51                    ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   202.478120    47.180465   334.878796
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:270:04:47:25.599 (VCDU count = 6487911)
+  Q1,Q2,Q3,Q4: -0.42196763  0.11934413  -0.89430594  0.08897856
+  MANVR: Angle= 167.37 deg  Duration= 2892 sec  Slew err= 74.2 arcsec
+
+MP_STARCAT at 2012:270:04:47:27.242 (VCDU count = 6487917)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    922  -1737   1   1   25          
+[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   453509920   BOT  6x6   5.797   7.216   8.719  -1503   1946  20   1  120          
+[ 5]  4   453511800   BOT  6x6   5.797   9.166  10.672   -908  -1850  20   1  120          
+[ 6]  5   453904608   BOT  6x6   5.797   7.341   8.844   1035    704  20   1  120          
+[ 7]  6   454303504   BOT  6x6   5.797   9.661  11.172   -194   2009  20   1  120  a2g2    
+[ 8]  7   453911496   GUI  6x6   5.797  10.027  11.531   2401   1930   1   1   25    g3    
+[ 9]  7   453511320   ACQ  6x6   5.797   9.721  11.219  -2196    -52  20   1  120    a2    
+[10]  0   453515000   ACQ  6x6   5.797  10.275  11.781  -1887  -1045  20   1  120    a3    
+[11]  1   453510208   ACQ  6x6   5.797   9.927  11.438  -1114   1815  20   1  120    a3    
+[12]  2   454303528   ACQ  6x6   5.797  10.251  11.750   -732   1874  20   1  120    a3    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.662	-5.708	-4.070	
+Acquisition Stars Expected  : 7.28
+==================================================================================== 
+OBSID: 14299  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.175713    45.766869   221.759137
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:02:13:27.162 (VCDU count = 6789029)
+  Q1,Q2,Q3,Q4: -0.86886860  0.07243960  -0.43161174  0.23136804
+  MANVR: Angle=  77.14 deg  Duration= 1688 sec  Slew err= 64.5 arcsec
+
+MP_STARCAT at 2012:271:02:13:28.805 (VCDU count = 6789036)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1869     80  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -731  -2254  11   1   75          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -845    289  20   1  120          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -2206   -104  20   1  120          
+[ 8]  7   472525528   GUI  6x6   5.797   6.560   8.062   2419    332   1   1   25    g2    
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641     69     55  20   1  120    a2    
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1325    946  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -216  -1220  20   1  120    a2    
+[12]  2   472653792   ACQ  6x6   5.797   9.415  11.766    511   1576  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14300  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.211320    45.789085   221.777905
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:03:36:05.665 (VCDU count = 6808379)
+  Q1,Q2,Q3,Q4: -0.86880004  0.07202020  -0.43170717  0.23157828
+  MANVR: Angle=   0.06 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:03:36:07.308 (VCDU count = 6808386)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 2]  1           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 3]  2          10   FID  8x8   5.797   7.000   8.000   1266    995   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1989     79  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -613  -2253  18   1  110          
+[ 6]  5   472651904   BOT  6x6   5.797   6.141   7.641    189     55  20   1  120  a2g2    
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -725    290  20   1  120          
+[ 8]  7   472665256   BOT  6x6   5.797   9.072  10.578  -2086   -103  20   1  120          
+[ 9]  0   472661712   ACQ  6x6   5.797   9.275  10.781    -97  -1220  20   1  120    a2    
+[10]  1   472654568   ACQ  6x6   5.797   9.406  10.906   1772   1919  20   1  120    a2    
+[11]  2   472653792   ACQ  6x6   5.797   9.415  11.766    632   1576  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14301  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.143761    45.791700   221.873668
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:04:01:15.665 (VCDU count = 6814272)
+  Q1,Q2,Q3,Q4: -0.86855757  0.07216220  -0.43192238  0.23204185
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:04:01:17.308 (VCDU count = 6814279)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2          10   FID  8x8   5.797   7.000   8.000   1266    995   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1869    197  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -735  -2132  18   1  110          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -845    410  20   1  120          
+[ 7]  6   472525528   GUI  6x6   5.797   6.560   8.062   2419    449   1   1   25    g2    
+[ 8]  7   472659832   GUI  6x6   5.797   9.540  11.047  -1924    234   1   1   25    g2    
+[ 9]  6   472665256   ACQ  6x6   5.797   9.072  10.578  -2206     18  20   1  120          
+[10]  7   472651904   ACQ  6x6   5.797   6.141   7.641     69    175  20   1  120    a2    
+[11]  0   472661712   ACQ  6x6   5.797   9.275  10.781   -218  -1100  20   1  120    a2    
+[12]  1   472653792   ACQ  6x6   5.797   9.415  11.766    513   1695  20   1  120    a2    
+[13]  2   472655704   ACQ  6x6   5.797   9.499  11.000   1173   1397  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14302  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.140075    45.744613   221.923629
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:04:26:25.665 (VCDU count = 6820165)
+  Q1,Q2,Q3,Q4: -0.86856623  0.07216919  -0.43163192  0.23254720
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:04:26:27.308 (VCDU count = 6820171)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1749     76  20   1  120          
+[ 5]  4   472525528   BOT  6x6   5.797   6.560   8.062   2299    327  20   1  120  a2g2    
+[ 6]  5   472533912   BOT  6x6   5.797   9.129  10.641   -857  -2252  18   1  110          
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -965    291   6   1   50          
+[ 8]  7   472665256   GUI  6x6   5.797   9.072  10.578  -2326    -99   1   1   25          
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641    -50     55  20   1  120    a2    
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1207    943  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -339  -1220  20   1  120    a2    
+[12]  2   472653792   ACQ  6x6   5.797   9.415  11.766    395   1575  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14303  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.207524    45.742061   221.870664
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:04:51:35.665 (VCDU count = 6826058)
+  Q1,Q2,Q3,Q4: -0.86872216  0.07186642  -0.43144394  0.23240732
+  MANVR: Angle=   0.05 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:04:51:37.308 (VCDU count = 6826064)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472533912   BOT  6x6   5.797   9.129  10.641   -737  -2372  14   1   90          
+[ 5]  4   472655152   BOT  6x6   5.797   9.382  10.891   -845    171  20   1  120          
+[ 6]  5   472665256   BOT  6x6   5.797   9.072  10.578  -2206   -219  20   1  120          
+[ 7]  6   472525528   GUI  6x6   5.797   6.560   8.062   2419    207   1   1   25    g2    
+[ 8]  7   472654568   GUI  6x6   5.797   9.406  10.906   1655   1797   1   1   25    g2    
+[ 9]  6   472523760   ACQ  6x6   5.797   8.134   9.641   1869    -43  20   1  120          
+[10]  7   472651904   ACQ  6x6   5.797   6.141   7.641     69    -64  20   1  120    a2    
+[11]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1327    823  20   1  120    a2    
+[12]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -219  -1340  20   1  120    a2    
+[13]  2   472653792   ACQ  6x6   5.797   9.415  11.766    515   1455  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14304  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.243107    45.764299   221.840494
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:05:16:45.665 (VCDU count = 6831950)
+  Q1,Q2,Q3,Q4: -0.86875252  0.07163135  -0.43150856  0.23224634
+  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:05:16:47.308 (VCDU count = 6831957)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2          10   FID  8x8   5.797   7.000   8.000   1266    995   1   1   25          
+[ 4]  3   472533912   BOT  6x6   5.797   9.129  10.641   -617  -2372  14   1   90          
+[ 5]  4   472654568   BOT  6x6   5.797   9.406  10.906   1775   1797  20   1  120  a2g2    
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -725    171  17   1  105          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -2086   -219  20   1  120          
+[ 8]  7   472649352   GUI  6x6   5.797   9.214  10.719   1447    823   1   1   25    g2    
+[ 9]  7   472523760   ACQ  6x6   5.797   8.134   9.641   1989    -43  20   1  120          
+[10]  0   472651904   ACQ  6x6   5.797   6.141   7.641    189    -64  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781    -99  -1340  20   1  120    a2    
+[12]  2   472653792   ACQ  6x6   5.797   9.415  11.766    634   1455  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14305  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.179266    45.813950   221.907556
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:05:41:55.665 (VCDU count = 6837843)
+  Q1,Q2,Q3,Q4: -0.86845807  0.07168632  -0.43202735  0.23236613
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:05:41:57.308 (VCDU count = 6837849)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1989    195  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -617  -2131  18   1  110          
+[ 6]  5   472654568   BOT  6x6   5.797   9.406  10.906   1775   2036  20   1  120  a2g2    
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -725    411  20   1  120          
+[ 8]  7   472659832   GUI  6x6   5.797   9.540  11.047  -1803    236   1   1   25    g2    
+[ 9]  7   472665256   ACQ  6x6   5.797   9.072  10.578  -2086     21  20   1  120          
+[10]  0   472651904   ACQ  6x6   5.797   6.141   7.641    189    175  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -100  -1100  20   1  120    a2    
+[12]  2   472653792   ACQ  6x6   5.797   9.415  11.766    635   1695  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14306  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.108089    45.769345   222.031769
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:06:07:05.665 (VCDU count = 6843736)
+  Q1,Q2,Q3,Q4: -0.86826749  0.07191611  -0.43193785  0.23317232
+  MANVR: Angle=   0.10 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:06:07:07.308 (VCDU count = 6843742)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1749    193  20   1  120          
+[ 5]  4   472525528   BOT  6x6   5.797   6.560   8.062   2300    443  20   1  120  a2g2    
+[ 6]  5   472533912   BOT  6x6   5.797   9.129  10.641   -860  -2130  18   1  110          
+[ 7]  6   472651904   BOT  6x6   5.797   6.141   7.641    -50    175  20   1  120  a2g2    
+[ 8]  7   472655152   BOT  6x6   5.797   9.382  10.891   -964    412  20   1  120          
+[ 9]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1209   1061  20   1  120    a2    
+[10]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -341  -1099  20   1  120    a2    
+[11]  2   472653792   ACQ  6x6   5.797   9.415  11.766    397   1694  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14307  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.172034    45.719810   222.007235
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:06:32:15.665 (VCDU count = 6849628)
+  Q1,Q2,Q3,Q4: -0.86847536  0.07170032  -0.43144593  0.23337526
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:06:32:17.308 (VCDU count = 6849635)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2          10   FID  8x8   5.797   7.000   8.000   1266    995   1   1   25          
+[ 4]  3   472525528   BOT  6x6   5.797   6.560   8.062   2300    202  20   1  120  a2g2    
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -861  -2370   5   1   45          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -964    173   6   1   50          
+[ 7]  6   472661712   BOT  6x6   5.797   9.275  10.781   -342  -1339  20   1  120  a2g2    
+[ 8]  7   472665256   GUI  6x6   5.797   9.072  10.578  -2326   -215   1   1   25          
+[ 9]  7   472523760   ACQ  6x6   5.797   8.134   9.641   1749    -47  20   1  120          
+[10]  0   472651904   ACQ  6x6   5.797   6.141   7.641    -50    -64  20   1  120    a2    
+[11]  1   472653792   ACQ  6x6   5.797   9.415  11.766    397   1454  20   1  120    a2    
+[12]  2   472655704   ACQ  6x6   5.797   9.499  11.000   1056   1154  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14308  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.239456    45.717324   221.954213
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:06:57:25.665 (VCDU count = 6855521)
+  Q1,Q2,Q3,Q4: -0.86863133  0.07139771  -0.43125817  0.23323459
+  MANVR: Angle=   0.05 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:06:57:27.308 (VCDU count = 6855527)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1869   -167  20   1  120          
+[ 5]  4   472655152   BOT  6x6   5.797   9.382  10.891   -844     53  20   1  120          
+[ 6]  5   472665256   BOT  6x6   5.797   9.072  10.578  -2206   -335  20   1  120          
+[ 7]  6   472525528   GUI  6x6   5.797   6.560   8.062   2420     82   1   1   25    g2    
+[ 8]  7   472659832   GUI  6x6   5.797   9.540  11.047  -1923   -120   1   1   25    g2    
+[ 9]  6   472651904   ACQ  6x6   5.797   6.141   7.641     69   -184  20   1  120    a2    
+[10]  7   472649352   ACQ  6x6   5.797   9.214  10.719   1329    701  20   1  120    a2    
+[11]  0   472661712   ACQ  6x6   5.797   9.275  10.781   -222  -1459  20   1  120    a2    
+[12]  1   472653792   ACQ  6x6   5.797   9.415  11.766    517   1334  20   1  120    a2    
+[13]  2   472655704   ACQ  6x6   5.797   9.499  11.000   1176   1034  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14309  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.271386    45.692557   221.952591
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:07:22:35.665 (VCDU count = 6861414)
+  Q1,Q2,Q3,Q4: -0.86871350  0.07124979  -0.43101880  0.23341618
+  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:07:22:37.308 (VCDU count = 6861420)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 3]  2          10   FID  8x8   5.797   7.000   8.000   1266    995   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1869   -287  20   1  120          
+[ 5]  4   472659832   BOT  6x6   5.797   9.540  11.047  -1923   -239  20   1  120  a2g2    
+[ 6]  5   472661712   BOT  6x6   5.797   9.275  10.781   -222  -1579  20   1  120  a2g2    
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -2207   -454  20   1  120          
+[ 8]  7   472654568   GUI  6x6   5.797   9.406  10.906   1659   1553   1   1   25    g2    
+[ 9]  7   472655152   ACQ  6x6   5.797   9.382  10.891   -844    -66  20   1  120          
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1329    581  20   1  120    a2    
+[11]  1   472653792   ACQ  6x6   5.797   9.415  11.766    518   1214  20   1  120    a2    
+[12]  2   472665088   ACQ  6x6   5.797  10.036  11.547  -2097  -1101  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.40	-8.162	-6.179	
+Acquisition Stars Expected  : 7.71
+==================================================================================== 
+OBSID: 14310  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.246660    45.811463   221.939523
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:07:47:45.665 (VCDU count = 6867306)
+  Q1,Q2,Q3,Q4: -0.86844110  0.07106390  -0.43189305  0.23286986
+  MANVR: Angle=   0.12 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:07:47:47.308 (VCDU count = 6867313)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   2109     73  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -501  -2250  18   1  110          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -604    293  20   1  120          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -1966    -95  20   1  120          
+[ 8]  7   472663080   GUI  6x6   5.797   9.348  10.859  -2344  -1102   1   1   25    g2    
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641    309     55  20   1  120    a2    
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1569    941  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781     18  -1219  20   1  120    a2    
+[12]  2   472654568   ACQ  6x6   5.797   9.406  10.906   1898   1914  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14311  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.282258    45.833729   221.909226
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:08:12:55.665 (VCDU count = 6873199)
+  Q1,Q2,Q3,Q4: -0.86847146  0.07082922  -0.43195775  0.23270809
+  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:08:12:57.308 (VCDU count = 6873205)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   2229     73  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -380  -2250  18   1  110          
+[ 6]  5   472651904   BOT  6x6   5.797   6.141   7.641    429     55  20   1  120  a2g2    
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -484    292  20   1  120          
+[ 8]  7   472665256   BOT  6x6   5.797   9.072  10.578  -1846    -95  20   1  120          
+[ 9]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1689    941  20   1  120    a2    
+[10]  1   472661712   ACQ  6x6   5.797   9.275  10.781    138  -1219  20   1  120    a2    
+[11]  2   472663080   ACQ  6x6   5.797   9.348  10.859  -2224  -1102  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14312  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.111403    45.816350   222.130782
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:08:38:05.665 (VCDU count = 6879092)
+  Q1,Q2,Q3,Q4: -0.86795596  0.07135006  -0.43232147  0.23379430
+  MANVR: Angle=   0.16 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:08:38:07.308 (VCDU count = 6879098)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1869    310  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -744  -2009  18   1  110          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -844    534  20   1  120          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -2207    148  20   1  120          
+[ 8]  7   472535576   GUI  6x6   5.797   7.963   9.469     88  -2397   1   1   25          
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641     69    295  20   1  120    a2    
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1330   1179  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -224   -979  20   1  120    a2    
+[12]  2   472654568   ACQ  6x6   5.797   9.406  10.906   1661   2151  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14313  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.079253    45.841043   222.175000
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:09:03:15.665 (VCDU count = 6884984)
+  Q1,Q2,Q3,Q4: -0.86778693  0.07133853  -0.43258708  0.23393392
+  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:09:03:17.308 (VCDU count = 6884991)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25    f2    
+[ 2]  1           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 3]  2          10   FID  8x8   5.797   7.000   8.000   1266    995   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1869    429  20   1  120          
+[ 5]  4   472533912   BOT  6x6   5.797   9.129  10.641   -745  -1889  18   1  110          
+[ 6]  5   472535576   BOT  6x6   5.797   7.963   9.469     87  -2277  18   1  110          
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -844    654  20   1  120          
+[ 8]  7   472665256   BOT  6x6   5.797   9.072  10.578  -2207    268  20   1  120          
+[ 9]  0   472651904   ACQ  6x6   5.797   6.141   7.641     69    415  20   1  120    a2    
+[10]  1   472649352   ACQ  6x6   5.797   9.214  10.719   1331   1299  20   1  120    a2    
+[11]  2   472661712   ACQ  6x6   5.797   9.275  10.781   -224   -859  20   1  120    a2    
+
+>> WARNING: [ 1] Fid spoiler.   472534984: Y,Z,Radial,Mag seps:  29  30  42 -4.7
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14314  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.104690    45.722112   222.229772
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:09:28:25.665 (VCDU count = 6890877)
+  Q1,Q2,Q3,Q4: -0.86797326  0.07136420  -0.43173851  0.23480084
+  MANVR: Angle=   0.14 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:09:28:27.308 (VCDU count = 6890883)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   2382   1917   5   1   45          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1629     67  20   1  120          
+[ 6]  5   472533912   BOT  6x6   5.797   9.129  10.641   -988  -2248  18   1  110          
+[ 7]  6   472651904   BOT  6x6   5.797   6.141   7.641   -170     55  20   1  120  a2g2    
+[ 8]  7   472655152   GUI  6x6   5.797   9.382  10.891  -1084    296   1   1   25          
+[ 9]  7   472525528   ACQ  6x6   5.797   6.560   8.062   2181    315  20   1  120    a2    
+[10]  0   472649352   ACQ  6x6   5.797   9.214  10.719   1092    937  20   1  120    a2    
+[11]  1   472661712   ACQ  6x6   5.797   9.275  10.781   -466  -1218  20   1  120    a2    
+[12]  2   472653792   ACQ  6x6   5.797   9.415  11.766    282   1573  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14315  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.069401    45.699645   222.302108
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:09:53:35.665 (VCDU count = 6896770)
+  Q1,Q2,Q3,Q4: -0.86785612  0.07143930  -0.43169905  0.23528304
+  MANVR: Angle=   0.06 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:09:53:37.308 (VCDU count = 6896776)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2          10   FID  8x8   5.797   7.000   8.000   1266    995   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   2264   1915  20   1  120          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1509     65  20   1  120          
+[ 6]  5   472525528   BOT  6x6   5.797   6.560   8.062   2061    313  20   1  120  a2g2    
+[ 7]  6   472533912   BOT  6x6   5.797   9.129  10.641  -1110  -2247  18   1  110          
+[ 8]  7   472655152   BOT  6x6   5.797   9.382  10.891  -1203    296  15   1   95          
+[ 9]  0   472651904   ACQ  6x6   5.797   6.141   7.641   -290     55  20   1  120    a2    
+[10]  1   472649352   ACQ  6x6   5.797   9.214  10.719    972    936  20   1  120    a2    
+[11]  2   472654568   ACQ  6x6   5.797   9.406  10.906   1306   1907  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14316  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.159529    45.531463   222.310803
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:10:18:45.665 (VCDU count = 6902662)
+  Q1,Q2,Q3,Q4: -0.86829170  0.07132552  -0.43034395  0.23619119
+  MANVR: Angle=   0.19 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:10:18:47.308 (VCDU count = 6902669)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 2]  1           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 3]  2          10   FID  8x8   5.797   7.000   8.000   1266    995   1   1   25          
+[ 4]  3   420754040   BOT  6x6   5.797   9.042  10.547   2026   1312  20   1  120          
+[ 5]  4   472523760   BOT  6x6   5.797   8.134   9.641   1269   -536  20   1  120          
+[ 6]  5   472527720   BOT  6x6   5.797   6.950   8.453   2324    -86  17   1  105          
+[ 7]  6   472651904   BOT  6x6   5.797   6.141   7.641   -530   -544  20   1  120  a2g2    
+[ 8]  7   472655152   BOT  6x6   5.797   9.382  10.891  -1443   -302  20   1  120          
+[ 9]  0   472525528   ACQ  6x6   5.797   6.560   8.062   1821   -289  20   1  120    a2    
+[10]  1   472649352   ACQ  6x6   5.797   9.214  10.719    733    334  20   1  120    a2    
+[11]  2   472661712   ACQ  6x6   5.797   9.275  10.781   -828  -1818  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14317  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.512895    45.754304   221.818690
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:10:43:55.665 (VCDU count = 6908555)
+  Q1,Q2,Q3,Q4: -0.86898709  0.06970319  -0.43087729  0.23312587
+  MANVR: Angle=   0.41 deg  Duration= 240 sec  Slew err= 20.4 arcsec
+
+MP_STARCAT at 2012:271:10:43:57.308 (VCDU count = 6908561)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 3]  2          10   FID  8x8   5.797   7.000   8.000   1266    995   1   1   25          
+[ 4]  3   472649352   BOT  6x6   5.797   9.214  10.719   1930    340  20   1  120  a2g2    
+[ 5]  4   472651904   BOT  6x6   5.797   6.141   7.641    669   -544  20   1  120  a2g2    
+[ 6]  5   472654568   BOT  6x6   5.797   9.406  10.906   2260   1312  20   1  120  a2g2    
+[ 7]  6   472655152   BOT  6x6   5.797   9.382  10.891   -244   -305  20   1  120          
+[ 8]  7   472665256   BOT  6x6   5.797   9.072  10.578  -1607   -692  20   1  120          
+[ 9]  0   472661712   ACQ  6x6   5.797   9.275  10.781    376  -1819  20   1  120    a2    
+[10]  1   472655704   ACQ  6x6   5.797   9.499  11.000   1777    673  20   1  120    a2    
+[11]  2   472659832   ACQ  6x6   5.797   9.540  11.047  -1323   -477  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.31	-9.005	-6.946	
+Acquisition Stars Expected  : 7.84
+==================================================================================== 
+OBSID: 14318  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   332.192788    46.002286   222.069551
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:11:09:05.665 (VCDU count = 6914448)
+  Q1,Q2,Q3,Q4: -0.86768690  0.07030201  -0.43341657  0.23308186
+  MANVR: Angle=   0.33 deg  Duration= 240 sec  Slew err= 20.4 arcsec
+
+MP_STARCAT at 2012:271:11:09:07.308 (VCDU count = 6914454)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472533912   BOT  6x6   5.797   9.129  10.641   -144  -1649  18   1  110          
+[ 5]  4   472535576   BOT  6x6   5.797   7.963   9.469    688  -2037  20   1  120          
+[ 6]  5   472655152   BOT  6x6   5.797   9.382  10.891   -244    894  20   1  120          
+[ 7]  6   472665256   BOT  6x6   5.797   9.072  10.578  -1607    508  20   1  120          
+[ 8]  7   472536328   GUI  6x6   5.797   8.069   9.578    185  -2371   1   1   25          
+[ 9]  7   472651904   ACQ  6x6   5.797   6.141   7.641    669    656  20   1  120    a2    
+[10]  0   472661712   ACQ  6x6   5.797   9.275  10.781    375   -619  20   1  120    a2    
+[11]  1   472663080   ACQ  6x6   5.797   9.348  10.859  -1986   -498  20   1  120    a2    
+[12]  2   472655704   ACQ  6x6   5.797   9.499  11.000   1777   1873  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 14319  ArLac                  HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   331.837750    45.777260   222.604067
+Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:11:34:15.665 (VCDU count = 6920340)
+  Q1,Q2,Q3,Q4: -0.86690652  0.07177491  -0.43290587  0.23646133
+  MANVR: Angle=   0.44 deg  Duration= 240 sec  Slew err= 20.4 arcsec
+
+MP_STARCAT at 2012:271:11:34:17.308 (VCDU count = 6920347)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   472523760   BOT  6x6   5.797   8.134   9.641   1269    661  20   1  120          
+[ 5]  4   472527720   BOT  6x6   5.797   6.950   8.453   2324   1110  17   1  105          
+[ 6]  5   472535576   BOT  6x6   5.797   7.963   9.469   -524  -2037  20   1  120          
+[ 7]  6   472536328   BOT  6x6   5.797   8.069   9.578  -1029  -2369  13   1   85          
+[ 8]  7   472655152   BOT  6x6   5.797   9.382  10.891  -1443    899  20   1  120          
+[ 9]  0   472533912   ACQ  6x6   5.797   9.129  10.641  -1356  -1645  18   1  110          
+[10]  1   472651904   ACQ  6x6   5.797   6.141   7.641   -530    656  20   1  120    a2    
+[11]  2   472525528   ACQ  6x6   5.797   6.560   8.062   1821    908  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 13997  Abell 1758             ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   203.204176    50.453270   336.463027
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:11:59:25.665 (VCDU count = 6926233)
+  Q1,Q2,Q3,Q4: -0.44582259  0.09682330  -0.88500069  0.09295831
+  MANVR: Angle=  74.02 deg  Duration= 1647 sec  Slew err= 62.5 arcsec
+
+MP_STARCAT at 2012:271:11:59:27.308 (VCDU count = 6926240)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140   1055   1   1   25          
+[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1828   1053   1   1   25          
+[ 4]  3   453776552   BOT  6x6   5.797   8.083   9.594  -1305  -1604  20   1  120          
+[ 5]  4   454692248   BOT  6x6   5.797   9.198  10.703  -1216    162  12   1   80          
+[ 6]  5   454692696   BOT  6x6   5.797  10.303  11.812   1826   -714  20   1  120  a3g3    
+[ 7]  6   454692736   BOT  6x6   5.797   9.708  11.219   1101   -516  20   1  120  a2g2    
+[ 8]  7   454694864   BOT  6x6   5.797   7.839   9.344   -186   1871  20   1  120          
+[ 9]  0   454690352   ACQ  6x6   5.797  10.559  12.062   -901   -748  20   1  120    a3    
+[10]  1   454691600   ACQ  6x6   5.797  10.389  11.891    422   -540  20   1  120    a3    
+[11]  2   454694264   ACQ  6x6   5.797  10.567  12.078   1280   -279  20   1  120    a3    
+
+>> WARNING: [ 6] Magnitude.  10.303
+>> WARNING: [ 6] Search spoiler.  454689256: Y,Z,Radial,Mag seps: 108  97 145 -0.8
+>> WARNING: [ 9] Magnitude.  10.559
+>> WARNING: [10] Magnitude.  10.389
+>> WARNING: [11] Magnitude.  10.567
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.512	-4.612	-3.067	
+Acquisition Stars Expected  : 6.79
+==================================================================================== 
+OBSID: 54295  
+RA, Dec, Roll (deg):   203.204176    50.453270   336.463027
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:20:16:42.792 (VCDU count = 7042671)
+  Q1,Q2,Q3,Q4: -0.44582259  0.09682330  -0.88500069  0.09295831
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:271:20:16:44.435 (VCDU count = 7042677)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   453776552   BOT  8x8   5.797   8.083   9.594  -1305  -1604  20   1  120          
+[ 2]  1   454690352   BOT  8x8   5.797  10.559  12.062   -901   -748  20   1  120  a3g4    
+[ 3]  2   454691600   BOT  8x8   5.797  10.389  11.891    422   -540  20   1  120  a3g3    
+[ 4]  3   454692248   BOT  8x8   5.797   9.198  10.703  -1216    162  20   1  120          
+[ 5]  4   454692696   BOT  8x8   5.797  10.303  11.812   1826   -714  20   1  120  a3g3    
+[ 6]  5   454692736   BOT  8x8   5.797   9.708  11.219   1101   -516  20   1  120  a2g2    
+[ 7]  6   454694264   BOT  8x8   5.797  10.567  12.078   1280   -279  20   1  120  a3g4    
+[ 8]  7   454694864   BOT  8x8   5.797   7.839   9.344   -186   1871  20   1  120          
+
+>> WARNING: [ 2] Magnitude.  10.559
+>> WARNING: [ 3] Magnitude.  10.389
+>> WARNING: [ 5] Magnitude.  10.303
+>> WARNING: [ 5] Search spoiler.  454689256: Y,Z,Radial,Mag seps: 108  97 145 -0.8
+>> WARNING: [ 7] Magnitude.  10.567
+>> INFO   : Special Case ER
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.512	-4.612	-3.067	
+Acquisition Stars Expected  : 6.79
+==================================================================================== 
+OBSID: 54294  
+RA, Dec, Roll (deg):   358.000000    25.000000   196.378333
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:271:20:28:38.502 (VCDU count = 7045464)
+  Q1,Q2,Q3,Q4: -0.96673177  -0.01396038  -0.21662702  0.13530529
+  MANVR: Angle= 101.32 deg  Duration= 2011 sec  Slew err= 73.6 arcsec
+
+MP_STARCAT at 2012:271:20:28:40.145 (VCDU count = 7045470)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   295174168   BOT  8x8   5.797   7.885   9.391   1571     68  20   1  120          
+[ 2]  1   295175224   BOT  8x8   5.797   8.790  10.297   2197   -607  20   1  120          
+[ 3]  2   295178392   BOT  8x8   5.797   9.575  11.078  -1026   1490  20   1  120  a2g2    
+[ 4]  3   295182928   BOT  8x8   5.797   8.965  10.469   -762   2215  20   1  120          
+[ 5]  4   295571872   BOT  8x8   5.797   8.290   9.797    714  -1336  20   1  120          
+[ 6]  5   295574528   BOT  8x8   5.797   7.914   9.422   1744  -1816  20   1  120          
+[ 7]  6   295574608   BOT  8x8   5.797   9.395  10.906   -127  -1324  20   1  120  a2g2    
+[ 8]  7   295175488   GUI  8x8   5.797   9.517  11.016    968   2340   1   1   25    g2    
+[ 9]  7   295579280   ACQ  8x8   5.797   9.366  10.875    -36    -27  20   1  120          
+
+>> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2012:271:23:15:02.000
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.27	-8.973	-6.916	
+Acquisition Stars Expected  : 7.83
+==================================================================================== 
+OBSID: 54293  
+RA, Dec, Roll (deg):   330.000000     3.000000   269.251559
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:272:00:22:13.799 (VCDU count = 7100158)
+  Q1,Q2,Q3,Q4: -0.69198286  0.16637896  -0.19974676  0.67348273
+  MANVR: Angle=  73.54 deg  Duration= 1641 sec  Slew err= 35.2 arcsec
+
+MP_STARCAT at 2012:272:00:22:15.442 (VCDU count = 7100164)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0    71961568   BOT  8x8   5.797   9.417  10.922    998   -325  20   1  120  a2g2    
+[ 2]  1    71965360   BOT  8x8   5.797   9.331  10.828  -2239  -2225  20   1  120          
+[ 3]  2    71966824   BOT  8x8   5.797   8.901  10.406  -1392  -1819  20   1  120          
+[ 4]  3    71968416   BOT  8x8   5.797   8.401   9.906   -702   -771  20   1  120          
+[ 5]  4    73534528   BOT  8x8   5.797   8.988  10.500    739    624  20   1  120          
+[ 6]  5    73546744   BOT  8x8   5.797   8.611  10.109  -1624    862  20   1  120          
+[ 7]  6    73549056   BOT  8x8   5.797   8.988  10.484  -1695   1784  20   1  120          
+[ 8]  7    73547680   GUI  8x8   5.797   9.774  11.281    152   1200   1   1   25    g2    
+[ 9]  7    71967744   ACQ  8x8   5.797   9.476  11.469    -62  -1108  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 54292  
+RA, Dec, Roll (deg):   308.000000    49.000000   244.992101
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:272:01:40:28.776 (VCDU count = 7118479)
+  Q1,Q2,Q3,Q4: -0.78747786  0.13620158  -0.52867192  0.28606600
+  MANVR: Angle=  60.04 deg  Duration= 1461 sec  Slew err= 47.6 arcsec
+
+MP_STARCAT at 2012:272:01:40:30.419 (VCDU count = 7118486)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   468850184   BOT  8x8   5.797   8.245   9.750   1911   1126  20   1  120          
+[ 2]  1   468856456   BOT  8x8   5.797   8.033   9.531   1648   -488  20   1  120          
+[ 3]  2   469371016   BOT  8x8   5.797   7.101   8.609    -94  -2069  20   1  120          
+[ 4]  3   469374200   BOT  8x8   5.797   7.918   9.422  -2042   1542  20   1  120          
+[ 5]  4   469375416   BOT  8x8   5.797   7.040   8.547   -417   -922  20   1  120          
+[ 6]  5   469375784   BOT  8x8   5.797   7.653   9.156   1238  -1496  20   1  120          
+[ 7]  6   468845184   GUI  8x8   5.797   9.039  10.547   1939   1764   1   1   25          
+[ 8]  7   469384496   GUI  8x8   5.797   7.652   9.156  -1251   1156   1   1   25          
+[ 9]  6   469383152   ACQ  8x8   5.797   8.302   9.812    679   -341  20   1  120          
+[10]  7   469379968   ACQ  8x8   5.797   8.613  10.109   -863    765  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 54291  
+RA, Dec, Roll (deg):   357.000000    26.400000   198.478114
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:272:03:34:15.197 (VCDU count = 7145119)
+  Q1,Q2,Q3,Q4: -0.96157914  -0.01149539  -0.22940302  0.15035849
+  MANVR: Angle=  46.16 deg  Duration= 1277 sec  Slew err= 43.9 arcsec
+
+MP_STARCAT at 2012:272:03:34:16.840 (VCDU count = 7145126)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   295454000   BOT  8x8   5.797   7.470   8.969   1778   -353  20   1  120          
+[ 2]  1   295455424   BOT  8x8   5.797   9.082  10.594   1367   1520  20   1  120          
+[ 3]  2   295456832   BOT  8x8   5.797   7.362   8.859    777    760  20   1  120          
+[ 4]  3   295577080   BOT  8x8   5.797   7.717   9.219  -1738  -1825  20   1  120          
+[ 5]  4   295584144   BOT  8x8   5.797   7.985   9.484   -618    527  20   1  120          
+[ 6]  5   295585176   BOT  8x8   5.797   8.592  10.094  -1147   1313  20   1  120          
+[ 7]  6   295458576   GUI  8x8   5.797   9.163  10.672   2420    684   1   1   25          
+[ 8]  7   295453224   GUI  8x8   5.797   9.060  10.562  -1235  -2386   1   1   25          
+[ 9]  6   295455280   ACQ  8x8   5.797   8.325   9.828    672    423  20   1  120          
+[10]  7   295583712   ACQ  8x8   5.797   8.961  10.469  -1724    825  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 54290  
+RA, Dec, Roll (deg):    15.925535   -20.165040    27.253475
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:272:04:33:22.085 (VCDU count = 7158961)
+  Q1,Q2,Q3,Q4: 0.20615160  0.20063096  0.09170377  0.95333056
+  MANVR: Angle= 171.03 deg  Duration= 2940 sec  Slew err= 50.2 arcsec
+
+MP_STARCAT at 2012:272:04:33:23.728 (VCDU count = 7158967)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   766771672   BOT  8x8   5.797   8.341   9.844   -378   2198  20   1  120          
+[ 2]  1   766771680   BOT  8x8   5.797   6.866   8.375  -2158   1408  20   1  120          
+[ 3]  2   766772904   BOT  8x8   5.797  10.204  11.703  -1337    219  20   1  120  a2g3    
+[ 4]  3   766780472   BOT  8x8   5.797   8.850  10.359  -1373   -797  20   1  120          
+[ 5]  4   767166264   BOT  8x8   5.797   9.523  11.031   2265   -739  20   1  120  a2g2    
+[ 6]  5   767173968   BOT  8x8   5.797   8.927  10.438   2087   -656  20   1  120          
+[ 7]  6   767175248   BOT  8x8   5.797  10.438  11.938   1367    200  20   1  120  a3g4    
+[ 8]  7   767175264   BOT  8x8   5.797   7.615   9.125    -96  -2248  20   1  120          
+
+>> WARNING: [ 7] Magnitude.  10.438
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.136	-6.979	-5.097	
+Acquisition Stars Expected  : 7.42
+==================================================================================== 
+OBSID: 13476  SPT-CLJ0307-5042       ACIS-I SIM Z offset:-3082 (-7.75mm) Grating: NONE 
+RA, Dec, Roll (deg):    46.990375   -50.690980    48.252685
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:272:06:01:06.554 (VCDU count = 7179505)
+  Q1,Q2,Q3,Q4: 0.18302516  0.50556300  0.16835450  0.82617468
+  MANVR: Angle=  39.14 deg  Duration= 1181 sec  Slew err= 43.4 arcsec
+
+MP_STARCAT at 2012:272:06:01:08.197 (VCDU count = 7179511)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    919  -1003   1   1   25          
+[ 2]  1           5   FID  8x8   5.797   7.000   8.000  -1828    894   1   1   25          
+[ 3]  2           6   FID  8x8   5.797   7.000   8.000    385   1538   1   1   25          
+[ 4]  3  1056968184   BOT  6x6   5.797   8.675  10.172    891  -1310  20   1  120          
+[ 5]  4  1056968768   BOT  6x6   5.797   9.326  10.828  -1580  -1518  20   1  120  a2g2    
+[ 6]  5  1056975096   BOT  6x6   5.797   9.607  11.109   -124    968  20   1  120  a2g2    
+[ 7]  6  1056967464   GUI  6x6   5.797   8.669  10.172  -2362     66   1   1   25          
+[ 8]  7  1056964728   GUI  6x6   5.797   9.479  10.984    622  -2422   1   1   25    g2    
+[ 9]  6  1056972144   ACQ  6x6   5.797   9.290  10.906    477   1287  20   1  120    a2    
+[10]  7  1056968576   ACQ  6x6   5.797   9.663  11.172   -617  -1684  20   1  120    a2    
+[11]  0  1056968512   ACQ  6x6   5.797   9.843  11.344   1276    383  20   1  120    a2    
+[12]  1  1056967072   ACQ  6x6   5.797   9.908  11.406    287   -500  20   1  120    a2    
+[13]  2  1056965104   ACQ  6x6   5.797   9.932  11.438  -1172   1076  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.324	-6.336	-4.645	
+Acquisition Stars Expected  : 7.49
+==================================================================================== 
+OBSID: 13881  3c46                   ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):    23.899165    37.900697   149.961388
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:272:17:43:05.502 (VCDU count = 7343871)
+  Q1,Q2,Q3,Q4: 0.91112002  0.10680585  0.35760590  0.17484521
+  MANVR: Angle= 129.65 deg  Duration= 2389 sec  Slew err= 62.1 arcsec
+
+MP_STARCAT at 2012:272:17:43:07.145 (VCDU count = 7343878)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    922  -1737   1   1   25          
+[ 2]  1           5   FID  8x8   5.797   7.000   8.000  -1826    160   1   1   25          
+[ 3]  2           6   FID  8x8   5.797   7.000   8.000    388    803   1   1   25          
+[ 4]  3   368836816   BOT  6x6   5.797   7.984   9.484    236  -2163  20   1  120          
+[ 5]  4   368843040   BOT  6x6   5.797   8.252   9.750   2090    283  20   1  120          
+[ 6]  5   368844968   BOT  6x6   5.797   8.099   9.609  -1157  -1177  20   1  120          
+[ 7]  6   368848304   BOT  6x6   5.797   7.142   8.641   -879    710  20   1  120          
+[ 8]  7   302123896   GUI  6x6   5.797   9.035  10.531  -1408   1171   1   1   25          
+[ 9]  7   368844464   ACQ  6x6   5.797   9.389  10.891  -1196  -2281  20   1  120          
+[10]  0   368841952   ACQ  6x6   5.797   9.603  11.109    556     63  20   1  120    a2    
+[11]  1   368851208   ACQ  6x6   5.797   9.685  11.188  -1414    160  20   1  120    a2    
+[12]  2   368844216   ACQ  6x6   5.797   9.832  11.344   1818    437  20   1  120    a2    
+
+>> WARNING: [12] Search spoiler.  368842304: Y,Z,Radial,Mag seps: 104 177 205 -0.9
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.901	-7.724	-5.813	
+Acquisition Stars Expected  : 7.69
+==================================================================================== 
+OBSID: 15538  Abell 1758             ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   203.204176    50.453270   336.463027
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:272:21:47:24.122 (VCDU count = 7401076)
+  Q1,Q2,Q3,Q4: -0.44582259  0.09682330  -0.88500069  0.09295831
+  MANVR: Angle=  91.77 deg  Duration= 1884 sec  Slew err= 69.4 arcsec
+
+MP_STARCAT at 2012:272:21:47:25.765 (VCDU count = 7401082)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140   1055   1   1   25          
+[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1828   1053   1   1   25          
+[ 4]  3   453776552   BOT  6x6   5.797   8.083   9.594  -1305  -1604  20   1  120          
+[ 5]  4   454692248   BOT  6x6   5.797   9.198  10.703  -1216    162  20   1  120    a3    
+[ 6]  5   454692696   BOT  6x6   5.797  10.303  11.812   1826   -714  20   1  120  a3g3    
+[ 7]  6   454692736   BOT  6x6   5.797   9.708  11.219   1101   -516  20   1  120  a2g2    
+[ 8]  7   454694864   BOT  6x6   5.797   7.839   9.344   -186   1871  20   1  120          
+[ 9]  0   454690352   ACQ  6x6   5.797  10.559  12.062   -901   -748  20   1  120    a3    
+[10]  1   454691600   ACQ  6x6   5.797  10.389  11.891    422   -540  20   1  120    a3    
+[11]  2   454694264   ACQ  6x6   5.797  10.567  12.078   1280   -279  20   1  120    a3    
+
+>> WARNING: [ 6] Magnitude.  10.303
+>> WARNING: [ 6] Search spoiler.  454689256: Y,Z,Radial,Mag seps: 108  97 145 -0.8
+>> WARNING: [ 9] Magnitude.  10.559
+>> WARNING: [10] Magnitude.  10.389
+>> WARNING: [11] Magnitude.  10.567
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.512	-4.612	-3.067	
+Acquisition Stars Expected  : 6.79
+==================================================================================== 
+OBSID: 13288  PSR J1459-60           ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   224.886111   -60.866730   223.213019
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:274:00:38:17.756 (VCDU count = 7778261)
+  Q1,Q2,Q3,Q4: -0.13364156  0.81212597  -0.11365779  0.55648294
+  MANVR: Angle= 146.22 deg  Duration= 2610 sec  Slew err= 70.6 arcsec
+
+MP_STARCAT at 2012:274:00:38:19.399 (VCDU count = 7778267)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8   5.797   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8   5.797   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8   5.797   7.000   8.000    385   1697   1   1   25          
+[ 4]  3  1182275400   BOT  6x6   5.797   8.867  10.375   -441  -2110  20   1  120          
+[ 5]  4  1182277376   BOT  6x6   5.797   7.886   9.391   2031     85  20   1  120          
+[ 6]  5  1182283280   BOT  6x6   5.797   9.396  10.906   2162  -1306  20   1  120          
+[ 7]  6  1182289848   BOT  6x6   5.797   8.912  10.422   -967    655  20   1  120          
+[ 8]  7  1182288104   GUI  6x6   5.797   8.849  10.359  -1524   1229   1   1   25          
+[ 9]  7  1182279448   ACQ  6x6   5.797   9.160  10.656    615   -695  16   1  100          
+[10]  0  1182279880   ACQ  6x6   5.797   9.349  10.859  -1761  -1047  14   1   90          
+[11]  1  1182280264   ACQ  6x6   5.797   6.571   8.078   1245   -961  20   1  120    a2    
+[12]  2  1182281752   ACQ  6x6   5.797   6.670   8.172   1985   -808  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 13860  SDSS J121629.13+6018   ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   184.078399    60.293951     2.884463
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:274:04:12:57.364 (VCDU count = 7828523)
+  Q1,Q2,Q3,Q4: -0.50096838  -0.03961583  -0.86346877  0.04339288
+  MANVR: Angle= 161.93 deg  Duration= 2819 sec  Slew err= 70.2 arcsec
+
+MP_STARCAT at 2012:274:04:12:59.007 (VCDU count = 7828529)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8   5.797   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   503320560   BOT  6x6   5.797   8.150   9.656  -1591  -1979  20   1  120          
+[ 5]  4   544610704   BOT  6x6   5.797   7.609   9.109    932    180  20   1  120          
+[ 6]  5   544612144   BOT  6x6   5.797   7.880   9.391   -946    613  20   1  120          
+[ 7]  6   544612184   BOT  6x6   5.797   9.731  11.234   1284   1488  20   1  120  a2g2    
+[ 8]  7   544608544   GUI  6x6   5.797   8.864  10.375  -1428    498   1   1   25          
+[ 9]  7   503321024   ACQ  6x6   5.797   9.766  11.266  -1495  -1655  20   1  120    a2    
+[10]  0   503320840   ACQ  6x6   5.797  10.200  11.703    956  -1138  20   1  120    a2    
+[11]  1   544612920   ACQ  6x6   5.797   9.759  11.266   -868    342  18   1  110    a2    
+[12]  2   544608632   ACQ  6x6   5.797   9.977  11.484   -141    313  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.941	-5.977	-4.322	
+Acquisition Stars Expected  : 7.39
+==================================================================================== 
+OBSID: 54289  
+RA, Dec, Roll (deg):   184.078399    60.293951     2.884463
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:274:11:48:38.885 (VCDU count = 7935221)
+  Q1,Q2,Q3,Q4: -0.50096838  -0.03961583  -0.86346877  0.04339288
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2012:274:11:48:40.528 (VCDU count = 7935228)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   503320560   BOT  8x8   5.797   8.150   9.656  -1591  -1979  20   1  120          
+[ 2]  1   503321024   BOT  8x8   5.797   9.766  11.266  -1495  -1655  20   1  120  a2g2    
+[ 3]  2   544610704   BOT  8x8   5.797   7.609   9.109    932    180  20   1  120          
+[ 4]  3   544612144   BOT  8x8   5.797   7.880   9.391   -946    613  20   1  120          
+[ 5]  4   544612184   BOT  8x8   5.797   9.731  11.234   1284   1488  20   1  120  a2g2    
+[ 6]  5   544612920   BOT  8x8   5.797   9.759  11.266   -868    342  20   1  120  a2g2    
+[ 7]  6   544608544   GUI  8x8   5.797   8.864  10.375  -1428    498   1   1   25          
+[ 8]  7   544607432   GUI  8x8   5.797  10.266  11.766   1766   2268   1   1   25    g3    
+[ 9]  6   503320840   ACQ  8x8   5.797  10.200  11.703    956  -1138  20   1  120    a2    
+[10]  7   544608632   ACQ  8x8   5.797   9.977  11.484   -141    313  20   1  120    a2    
+
+>> INFO   : Special Case ER
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.941	-5.977	-4.322	
+Acquisition Stars Expected  : 7.39
+==================================================================================== 
+OBSID: 54288  
+RA, Dec, Roll (deg):   358.000000    25.000000   202.807473
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:274:12:00:12.179 (VCDU count = 7937927)
+  Q1,Q2,Q3,Q4: -0.95762336  -0.02608586  -0.21550333  0.18930227
+  MANVR: Angle=  95.08 deg  Duration= 1928 sec  Slew err= 70.2 arcsec
+
+MP_STARCAT at 2012:274:12:00:13.822 (VCDU count = 7937933)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   295174168   BOT  8x8   5.797   7.885   9.391   1569   -107  20   1  120          
+[ 2]  1   295175224   BOT  8x8   5.797   8.790  10.297   2115   -850  20   1  120          
+[ 3]  2   295182928   BOT  8x8   5.797   8.965  10.469   -509   2286  13   1   85          
+[ 4]  3   295571872   BOT  8x8   5.797   8.290   9.797    560  -1407  20   1  120          
+[ 5]  4   295574528   BOT  8x8   5.797   7.914   9.422   1530  -2000  20   1  120          
+[ 6]  5   295577840   BOT  8x8   5.797   9.304  10.812  -2026   -750  20   1  120          
+[ 7]  6   295568176   GUI  8x8   5.797   9.301  10.797  -1563  -2394   1   1   25          
+[ 8]  7   295178392   GUI  8x8   5.797   9.575  11.078   -852   1595   1   1   25    g2    
+[ 9]  6   295579280   ACQ  8x8   5.797   9.366  10.875    -39    -23  20   1  120          
+[10]  7   295574608   ACQ  8x8   5.797   9.395  10.906   -275  -1302  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 54287  
+RA, Dec, Roll (deg):    17.500000    -9.500000    40.456620
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:274:12:36:59.929 (VCDU count = 7946542)
+  Q1,Q2,Q3,Q4: 0.32874392  0.12921428  0.11395183  0.92857207
+  MANVR: Angle= 160.78 deg  Duration= 2804 sec  Slew err= 43.2 arcsec
+
+MP_STARCAT at 2012:274:12:37:01.572 (VCDU count = 7946549)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   691143088   BOT  8x8   5.797  10.310  11.812    -36     68  20   1  120  a3g3    
+[ 2]  1   691145752   BOT  8x8   5.797   9.128  10.625   -637    785  20   1  120          
+[ 3]  2   691146904   BOT  8x8   5.797   9.559  11.062   -283  -1824  20   1  120  a2g2    
+[ 4]  3   691151536   BOT  8x8   5.797   9.049  10.547   -168   -708  20   1  120          
+[ 5]  4   691153248   BOT  8x8   5.797  10.088  11.594    963   -791  20   1  120  a2g3    
+[ 6]  5   691154912   BOT  8x8   5.797   7.477   8.984  -2047  -1094   7   1   55          
+[ 7]  6   691155448   BOT  8x8   5.797   7.777   9.281   2338   -689  12   1   80          
+[ 8]  7   691163896   BOT  8x8   5.797   5.858   7.359  -2171    498  20   1  120  a3g3    
+
+>> WARNING: [ 8] Magnitude.   5.858
+>> WARNING: [ 1] Magnitude.  10.310
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.260	-7.102	-5.219	
+Acquisition Stars Expected  : 7.49
+==================================================================================== 
+OBSID: 54286  
+RA, Dec, Roll (deg):    31.124507     0.231881    83.024934
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:274:15:34:38.793 (VCDU count = 7988138)
+  Q1,Q2,Q3,Q4: 0.63889027  0.17635482  0.20218666  0.72099844
+  MANVR: Angle=  44.56 deg  Duration= 1256 sec  Slew err= 27.2 arcsec
+
+MP_STARCAT at 2012:274:15:34:40.436 (VCDU count = 7988144)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0     4856024   BOT  8x8   5.797   8.911  10.422   2267   -913  20   1  120          
+[ 2]  1     4857320   BOT  8x8   5.797   9.616  11.125    231    896  20   1  120  a2g2    
+[ 3]  2     4857448   BOT  8x8   5.797   8.690  10.188    414   -693  20   1  120          
+[ 4]  3     4858968   BOT  8x8   5.797   9.691  11.188   2307   1092  20   1  120  a2g2    
+[ 5]  4     4860216   BOT  8x8   5.797   6.222   7.719   -484  -1864  20   1  120  a2g2    
+[ 6]  5   614601880   BOT  8x8   5.797   9.709  11.219  -2101    973  20   1  120  a2g2    
+[ 7]  6   614603000   BOT  8x8   5.797   8.732  10.234   -758   -703  20   1  120          
+[ 8]  7   614603456   BOT  8x8   5.797   8.883  10.391  -1000    595  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.992	-7.811	-5.896	
+Acquisition Stars Expected  : 7.71
+==================================================================================== 
+OBSID: 54285  
+RA, Dec, Roll (deg):    73.488643    23.695017    96.966772
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:274:17:11:40.029 (VCDU count = 8010855)
+  Q1,Q2,Q3,Q4: 0.66862519  0.32935473  0.51127524  0.42785915
+  MANVR: Angle=  52.44 deg  Duration= 1359 sec  Slew err= 45.2 arcsec
+
+MP_STARCAT at 2012:274:17:11:41.672 (VCDU count = 8010861)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   240007184   BOT  8x8   5.797   8.029   9.781  -1864   1236  20   1  120          
+[ 2]  1   240130696   BOT  8x8   5.797   7.672   9.172   1059   -345  20   1  120          
+[ 3]  2   240131288   BOT  8x8   5.797   7.662   9.172   1782    267  20   1  120          
+[ 4]  3   240136952   BOT  8x8   5.797   8.562  10.062    893  -1901  20   1  120          
+[ 5]  4   240143320   BOT  8x8   5.797   7.619   9.125  -1688  -1994  20   1  120          
+[ 6]  5   239996584   GUI  8x8   5.797   9.001  10.500   2403   1944   1   1   25          
+[ 7]  6   240002144   GUI  8x8   5.797   8.965  10.469  -1003   1860   1   1   25          
+[ 8]  7   240136352   GUI  8x8   5.797   9.226  10.734  -2267    107   1   1   25          
+[ 9]  5   240130376   ACQ  8x8   5.797   8.059   9.562    801   -654  20   1  120          
+[10]  6   240001872   ACQ  8x8   5.797   8.253   9.750    361   1265  20   1  120          
+[11]  7   240138896   ACQ  8x8   5.797   8.794  10.297   -218  -1128  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
+Acquisition Stars Expected  : 7.87
+==================================================================================== 
+OBSID: 54284  
+RA, Dec, Roll (deg):    31.048092    -4.484893    72.681348
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:274:19:04:21.372 (VCDU count = 8037241)
+  Q1,Q2,Q3,Q4: 0.56209379  0.18884782  0.19308242  0.78173285
+  MANVR: Angle=  58.80 deg  Duration= 1444 sec  Slew err= 46.4 arcsec
+
+MP_STARCAT at 2012:274:19:04:23.015 (VCDU count = 8037247)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   614991552   BOT  8x8   5.797   9.199  10.703   -419   1444  20   1  120          
+[ 2]  1   614992048   BOT  8x8   5.797   7.479   8.984    330    818  20   1  120          
+[ 3]  2   614994016   BOT  8x8   5.797   7.729   9.234    531   -739  20   1  120          
+[ 4]  3   614994824   BOT  8x8   5.797   9.740  11.250   1852    322  20   1  120  a2g2    
+[ 5]  4   614996416   BOT  8x8   5.797   9.085  10.594   1463   1423  20   1  120          
+[ 6]  5   614997584   BOT  8x8   5.797   8.499  10.000   -426    227  20   1  120          
+[ 7]  6   614997648   BOT  8x8   5.797   8.305   9.812  -1846   2066  20   1  120          
+[ 8]  7   614997168   GUI  8x8   5.797   9.854  11.359  -1856   2335   1   1   25    g2    
+[ 9]  7   614996368   ACQ  8x8   5.797   9.539  11.047   -637    731  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.65	-8.401	-6.408	
+Acquisition Stars Expected  : 7.77
+==================================================================================== 
+OBSID: 54283  
+RA, Dec, Roll (deg):    12.800000   -23.200000    12.314468
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:274:19:57:41.623 (VCDU count = 8049729)
+  Q1,Q2,Q3,Q4: 0.08212716  0.21038372  0.08712965  0.97025885
+  MANVR: Angle=  61.10 deg  Duration= 1475 sec  Slew err= 31.2 arcsec
+
+MP_STARCAT at 2012:274:19:57:43.266 (VCDU count = 8049736)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   841620256   BOT  8x8   5.797   9.527  11.031  -1832    885  20   1  120  a2g2    
+[ 2]  1   841620264   BOT  8x8   5.797   6.603   8.109  -1451   -282  20   1  120          
+[ 3]  2   841745888   BOT  8x8   5.797   9.857  11.359    260   1446  20   1  120  a2g3    
+[ 4]  3   841746088   BOT  8x8   5.797  10.114  11.625   2047  -1926  20   1  120  a2g3    
+[ 5]  4   841748256   BOT  8x8   5.797  10.063  11.562    754  -1213  20   1  120  a2g3    
+[ 6]  5   841748288   BOT  8x8   5.797   9.794  11.297   1899    510  20   1  120  a2g2    
+[ 7]  6   841750840   BOT  8x8   5.797   7.812   9.312    -30  -1391  20   1  120          
+[ 8]  7   841751896   BOT  8x8   5.797   8.353   9.859   -726  -1579  20   1  120          
+
+>> WARNING: [ 1] Nearby ACA bad pixel. Y,Z,Radial seps:  28,   8,  29
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.016	-6.041	-4.371	
+Acquisition Stars Expected  : 7.40
+==================================================================================== 
+OBSID: 13795  GRB 120711A            ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):    94.712091   -71.021234    88.531767
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2012:274:21:41:35.551 (VCDU count = 8074057)
+  Q1,Q2,Q3,Q4: 0.07893368  0.69971637  0.15412700  0.69311712
+  MANVR: Angle=  65.80 deg  Duration= 1537 sec  Slew err= 59.3 arcsec
+
+MP_STARCAT at 2012:274:21:41:37.194 (VCDU count = 8074063)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8   5.797   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3  1201668472   BOT  6x6   5.797   9.301  10.812   1703   -496  20   1  120          
+[ 5]  4  1201673112   BOT  6x6   5.797   9.006  10.516   1980   1202  20   1  120          
+[ 6]  5  1201677552   BOT  6x6   5.797   9.320  10.828   1480   1236  20   1  120    a3    
+[ 7]  6  1202196968   BOT  6x6   5.797   9.195  10.703  -1287   -312  20   1  120          
+[ 8]  7  1203896600   BOT  6x6   5.797   9.868  11.375  -1874  -1893  20   1  120  a3g2    
+[ 9]  0  1201678424   ACQ  6x6   5.797   9.965  11.469    296    728  20   1  120    a2    
+[10]  1  1201675480   ACQ  6x6   5.797  10.064  11.562    788    387  20   1  120    a2    
+[11]  2  1201670280   ACQ  6x6   5.797   9.700  11.203   -669    282  20   1  120    a2    
+
+>> WARNING: [ 8] Search spoiler. 1203899224: Y,Z,Radial,Mag seps:  73  18  75 -0.3
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.632	-6.565	-4.789	
+Acquisition Stars Expected  : 7.48
+==================================================================================== 
