@@ -2693,8 +2693,9 @@ sub set_ccd_temps{
     my $self = shift;
     my $obsid_temps = shift;
     # if no temperature data, just return
-    if (not defined $obsid_temps->{$self->{obsid}}){
-        push @{$self->{warn}}, "No CCD temperature prediction for obsid\n";
+    if ((not defined $obsid_temps->{$self->{obsid}})
+        or (not defined $obsid_temps->{$self->{obsid}}->{ccd_temp})){
+        push @{$self->{warn}}, "$alarm No CCD temperature prediction for obsid\n";
         return;
     }
     # set the temperature to the value for the current obsid
