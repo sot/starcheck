@@ -223,6 +223,11 @@ def get_obs_intervals(sc_obsids):
     intervals = []
     for idx in range(len(sc_obsids)):
         obs = sc_obsids[idx]
+        # if the range is undefined, just don't make
+        # an entry / interval for the obsid
+        if (('obs_tstart' not in obs)
+            or 'obs_tstop' not in obs):
+            continue
         interval = dict(
             obsid=obs['obsid'],
             tstart=obs['obs_tstart'],
