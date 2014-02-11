@@ -1819,10 +1819,10 @@ sub print_report {
 
     $o .= sprintf("\n");
     if (defined $self->{ccd_temp}){
-        $o .= sprintf("PREDICTED MAX AACCCDPT(C): %.2f \n", $self->{ccd_temp});
+        $o .= sprintf("Predicted Max CCD temperature: %.2fC \n", $self->{ccd_temp});
     }
     else{
-        $o .= sprintf("NO AACCCDPT(C) PREDICTION\n")
+        $o .= sprintf("No CCD temperature prediction\n")
     }
     # cute little table for buttons for previous and next obsid
     $o .= "</PRE></TD><TD VALIGN=TOP>\n";
