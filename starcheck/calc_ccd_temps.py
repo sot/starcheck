@@ -159,6 +159,15 @@ def get_ccd_temps(config=dict()):
 
     states = get_week_states(config, tstart, tstop, bs_cmds, tlm, db)
 
+    # if the last obsid interval extends over the end of states
+    # extend the state / predictions
+    if ((states[-1]['obsid'] == sc_obsids[-1]['obsid'])
+        & (sc_obsids[-1]['obs_tstop'] > states[-1]['tstop'])):
+        tstop = sc_obsids[-1]['obs_tstop']
+        states[-1]['tstop'] = sc_obsids[-1]['obs_tstop']
+        states[-1]['datestop'] = DateTime(sc_obsids[-1]['obs_tstop']).date
+
+
     if tstart >  DateTime(MODEL_VALID_FROM).secs:
         times, ccd_temp = make_week_predict(config, states, tstop)
     else:
