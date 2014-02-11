@@ -178,7 +178,6 @@ def get_ccd_temps(config=dict()):
 
     intervals = get_obs_intervals(sc_obsids)
     obstemps = get_interval_temps(intervals, times, ccd_temp)
-    #write_obstemps(config, obstemps)
     return json.dumps(obstemps, sort_keys=True, indent=4,
 	                  cls=NumpyAwareJSONEncoder)
 
@@ -472,8 +471,7 @@ class NumpyAwareJSONEncoder(json.JSONEncoder):
 def write_obstemps(opt, obstemps):
     """JSON write temperature predictions"""
     jfile = opt['output_temps']
-    jfile.write(json.dumps(obstemps, sort_keys=True, indent=4,
-                           cls=NumpyAwareJSONEncoder))
+    jfile.write(json_obstemps)
     jfile.flush()
 
 
@@ -629,7 +627,8 @@ def globfile(pathglob):
 if __name__ == '__main__':
     opt = get_options()
     try:
-        get_ccd_temps(vars(opt))
+        json_obstemps = get_ccd_temps(vars(opt))
+        write_obstemps(vars(opt), json_obstemps)
     except Exception, msg:
         if opt.traceback:
             raise
