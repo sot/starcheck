@@ -283,6 +283,7 @@ def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
                    'datestart': DateTime(tstart - 30).date,
                    'datestop': DateTime(tstart).date,
                    'q1': 0.0, 'q2': 0.0, 'q3': 0.0, 'q4': 1.0,
+                   'aacccdpt': state0['T_aca'],
                    }
                   )
 
