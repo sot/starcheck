@@ -709,6 +709,12 @@ sub check_bright_perigee{
     my $obs_tstart = $self->{obs_tstart};
     my $obs_tstop = $self->{obs_tstop};
 
+    # if observation stop time is undefined, warn and return
+    if (not defined $obs_tstop){
+        push @{$self->{warn}}, "$alarm Perigee bright stars not being checked, no obs tstop available\n";
+	return;
+    }
+
     # is this obsid in perigee?  assume no to start
     my $in_perigee = 0;
 
