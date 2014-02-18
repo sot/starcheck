@@ -38,10 +38,10 @@ import xija
 import lineid_plot
 from starcheck.version import version
 
-MSID = dict(aca='AACCCDPT')
+MSID = {'aca': 'AACCCDPT'}
 TASK_DATA = os.path.dirname(__file__)
 TASK_NAME = 'calc_ccd_temps'
-MSID_PLOT_NAME = dict(aca='ccd_temperature.png')
+MSID_PLOT_NAME = {'aca': 'ccd_temperature.png'}
 # the model is reasonable from around Jan-2011
 MODEL_VALID_FROM = '2011:001:00:00:00.000'
 logger = logging.getLogger(TASK_NAME)
@@ -120,10 +120,9 @@ def get_ccd_temps(oflsdir, outdir='out',
     config_logging(outdir, verbose)
 
     # Store info relevant to processing for use in outputs
-    proc = dict(run_user=os.environ['USER'],
-                run_time=time.ctime(),
-                errors=[],
-                )
+    proc = {'run_user': os.environ['USER'],
+            'run_time': time.ctime(),
+            'errors': []}
     logger.info('##############################'
                 '#######################################')
     logger.info('# %s run at %s by %s'
@@ -149,8 +148,8 @@ def get_ccd_temps(oflsdir, outdir='out',
     bs_cmds = get_bs_cmds(oflsdir)
     tstart = bs_cmds[0]['time']
     tstop = bs_cmds[-1]['time']
-    proc.update(dict(datestart=DateTime(tstart).date,
-                     datestop=DateTime(tstop).date))
+    proc['datestart'] = DateTime(tstart).date
+    proc['datestop'] = DateTime(tstop).date
 
     # Get temperature telemetry for 3 weeks prior to min(tstart, NOW)
     tlm = get_telem_values(min(tstart, tnow),
@@ -205,7 +204,7 @@ def get_interval_temps(intervals, times, ccd_temp):
         obs_ccd_temp = None
         if len(ok_temps):
             obs_ccd_temp = np.max(ok_temps)
-        obs = dict(ccd_temp=obs_ccd_temp)
+        obs = {'ccd_temp': obs_ccd_temp}
         obs.update(interval)
         obstemps[obsid] = obs
     return obstemps
@@ -228,14 +227,12 @@ def get_obs_intervals(sc_obsids):
         if (('obs_tstart' not in obs)
             or 'obs_tstop' not in obs):
             continue
-        interval = dict(
-            obsid=obs['obsid'],
-            tstart=obs['obs_tstart'],
-            tstop=obs['obs_tstop'])
+        interval = {'obsid': obs['obsid'],
+                    'tstart': obs['obs_tstart'],
+                    'tstop': obs['obs_tstop']}
         if 'no_following_manvr' in obs:
-            interval.update(dict(
-                tstop=sc_obsids[idx + 1]['obs_tstop'],
-                text='(max through following obsid)'))
+            interval['tstop'] = sc_obsids[idx + 1]['obs_tstop']
+            interval['text'] = '(max through following obsid)'
         intervals.append(interval)
     return intervals
 
