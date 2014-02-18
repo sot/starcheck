@@ -92,7 +92,6 @@ GetOptions( \%par,
 			'agasc=s',
 			'agasc_dir=s',
 			'sc_data=s',
-                        'sc_share=s',
 			'fid_char=s',
 			'config_file=s',
 			) ||

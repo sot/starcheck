@@ -368,7 +368,6 @@ def mock_telem_predict(states):
     :returns: (times, temperature vals) as numpy arrays
     """
 
-    state0 = states[0]
     # Get temperature telemetry over the interval
     logger.info('Fetching telemetry between %s and %s' % (states[0]['tstart'],
                                                           states[-1]['tstop']))
