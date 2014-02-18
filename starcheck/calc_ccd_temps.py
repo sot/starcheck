@@ -200,7 +200,7 @@ def get_interval_temps(intervals, times, ccd_temp):
         tok = np.zeros(len(ccd_temp), dtype=bool)
         tok[:-1] = ((times[:-1] < interval['tstop'])
                     & (times[1:] > interval['tstart']))
-        obsid = "{}".format(interval['obsid'])
+        obsid = str(interval['obsid'])
         ok_temps = ccd_temp[tok]
         obs_ccd_temp = None
         if len(ok_temps):
