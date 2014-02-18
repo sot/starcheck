@@ -36,8 +36,6 @@ import Chandra.cmd_states as cmd_states
 import xija
 
 import lineid_plot
-from starcheck.config import config as defaultconfig
-from starcheck.config import configvars
 from starcheck.version import version
 
 MSID = dict(aca='AACCCDPT')
@@ -66,25 +64,25 @@ def get_options():
     parser.add_argument("oflsdir",
                        help="Load products OFLS directory")
     parser.add_argument("--outdir",
-                       default=defaultconfig['outdir'],
-                       help="Output directory")
+                        default='out',
+                        help="Output directory")
     parser.add_argument('--json-obsids', nargs="?", type=argparse.FileType('r'),
-                        default=defaultconfig['json_obsids'],
+                        default=sys.stdin,
                         help="JSON-ified starcheck Obsid objects, as file or stdin")
     parser.add_argument('--output-temps', nargs="?", type=argparse.FileType('w'),
-                        default=defaultconfig['output_temps'],
+                        default=sys.stdout,
                         help="output destination for temperature JSON, file or stdout")
     parser.add_argument("--model-spec",
                         help="xija ACA model specification file")
     parser.add_argument("--traceback",
-                        default=defaultconfig['traceback'],
+                        default=True,
                         help='Enable tracebacks')
     parser.add_argument("--verbose",
                         type=int,
-                        default=defaultconfig['verbose'],
+                        default=1,
                         help="Verbosity (0=quiet, 1=normal, 2=debug)")
     parser.add_argument("--pitch",
-                        default=defaultconfig['pitch'],
+                        default=150,
                         type=float,
                         help="Starting pitch (deg)")
     parser.add_argument("--T-aca",
@@ -97,25 +95,29 @@ def get_options():
     return args
 
 
-def get_ccd_temps(config=dict()):
+def get_ccd_temps(oflsdir, outdir='out',
+                  json_obsids=sys.stdin,
+                  model_spec=None, pitch=150, T_aca=None,
+                  verbose=1, **kwargs):
     """
     Using the cmds and cmd_states sybase databases, available telemetry, and
     the pitches determined from the planning products, calculate xija ACA model
     temperatures for the given week.
 
-    Takes a dictionary of configuration options which match the arguments
-    from get_options()
+    :param oflsdir: products directory
+    :param outdir: output directory for plots
+    :param json_obsids: file-like object or string containing JSON of
+                        starcheck Obsid objects
+    :param model_spec: xija ACA model specification
+    :param pitch: initial pitch for model calculations
+    :param T_aca: initial ACA temperature for model calculations
+    :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
+    :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
 
-    # for any unset configuration variables, use the defaults
-    for entry in configvars:
-        if entry not in config:
-            config[entry] = defaultconfig[entry]
-
-    if not os.path.exists(config['outdir']):
-        os.mkdir(config['outdir'])
-
-    config_logging(config['outdir'], config['verbose'])
+    config_logging(outdir, verbose)
 
     # Store info relevant to processing for use in outputs
     proc = dict(run_user=os.environ['USER'],
@@ -129,13 +131,12 @@ def get_ccd_temps(config=dict()):
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
     logger.info('###############################'
                 '######################################\n')
-    #logger.info('Options:\n%s\n' % pformat(config))
     # save spec file in out directory
-    shutil.copy(config['model_spec'], config['outdir'])
+    shutil.copy(model_spec, outdir)
 
     # the yaml subset of json is sufficient for the
     # JSON we have from the Perl code
-    sc_obsids = yaml.load(config['json_obsids'])
+    sc_obsids = yaml.load(json_obsids)
 
     # Connect to database (NEED TO USE aca_read)
     logger.info('Connecting to database to get cmd_states')
@@ -145,7 +146,7 @@ def get_ccd_temps(config=dict()):
     tnow = DateTime().secs
 
     # Get tstart, tstop, commands from backstop file in opt.oflsdir
-    bs_cmds = get_bs_cmds(config['oflsdir'])
+    bs_cmds = get_bs_cmds(oflsdir)
     tstart = bs_cmds[0]['time']
     tstop = bs_cmds[-1]['time']
     proc.update(dict(datestart=DateTime(tstart).date,
@@ -157,7 +158,7 @@ def get_ccd_temps(config=dict()):
                            days=21,
                            name_map={'aosares1': 'pitch'})
 
-    states = get_week_states(config, tstart, tstop, bs_cmds, tlm, db)
+    states = get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm, db)
 
     # if the last obsid interval extends over the end of states
     # extend the state / predictions
@@ -169,11 +170,11 @@ def get_ccd_temps(config=dict()):
 
 
     if tstart >  DateTime(MODEL_VALID_FROM).secs:
-        times, ccd_temp = make_week_predict(config, states, tstop)
+        times, ccd_temp = make_week_predict(model_spec, states, tstop)
     else:
         times, ccd_temp = mock_telem_predict(states)
 
-    make_check_plots(config, states, times,
+    make_check_plots(outdir, states, times,
                      ccd_temp, tstart)
 
     intervals = get_obs_intervals(sc_obsids)
@@ -266,7 +267,7 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
     return model
 
 
-def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
+def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm, db):
     """
     Make states from last available telemetry through the end of the backstop commands
 
@@ -280,16 +281,15 @@ def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
     """
 
     # Try to make initial state0 from cmd line options
-    state0 = dict((x, opt.get(x))
-                  for x in ('pitch', 'T_aca'))
-    state0.update({'tstart': tstart - 30,
-                   'tstop': tstart,
-                   'datestart': DateTime(tstart - 30).date,
-                   'datestop': DateTime(tstart).date,
-                   'q1': 0.0, 'q2': 0.0, 'q3': 0.0, 'q4': 1.0,
-                   'aacccdpt': state0['T_aca'],
-                   }
-                  )
+    state0 = {
+        'pitch': pitch,
+        'aacccdpt': T_aca,
+        'tstart': tstart - 30,
+        'tstop': tstart,
+        'datestart': DateTime(tstart - 30).date,
+        'datestop': DateTime(tstart).date,
+        'q1': 0.0, 'q2': 0.0, 'q3': 0.0, 'q4': 1.0,
+        }
 
     # If cmd lines options were not fully specified then get state0 as last
     # cmd_state that starts within available telemetry.  Update with the
@@ -337,7 +337,7 @@ def get_week_states(opt, tstart, tstop, bs_cmds, tlm, db):
     return states
 
 
-def make_week_predict(opt, states, tstop):
+def make_week_predict(model_spec, states, tstop):
     """
     Get model predictions over the desired states
     :param opt: options dictionary containing at least opt['model_spec']
@@ -353,7 +353,7 @@ def make_week_predict(opt, states, tstop):
     logger.info('Propagation initial time and ACA: {} {:.2f}'.format(
             DateTime(state0['tstart']).date, state0['aacccdpt']))
 
-    model = calc_model(opt['model_spec'], states, state0['tstart'], tstop,
+    model = calc_model(model_spec, states, state0['tstart'], tstop,
                        state0['aacccdpt'], state0['tstart'])
 
     return model.times, model.comp['aacccdpt'].mvals
@@ -468,9 +468,9 @@ class NumpyAwareJSONEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def write_obstemps(opt, obstemps):
+def write_obstemps(output_dev, obstemps):
     """JSON write temperature predictions"""
-    jfile = opt['output_temps']
+    jfile = output_dev
     jfile.write(json_obstemps)
     jfile.flush()
 
@@ -513,7 +513,7 @@ def plot_two(fig_id, x, y, x2, y2,
     return {'fig': fig, 'ax': ax, 'ax2': ax2}
 
 
-def make_check_plots(opt, states, times, temps, tstart):
+def make_check_plots(outdir, states, times, temps, tstart):
     """
     Make output plots.
 
@@ -563,7 +563,7 @@ def make_check_plots(opt, states, times, temps, tstart):
         plots[msid]['ax'].axvline(load_start, linestyle=':', color='g',
                                   linewidth=1.0)
         filename = MSID_PLOT_NAME[msid]
-        outfile = os.path.join(opt['outdir'], filename)
+        outfile = os.path.join(outdir, filename)
         logger.info('Writing plot file %s' % outfile)
         plots[msid]['fig'].savefig(outfile)
         plots[msid]['filename'] = filename
@@ -627,8 +627,8 @@ def globfile(pathglob):
 if __name__ == '__main__':
     opt = get_options()
     try:
-        json_obstemps = get_ccd_temps(vars(opt))
-        write_obstemps(vars(opt), json_obstemps)
+        json_obstemps = get_ccd_temps(**vars(opt))
+        write_obstemps(opt.output_temps, json_obstemps)
     except Exception, msg:
         if opt.traceback:
             raise
