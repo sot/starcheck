@@ -196,17 +196,14 @@ def get_interval_temps(intervals, times, ccd_temp):
     for interval in intervals:
         # treat the model samples as temperature intervals
         # and find the max during each obsid npnt interval
-        tok = np.zeros(len(ccd_temp), dtype=bool)
-        tok[:-1] = ((times[:-1] < interval['tstop'])
-                    & (times[1:] > interval['tstart']))
-        obsid = str(interval['obsid'])
-        ok_temps = ccd_temp[tok]
-        obs_ccd_temp = None
-        if len(ok_temps):
-            obs_ccd_temp = np.max(ok_temps)
-        obs = {'ccd_temp': obs_ccd_temp}
+        obs = {'ccd_temp': None}
         obs.update(interval)
-        obstemps[obsid] = obs
+        stop_idx = 1 + np.searchsorted(times, interval['tstop'])
+        start_idx = -1 + np.searchsorted(times, interval['tstart'])
+        ok_temps = ccd_temp[start_idx:stop_idx]
+        if len(ok_temps) > 0:
+            obs['ccd_temp'] = np.max(ok_temps)
+        obstemps[str(interval['obsid'])] = obs
     return obstemps
 
 
@@ -220,8 +217,7 @@ def get_obs_intervals(sc_obsids):
     :returns: list of dictionaries containing obsid/tstart/tstop
     """
     intervals = []
-    for idx in range(len(sc_obsids)):
-        obs = sc_obsids[idx]
+    for idx, obs in enumerate(sc_obsids):
         # if the range is undefined, just don't make
         # an entry / interval for the obsid
         if (('obs_tstart' not in obs)
