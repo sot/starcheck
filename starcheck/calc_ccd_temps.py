@@ -28,6 +28,7 @@ import matplotlib.pyplot as plt
 
 import Ska.Matplotlib
 from Ska.Matplotlib import cxctime2plotdate as cxc2pd
+from Ska.Matplotlib import lineid_plot
 import Ska.DBI
 import Ska.Numpy
 import Ska.engarchive.fetch_sci as fetch
@@ -35,7 +36,6 @@ from Chandra.Time import DateTime
 import Chandra.cmd_states as cmd_states
 import xija
 
-import lineid_plot
 from starcheck.version import version
 
 MSID = {'aca': 'AACCCDPT'}
