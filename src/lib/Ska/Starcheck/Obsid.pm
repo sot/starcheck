@@ -1818,9 +1818,13 @@ sub print_report {
                       $self->{figure_of_merit}->{expected});
     }
 
-    $o .= sprintf("\n");
     if (defined $self->{ccd_temp}){
-        $o .= sprintf("Predicted Max CCD temperature: %.2fC \n", $self->{ccd_temp});
+        my $font_start = "";
+        $font_start = "$yellow_font_start" if $self->{ccd_temp} > $config{ccd_temp_yellow_limit};
+        $font_start = "$red_font_start" if $self->{ccd_temp} > $config{ccd_temp_red_limit};
+        $o .= $font_start;
+        $o .= sprintf("Predicted Max CCD temperature: %.1f C \n", $self->{ccd_temp});
+        $o .= "$font_stop" if $self->{ccd_temp} > $config{ccd_temp_yellow_limit};
     }
     else{
         $o .= sprintf("No CCD temperature prediction\n")
@@ -2701,5 +2705,14 @@ sub set_ccd_temps{
     }
     # set the temperature to the value for the current obsid
     $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
-    return;
+    # add warnings for limit violations
+    if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
+        push @{$self->{warn}}, sprintf("$alarm CCD temperature exceeds %d C\n",
+                                       $config{ccd_temp_red_limit});
+        return;
+    }
+    if ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}){
+        push @{$self->{yellow_warn}}, sprintf("$alarm CCD temperature exceeds %d C\n",
+                                              $config{ccd_temp_yellow_limit});
+    }
 }
