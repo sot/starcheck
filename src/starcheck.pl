@@ -88,7 +88,6 @@ GetOptions( \%par,
 
 
 my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
-my $Starcheck_Share = $par{sc_share} || "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 

@@ -2,5 +2,5 @@
 
 DIR=`dirname $0`
 export PYTHONPATH=$DIR:$PYTHONPATH
-exec perl -I ${DIR}/src/lib ${DIR}/src/starcheck.pl -sc_data ${DIR}/starcheck_data -sc_share ${DIR}/starcheck "$@"
+exec perl -I ${DIR}/src/lib ${DIR}/src/starcheck.pl -sc_data ${DIR}/starcheck_data "$@"
 exit 1
