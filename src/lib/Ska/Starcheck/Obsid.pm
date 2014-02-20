@@ -1814,7 +1814,8 @@ sub print_report {
         }
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
-	$o .= "Acquisition Stars Expected  : $self->{figure_of_merit}->{expected}\n";
+	$o .= sprintf("Acquisition Stars Expected  : %.2f\n",
+                      $self->{figure_of_merit}->{expected});
     }
 
     $o .= sprintf("\n");
