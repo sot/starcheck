@@ -689,14 +689,6 @@ for my $obs_idx (0 .. $#obsid_id) {
     $out .= sprintf "<A HREF=\"#obsid$obs{$obsid}->{obsid}\">OBSID = %5s</A>", $obs{$obsid}->{obsid};
     $out .= sprintf " at $obs{$obsid}->{date} ";
 
-    # CCD TEMP
-    if (defined $obs{$obsid}->{ccd_temp}){
-        $out .= sprintf("CCDTEMP= %0.2fC   ", $obs{$obsid}->{ccd_temp});
-    }
-    else{
-        $out .= sprintf("CCDTEMP= NONE   ", $obs{$obsid}->{ccd_temp});
-    }
-
     my $good_guide_count = $obs{$obsid}->{count_nowarn_stars}{GUI};
     my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};
 
