@@ -32,6 +32,7 @@ use PoorTextFormat;
 #use GrabEnv qw( grabenv );
 #use Shell::GetEnv;
 
+use Data::ParseTable;
 use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
 use Carp;
@@ -77,6 +78,7 @@ GetOptions( \%par,
 			'agasc=s',
 			'agasc_dir=s',
 			'sc_data=s',
+                        'sc_share=s',
 			'fid_char=s',
 			'config_file=s',
 			) ||
@@ -84,6 +86,7 @@ GetOptions( \%par,
 
 
 my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
+my $Starcheck_Share = $par{sc_share} || "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
 
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
@@ -279,6 +282,25 @@ if ($@){
 if ($dot_touched_by_sausage == 0 ){
 	warning("DOT file not modified by SAUSAGE! \n");
 }
+
+
+print STDERR "Running ACA temperature model\n";
+my @aca_check = ("$SKA/bin/python",
+                 "$Starcheck_Share/aca_check.py",
+                 "--oflsdir", "$par{dir}",
+                 "--out", "$STARCHECK");
+#                 "--model-spec", "$Starcheck_Data/aca_spec.json");
+print STDERR map {$_ . " "} @aca_check;
+print STDERR "\n";
+my $ccd_temps;
+if (system(@aca_check) == 0){
+    my $ccd_temp_file   = get_file("$STARCHECK/temperatures.dat", "ccdtemp", 'required');
+    $ccd_temps = Data::ParseTable::parse_table($ccd_temp_file);
+}
+else{
+    push @global_warn, "aca_check xija model failed with code $?.  No temperatures.\n";
+}
+
 
 
 Ska::Starcheck::Obsid::setcolors({ red => $red_font_start,
@@ -501,6 +523,12 @@ foreach my $obsid (@obsid_id) {
 	if ($obs{$obsid}->find_command('MP_STARCAT',2));
 }
 
+# Since we need set_npm_times to have run on all obsids
+# to get the (n+1) obs stop time for setting max temperatures
+# this is just run it its own loop
+foreach my $obsid (@obsid_id) {
+    $obs{$obsid}->set_ccd_temps($ccd_temps) if ($ccd_temps);
+}
 
 # Write out Obsid objects as JSON
 # include a routine to change the internal context to a float/int
@@ -598,6 +626,13 @@ if ($dark_cal_checker->{dark_cal_present}){
     $out .= "\n";
 }
 
+# CCD temperature plot
+if ($ccd_temps){
+    $out .= "------------  CCD TEMPERATURE PREDICTION -----------------\n\n";
+    $out .= "<IMG SRC='$STARCHECK/aacccdpt.png'>\n";
+}
+
+
 # Summary of obsids
 
 $out .= "------------  SUMMARY OF OBSIDS -----------------\n\n";
@@ -621,7 +656,15 @@ for my $obs_idx (0 .. $#obsid_id) {
     }
 
     $out .= sprintf "<A HREF=\"#obsid$obs{$obsid}->{obsid}\">OBSID = %5s</A>", $obs{$obsid}->{obsid};
-    $out .= sprintf " at $obs{$obsid}->{date}   ";
+    $out .= sprintf " at $obs{$obsid}->{date} ";
+
+    # CCD TEMP
+    if (defined $obs{$obsid}->{ccd_temp}){
+        $out .= sprintf("CCDTEMP= %0.2fC   ", $obs{$obsid}->{ccd_temp});
+    }
+    else{
+        $out .= sprintf("CCDTEMP= NONE   ", $obs{$obsid}->{ccd_temp});
+    }
 
     my $good_guide_count = $obs{$obsid}->{count_nowarn_stars}{GUI};
     my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};

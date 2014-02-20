@@ -7,6 +7,7 @@ include $(SKA)/include/Makefile.FLIGHT
 
 RELATED_LIB = $(SRC)/StarcheckParser.pm
 BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
+SHARE = $(SRC)/aca_check.py $(SRC)/lineid_plot.py
 LIB = $(SRC)/lib/Ska/Starcheck/Obsid.pm $(SRC)/lib/Ska/Starcheck/FigureOfMerit.pm \
 	$(SRC)/lib/Ska/Starcheck/Dark_Cal_Checker.pm $(SRC)/lib/Ska/Parse_CM_File.pm
 
@@ -75,6 +76,10 @@ ifdef BIN
 	mkdir -p $(INSTALL_BIN)
 	rsync --times --cvs-exclude $(BIN) $(INSTALL_BIN)/
 #	pod2html starcheck.pl > $(INSTALL_DOC)/starcheck.html
+endif
+ifdef SHARE
+	mkdir -p $(INSTALL_SHARE)
+	rsync --times --cvs-exclude $(SHARE) $(INSTALL_SHARE)/
 endif
 ifdef LIB
 	mkdir -p $(INSTALL_PERLLIB)

@@ -101,6 +101,7 @@ sub new {
     %{$self->{agasc_hash}} = ();
 #    @{$self->{agasc_stars}} = ();
     %{$self->{count_nowarn_stars}} = ();
+    $self->{ccd_temp} = undef;
     return $self;
 }
     
@@ -494,7 +495,7 @@ sub set_npm_times{
 
     # NPM range that will be checked for momentum dumps
     # duplicates check_dither range...
-    my ($obs_tstart, $obs_tstop);
+    my ($obs_tstart, $obs_tstop, $no_manvr);
     
     # as with dither, check for end of associated maneuver to this attitude
     # and finding none, set start time as obsid start
@@ -521,6 +522,7 @@ sub set_npm_times{
             if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
 		push @{$self->{fyi}}, "$info Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)\n";
                 $obs_tstop = $next_cmd_obsid->{time};
+                $no_manvr = 1;
             }
         }
     }
@@ -534,6 +536,7 @@ sub set_npm_times{
     else{
         $self->{obs_tstart} = $obs_tstart;
         $self->{obs_tstop} = $obs_tstop;
+        $self->{no_following_manvr} = $no_manvr;
     }
 }
 
@@ -1805,6 +1808,17 @@ sub print_report {
 	$o .= "Acquisition Stars Expected  : $self->{figure_of_merit}->{expected}\n";
     }
 
+    $o .= sprintf("\n");
+    if (defined $self->{ccd_temp}){
+        $o .= sprintf("PREDICTED MAX AACCCDPT(C): %.2f  ", $self->{ccd_temp});
+        if (defined $self->{ccd_temp_note}){
+            $o .= $self->{ccd_temp_note};
+        }
+        $o .= "\n";
+    }
+    else{
+        $o .= sprintf("NO AACCCDPT(C) PREDICTION\n")
+    }
     # cute little table for buttons for previous and next obsid
     $o .= "</PRE></TD><TD VALIGN=TOP>\n";
     if (defined $self->{prev}->{obsid} or defined $self->{next}->{obsid}){
@@ -2666,4 +2680,28 @@ sub check_idx_warn{
     }
 
     return $warn_boolean;
+}
+
+###################################################################################
+sub set_ccd_temps{
+###################################################################################
+    my $self = shift;
+    my $ccd_temps = shift;
+    my $max_temp = -99;
+    my $tstop = $self->{obs_tstop};
+    # if there is no following maneuver, use the next obsid's
+    # end time for this max
+    if (defined $self->{next} and $self->{no_following_manvr}){
+        $tstop = $self->{next}->{obs_tstop};
+        $self->{ccd_temp_note} = '(max through end of following obsid)';
+    }
+    for my $temp (@{$ccd_temps}){
+        next if $temp->{time} < $self->{obs_tstart};
+        if ($temp->{aacccdpt} > $max_temp){
+            $max_temp = $temp->{aacccdpt};
+        }
+        last if $temp->{time} > $tstop;
+    }
+    $self->{ccd_temp} = $max_temp;
+    return;
 }
