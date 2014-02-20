@@ -780,15 +780,19 @@ sub check_for_special_case_er{
         and $self->{prev}->{obsid} =~ /^\d+$/
         and $self->{prev}->{obsid} < 40000
         and $self->{prev}->find_command("MP_STARCAT")
-        and $self->{obs_tstop} - $self->{obs_tstart} < 10*60
         and abs($self->{ra} - $self->{prev}->{ra}) < 0.001
         and abs($self->{dec} - $self->{prev}->{dec}) < 0.001
         and abs($self->{roll} - $self->{prev}->{roll}) < 0.001){
-      $self->{special_case_er} = 1;
-      push @{$self->{fyi}}, "$info Special Case ER";
+        if (($self->{obs_tstop} - $self->{obs_tstart}) < 10*60){
+            $self->{special_case_er} = 1;
+            push @{$self->{fyi}}, "$info Special Case ER\n";
+        }
+        else{
+            push @{$self->{fyi}},
+            sprintf("$info Same attitude as last obsid but too long (%.1f min) for Special Case ER\n", ($self->{obs_tstop} - $self->{obs_tstart})/60.);
+        }
     }
 }
-
 
 #############################################################################################
 sub check_sim_position {
