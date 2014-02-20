@@ -40,6 +40,7 @@ from Chandra.cmd_states import get_cmd_states
 import lineid_plot
 import xija
 import chandra_models
+from starcheck.version import version
 
 MSID = dict(aca='AACCCDPT')
 TASK_DATA = os.path.dirname(__file__)
@@ -53,10 +54,9 @@ plt.rc("xtick", labelsize=10)
 plt.rc("ytick", labelsize=10)
 
 try:
-    _versionfile = os.path.join(os.path.dirname(__file__), 'VERSION')
-    VERSION = open(_versionfile).read().strip()
+    VERSION = str(version)
 except:
-    VERSION = '1.0'
+    VERSION = 'dev'
 
 
 def get_options():
