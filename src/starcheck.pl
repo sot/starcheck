@@ -286,7 +286,7 @@ if ($dot_touched_by_sausage == 0 ){
 
 print STDERR "Running ACA temperature model\n";
 my @aca_check = ("$SKA/bin/python",
-                 "$Starcheck_Share/aca_check.py",
+                 "$Starcheck_Share/calc_ccd_temps.py",
                  "--oflsdir", "$par{dir}",
                  "--out", "$STARCHECK");
 #                 "--model-spec", "$Starcheck_Data/aca_spec.json");
