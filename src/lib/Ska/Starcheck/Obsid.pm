@@ -2704,9 +2704,8 @@ sub set_ccd_temps{
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
         push @{$self->{warn}}, sprintf("$alarm CCD temperature exceeds %d C\n",
                                        $config{ccd_temp_red_limit});
-        return;
     }
-    if ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}){
+    elsif ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}){
         push @{$self->{yellow_warn}}, sprintf("$alarm CCD temperature exceeds %d C\n",
                                               $config{ccd_temp_yellow_limit});
     }
