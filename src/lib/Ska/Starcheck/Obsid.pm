@@ -1819,12 +1819,7 @@ sub print_report {
     }
 
     if (defined $self->{ccd_temp}){
-        my $font_start = "";
-        $font_start = "$yellow_font_start" if $self->{ccd_temp} > $config{ccd_temp_yellow_limit};
-        $font_start = "$red_font_start" if $self->{ccd_temp} > $config{ccd_temp_red_limit};
-        $o .= $font_start;
         $o .= sprintf("Predicted Max CCD temperature: %.1f C \n", $self->{ccd_temp});
-        $o .= "$font_stop" if $self->{ccd_temp} > $config{ccd_temp_yellow_limit};
     }
     else{
         $o .= sprintf("No CCD temperature prediction\n")
