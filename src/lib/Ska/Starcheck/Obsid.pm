@@ -1138,7 +1138,8 @@ sub check_star_catalog {
 	    } 
 	}
 
-        # Warn if there is a fid light in the search box
+        # Check for situation that occurred for obsid 14577 with a fid light
+        # inside the search box (PR #50).
         if ($type =~ /BOT|GUI|ACQ/){
             for my $fpos (@fid_positions){
                 if (abs($fpos->{y} - $yag) < $halfw and abs($fpos->{z} - $zag) < $halfw){
