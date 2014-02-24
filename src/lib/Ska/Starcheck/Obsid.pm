@@ -997,6 +997,9 @@ sub check_star_catalog {
     # Skip this for vehicle-only loads since fids will be turned off.
     check_fids($self, $c, \@warn) unless $vehicle;
 
+    # store a list of the fid positions
+    my @fid_positions = map {{'y' => $c->{"YANG$_"}, 'z' => $c->{"ZANG$_"}}} @{$self->{fid}};
+
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
 	my $type = $c->{"TYPE$i"};
@@ -1144,6 +1147,21 @@ sub check_star_catalog {
 		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i, $mag =~ /---/ ? 0 : $mag;
 	    } 
 	}
+
+        # Check for situation that occurred for obsid 14577 with a fid light
+        # inside the search box (PR #50).
+        if ($type =~ /BOT|ACQ/){
+            for my $fpos (@fid_positions){
+                if (abs($fpos->{y} - $yag) < $halfw and abs($fpos->{z} - $zag) < $halfw){
+                    if ($type =~ /ACQ/){
+                        push @yellow_warn, sprintf "$alarm [%2d] Fid light in search box\n", $i;
+                    }
+                    else{
+                        push @warn, sprintf "$alarm [%2d] Fid light in search box\n", $i;
+                    }
+                }
+            }
+        }
 
         # ACA-041
 	if ($type =~ /BOT|GUI|ACQ/){
