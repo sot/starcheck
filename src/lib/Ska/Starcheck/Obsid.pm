@@ -1141,10 +1141,7 @@ sub check_star_catalog {
         # Warn if there is a fid light in the search box
         if ($type =~ /BOT|GUI|ACQ/){
             for my $fpos (@fid_positions){
-                if (($fpos->{y} > ($yag - $halfw))
-                    and ($fpos->{y} < ($yag + $halfw))
-                    and ($fpos->{z} > ($zag - $halfw))
-                    and ($fpos->{z} < ($zag + $halfw))){
+                if (abs($fpos->{y} - $yag) < $halfw and abs($fpos->{z} - $zag) < $halfw){
                     if ($type =~ /ACQ/){
                         push @yellow_warn, sprintf "$alarm [%2d] Fid light in search box\n", $i;
                     }
