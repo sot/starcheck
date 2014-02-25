@@ -591,8 +591,12 @@ sub OR_parse_obs {
     $obs{SS_OBJECT} = $1 if (/SS_OBJECT=([^,\)]+)/);
     $obs{SI} = $1 if (/SI=([^,]+)/);
  #   print STDERR "obsSI = $obs{SI} \n";
-    ($obs{TARGET_OFFSET_Y}, $obs{TARGET_OFFSET_Z}) = ($1, $2)
-	if (/TARGET_OFFSET=\(([^,]+),([^,]+)\)/);
+    if (/TARGET_OFFSET=\((-?[\d\.]+),(-?[\d\.]+)\)/){
+        ($obs{TARGET_OFFSET_Y}, $obs{TARGET_OFFSET_Z}) = ($1, $2);
+    }
+    elsif (/TARGET_OFFSET=\((-?[\d\.]+)\)/){
+        $obs{TARGET_OFFSET_Y} = $1;
+    }
     ($obs{DITHER_ON},
      $obs{DITHER_Y_AMP},$obs{DITHER_Y_FREQ}, $obs{DITHER_Y_PHASE},
      $obs{DITHER_Z_AMP},$obs{DITHER_Z_FREQ}, $obs{DITHER_Z_PHASE}) = split ',', $1
