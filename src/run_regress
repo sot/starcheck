@@ -122,7 +122,7 @@ vdiffs=$home/vehicle_regress_diffs
 diffs=$home/regress_diffs
 
 RELEASE=/proj/sot/ska
-local_data=$home/starcheck_data_local
+local_data=$home/starcheck_data
 release_data=$RELEASE/data/starcheck
 
 if [ -d $regtestdir ]
