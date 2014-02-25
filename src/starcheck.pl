@@ -21,6 +21,7 @@ use Sys::Hostname;
 use English;
 use File::Basename;
 use File::Copy;
+use Scalar::Util qw(looks_like_number);
 
 use Time::JulianDay;
 use Time::DayOfYear;
@@ -35,6 +36,7 @@ use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
 use Carp;
 use YAML;
+use JSON ();
 
 use Ska::Convert qw( date2time );
 use Cwd qw( abs_path );
@@ -42,6 +44,21 @@ use Cwd qw( abs_path );
 use HTML::TableExtract;
 
 use Ska::AGASC;
+
+
+use Inline Python => q{
+import sys
+import perl
+# this provides an interface back to the Perl namespace
+
+def ccd_temp_wrapper(kwargs):
+    try:
+        from starcheck.calc_ccd_temps import get_ccd_temps
+    except ImportError as err:
+        # write errors to starcheck's global warnings and STDERR
+        perl.warning("Error with Inline::Python imports {}\n".format(err))
+    return get_ccd_temps(**kwargs)
+};
 
 # cheat to get the OS (major)
 my $OS = `uname`;
@@ -84,6 +101,8 @@ GetOptions( \%par,
 my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
 
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
+
+
 
 my $empty_font_start = qq{<font>};
 my $red_font_start = qq{<font color="#FF0000">};
@@ -277,6 +296,7 @@ if ($@){
 if ($dot_touched_by_sausage == 0 ){
 	warning("DOT file not modified by SAUSAGE! \n");
 }
+
 
 
 Ska::Starcheck::Obsid::setcolors({ red => $red_font_start,
@@ -500,6 +520,82 @@ foreach my $obsid (@obsid_id) {
 }
 
 
+# Write out Obsid objects as JSON
+# include a routine to change the internal context to a float/int
+# for everything that looks like a number
+sub force_numbers {
+    if (ref $_[0] eq ""){
+        if ( looks_like_number($_[0]) ){
+            $_[0] += 0;
+        }
+    } elsif ( ref $_[0] eq 'ARRAY' ){
+        force_numbers($_) for @{$_[0]};
+    } elsif ( ref $_[0] eq 'HASH' ) {
+        force_numbers($_) for values %{$_[0]};
+    }
+    return $_[0];
+}
+
+
+sub json_obsids{
+
+    my @all_obs;
+    my %exclude = ('next' => 1, 'prev' => 1, 'agasc_hash' => 1);
+    foreach my $obsid (@obsid_id){
+        my %obj = ();
+        for my $tkey (keys(%{$obs{$obsid}})){
+            if (not defined $exclude{$tkey}){
+                $obj{$tkey} = $obs{$obsid}->{$tkey};
+            }
+        }
+        push @all_obs, \%obj;
+    }
+
+    return JSON::to_json(force_numbers(\@all_obs), {pretty => 1});
+}
+
+
+my $json_text = json_obsids();
+my $obsid_temps;
+eval{
+    my $json_obsid_temps;
+    local $SIG{ALRM}=sub{ die "get_ccd_temps timed out\n"};
+    eval{
+        alarm 120;
+        $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
+                                              outdir=>$STARCHECK,
+                                              json_obsids => $json_text,
+                                              model_spec => "$Starcheck_Data/aca_spec.json"});
+        alarm 0;
+    };
+    if ($@){
+        push @global_warn, "ERROR: $@";
+        die "$@\n";
+    }
+    alarm 0;
+    # convert back from JSON outside the timeout
+    $obsid_temps = JSON::from_json($json_obsid_temps);
+};
+if ($@){
+    push @global_warn, "Error getting temperatures from get_ccd_temps\n";
+}
+
+
+# Since we need set_npm_times to have run on all obsids
+# to get the (n+1) obs stop time for setting max temperatures
+# this is just run it its own loop
+if ($obsid_temps){
+    foreach my $obsid (@obsid_id) {
+        $obs{$obsid}->set_ccd_temps($obsid_temps);
+    }
+}
+
+my $final_json = json_obsids();
+open(my $JSON_OUT, "> $STARCHECK/obsids.json")
+     or die "Couldn't open $STARCHECK/obsids.json for writing\n";
+print $JSON_OUT $final_json;
+close($JSON_OUT);
+
 # Produce final report
 my %save_hash;
 
@@ -561,6 +657,13 @@ if ($dark_cal_checker->{dark_cal_present}){
     $out .= "\n";
 }
 
+# CCD temperature plot
+if ($obsid_temps){
+    $out .= "------------  CCD TEMPERATURE PREDICTION -----------------\n\n";
+    $out .= "<IMG SRC='$STARCHECK/ccd_temperature.png'>\n";
+}
+
+
 # Summary of obsids
 
 $out .= "------------  SUMMARY OF OBSIDS -----------------\n\n";
@@ -584,7 +687,7 @@ for my $obs_idx (0 .. $#obsid_id) {
     }
 
     $out .= sprintf "<A HREF=\"#obsid$obs{$obsid}->{obsid}\">OBSID = %5s</A>", $obs{$obsid}->{obsid};
-    $out .= sprintf " at $obs{$obsid}->{date}   ";
+    $out .= sprintf " at $obs{$obsid}->{date} ";
 
     my $good_guide_count = $obs{$obsid}->{count_nowarn_stars}{GUI};
     my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};

@@ -101,6 +101,7 @@ sub new {
     %{$self->{agasc_hash}} = ();
 #    @{$self->{agasc_stars}} = ();
     %{$self->{count_nowarn_stars}} = ();
+    $self->{ccd_temp} = undef;
     return $self;
 }
     
@@ -521,6 +522,7 @@ sub set_npm_times{
             if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
 		push @{$self->{fyi}}, "$info Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)\n";
                 $obs_tstop = $next_cmd_obsid->{time};
+                $self->{no_following_manvr} = 1;
             }
         }
     }
@@ -534,6 +536,7 @@ sub set_npm_times{
     else{
         $self->{obs_tstart} = $obs_tstart;
         $self->{obs_tstop} = $obs_tstop;
+
     }
 }
 
@@ -1746,6 +1749,12 @@ sub print_report {
 	    }
 	    for my $field_idx (0 .. $#fields){
 		my $curr_format = $format[$field_idx];
+                # override mag formatting if it lost its 3
+                # decimal places during JSONifying
+                if (($fields[$field_idx] eq 'GS_MAG')
+                    and ($c->{"$fields[$field_idx]$i"} ne '---')){
+                    $curr_format = "%8.3f";
+                }
 #		if (($curr_format =~ /link_target/) and ($color)){
 #		    # turn off the color before the link
 #		    $curr_format = " \\${color}_end " . $curr_format;
@@ -1799,12 +1808,22 @@ sub print_report {
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
 	$o .= "$red_font_start" if $bad_FOM;
 	$o .= "Probability of acquiring 2,3, and 4 or fewer stars (10^x):\t";
-	foreach (2..4) { $o .= "$probs[$_]\t" }
+        # override formatting to match pre-JSON strings
+        foreach (2..4) {
+            $o .= substr(sprintf("%.4f", "$probs[$_]"), 0, 6) . "\t";
+        }
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
-	$o .= "Acquisition Stars Expected  : $self->{figure_of_merit}->{expected}\n";
+	$o .= sprintf("Acquisition Stars Expected  : %.2f\n",
+                      $self->{figure_of_merit}->{expected});
     }
 
+    if (defined $self->{ccd_temp}){
+        $o .= sprintf("Predicted Max CCD temperature: %.1f C \n", $self->{ccd_temp});
+    }
+    else{
+        $o .= sprintf("No CCD temperature prediction\n")
+    }
     # cute little table for buttons for previous and next obsid
     $o .= "</PRE></TD><TD VALIGN=TOP>\n";
     if (defined $self->{prev}->{obsid} or defined $self->{next}->{obsid}){
@@ -2666,4 +2685,28 @@ sub check_idx_warn{
     }
 
     return $warn_boolean;
+}
+
+###################################################################################
+sub set_ccd_temps{
+###################################################################################
+    my $self = shift;
+    my $obsid_temps = shift;
+    # if no temperature data, just return
+    if ((not defined $obsid_temps->{$self->{obsid}})
+        or (not defined $obsid_temps->{$self->{obsid}}->{ccd_temp})){
+        push @{$self->{warn}}, "$alarm No CCD temperature prediction for obsid\n";
+        return;
+    }
+    # set the temperature to the value for the current obsid
+    $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
+    # add warnings for limit violations
+    if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
+        push @{$self->{warn}}, sprintf("$alarm CCD temperature exceeds %d C\n",
+                                       $config{ccd_temp_red_limit});
+    }
+    elsif ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}){
+        push @{$self->{yellow_warn}}, sprintf("$alarm CCD temperature exceeds %d C\n",
+                                              $config{ccd_temp_yellow_limit});
+    }
 }
