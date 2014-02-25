@@ -68,6 +68,9 @@ For dark current operations, transponder should be set to:
 Transponder B	before 2007:220:04:47:20.898
 		(Commanding already included in Loads)
 
+------------  CCD TEMPERATURE PREDICTION -----------------
+
+
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2007:217:17:41:24.095   OBC Load Segment Begins     CL217:1704 
@@ -137,6 +140,7 @@ MP_STARCAT at 2007:217:17:44:30.095 (VCDU count = 13046398)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.090	-6.047	-4.308	
 Acquisition Stars Expected  : 7.32
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58289  
 RA, Dec, Roll (deg):    40.000000   -24.000000   103.511344
@@ -167,6 +171,7 @@ MP_STARCAT at 2007:217:21:26:28.686 (VCDU count = 13098373)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.720	-7.500	-5.547	
 Acquisition Stars Expected  : 7.50
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58288  
 RA, Dec, Roll (deg):   345.000000   -25.500000    78.425064
@@ -194,6 +199,7 @@ MP_STARCAT at 2007:217:23:23:36.485 (VCDU count = 13125799)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.090	-6.047	-4.308	
 Acquisition Stars Expected  : 7.32
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 8568   Orion Trapezium Clus   ACIS-S SIM Z offset:0     (0.00mm) Grating: HETG 
 RA, Dec, Roll (deg):    83.836971    -5.403052   113.001717
@@ -227,6 +233,7 @@ MP_STARCAT at 2007:218:06:36:47.921 (VCDU count = 13227229)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.69	-8.443	-6.448	
 Acquisition Stars Expected  : 7.78
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 7490   PSR B1259-63           ACIS-S SIM Z offset:0     (0.00mm) Grating: HETG 
 RA, Dec, Roll (deg):   195.701522   -63.813300   235.670236
@@ -258,6 +265,7 @@ MP_STARCAT at 2007:218:17:16:31.838 (VCDU count = 13377020)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
 Acquisition Stars Expected  : 7.87
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 7742   NGC 7213               ACIS-S SIM Z offset:-1193 (-3.00mm) Grating: HETG 
 RA, Dec, Roll (deg):   332.299593   -47.185584    26.486865
@@ -286,6 +294,7 @@ MP_STARCAT at 2007:218:19:17:26.000 (VCDU count = 13405329)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.883	-4.295	-3.015	
 Acquisition Stars Expected  : 6.96
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58287  
 RA, Dec, Roll (deg):   355.663105   -30.916200    75.975115
@@ -315,6 +324,7 @@ MP_STARCAT at 2007:220:04:01:07.091 (VCDU count = 13865118)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.538	-6.474	-4.704	
 Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58286  
 RA, Dec, Roll (deg):   355.663105   -30.916200    75.944404
@@ -326,7 +336,9 @@ MP_TARGQUAT at 2007:220:04:41:25.255 (VCDU count = 13874555)
 
 
 >> INFO   : No Guide Star Summary for obsid 58286 (DC_T0). OK for 'DC_T' ER. 
->> INFO   : No star catalog for obsid 58286 (DC_T0). OK for 'DC_T' ER.
+>> INFO   : No star catalog for obsid 58286 (DC_T0). OK for 'DC_T' ER. 
+
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58285  
 RA, Dec, Roll (deg):   355.663105   -30.916200    75.929925
@@ -356,6 +368,7 @@ MP_STARCAT at 2007:220:05:00:26.898 (VCDU count = 13879010)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.538	-6.474	-4.704	
 Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58284  
 RA, Dec, Roll (deg):   355.673736   -30.948262    75.879545
@@ -367,7 +380,9 @@ MP_TARGQUAT at 2007:220:05:24:25.255 (VCDU count = 13884623)
 
 
 >> INFO   : No Guide Star Summary for obsid 58284 (DC_T1). OK for 'DC_T' ER. 
->> INFO   : No star catalog for obsid 58284 (DC_T1). OK for 'DC_T' ER.
+>> INFO   : No star catalog for obsid 58284 (DC_T1). OK for 'DC_T' ER. 
+
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58283  
 RA, Dec, Roll (deg):   355.663105   -30.916200    75.897126
@@ -397,6 +412,7 @@ MP_STARCAT at 2007:220:05:43:26.898 (VCDU count = 13889079)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.538	-6.474	-4.704	
 Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58282  
 RA, Dec, Roll (deg):   355.625726   -30.925303    75.837890
@@ -408,7 +424,9 @@ MP_TARGQUAT at 2007:220:06:07:25.255 (VCDU count = 13894692)
 
 
 >> INFO   : No Guide Star Summary for obsid 58282 (DC_T2). OK for 'DC_T' ER. 
->> INFO   : No star catalog for obsid 58282 (DC_T2). OK for 'DC_T' ER.
+>> INFO   : No star catalog for obsid 58282 (DC_T2). OK for 'DC_T' ER. 
+
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58281  
 RA, Dec, Roll (deg):   355.663105   -30.916200    75.864272
@@ -438,6 +456,7 @@ MP_STARCAT at 2007:220:06:26:26.898 (VCDU count = 13899147)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.538	-6.474	-4.704	
 Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58280  
 RA, Dec, Roll (deg):   355.652475   -30.884139    75.878057
@@ -449,7 +468,9 @@ MP_TARGQUAT at 2007:220:06:50:25.255 (VCDU count = 13904760)
 
 
 >> INFO   : No Guide Star Summary for obsid 58280 (DC_T3). OK for 'DC_T' ER. 
->> INFO   : No star catalog for obsid 58280 (DC_T3). OK for 'DC_T' ER.
+>> INFO   : No star catalog for obsid 58280 (DC_T3). OK for 'DC_T' ER. 
+
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58279  
 RA, Dec, Roll (deg):   355.663105   -30.916200    75.831345
@@ -479,6 +500,7 @@ MP_STARCAT at 2007:220:07:09:26.898 (VCDU count = 13909215)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.538	-6.474	-4.704	
 Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58278  
 RA, Dec, Roll (deg):   355.700481   -30.907100    75.853851
@@ -490,7 +512,9 @@ MP_TARGQUAT at 2007:220:07:33:25.255 (VCDU count = 13914828)
 
 
 >> INFO   : No Guide Star Summary for obsid 58278 (DC_T4). OK for 'DC_T' ER. 
->> INFO   : No star catalog for obsid 58278 (DC_T4). OK for 'DC_T' ER.
+>> INFO   : No star catalog for obsid 58278 (DC_T4). OK for 'DC_T' ER. 
+
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58277  
 RA, Dec, Roll (deg):   355.663105   -30.916200    75.798317
@@ -520,6 +544,7 @@ MP_STARCAT at 2007:220:07:52:26.898 (VCDU count = 13919284)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.538	-6.474	-4.704	
 Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58276  
 RA, Dec, Roll (deg):   355.663105   -30.916200    75.779827
@@ -549,6 +574,7 @@ MP_STARCAT at 2007:220:08:16:26.898 (VCDU count = 13924903)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.538	-6.474	-4.704	
 Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58275  
 RA, Dec, Roll (deg):    40.000000   -24.000000   101.998023
@@ -575,6 +601,7 @@ MP_STARCAT at 2007:220:08:55:52.587 (VCDU count = 13934135)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.720	-7.500	-5.547	
 Acquisition Stars Expected  : 7.50
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58274  
 RA, Dec, Roll (deg):   250.000000   -62.000000   281.993014
@@ -604,6 +631,7 @@ MP_STARCAT at 2007:220:09:20:25.210 (VCDU count = 13939882)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.28	-8.977	-6.920	
 Acquisition Stars Expected  : 7.83
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58273  
 RA, Dec, Roll (deg):   347.000000   -25.500000    76.765612
@@ -638,6 +666,7 @@ MP_STARCAT at 2007:220:11:50:14.005 (VCDU count = 13974960)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.619	-6.553	-4.779	
 Acquisition Stars Expected  : 7.48
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 8589   Orion Trapezium Clus   ACIS-S SIM Z offset:0     (0.00mm) Grating: HETG 
 RA, Dec, Roll (deg):    83.836971    -5.403052   113.001717
@@ -669,6 +698,7 @@ MP_STARCAT at 2007:220:21:13:27.091 (VCDU count = 14106835)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
 Acquisition Stars Expected  : 7.87
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 8590   NGC 7213               ACIS-S SIM Z offset:-1193 (-3.00mm) Grating: HETG 
 RA, Dec, Roll (deg):   332.299593   -47.185584    26.486865
@@ -701,6 +731,7 @@ MP_STARCAT at 2007:221:12:29:18.937 (VCDU count = 14321282)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.883	-4.295	-3.015	
 Acquisition Stars Expected  : 6.96
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 7481   XTE J1829-098          ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   277.421314    -9.839586   257.291612
@@ -734,6 +765,7 @@ MP_STARCAT at 2007:221:22:40:09.945 (VCDU count = 14464310)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.282	-3.757	-2.554	
 Acquisition Stars Expected  : 6.65
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 7618   PSRJ1906+0746          ACIS-I SIM Z offset:-1352 (-3.40mm) Grating: NONE 
 RA, Dec, Roll (deg):   286.696668     7.792725   233.944221
@@ -762,6 +794,7 @@ MP_STARCAT at 2007:222:00:43:52.946 (VCDU count = 14493278)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
 Acquisition Stars Expected  : 7.87
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58272  
 RA, Dec, Roll (deg):   320.000000    13.000000   179.461275
@@ -789,6 +822,7 @@ MP_STARCAT at 2007:222:10:04:08.946 (VCDU count = 14624462)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
 Acquisition Stars Expected  : 7.87
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 8588   L1251B-VLA3            ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   339.769699    75.197320   160.928585
@@ -820,6 +854,7 @@ MP_STARCAT at 2007:222:10:32:42.368 (VCDU count = 14631149)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
 Acquisition Stars Expected  : 7.87
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58271  
 RA, Dec, Roll (deg):   320.000000    13.000000   180.232841
@@ -849,6 +884,7 @@ MP_STARCAT at 2007:222:19:37:14.765 (VCDU count = 14758651)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
 Acquisition Stars Expected  : 7.87
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58270  
 RA, Dec, Roll (deg):   317.000000   -48.000000   354.040038
@@ -876,6 +912,7 @@ MP_STARCAT at 2007:222:23:53:01.036 (VCDU count = 14818539)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.826	-7.654	-5.750	
 Acquisition Stars Expected  : 7.68
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58269  
 RA, Dec, Roll (deg):   320.000000    13.000000   181.228884
@@ -905,6 +942,7 @@ MP_STARCAT at 2007:223:06:10:35.293 (VCDU count = 14906945)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
 Acquisition Stars Expected  : 7.87
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 7415   L1251B-VLA3            ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   339.769699    75.197320   160.928585
@@ -936,6 +974,7 @@ MP_STARCAT at 2007:223:12:51:34.765 (VCDU count = 15000836)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
 Acquisition Stars Expected  : 7.87
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 8270   A2572                  ACIS-I SIM Z offset:-1989 (-5.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   349.299748    18.713788   138.867098
@@ -964,6 +1003,7 @@ MP_STARCAT at 2007:223:21:41:08.332 (VCDU count = 15124831)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.28	-8.980	-6.923	
 Acquisition Stars Expected  : 7.83
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 7355   RCS 2327-0204          ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   351.881990    -2.068192   115.176126
@@ -994,6 +1034,7 @@ MP_STARCAT at 2007:224:00:22:55.783 (VCDU count = 15162713)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.29	-8.063	-6.090	
 Acquisition Stars Expected  : 7.71
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 58268  
 RA, Dec, Roll (deg):   306.000000    12.000000   210.058866
@@ -1019,6 +1060,7 @@ MP_STARCAT at 2007:224:07:46:31.783 (VCDU count = 15266581)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.31	-9.012	-6.952	
 Acquisition Stars Expected  : 7.84
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
 OBSID: 7827   FLS4                   ACIS-I SIM Z offset:159   (0.40mm) Grating: NONE 
 RA, Dec, Roll (deg):   257.995988    58.792260   239.868450
@@ -1048,4 +1090,5 @@ MP_STARCAT at 2007:224:08:24:24.663 (VCDU count = 15275450)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.166	-7.073	-5.261	
 Acquisition Stars Expected  : 7.61
+Predicted Max CCD temperature: -19.6 C
 ==================================================================================== 
