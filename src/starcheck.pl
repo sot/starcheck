@@ -687,7 +687,7 @@ for my $obs_idx (0 .. $#obsid_id) {
     }
 
     $out .= sprintf "<A HREF=\"#obsid$obs{$obsid}->{obsid}\">OBSID = %5s</A>", $obs{$obsid}->{obsid};
-    $out .= sprintf " at $obs{$obsid}->{date} ";
+    $out .= sprintf " at $obs{$obsid}->{date}   ";
 
     my $good_guide_count = $obs{$obsid}->{count_nowarn_stars}{GUI};
     my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};
