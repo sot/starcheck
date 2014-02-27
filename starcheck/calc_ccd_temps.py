@@ -22,8 +22,7 @@ import yaml
 # Matplotlib setup
 # Use Agg backend for command-line (non-interactive) operation
 import matplotlib
-if __name__ == '__main__':
-    matplotlib.use('Agg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 import Ska.Matplotlib
