@@ -33,6 +33,7 @@ import Ska.Numpy
 import Ska.engarchive.fetch_sci as fetch
 from Chandra.Time import DateTime
 import Chandra.cmd_states as cmd_states
+from Chandra.cmd_states import get_cmd_states
 import xija
 
 from starcheck.version import version
@@ -136,11 +137,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     # JSON we have from the Perl code
     sc_obsids = yaml.load(json_obsids)
 
-    # Connect to database (NEED TO USE aca_read)
-    logger.info('Connecting to database to get cmd_states')
-    db = Ska.DBI.DBI(dbi='sybase', server='sybase', user='aca_read',
-                     database='aca')
-
     tnow = DateTime().secs
 
     # Get tstart, tstop, commands from backstop file in opt.oflsdir
@@ -150,13 +146,13 @@ def get_ccd_temps(oflsdir, outdir='out',
     proc['datestart'] = DateTime(tstart).date
     proc['datestop'] = DateTime(tstop).date
 
-    # Get temperature telemetry for 3 weeks prior to min(tstart, NOW)
+    # Get temperature telemetry for 30 days prior to min(tstart, NOW)
     tlm = get_telem_values(min(tstart, tnow),
                            ['aacccdpt', 'aosares1'],
-                           days=21,
+                           days=30,
                            name_map={'aosares1': 'pitch'})
 
-    states = get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm, db)
+    states = get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm)
 
     # if the last obsid interval extends over the end of states
     # extend the state / predictions
@@ -259,7 +255,7 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
     return model
 
 
-def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm, db):
+def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm):
     """
     Make states from last available telemetry through the end of the backstop commands
 
@@ -283,49 +279,36 @@ def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm, db):
         'q1': 0.0, 'q2': 0.0, 'q3': 0.0, 'q4': 1.0,
         }
 
-    # If cmd lines options were not fully specified then get state0 as last
-    # cmd_state that starts within available telemetry.  Update with the
-    # mean temperatures at the start of state0.
     if None in state0.values():
-        state0 = cmd_states.get_state0(tlm['date'][-5], db,
-                                       datepar='datestart')
+        # If cmd line options were not fully specified, look up an initial
+        # state in cmd_states.  First fetch last 30 days of states
+        cstates = get_cmd_states.fetch_states(DateTime(tstart) - 30,
+                                              tstop,
+                                              vals=['obsid',
+                                                    'pitch',
+                                                    'q1', 'q2', 'q3', 'q4'])
+
+        # get the state before tstart and at least 3 days before the
+        # job run time
+        cstate0 = cstates[(cstates['tstart'] < tstart)
+                          & (cstates['tstart'] < (DateTime() - 3).secs)][-1]
+        # update state0 from the new initial cmd state
+        for x in cstate0.dtype.names:
+            state0[x] = cstate0[x]
+        # get temperature data
         ok = ((tlm['date'] >= state0['tstart'] - 700) &
               (tlm['date'] <= state0['tstart'] + 700))
-        state0.update({'aacccdpt': np.mean(tlm['aacccdpt'][ok])})
+        state0['aacccdpt'] = np.mean(tlm['aacccdpt'][ok])
 
     logger.debug('state0 at %s is\n%s' % (DateTime(state0['tstart']).date,
                                           pformat(state0)))
 
-    # Get commands after end of state0 through first backstop command time
-    cmds_datestart = state0['datestop']
-    cmds_datestop = bs_cmds[0]['date']
-
-    # Get timeline load segments including state0 and beyond.
-    timeline_loads = db.fetchall("""SELECT * from timeline_loads
-                                 WHERE datestop > '%s'
-                                 and datestart < '%s'"""
-                                 % (cmds_datestart, cmds_datestop))
-    logger.info('Found {} timeline_loads  after {}'.format(
-            len(timeline_loads), cmds_datestart))
-
-    # Get cmds since datestart within timeline_loads
-    db_cmds = cmd_states.get_cmds(cmds_datestart, db=db, update_db=False,
-                                  timeline_loads=timeline_loads)
-
-    # Delete non-load cmds that are within the backstop time span
-    # => Keep if timeline_id is not None or date < bs_cmds[0]['time']
-    db_cmds = [x for x in db_cmds if (x['timeline_id'] is not None or
-                                      x['time'] < bs_cmds[0]['time'])]
-
-    logger.info('Got %d cmds from database between %s and %s' %
-                  (len(db_cmds), cmds_datestart, cmds_datestop))
-
     # Get the commanded states from state0 through the end of backstop commands
-    states = cmd_states.get_states(state0, db_cmds + bs_cmds)
+    states = cmd_states.get_states(state0, bs_cmds)
     states[-1].datestop = bs_cmds[-1]['date']
     states[-1].tstop = bs_cmds[-1]['time']
-    logger.info('Found %d commanded states from %s to %s' %
-                 (len(states), states[0]['datestart'], states[-1]['datestop']))
+    logger.info('Constructed %d commanded states from %s to %s' %
+                (len(states), states[0]['datestart'], states[-1]['datestop']))
     return states
 
 
