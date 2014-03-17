@@ -561,7 +561,7 @@ eval{
     my $json_obsid_temps;
     local $SIG{ALRM}=sub{ die "get_ccd_temps timed out\n"};
     eval{
-        alarm 120;
+        alarm 300;
         $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                               outdir=>$STARCHECK,
                                               json_obsids => $json_text,
