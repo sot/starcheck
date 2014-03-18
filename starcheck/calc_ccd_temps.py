@@ -148,9 +148,8 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     # Get temperature telemetry for 30 days prior to min(tstart, NOW)
     tlm = get_telem_values(min(tstart, tnow),
-                           ['aacccdpt', 'aosares1'],
-                           days=30,
-                           name_map={'aosares1': 'pitch'})
+                           ['aacccdpt', 'pitch'],
+                           days=30)
 
     states = get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm)
 
