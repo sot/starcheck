@@ -287,10 +287,10 @@ def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm):
                                                     'pitch',
                                                     'q1', 'q2', 'q3', 'q4'])
 
-        # get the state before tstart and at least 3 days before the
-        # job run time
-        cstate0 = cstates[(cstates['tstart'] < tstart)
-                          & (cstates['tstart'] < (DateTime() - 3).secs)][-1]
+        # Get the last state at least 3 days before tstart and at least one hour
+        # before the last available telemetry
+        cstate0 = cstates[(cstates['tstart'] < (DateTime(tstart) - 3).secs)
+                          & (cstates['tstart'] < (tlm[-1]['date'] - 3600))][-1]
         # update state0 from the new initial cmd state
         for x in cstate0.dtype.names:
             state0[x] = cstate0[x]
