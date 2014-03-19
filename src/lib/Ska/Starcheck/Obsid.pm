@@ -21,7 +21,6 @@ package Ska::Starcheck::Obsid;
 use strict;
 use warnings;
 
-#use lib '/proj/sot/ska/lib/site_perl';
 use Quat;
 use Ska::ACACoordConvert;
 use File::Basename;
@@ -37,9 +36,6 @@ use Ska::AGASC;
 use SQL::Abstract;
 use Ska::DatabaseUtil qw( sql_fetchall_array_of_hashref );
 use Carp;
-
-
-# use FigureOfMerit;
 
 # Constants
 
@@ -346,7 +342,6 @@ sub set_maneuver {
 
 
     while ($c = find_command($self, "MP_TARGQUAT", $n++)) {
-#	print "Looking for match for maneuver to $c->{Q1} $c->{Q2} $c->{Q3} for obsid $self->{obsid} AKA $self->{dot_obsid}\n";
 	$found = 0;
 	foreach my $m (values %mm) {
 	    my $manvr_obsid = $m->{manvr_dest};
@@ -356,15 +351,10 @@ sub set_maneuver {
 		 && abs($m->{q1} - $c->{Q1}) < 1e-7
 		 && abs($m->{q2} - $c->{Q2}) < 1e-7
 		 && abs($m->{q3} - $c->{Q3}) < 1e-7) {
-#		print "Maneuver: $m->{obsid} $m->{tstop}  TARGQUAT: $self->{obsid} $self->{dot_obsid} $c->{time}\n";
-#		print "  $m->{ra} $m->{dec} $m->{roll}\n";
-		
 		$found = 1;
 		foreach (keys %{$m}) {
-		    
 		    $c->{$_} = $m->{$_};
 		}
-		
 		# Set the default maneuver error (based on WS Davis data) and cap at 85 arcsec
 		$c->{man_err} = (exists $c->{angle}) ? 35 + $c->{angle}/2. : 85;
 		$c->{man_err} = 85 if ($c->{man_err} > 85);
@@ -459,7 +449,6 @@ sub set_ps_times{
 	if ($tmp[1] eq 'OBS') {
 	    my $length = length($obsid);
 	    if (substr($tmp[0], 5-$length, $length) eq $obsid){
-#		print "$obsid found in $ms_line";
 		$or_er_start = $tmp[2];
 		$or_er_stop = $tmp[3];
 		last;
@@ -1079,7 +1068,6 @@ sub check_star_catalog {
 	my $marginal_note = '';
 	if (defined $c->{"GS_CLASS$i"}) {
 	    $c->{"GS_NOTES$i"} .= 'b' if ($c->{"GS_CLASS$i"} != 0);
-#	    $c->{"GS_NOTES$i"} .= 'c' if ($c->{"GS_BV$i"} == 0.700);
 	    # ignore precision errors in color
 	    my $color = sprintf('%.7f', $c->{"GS_BV$i"});
 	    $c->{"GS_NOTES$i"} .= 'c' if ($color eq '0.7000000'); # ACA-033
@@ -1240,7 +1228,6 @@ sub check_star_catalog {
 	
 	foreach my $star (values %{$self->{agasc_hash}}) {
             # Skip tests if $star is the same as the catalog star
-	    # print STDERR "SID = $sid \n";
 	    next if (  $star->{id} eq $sid || 	
 		       ( abs($star->{yag} - $yag) < $ID_DIST_LIMIT 
 			 && abs($star->{zag} - $zag) < $ID_DIST_LIMIT 
@@ -1311,8 +1298,6 @@ sub check_flick_pix_mon {
     return unless (@mon_stars);
 
     for my $mon_star (@mon_stars){
-
-#	map { print "$_ : ", $c->{"$_${mon_star}"}, "\n" } qw( IMNUM TYPE YANG ZANG SIZE RESTRK DIMDTS);
 
 	push @{$self->{fyi}}, sprintf("$info Obsid contains flickering pixel MON\n", $mon_star);
 
@@ -1645,13 +1630,6 @@ sub print_report {
 	    if ($self->{DITHER_ON} eq 'ON' && $self->{DITHER_Y_FREQ} && $self->{DITHER_Z_FREQ});
 	$o .= "\n";
     }
-    else {
-#	$o .= "\n";
-    }
-
-#$file_out = "$STARCHECK/" . basename($file_in) . ".html"
-#    ($self->{backstop}, $self->{guide_summ}, $self->{or_file},
-#     $self->{mm_file}, $self->{dot_file}) = @_;
 
     $o .= sprintf("<A HREF=\"%s/%s.html#%s\">BACKSTOP</A> ", $self->{STARCHECK}, basename($self->{backstop}), $self->{obsid});
     $o .= sprintf("<A HREF=\"%s/%s.html#%s\">GUIDE_SUMM</A> ", $self->{STARCHECK}, basename($self->{guide_summ}), $self->{obsid});
@@ -1683,12 +1661,8 @@ sub print_report {
 
 	my $table;
 
-#	my @fid_fields = qw (IMNUM GS_ID   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
-#	my @fid_format = ( '%3d', '%12s',     '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
 	my @fid_fields = qw (TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
 	my @fid_format = ( '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
-#	my @star_fields = qw (IMNUM GS_ID GS_ID   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
-#	my @star_format = ( '%3d', "\\link_target{${acq_stat_lookup}%s,", '%12s}',     '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
 	my @star_fields = qw (   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
 	my @star_format = ( '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
 
@@ -1717,9 +1691,7 @@ sub print_report {
 		$table .= ( $color eq 'red') ? $red_font_start :
 		    ( $color eq 'yellow') ? $yellow_font_start : qq{};
 	    }
-#	    $table.= "\\${color}_start " if ($color);
 	    $table.= sprintf "[%2d]",$i;
-#	    map { $table.= sprintf "$format[$_]", $c->{"$fields[$_]$i"} } (0 .. $#fields);
 	    # change from a map to a loop to get some conditional control, since PoorTextFormat can't seem to 
 	    # take nested \link_target when the line is colored green or red
 	    $table .= sprintf('%3d', $c->{"IMNUM${i}"});
@@ -1755,14 +1727,6 @@ sub print_report {
                     and ($c->{"$fields[$field_idx]$i"} ne '---')){
                     $curr_format = "%8.3f";
                 }
-#		if (($curr_format =~ /link_target/) and ($color)){
-#		    # turn off the color before the link
-#		    $curr_format = " \\${color}_end " . $curr_format;
-#		}
-#		if (($curr_format eq '%12s}') and ($color)){
-		    # turn the color back on after the link
-#		    $curr_format = $curr_format . "\\${color}_start ";
-#		}
 		$table .= sprintf($curr_format, $c->{"$fields[$field_idx]$i"});
 	    }
 	    $table.= $font_stop if ($color);
@@ -1874,14 +1838,6 @@ sub add_guide_summ {
     my $c;
 
     return unless ($c = find_command($self, 'MP_STARCAT'));
-    
-#    unless ($c = find_command($self, 'MP_STARCAT')) {
-#	if ($self->{n_guide_summ}++ == 0) {
-#	    push @{$self->{warn}}, ">> WARNING: " .
-#		"Star catalog for $self->{obsid} in guide star summary, but not backstop\n";
-#	}
-#	return; # Bail out, since there is no starcat cmd to update
-#    }
 
     # target ra, dec, and roll don't seem to be used, but they aren't causing 
     # any harm ...
@@ -1985,11 +1941,6 @@ sub get_agasc_stars {
 	    aspq => $star->aspq1() 
 	    } ;
 	
-#	push @{$self->{agasc_stars}} , { id=> $id, class => $class,
-#					ra  => $ra,  dec => $dec,
-#					mag => $mag, bv  => $bv,
-#					magerr => $magerr, poserr  => $poserr,
-#					yag => $yag, zag => $zag, aspq => $aspq } ;
     }
 
 
@@ -2063,7 +2014,6 @@ sub identify_stars {
 	    $c->{"GS_ASPQ$i"} = $star->{aspq};
 	    my $db_hist = star_dbhist( "$gs_id", $obs_time );
 	    $c->{"GS_USEDBEFORE$i"} =  $db_hist;
-#	    print "$gs_id has used_before = $used_before \n";
 
 	}
 	else{
@@ -2312,7 +2262,6 @@ sub plot_stars {
     pgscf(1);             # Set character font
     pgscr(0, 1.0, 1.0, 1.0);
     pgscr(1, 0.0, 0.0, 0.0);
-#    pgslw(2);
     
     # Define data limits and plot axes
     pgpage();
@@ -2384,7 +2333,6 @@ sub plot_stars {
     unless (-s $self->{plot_file}){
       die("$self->{plot_file} was not created");
     }
-#    print STDERR "Created star chart $self->{plot_file}\n";
 }
 
 
@@ -2419,7 +2367,6 @@ sub plot_star_field {
     pgscf(1);             # Set character font
     pgscr(0, 1.0, 1.0, 1.0);
     pgscr(1, 0.0, 0.0, 0.0);
-#   pgslw(2);
     
     # Define data limits and plot axes
     pgpage();
@@ -2427,9 +2374,6 @@ sub plot_star_field {
     pgvsiz (0.2, 2.5, 0.2, 2.5);
     pgswin (2900,-2900,-2900,2900);
     pgbox  ('BCNST', 0.0, 0, 'BCNST', 0.0, 0);
-#    pglabel("Yag (arcsec)","Zag (arcsec)","Stars at RA=$self->{ra} Dec=$self->{dec} Roll=$self->{roll}");	# Labels
-#    box(0,0,2560,2560);
-#    box(0,0,2600,2560);
 
     # Plot field stars from AGASC
     foreach my $star (values %{$self->{agasc_hash}}) {
@@ -2445,8 +2389,6 @@ sub plot_star_field {
 	if ( $star->{mag_aca} > $faint_plot_mag ){
 	    $symbol = $sym_type{very_faint};
 	}
-#	pgpoint(1, $star->{yag}, $star->{zag}, $symbol);
-	
 	pgpoint(1, $star->{yag}, $star->{zag}, $symbol);
     }
 
@@ -2454,8 +2396,6 @@ sub plot_star_field {
     unless (-s $self->{plot_field_file}){
       die("$self->{plot_field_file} was not created");
     }
-
-#    print STDERR "Created star chart $self->{plot_file}\n";
 }
 
 #############################################################################################
@@ -2480,8 +2420,6 @@ sub plot_compass{
     pgscf(1);             # Set character font
     pgscr(0, 1.0, 1.0, 1.0);
     pgscr(1, 0.0, 0.0, 0.0);
-#   pgslw(2);
-
 
     # Define data limits and plot axes
     pgpage();
@@ -2491,10 +2429,7 @@ sub plot_compass{
     pgbox  ('BCNST', 0.0, 0, 'BCNST', 0.0, 0);
 
 
-
     my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
-#    use Data::Dumper;
-#    print Dumper $q_aca;
 
     my $plotrad = 1750/3600.;
     my $testrad = 1/3600;
@@ -2510,9 +2445,7 @@ sub plot_compass{
 	$dec_angle = $rad if not defined $dec_angle;
 	my $yag = $testrad * -1 * sin($rad);
 	my $zag = $testrad * cos($rad);
-#	print "(yag= $yag,zag= $zag ) \n";
 	my ($point_ra, $point_dec) = Quat::yagzag2radec( $yag, $zag, $q_aca);
-#	print "(ra=$point_ra, dec=$point_dec) \n";
 	my $point_ra_diff = $point_ra - $self->{ra};
 	my $point_dec_diff = $point_dec - $self->{dec};
 	$ra_diff = $point_ra_diff if not defined $ra_diff;
@@ -2527,7 +2460,6 @@ sub plot_compass{
 	}
     }
 
-#    print "$ra_angle $dec_angle \n";
     pgarro( 0, 0, $plotrad * 3600 * -1 * sin($ra_angle), $plotrad * 3600 * cos($ra_angle) );
     pgarro( 0, 0, $plotrad * 3600 * -1 * sin($dec_angle),  $plotrad * 3600 * cos($dec_angle) );
 
@@ -2543,16 +2475,6 @@ sub plot_compass{
     pgptxt( ($plotrad + $text_offset ) * 3600 * -1 * sin($dec_angle), 
 	    ($plotrad + $text_offset ) * 3600 * cos($dec_angle), $text_angle, 0.5, 
 	    'N' );
-
-#    pgline( 2, [@Nx], [@Ny] );
-#    pgline( 2, @Ex, @Ey );
-
-#    use Data::Dumper;
-#    print Dumper @Nx;
-#    print Dumper @Ex;
-
-
-
 
     pgend();				# Close plot
     unless (-s $self->{compass_file}){
@@ -2664,21 +2586,18 @@ sub check_idx_warn{
 
     for my $red_warn (@{$self->{warn}}){
 	if ( $red_warn =~ /\[\s*$i\]/){
-#	    print "match $i on $red_warn";
 	    $warn_boolean = 1;
 	    last;
 	}
     }
-    
+
     # and why do the next loop if we match on the first one?
-    
     if ($warn_boolean){
 	return $warn_boolean;
     }
 
     for my $yellow_warn (@{$self->{yellow_warn}}){
 	if ($yellow_warn =~ /\[\s*$i\]/){
-#	    print "match $i on $yellow_warn";
 	    $warn_boolean = 1;
 	    last;
 	}
