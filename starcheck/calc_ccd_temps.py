@@ -278,14 +278,15 @@ def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm):
         'q1': 0.0, 'q2': 0.0, 'q3': 0.0, 'q4': 1.0,
         }
 
+    cstates = get_cmd_states.fetch_states(DateTime(tstart) - 30,
+                                          tstop,
+                                          vals=['obsid',
+                                                'pitch',
+                                                'q1', 'q2', 'q3', 'q4'])
+
     if None in state0.values():
         # If cmd line options were not fully specified, look up an initial
         # state in cmd_states.  First fetch last 30 days of states
-        cstates = get_cmd_states.fetch_states(DateTime(tstart) - 30,
-                                              tstop,
-                                              vals=['obsid',
-                                                    'pitch',
-                                                    'q1', 'q2', 'q3', 'q4'])
 
         # Get the last state at least 3 days before tstart and at least one hour
         # before the last available telemetry
@@ -299,16 +300,25 @@ def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm):
               (tlm['date'] <= state0['tstart'] + 700))
         state0['aacccdpt'] = np.mean(tlm['aacccdpt'][ok])
 
-    logger.debug('state0 at %s is\n%s' % (DateTime(state0['tstart']).date,
-                                          pformat(state0)))
-
-    # Get the commanded states from state0 through the end of backstop commands
-    states = cmd_states.get_states(state0, bs_cmds)
+    pre_bs_states = cstates[(cstates['tstart'] >= state0['tstart'])
+                            & (cstates['tstop'] < tstart)]
+    last_pre_bs_state = dict(zip(pre_bs_states.dtype.names, pre_bs_states[-1].tolist()))
+    # Get the commanded states from last cmd_state through the end of backstop commands
+    states = cmd_states.get_states(last_pre_bs_state, bs_cmds)
     states[-1].datestop = bs_cmds[-1]['date']
     states[-1].tstop = bs_cmds[-1]['time']
     logger.info('Constructed %d commanded states from %s to %s' %
                 (len(states), states[0]['datestart'], states[-1]['datestop']))
-    return states
+    # Combine the pre-backstop states with the commanded states
+    all_states = pre_bs_states.tolist()
+    all_states.extend([[row[val] for val in pre_bs_states.dtype.names] for row in states])
+    all_states = np.rec.fromrecords(all_states, dtype=pre_bs_states.dtype)
+    # Add a column for temperature and pre-fill all to be the state0 temperature
+    # (the first state temperature is the only one used anyway)
+    all_states = Ska.Numpy.add_column(all_states,
+                                      'aacccdpt',
+                                      np.repeat(state0['aacccdpt'], len(all_states)))
+    return all_states
 
 
 def make_week_predict(model_spec, states, tstop):
