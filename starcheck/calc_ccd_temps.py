@@ -81,13 +81,6 @@ def get_options():
                         type=int,
                         default=1,
                         help="Verbosity (0=quiet, 1=normal, 2=debug)")
-    parser.add_argument("--pitch",
-                        default=150,
-                        type=float,
-                        help="Starting pitch (deg)")
-    parser.add_argument("--T-aca",
-                        type=float,
-                        help="Starting ACA CCD temperature (degC)")
     parser.add_argument("--version",
                         action='version',
                         version=VERSION)
@@ -97,7 +90,7 @@ def get_options():
 
 def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=sys.stdin,
-                  model_spec=None, pitch=150, T_aca=None,
+                  model_spec=None,
                   verbose=1, **kwargs):
     """
     Using the cmds and cmd_states sybase databases, available telemetry, and
@@ -109,8 +102,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param json_obsids: file-like object or string containing JSON of
                         starcheck Obsid objects
     :param model_spec: xija ACA model specification
-    :param pitch: initial pitch for model calculations
-    :param T_aca: initial ACA temperature for model calculations
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
@@ -151,7 +142,7 @@ def get_ccd_temps(oflsdir, outdir='out',
                            ['aacccdpt', 'pitch'],
                            days=30)
 
-    states = get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm)
+    states = get_week_states(tstart, tstop, bs_cmds, tlm)
 
     # if the last obsid interval extends over the end of states
     # extend the state / predictions
@@ -254,29 +245,16 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
     return model
 
 
-def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm):
+def get_week_states(tstart, tstop, bs_cmds, tlm):
     """
     Make states from last available telemetry through the end of the backstop commands
 
-    :param opt: options dictionary from get_options()
     :param tstart: start time from first backstop command
     :param tstop: stop time from last backstop command
     :param bs_cmds: backstop commands for products under review
     :param tlm: available pitch and aacccdpt telemetry recarray from fetch
-    :param db: sybase database handle
     :returns: numpy recarray of states
     """
-
-    # Try to make initial state0 from cmd line options
-    state0 = {
-        'pitch': pitch,
-        'aacccdpt': T_aca,
-        'tstart': tstart - 30,
-        'tstop': tstart,
-        'datestart': DateTime(tstart - 30).date,
-        'datestop': DateTime(tstart).date,
-        'q1': 0.0, 'q2': 0.0, 'q3': 0.0, 'q4': 1.0,
-        }
 
     cstates = get_cmd_states.fetch_states(DateTime(tstart) - 30,
                                           tstop,
@@ -284,23 +262,16 @@ def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm):
                                                 'pitch',
                                                 'q1', 'q2', 'q3', 'q4'])
 
-    if None in state0.values():
-        # If cmd line options were not fully specified, look up an initial
-        # state in cmd_states.  First fetch last 30 days of states
+    # Get the last state at least 3 days before tstart and at least one hour
+    # before the last available telemetry
+    cstate0 = cstates[(cstates['tstart'] < (DateTime(tstart) - 3).secs)
+                      & (cstates['tstart'] < (tlm[-1]['date'] - 3600))][-1]
+    # get temperature data in a range around that initial state
+    ok = ((tlm['date'] >= cstate0['tstart'] - 700) &
+          (tlm['date'] <= cstate0['tstart'] + 700))
+    init_aacccdpt = np.mean(tlm['aacccdpt'][ok])
 
-        # Get the last state at least 3 days before tstart and at least one hour
-        # before the last available telemetry
-        cstate0 = cstates[(cstates['tstart'] < (DateTime(tstart) - 3).secs)
-                          & (cstates['tstart'] < (tlm[-1]['date'] - 3600))][-1]
-        # update state0 from the new initial cmd state
-        for x in cstate0.dtype.names:
-            state0[x] = cstate0[x]
-        # get temperature data
-        ok = ((tlm['date'] >= state0['tstart'] - 700) &
-              (tlm['date'] <= state0['tstart'] + 700))
-        state0['aacccdpt'] = np.mean(tlm['aacccdpt'][ok])
-
-    pre_bs_states = cstates[(cstates['tstart'] >= state0['tstart'])
+    pre_bs_states = cstates[(cstates['tstart'] >= cstate0['tstart'])
                             & (cstates['tstop'] < tstart)]
     last_pre_bs_state = dict(zip(pre_bs_states.dtype.names, pre_bs_states[-1].tolist()))
     # Get the commanded states from last cmd_state through the end of backstop commands
@@ -313,11 +284,11 @@ def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm):
     all_states = pre_bs_states.tolist()
     all_states.extend([[row[val] for val in pre_bs_states.dtype.names] for row in states])
     all_states = np.rec.fromrecords(all_states, dtype=pre_bs_states.dtype)
-    # Add a column for temperature and pre-fill all to be the state0 temperature
+    # Add a column for temperature and pre-fill all to be the initial temperature
     # (the first state temperature is the only one used anyway)
     all_states = Ska.Numpy.add_column(all_states,
                                       'aacccdpt',
-                                      np.repeat(state0['aacccdpt'], len(all_states)))
+                                      np.repeat(init_aacccdpt, len(all_states)))
     return all_states
 
 
