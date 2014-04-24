@@ -25,6 +25,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+from astropy.table import vstack, Table
 import Ska.Matplotlib
 from Ska.Matplotlib import cxctime2plotdate as cxc2pd
 from Ska.Matplotlib import lineid_plot
@@ -143,7 +144,6 @@ def get_ccd_temps(oflsdir, outdir='out',
                            days=30)
 
     states = get_week_states(tstart, tstop, bs_cmds, tlm)
-
     # if the last obsid interval extends over the end of states
     # extend the state / predictions
     if ((states[-1]['obsid'] == sc_obsids[-1]['obsid'])
@@ -255,12 +255,11 @@ def get_week_states(tstart, tstop, bs_cmds, tlm):
     :param tlm: available pitch and aacccdpt telemetry recarray from fetch
     :returns: numpy recarray of states
     """
-
-    cstates = get_cmd_states.fetch_states(DateTime(tstart) - 30,
-                                          tstop,
-                                          vals=['obsid',
-                                                'pitch',
-                                                'q1', 'q2', 'q3', 'q4'])
+    cstates = Table(get_cmd_states.fetch_states(DateTime(tstart) - 30,
+                                                tstop,
+                                                vals=['obsid',
+                                                      'pitch',
+                                                      'q1', 'q2', 'q3', 'q4']))
 
     # Get the last state at least 3 days before tstart and at least one hour
     # before the last available telemetry
@@ -273,22 +272,21 @@ def get_week_states(tstart, tstop, bs_cmds, tlm):
 
     pre_bs_states = cstates[(cstates['tstart'] >= cstate0['tstart'])
                             & (cstates['tstop'] < tstart)]
-    last_pre_bs_state = dict(zip(pre_bs_states.dtype.names, pre_bs_states[-1].tolist()))
+    # cmd_states.get_states needs an initial state dictionary, so
+    # construct one from the last pre-backstop state
+    last_pre_bs_state = {col: pre_bs_states[-1][col]
+                         for col in pre_bs_states[-1].colnames}
     # Get the commanded states from last cmd_state through the end of backstop commands
-    states = cmd_states.get_states(last_pre_bs_state, bs_cmds)
+    states = Table(cmd_states.get_states(last_pre_bs_state, bs_cmds))
     states[-1].datestop = bs_cmds[-1]['date']
     states[-1].tstop = bs_cmds[-1]['time']
     logger.info('Constructed %d commanded states from %s to %s' %
                 (len(states), states[0]['datestart'], states[-1]['datestop']))
     # Combine the pre-backstop states with the commanded states
-    all_states = pre_bs_states.tolist()
-    all_states.extend([[row[val] for val in pre_bs_states.dtype.names] for row in states])
-    all_states = np.rec.fromrecords(all_states, dtype=pre_bs_states.dtype)
+    all_states = vstack([pre_bs_states, states])
     # Add a column for temperature and pre-fill all to be the initial temperature
     # (the first state temperature is the only one used anyway)
-    all_states = Ska.Numpy.add_column(all_states,
-                                      'aacccdpt',
-                                      np.repeat(init_aacccdpt, len(all_states)))
+    all_states['aacccdpt'] = init_aacccdpt
     return all_states
 
 
