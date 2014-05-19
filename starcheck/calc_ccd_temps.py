@@ -25,6 +25,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+from astropy.table import vstack, Table
 import Ska.Matplotlib
 from Ska.Matplotlib import cxctime2plotdate as cxc2pd
 from Ska.Matplotlib import lineid_plot
@@ -33,6 +34,7 @@ import Ska.Numpy
 import Ska.engarchive.fetch_sci as fetch
 from Chandra.Time import DateTime
 import Chandra.cmd_states as cmd_states
+from Chandra.cmd_states import get_cmd_states
 import xija
 
 from starcheck.version import version
@@ -80,13 +82,6 @@ def get_options():
                         type=int,
                         default=1,
                         help="Verbosity (0=quiet, 1=normal, 2=debug)")
-    parser.add_argument("--pitch",
-                        default=150,
-                        type=float,
-                        help="Starting pitch (deg)")
-    parser.add_argument("--T-aca",
-                        type=float,
-                        help="Starting ACA CCD temperature (degC)")
     parser.add_argument("--version",
                         action='version',
                         version=VERSION)
@@ -96,7 +91,7 @@ def get_options():
 
 def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=sys.stdin,
-                  model_spec=None, pitch=150, T_aca=None,
+                  model_spec=None,
                   verbose=1, **kwargs):
     """
     Using the cmds and cmd_states sybase databases, available telemetry, and
@@ -108,8 +103,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param json_obsids: file-like object or string containing JSON of
                         starcheck Obsid objects
     :param model_spec: xija ACA model specification
-    :param pitch: initial pitch for model calculations
-    :param T_aca: initial ACA temperature for model calculations
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
@@ -136,11 +129,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     # JSON we have from the Perl code
     sc_obsids = yaml.load(json_obsids)
 
-    # Connect to database (NEED TO USE aca_read)
-    logger.info('Connecting to database to get cmd_states')
-    db = Ska.DBI.DBI(dbi='sybase', server='sybase', user='aca_read',
-                     database='aca')
-
     tnow = DateTime().secs
 
     # Get tstart, tstop, commands from backstop file in opt.oflsdir
@@ -150,14 +138,12 @@ def get_ccd_temps(oflsdir, outdir='out',
     proc['datestart'] = DateTime(tstart).date
     proc['datestop'] = DateTime(tstop).date
 
-    # Get temperature telemetry for 3 weeks prior to min(tstart, NOW)
+    # Get temperature telemetry for 30 days prior to min(tstart, NOW)
     tlm = get_telem_values(min(tstart, tnow),
-                           ['aacccdpt', 'aosares1'],
-                           days=21,
-                           name_map={'aosares1': 'pitch'})
+                           ['aacccdpt', 'pitch'],
+                           days=30)
 
-    states = get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm, db)
-
+    states = get_week_states(tstart, tstop, bs_cmds, tlm)
     # if the last obsid interval extends over the end of states
     # extend the state / predictions
     if ((states[-1]['obsid'] == sc_obsids[-1]['obsid'])
@@ -259,74 +245,49 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
     return model
 
 
-def get_week_states(pitch, T_aca, tstart, tstop, bs_cmds, tlm, db):
+def get_week_states(tstart, tstop, bs_cmds, tlm):
     """
     Make states from last available telemetry through the end of the backstop commands
 
-    :param opt: options dictionary from get_options()
     :param tstart: start time from first backstop command
     :param tstop: stop time from last backstop command
     :param bs_cmds: backstop commands for products under review
     :param tlm: available pitch and aacccdpt telemetry recarray from fetch
-    :param db: sybase database handle
     :returns: numpy recarray of states
     """
+    cstates = Table(get_cmd_states.fetch_states(DateTime(tstart) - 30,
+                                                tstop,
+                                                vals=['obsid',
+                                                      'pitch',
+                                                      'q1', 'q2', 'q3', 'q4']))
 
-    # Try to make initial state0 from cmd line options
-    state0 = {
-        'pitch': pitch,
-        'aacccdpt': T_aca,
-        'tstart': tstart - 30,
-        'tstop': tstart,
-        'datestart': DateTime(tstart - 30).date,
-        'datestop': DateTime(tstart).date,
-        'q1': 0.0, 'q2': 0.0, 'q3': 0.0, 'q4': 1.0,
-        }
+    # Get the last state at least 3 days before tstart and at least one hour
+    # before the last available telemetry
+    cstate0 = cstates[(cstates['tstart'] < (DateTime(tstart) - 3).secs)
+                      & (cstates['tstart'] < (tlm[-1]['date'] - 3600))][-1]
+    # get temperature data in a range around that initial state
+    ok = ((tlm['date'] >= cstate0['tstart'] - 700) &
+          (tlm['date'] <= cstate0['tstart'] + 700))
+    init_aacccdpt = np.mean(tlm['aacccdpt'][ok])
 
-    # If cmd lines options were not fully specified then get state0 as last
-    # cmd_state that starts within available telemetry.  Update with the
-    # mean temperatures at the start of state0.
-    if None in state0.values():
-        state0 = cmd_states.get_state0(tlm['date'][-5], db,
-                                       datepar='datestart')
-        ok = ((tlm['date'] >= state0['tstart'] - 700) &
-              (tlm['date'] <= state0['tstart'] + 700))
-        state0.update({'aacccdpt': np.mean(tlm['aacccdpt'][ok])})
-
-    logger.debug('state0 at %s is\n%s' % (DateTime(state0['tstart']).date,
-                                          pformat(state0)))
-
-    # Get commands after end of state0 through first backstop command time
-    cmds_datestart = state0['datestop']
-    cmds_datestop = bs_cmds[0]['date']
-
-    # Get timeline load segments including state0 and beyond.
-    timeline_loads = db.fetchall("""SELECT * from timeline_loads
-                                 WHERE datestop > '%s'
-                                 and datestart < '%s'"""
-                                 % (cmds_datestart, cmds_datestop))
-    logger.info('Found {} timeline_loads  after {}'.format(
-            len(timeline_loads), cmds_datestart))
-
-    # Get cmds since datestart within timeline_loads
-    db_cmds = cmd_states.get_cmds(cmds_datestart, db=db, update_db=False,
-                                  timeline_loads=timeline_loads)
-
-    # Delete non-load cmds that are within the backstop time span
-    # => Keep if timeline_id is not None or date < bs_cmds[0]['time']
-    db_cmds = [x for x in db_cmds if (x['timeline_id'] is not None or
-                                      x['time'] < bs_cmds[0]['time'])]
-
-    logger.info('Got %d cmds from database between %s and %s' %
-                  (len(db_cmds), cmds_datestart, cmds_datestop))
-
-    # Get the commanded states from state0 through the end of backstop commands
-    states = cmd_states.get_states(state0, db_cmds + bs_cmds)
+    pre_bs_states = cstates[(cstates['tstart'] >= cstate0['tstart'])
+                            & (cstates['tstop'] < tstart)]
+    # cmd_states.get_states needs an initial state dictionary, so
+    # construct one from the last pre-backstop state
+    last_pre_bs_state = {col: pre_bs_states[-1][col]
+                         for col in pre_bs_states[-1].colnames}
+    # Get the commanded states from last cmd_state through the end of backstop commands
+    states = Table(cmd_states.get_states(last_pre_bs_state, bs_cmds))
     states[-1].datestop = bs_cmds[-1]['date']
     states[-1].tstop = bs_cmds[-1]['time']
-    logger.info('Found %d commanded states from %s to %s' %
-                 (len(states), states[0]['datestart'], states[-1]['datestop']))
-    return states
+    logger.info('Constructed %d commanded states from %s to %s' %
+                (len(states), states[0]['datestart'], states[-1]['datestop']))
+    # Combine the pre-backstop states with the commanded states
+    all_states = vstack([pre_bs_states, states])
+    # Add a column for temperature and pre-fill all to be the initial temperature
+    # (the first state temperature is the only one used anyway)
+    all_states['aacccdpt'] = init_aacccdpt
+    return all_states
 
 
 def make_week_predict(model_spec, states, tstop):
@@ -560,40 +521,6 @@ def make_check_plots(outdir, states, times, temps, tstart):
         plots[msid]['filename'] = filename
 
     return plots
-
-
-def get_states(datestart, datestop, db):
-    """Get states exactly covering date range
-
-    :param datestart: start date
-    :param datestop: stop date
-    :param db: database handle
-    :returns: np recarry of states
-    """
-    datestart = DateTime(datestart).date
-    datestop = DateTime(datestop).date
-    logger.info('Getting commanded states between %s - %s' %
-                 (datestart, datestop))
-
-    # Get all states that intersect specified date range
-    cmd = """SELECT * FROM cmd_states
-             WHERE datestop > '%s' AND datestart < '%s'
-             ORDER BY datestart""" % (datestart, datestop)
-    logger.debug('Query command: %s' % cmd)
-    states = db.fetchall(cmd)
-    logger.info('Found %d commanded states' % len(states))
-
-    # Set start and end state date/times to match telemetry span.  Extend the
-    # state durations by a small amount because of a precision issue converting
-    # to date and back to secs.  (The reference tstop could be just over the
-    # 0.001 precision of date and thus cause an out-of-bounds error when
-    # interpolating state values).
-    states[0].tstart = DateTime(datestart).secs - 0.01
-    states[0].datestart = DateTime(states[0].tstart).date
-    states[-1].tstop = DateTime(datestop).secs + 0.01
-    states[-1].datestop = DateTime(states[-1].tstop).date
-
-    return states
 
 
 def pointpair(x, y=None):
