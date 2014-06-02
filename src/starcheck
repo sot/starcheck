@@ -6,7 +6,7 @@ unset PYTHONPATH
 SKA_bin=`dirname $0`
 eval `${SKA_bin}/flt_envs -shell sh`
 export PYTHONHOME=$SKA_ARCH_OS
-export PERL_INLINE_DIRECTORY=`/bin/mktemp -d --tmpdir starcheck_inline.XXXXXX`
+export PERL_INLINE_DIRECTORY=`/bin/mktemp -d -t starcheck_inline.XXXXXX`
 exec perl ${SKA_bin}/starcheck.pl "$@"
 
 exit 1
