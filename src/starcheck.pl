@@ -565,7 +565,9 @@ eval{
         $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                               outdir=>$STARCHECK,
                                               json_obsids => $json_text,
-                                              model_spec => "$Starcheck_Data/aca_spec.json"});
+                                              model_spec => "$Starcheck_Data/aca_spec.json",
+                                              char_file => "$Starcheck_Data/characteristics.yaml",
+                                             });
         alarm 0;
     };
     if ($@){
