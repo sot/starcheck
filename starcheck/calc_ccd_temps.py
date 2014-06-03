@@ -75,6 +75,8 @@ def get_options():
                         help="output destination for temperature JSON, file or stdout")
     parser.add_argument("--model-spec",
                         help="xija ACA model specification file")
+    parser.add_argument("--char-file",
+                        help="starcheck characteristics file")
     parser.add_argument("--traceback",
                         default=True,
                         help='Enable tracebacks')
@@ -91,7 +93,7 @@ def get_options():
 
 def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=sys.stdin,
-                  model_spec=None,
+                  model_spec=None, char_file=None,
                   verbose=1, **kwargs):
     """
     Using the cmds and cmd_states sybase databases, available telemetry, and
@@ -122,6 +124,10 @@ def get_ccd_temps(oflsdir, outdir='out',
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
     logger.info('###############################'
                 '######################################\n')
+
+    # load more general starcheck characteristics to get red/yellow limits
+    char = yaml.load(open(char_file))
+
     # save spec file in out directory
     shutil.copy(model_spec, outdir)
 
@@ -159,7 +165,7 @@ def get_ccd_temps(oflsdir, outdir='out',
         times, ccd_temp = mock_telem_predict(states)
 
     make_check_plots(outdir, states, times,
-                     ccd_temp, tstart)
+                     ccd_temp, tstart, char=char)
 
     intervals = get_obs_intervals(sc_obsids)
     obstemps = get_interval_temps(intervals, times, ccd_temp)
@@ -465,7 +471,7 @@ def plot_two(fig_id, x, y, x2, y2,
     return {'fig': fig, 'ax': ax, 'ax2': ax2}
 
 
-def make_check_plots(outdir, states, times, temps, tstart):
+def make_check_plots(outdir, states, times, temps, tstart, char):
     """
     Make output plots.
 
@@ -512,8 +518,12 @@ def make_check_plots(outdir, states, times, temps, tstart):
                                   label1_size=7)
         plt.tight_layout()
         plt.subplots_adjust(top=.85)
-        plots[msid]['ax'].axvline(load_start, linestyle=':', color='g',
-                                  linewidth=1.0)
+        plots[msid]['ax'].axvline(load_start, color='b',
+                                  linewidth=3.0)
+        plots[msid]['ax'].axhline(y=char['ccd_temp_yellow_limit'],
+                                  linestyle='--', color='g', linewidth=2.0)
+        plots[msid]['ax'].axhline(y=char['ccd_temp_red_limit'],
+                                  linestyle='--', color='r', linewidth=2.0)
         filename = MSID_PLOT_NAME[msid]
         outfile = os.path.join(outdir, filename)
         logger.info('Writing plot file %s' % outfile)
