@@ -511,6 +511,12 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
                                figsize=(9, 5),
                                )
         ax = plots[msid]['ax']
+        plots[msid]['ax'].axvline(load_start, color='b',
+                                  linewidth=3.0)
+        plots[msid]['ax'].axhline(y=char['ccd_temp_yellow_limit'],
+                                  linestyle='--', color='g', linewidth=2.0)
+        plots[msid]['ax'].axhline(y=char['ccd_temp_red_limit'],
+                                  linestyle='--', color='r', linewidth=2.0)
         plt.subplots_adjust(bottom=0.1)
         pad = 1
         lineid_plot.plot_line_ids([cxc2pd([times[0]])[0] - pad, cxc2pd([times[-1]])[0] + pad],
@@ -520,12 +526,6 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
                                   label1_size=7)
         plt.tight_layout()
         plt.subplots_adjust(top=.85)
-        plots[msid]['ax'].axvline(load_start, color='b',
-                                  linewidth=3.0)
-        plots[msid]['ax'].axhline(y=char['ccd_temp_yellow_limit'],
-                                  linestyle='--', color='g', linewidth=2.0)
-        plots[msid]['ax'].axhline(y=char['ccd_temp_red_limit'],
-                                  linestyle='--', color='r', linewidth=2.0)
         filename = MSID_PLOT_NAME[msid]
         outfile = os.path.join(outdir, filename)
         logger.info('Writing plot file %s' % outfile)
