@@ -158,7 +158,6 @@ def get_ccd_temps(oflsdir, outdir='out',
         states[-1]['tstop'] = sc_obsids[-1]['obs_tstop']
         states[-1]['datestop'] = DateTime(sc_obsids[-1]['obs_tstop']).date
 
-
     if tstart >  DateTime(MODEL_VALID_FROM).secs:
         times, ccd_temp = make_week_predict(model_spec, states, tstop)
     else:
@@ -328,11 +327,14 @@ def mock_telem_predict(states):
     """
 
     # Get temperature telemetry over the interval
+    # Use the last state tstart instead of tstop because the last state
+    # from cmd_states is extended to 2099
     logger.info('Fetching telemetry between %s and %s' % (states[0]['tstart'],
-                                                          states[-1]['tstop']))
+                                                          states[-1]['tstart']))
+
     tlm = fetch.MSIDset(['aacccdpt'],
                         states[0]['tstart'],
-                        states[-1]['tstop'],
+                        states[-1]['tstart'],
                         stat='5min')
     temps = {'aca': tlm['aacccdpt'].vals}
     return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
