@@ -1717,7 +1717,13 @@ sub print_report {
 			      $c->{"GS_ID${i}"});
 	  }
 	    else{
-	      $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
+                if ((not defined $db_handle) and ($c->{"TYPE${i}"} ne 'FID')){
+                    $table .= sprintf("${idpad}<A HREF=\"%s%s\">%s</A>",
+                                      $acq_stat_lookup, $c->{"GS_ID${i}"}, $c->{"GS_ID${i}"});
+                }
+                else{
+                    $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
+                }
 	    }
 	    for my $field_idx (0 .. $#fields){
 		my $curr_format = $format[$field_idx];
