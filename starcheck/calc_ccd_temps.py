@@ -24,6 +24,7 @@ import yaml
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.patches
 
 from astropy.table import vstack, Table
 import Ska.Matplotlib
@@ -164,7 +165,7 @@ def get_ccd_temps(oflsdir, outdir='out',
         times, ccd_temp = mock_telem_predict(states)
 
     make_check_plots(outdir, states, times,
-                     ccd_temp, tstart, char=char)
+                     ccd_temp, tstart, tstop, char=char)
 
     intervals = get_obs_intervals(sc_obsids)
     obstemps = get_interval_temps(intervals, times, ccd_temp)
@@ -473,7 +474,7 @@ def plot_two(fig_id, x, y, x2, y2,
     return {'fig': fig, 'ax': ax, 'ax2': ax2}
 
 
-def make_check_plots(outdir, states, times, temps, tstart, char):
+def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
     """
     Make output plots.
 
@@ -488,6 +489,7 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
 
     # Start time of loads being reviewed expressed in units for plotdate()
     load_start = cxc2pd([tstart])[0]
+    load_stop = cxc2pd([tstop])[0]
 
     # Add labels for obsids
     id_xs = [cxc2pd([states[0]['tstart']])[0]]
@@ -515,8 +517,6 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
                                figsize=(9, 5),
                                )
         ax = plots[msid]['ax']
-        plots[msid]['ax'].axvline(load_start, color='b',
-                                  linewidth=3.0)
         plots[msid]['ax'].axhline(y=char['ccd_temp_yellow_limit'],
                                   linestyle='--', color='g', linewidth=2.0)
         plots[msid]['ax'].axhline(y=char['ccd_temp_red_limit'],
@@ -530,6 +530,23 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
                                   label1_size=7)
         plt.tight_layout()
         plt.subplots_adjust(top=.85)
+
+        xlims = ax.get_xlim()
+        ylims = ax.get_ylim()
+        pre_rect = matplotlib.patches.Rectangle((xlims[0], ylims[0]),
+                                                load_start - xlims[0],
+                                                ylims[1] - ylims[0],
+                                                alpha=.1,
+                                                facecolor='black',
+                                                edgecolor='none')
+        ax.add_patch(pre_rect)
+        post_rect = matplotlib.patches.Rectangle((load_stop, ylims[0]),
+                                                 xlims[-1] - load_stop,
+                                                 ylims[1] - ylims[0],
+                                                 alpha=.1,
+                                                 facecolor='black',
+                                                 edgecolor='none')
+        ax.add_patch(post_rect)
 
         filename = MSID_PLOT_NAME[msid]
         outfile = os.path.join(outdir, filename)
