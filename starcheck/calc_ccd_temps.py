@@ -499,6 +499,8 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
 
     logger.info('Making temperature check plots')
     for fig_id, msid in enumerate(('aca',)):
+        temp_ymax = max(char['ccd_temp_red_limit'], np.max(temps))
+        temp_ymin = min(char['ccd_temp_yellow_limit'], np.min(temps))
         plots[msid] = plot_two(fig_id=fig_id + 1,
                                x=times,
                                y=temps,
@@ -507,6 +509,8 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
                                xlabel='Date',
                                ylabel='Temperature (C)',
                                ylabel2='Pitch (deg)',
+                               ylim=(temp_ymin - .05 * (temp_ymax - temp_ymin),
+                                     temp_ymax + .05 * (temp_ymax - temp_ymin)),
                                ylim2=(40, 180),
                                figsize=(9, 5),
                                )
@@ -526,6 +530,7 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
                                   label1_size=7)
         plt.tight_layout()
         plt.subplots_adjust(top=.85)
+
         filename = MSID_PLOT_NAME[msid]
         outfile = os.path.join(outdir, filename)
         logger.info('Writing plot file %s' % outfile)
