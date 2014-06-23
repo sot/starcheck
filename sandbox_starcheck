@@ -6,7 +6,9 @@ export PYTHONPATH=$DIR:$PYTHONPATH
 PERL_INLINE_DIRECTORY=`/bin/mktemp -d -t starcheck_inline.XXXXXX` || exit 1
 export PERL_INLINE_DIRECTORY
 perl -I ${DIR}/src/lib ${DIR}/src/starcheck.pl -sc_data ${DIR}/starcheck_data "$@"
+SC_STATUS=$?
 if [[ -d $PERL_INLINE_DIRECTORY && $PERL_INLINE_DIRECTORY =~ .*starcheck_inline.* ]];
 then
     rm -r $PERL_INLINE_DIRECTORY
 fi
+exit $SC_STATUS
