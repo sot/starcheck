@@ -24,6 +24,7 @@ import yaml
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.patches
 
 from astropy.table import vstack, Table
 import Ska.Matplotlib
@@ -158,14 +159,13 @@ def get_ccd_temps(oflsdir, outdir='out',
         states[-1]['tstop'] = sc_obsids[-1]['obs_tstop']
         states[-1]['datestop'] = DateTime(sc_obsids[-1]['obs_tstop']).date
 
-
     if tstart >  DateTime(MODEL_VALID_FROM).secs:
         times, ccd_temp = make_week_predict(model_spec, states, tstop)
     else:
         times, ccd_temp = mock_telem_predict(states)
 
     make_check_plots(outdir, states, times,
-                     ccd_temp, tstart, char=char)
+                     ccd_temp, tstart, tstop, char=char)
 
     intervals = get_obs_intervals(sc_obsids)
     obstemps = get_interval_temps(intervals, times, ccd_temp)
@@ -328,11 +328,14 @@ def mock_telem_predict(states):
     """
 
     # Get temperature telemetry over the interval
+    # Use the last state tstart instead of tstop because the last state
+    # from cmd_states is extended to 2099
     logger.info('Fetching telemetry between %s and %s' % (states[0]['tstart'],
-                                                          states[-1]['tstop']))
+                                                          states[-1]['tstart']))
+
     tlm = fetch.MSIDset(['aacccdpt'],
                         states[0]['tstart'],
-                        states[-1]['tstop'],
+                        states[-1]['tstart'],
                         stat='5min')
     temps = {'aca': tlm['aacccdpt'].vals}
     return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
@@ -471,7 +474,7 @@ def plot_two(fig_id, x, y, x2, y2,
     return {'fig': fig, 'ax': ax, 'ax2': ax2}
 
 
-def make_check_plots(outdir, states, times, temps, tstart, char):
+def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
     """
     Make output plots.
 
@@ -486,6 +489,7 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
 
     # Start time of loads being reviewed expressed in units for plotdate()
     load_start = cxc2pd([tstart])[0]
+    load_stop = cxc2pd([tstop])[0]
 
     # Add labels for obsids
     id_xs = [cxc2pd([states[0]['tstart']])[0]]
@@ -497,6 +501,8 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
 
     logger.info('Making temperature check plots')
     for fig_id, msid in enumerate(('aca',)):
+        temp_ymax = max(char['ccd_temp_red_limit'], np.max(temps))
+        temp_ymin = min(char['ccd_temp_yellow_limit'], np.min(temps))
         plots[msid] = plot_two(fig_id=fig_id + 1,
                                x=times,
                                y=temps,
@@ -505,10 +511,16 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
                                xlabel='Date',
                                ylabel='Temperature (C)',
                                ylabel2='Pitch (deg)',
+                               ylim=(temp_ymin - .05 * (temp_ymax - temp_ymin),
+                                     temp_ymax + .05 * (temp_ymax - temp_ymin)),
                                ylim2=(40, 180),
                                figsize=(9, 5),
                                )
         ax = plots[msid]['ax']
+        plots[msid]['ax'].axhline(y=char['ccd_temp_yellow_limit'],
+                                  linestyle='--', color='g', linewidth=2.0)
+        plots[msid]['ax'].axhline(y=char['ccd_temp_red_limit'],
+                                  linestyle='--', color='r', linewidth=2.0)
         plt.subplots_adjust(bottom=0.1)
         pad = 1
         lineid_plot.plot_line_ids([cxc2pd([times[0]])[0] - pad, cxc2pd([times[-1]])[0] + pad],
@@ -518,12 +530,24 @@ def make_check_plots(outdir, states, times, temps, tstart, char):
                                   label1_size=7)
         plt.tight_layout()
         plt.subplots_adjust(top=.85)
-        plots[msid]['ax'].axvline(load_start, color='b',
-                                  linewidth=3.0)
-        plots[msid]['ax'].axhline(y=char['ccd_temp_yellow_limit'],
-                                  linestyle='--', color='g', linewidth=2.0)
-        plots[msid]['ax'].axhline(y=char['ccd_temp_red_limit'],
-                                  linestyle='--', color='r', linewidth=2.0)
+
+        xlims = ax.get_xlim()
+        ylims = ax.get_ylim()
+        pre_rect = matplotlib.patches.Rectangle((xlims[0], ylims[0]),
+                                                load_start - xlims[0],
+                                                ylims[1] - ylims[0],
+                                                alpha=.1,
+                                                facecolor='black',
+                                                edgecolor='none')
+        ax.add_patch(pre_rect)
+        post_rect = matplotlib.patches.Rectangle((load_stop, ylims[0]),
+                                                 xlims[-1] - load_stop,
+                                                 ylims[1] - ylims[0],
+                                                 alpha=.1,
+                                                 facecolor='black',
+                                                 edgecolor='none')
+        ax.add_patch(post_rect)
+
         filename = MSID_PLOT_NAME[msid]
         outfile = os.path.join(outdir, filename)
         logger.info('Writing plot file %s' % outfile)
