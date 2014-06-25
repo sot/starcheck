@@ -23,8 +23,8 @@ TEST_BACKSTOP = AUG0104A/CR214_0300.backstop
 DATA_FILES = starcheck_data/aca_spec.json starcheck_data/ACABadPixels starcheck_data/agasc.bad \
 	starcheck_data/fid_CHARACTERIS_JUL01 starcheck_data/fid_CHARACTERIS_FEB07 \
 	starcheck_data/fid_CHARACTERISTICS starcheck_data/characteristics.yaml \
-	starcheck_data/A.tlr starcheck_data/B.tlr starcheck_data/tlr.cfg
-
+	starcheck_data/A.tlr starcheck_data/B.tlr starcheck_data/tlr.cfg \
+	starcheck_data/overlib.js starcheck_data/up.gif starcheck_data/down.gif
 
 SHA_FILES = ${SKA_ARCH_OS}/bin/ska_version ${SKA_ARCH_OS}/pkgs.manifest $(BIN) $(LIB) \
 	$(DATA_FILES) $(PYTHON_LIB)
