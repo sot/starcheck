@@ -24,7 +24,8 @@ DATA_FILES = starcheck_data/aca_spec.json starcheck_data/ACABadPixels starcheck_
 	starcheck_data/fid_CHARACTERIS_JUL01 starcheck_data/fid_CHARACTERIS_FEB07 \
 	starcheck_data/fid_CHARACTERISTICS starcheck_data/characteristics.yaml \
 	starcheck_data/A.tlr starcheck_data/B.tlr starcheck_data/tlr.cfg \
-	starcheck_data/overlib.js starcheck_data/up.gif starcheck_data/down.gif
+	starcheck_data/overlib.js starcheck_data/up.gif starcheck_data/down.gif \
+	starcheck_data/D3_LICENSE starcheck_data/d3.js starcheck_data/d3.min.js
 
 SHA_FILES = ${SKA_ARCH_OS}/bin/ska_version ${SKA_ARCH_OS}/pkgs.manifest $(BIN) $(LIB) \
 	$(DATA_FILES) $(PYTHON_LIB)
