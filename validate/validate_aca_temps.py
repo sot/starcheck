@@ -40,17 +40,9 @@ def calc_ccd_model(start, stop):
     model_spec = chandra_models.get_xija_model_file('aca')
 
     # Initially propagate model for three days prior to estimate aca0 value
-    model = xija.XijaModel('aca', model_spec=model_spec, start=start - 3, stop=start)
+    model = xija.XijaModel('aca', model_spec=model_spec, start=start - 3, stop=stop)
     dat = fetch.Msid('aacccdpt', start - 3, start - 2, stat='5min')
-    model.comp['aca0'].set_data(dat.vals[0].tolist())
-    model.make()
-    model.calc()
-
-    aca0_start = model.comp['aca0'].mvals[-1].tolist()  # Last value of ACA pseudo-node
-
-    # Now propagate model for the requested start / stop interval
-    model = xija.XijaModel('aca', model_spec=model_spec, start=start, stop=stop)
-    model.comp['aca0'].set_data(aca0_start)
+    model.comp['aca0'].set_data(float(dat.vals[0]))
     model.make()
     model.calc()
 
