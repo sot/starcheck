@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2011/DEC1211/oflsa/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2011/DEC1211/oflsa/mps/ms346_0006.sum
 Using radmon file /data/mpcrit1/mplogs/2011/DEC1211/oflsa/History/RADMON.txt
-Using ACABadPixel file from 2013191 Dark Cal 
+Using ACABadPixel file from 2014104 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
@@ -108,7 +108,7 @@ OBSID = 54983 at 2011:348:19:16:12.129   8 clean ACQ | 8 clean GUI |
 OBSID = 54982 at 2011:348:21:47:52.368   8 clean ACQ | 8 clean GUI | 
 OBSID = 14024 at 2011:348:23:26:07.985   8 clean ACQ | 5 clean GUI | 
          ------  2011:350:11:00:00.000   OBC Load Segment Begins     CL350:1107 
-OBSID = 13998 at 2011:350:14:21:03.368   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID = 13998 at 2011:350:14:21:03.368   7 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 14049 at 2011:350:23:14:34.533   8 clean ACQ | 5 clean GUI | 
 OBSID = 12910 at 2011:351:01:13:14.338   6 clean ACQ | 4 clean GUI | WARNINGS [ 3]
 OBSID = 54981 at 2011:351:06:31:33.830   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
@@ -883,6 +883,7 @@ MP_STARCAT at 2011:350:14:21:03.368 (VCDU count = 550179)
 [11]  1   700059360   ACQ  6x6   5.797   9.949  11.453    864    282  20   1  120    a2    
 [12]  2   699545808   ACQ  6x6   5.797  10.179  11.688   1476   1848  20   1  120    a3    
 
+>> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:   0,  15,  15
 >> WARNING: [11] Search spoiler.  700059696: Y,Z,Radial,Mag seps: 137 144 199 -0.8
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.560	-5.695	-4.136	

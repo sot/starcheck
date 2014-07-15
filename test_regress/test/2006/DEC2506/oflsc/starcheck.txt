@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2006/DEC2506/oflsc/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_JUL01
 Using processing summary file /data/mpcrit1/mplogs/2006/DEC2506/oflsc/mps/ms359_0926.sum
 Using radmon file /data/mpcrit1/mplogs/2006/DEC2506/oflsc/History/RADMON.txt
-Using ACABadPixel file from 2013191 Dark Cal 
+Using ACABadPixel file from 2014104 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
@@ -90,7 +90,7 @@ OBSID =  7917 at 2006:361:17:54:04.026   8 clean ACQ | 5 clean GUI |
          ------  2006:362:11:14:34.026   OBC Load Segment Begins     CL362:1109 
 OBSID =  7996 at 2006:362:11:17:40.026   8 clean ACQ | 5 clean GUI | 
 OBSID = 58619 at 2006:363:01:03:37.802   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
-OBSID = 58618 at 2006:363:03:41:06.999   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 58618 at 2006:363:03:41:06.999   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
 OBSID = 58617 at 2006:363:14:35:10.238   8 clean ACQ | 8 clean GUI | 
          ------  2006:363:16:04:34.846   OBC Load Segment Begins     CL363:1609 
 OBSID = 58616 at 2006:363:16:07:40.846   8 clean ACQ | 8 clean GUI | 
@@ -596,6 +596,7 @@ MP_STARCAT at 2006:363:03:41:06.999 (VCDU count = 6117400)
 [ 8]  7   311568904   GUI  8x8   5.797   9.780  11.281   2309   1841   1   1   25    g2    
 [ 9]  7   312082584   ACQ  8x8   5.797   9.315  10.812  -1241     -5  20   1  120          
 
+>> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  43,  12,  45
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2006:363:14:00:00.000
 
