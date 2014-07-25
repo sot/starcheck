@@ -43,6 +43,7 @@ sub make_figure_of_merit{
 	    $acq{index} = $i;
 	    $acq{magnitude} = $c->{"GS_MAG$i"};
 	    $acq{warnings} = [grep {/\[\s{0,1}$i\]/} (@{$self->{warn}}, @{$self->{yellow_warn}})];
+            $acq{n100_warm_frac} = $self->{n100_warm_frac} || $self->{config}{n100_warm_frac_default};
 	    #find the probability of acquiring a star
 	    push @probs, star_prob(\%acq);
 	}
@@ -65,29 +66,24 @@ sub star_prob {
     my ($acq) = @_;
     my @warnings = @{ $acq->{warnings} };
     my $mag = $acq->{magnitude};
+    my $warm_frac = $acq->{n100_warm_frac};
 
-    my $prob; #initialize the probability   
- 
-    my $p_normal = .9846; #probability of acquiring any star
-    my $p_marsta = .4846; #probability of acquiring a B-V = 0.700 star
+    my $p_badcolor = .4294; #probability of acquiring a B-V = 0.700 star
+    my $p_1p5color = 0.9452; #probability of acquiring a B-V = 1.500 star
     my $p_seaspo = .9241; #probability of acquiring a search spoiled star
-    my @c_mag = qw(-1008.50 243.75 -13.41); #polynomial coefficients for magnitudes
 
-    my $j = 0;
+    my $mag10 = $mag - 10.0;
+    my $scale = 10. ** (0.185 + 0.990 * $mag10 + -0.491 * $mag10 ** 2);
+    my $offset = 10. ** (-1.489 + 0.888 * $mag10 + 0.280 * $mag10 ** 2);
+    my $prob = 1.0 - ($offset + $scale * $warm_frac);
 
-    $prob = $p_normal;
-
-    if ($mag > 9.5) {
-	my $coeff = ($c_mag[0]+$c_mag[1]*($mag)+$c_mag[2]*($mag**2))/100.0;
-	$coeff = 0.0 if ($coeff < 0.0);
-        $prob *= $coeff;
-    }
-
-    
     foreach my $warning (@warnings) {
 	if ($warning =~ /B-V = 0.700/) {
-	    $prob *= $p_marsta;
+	    $prob *= $p_badcolor;
 	}
+        if ($warning =~ /B-V = 1.500/) {
+            $prob *= $p_1p5color;
+        }
 	if ($warning =~ /Search Spoiler/) {
 	    $prob *= $p_seaspo;
 	}
@@ -97,7 +93,6 @@ sub star_prob {
             last;
 	}
     }
-
     return $prob;
 }
 
@@ -134,9 +129,10 @@ sub cum_prob {
     my $exp = 0;
     for my $i (1.. $n_slot) {
 	$exp += $i*$acq_prob[$i];
-	for my $j ($i.. $n_slot) { $cum_prob[$i] += $acq_prob[$j] };	
+	for my $j ($i.. $n_slot) { $cum_prob[$i] += $acq_prob[$j] };
     }
-    for my $i (1.. $n_slot) { $cum_prob[$i] = substr(log(1.0 - $cum_prob[$i])/log(10.0),0,6) };
+    my $small_number = 1e-15;
+    for my $i (1.. $n_slot) { $cum_prob[$i] = substr(log($small_number + 1.0 - $cum_prob[$i])/log(10.0),0,6) };
 
 
     return {expected => substr($exp,0,4),

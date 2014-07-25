@@ -98,6 +98,7 @@ sub new {
 #    @{$self->{agasc_stars}} = ();
     %{$self->{count_nowarn_stars}} = ();
     $self->{ccd_temp} = undef;
+    $self->{config} = \%config;
     return $self;
 }
     
@@ -2625,6 +2626,7 @@ sub set_ccd_temps{
     }
     # set the temperature to the value for the current obsid
     $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
+    $self->{n100_warm_frac} = $obsid_temps->{$self->{obsid}}->{n100_warm_frac};
     # add warnings for limit violations
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
         push @{$self->{warn}}, sprintf("$alarm CCD temperature exceeds %d C\n",
