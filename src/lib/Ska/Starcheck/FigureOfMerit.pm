@@ -68,7 +68,7 @@ sub star_prob {
     my $mag = $acq->{magnitude};
     my $warm_frac = $acq->{n100_warm_frac};
 
-    my $p_badcolor = .4294; #probability of acquiring a B-V = 0.700 star
+    my $p_0p7color = .4294; #probability of acquiring a B-V = 0.700 star
     my $p_1p5color = 0.9452; #probability of acquiring a B-V = 1.500 star
     my $p_seaspo = .9241; #probability of acquiring a search spoiled star
 
@@ -79,7 +79,7 @@ sub star_prob {
 
     foreach my $warning (@warnings) {
 	if ($warning =~ /B-V = 0.700/) {
-	    $prob *= $p_badcolor;
+	    $prob *= $p_0p7color;
 	}
         if ($warning =~ /B-V = 1.500/) {
             $prob *= $p_1p5color;
