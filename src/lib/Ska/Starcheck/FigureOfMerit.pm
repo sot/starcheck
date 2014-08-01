@@ -37,6 +37,7 @@ sub make_figure_of_merit{
     my $self = shift;
     return unless ($c = $self->find_command("MP_STARCAT"));
     my @probs;
+    my %slot_probs;
     foreach my $i (1..16) {
 	my %acq = ();
 	my $type = $c->{"TYPE$i"};
@@ -46,7 +47,9 @@ sub make_figure_of_merit{
 	    $acq{warnings} = [grep {/\[\s{0,1}$i\]/} (@{$self->{warn}}, @{$self->{yellow_warn}})];
             $acq{n100_warm_frac} = $self->{n100_warm_frac} || $self->{config}{n100_warm_frac_default};
 	    #find the probability of acquiring a star
-	    push @probs, star_prob(\%acq);
+            my $star_prob = star_prob(\%acq);
+	    push @probs, $star_prob;
+            $slot_probs{$c->{"IMNUM$i"}} = $star_prob;
 	}
     }
 #    push @{$self->{yellow_warn}}, "Probs = " .  join(" ",  map{ sprintf("%.4f",$_) } @probs) . "\n";
@@ -56,7 +59,7 @@ sub make_figure_of_merit{
     my @nacq_probs = prob_nstars($n_slot, @probs);
     #calculate the probability of acquiring at least n stars
     $self->{figure_of_merit} = cum_prob($n_slot, @nacq_probs);
-
+    $self->{acq_probs} = \%slot_probs;
 
 
 }
