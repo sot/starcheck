@@ -135,8 +135,7 @@ sub cum_prob {
 	$exp += $i*$acq_prob[$i];
 	for my $j ($i.. $n_slot) { $cum_prob[$i] += $acq_prob[$j] };
     }
-    my $small_number = 1e-15;
-    for my $i (1.. $n_slot) { $cum_prob[$i] = substr(log($small_number + 1.0 - $cum_prob[$i])/log(10.0),0,6) };
+    for my $i (1.. $n_slot) { $cum_prob[$i] = substr(log(1.0 - $cum_prob[$i])/log(10.0),0,6) };
 
 
     return {expected => substr($exp,0,4),
