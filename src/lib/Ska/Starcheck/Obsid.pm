@@ -1807,7 +1807,8 @@ sub print_report {
     }
 
     if (defined $self->{ccd_temp}){
-        $o .= sprintf("Predicted Max CCD temperature: %.1f C \n", $self->{ccd_temp});
+        $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp})
+              . sprintf("\t N100 Warm Pix Frac %.3f \n", $self->{n100_warm_frac});
     }
     else{
         $o .= sprintf("No CCD temperature prediction\n")
