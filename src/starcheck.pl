@@ -505,7 +505,6 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_flick_pix_mon();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
-    $obs{$obsid}->make_figure_of_merit();
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
     $obs{$obsid}->set_npm_times();
     $obs{$obsid}->check_bright_perigee($radmon);
@@ -590,6 +589,11 @@ if ($obsid_temps){
     foreach my $obsid (@obsid_id) {
         $obs{$obsid}->set_ccd_temps($obsid_temps);
     }
+}
+
+# Make a figure of merit now that we have all the temperatures
+foreach my $obsid (@obsid_id) {
+    $obs{$obsid}->make_figure_of_merit();
 }
 
 my $final_json = json_obsids();
