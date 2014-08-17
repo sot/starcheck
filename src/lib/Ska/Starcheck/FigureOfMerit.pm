@@ -77,9 +77,12 @@ sub star_prob {
     my $p_seaspo = .9241; #probability of acquiring a search spoiled star
 
     my $mag10 = $mag - 10.0;
+    # Minimum warm fraction seen in fit data
+    my $warm_frac_min = 0.0412;
+    # Co-efficients from 2013 State of the ACA polynomial fit
     my $scale = 10. ** (0.185 + 0.990 * $mag10 + -0.491 * $mag10 ** 2);
     my $offset = 10. ** (-1.489 + 0.888 * $mag10 + 0.280 * $mag10 ** 2);
-    my $prob = 1.0 - ($offset + $scale * $warm_frac);
+    my $prob = 1.0 - ($offset + $scale * ($warm_frac - $warm_frac_min));
     # Clip the individual star probability at $max_star_prob
     my $max_star_prob = .985;
     $prob = min($max_star_prob, $prob);
