@@ -83,9 +83,12 @@ sub star_prob {
     my $scale = 10. ** (0.185 + 0.990 * $mag10 + -0.491 * $mag10 ** 2);
     my $offset = 10. ** (-1.489 + 0.888 * $mag10 + 0.280 * $mag10 ** 2);
     my $prob = 1.0 - ($offset + $scale * ($warm_frac - $warm_frac_min));
-    # Clip the individual star probability at $max_star_prob
     my $max_star_prob = .985;
-    $prob = min($max_star_prob, $prob);
+    # If the star is brighter than 8.5 or has a calculated probability
+    # higher than the $max_star_prob, clip it at that value
+    if (($mag < 8.5) or ($prob > $max_star_prob)){
+        $prob = $max_star_prob;
+    }
 
     foreach my $warning (@warnings) {
 	if ($warning =~ /B-V = 0.700/) {
