@@ -35,7 +35,7 @@ sub new{
 	       );
 
 
-    my @checks = qw(
+    my @checks = (qw(
 					aca_init_command
 					trans_replica_0
 					dither_disable_0
@@ -58,7 +58,7 @@ sub new{
 					check_momentum_unloads
 					check_dither_enable_at_end
 					check_dither_param_at_end
-					);
+					));
 
     
 # Create a hash to store all information about the checks as they are performed
@@ -90,7 +90,7 @@ sub new{
     my %templates = map { $_ => TLR->new(get_file("$par{app_data}/$config{file}{template}{$_}", 
                                                   'template', 
                                                   'required', 
-                                                  \@{$feedback{input_files}} ), 'template', \%config) } qw(A B);
+                                                  \@{$feedback{input_files}} ), 'template', \%config) } (qw(A B));
     
     my $manvrs = maneuver_parse($dot_aref);
     my $dwells = calc_dwells($manvrs);
@@ -203,7 +203,7 @@ sub replicas{
 		# run the command checks on each transponder and store the results in the %per_trans hash
 		my %per_trans;
 		my $best_guess;
-		for my $trans qw( A B ){
+		for my $trans (qw( A B )){
 			my $template = $templates->{$trans};
 			my @replica_templ;
 			for my $entry (@{$template->{entries}}){
@@ -247,7 +247,7 @@ sub check_iu{
 ##***************************************************************************
 	my $check_cfg = shift;
 	my ($replica, $r_datestart, $transponder, $timelines, $config) = 
-		@{$check_cfg}{qw(replica r_datestart transponder timelines config)};
+		@{$check_cfg}{(qw(replica r_datestart transponder timelines config))};
 
 	#my $r_tstart $r_tstop, $transponder, $timelines, $config) = @_;
 	my %output = (
@@ -396,7 +396,7 @@ sub check_dither_disable_before_replica{
 
     my @tlr_arr = @{$tlr->{entries}};
 
-    my %cmd_list = map { $_ => $config->{template}{independent}{$_}} qw( dither_enable dither_disable );
+    my %cmd_list = map { $_ => $config->{template}{independent}{$_}} (qw( dither_enable dither_disable ));
 
     my $index_0 = $tlr->begin_replica($replica)->index();
 
@@ -435,7 +435,7 @@ sub check_dither_disable_before_replica{
     # confirm that the most recent dither command is correct
     my $match = entry_arrays_match( \@last_dith_cmd, $cmd_list{dither_disable} ); 
     $output{status} = $match->{status};
-    for my $data qw(info criteria){
+    for my $data (qw(info criteria)){
 	if ($match->{$data}){
 	    push @{$output{$data}}, @{$match->{$data}};
 	}
@@ -459,7 +459,7 @@ sub check_dither_enable_at_end{
     
     my @tlr_arr = @{$tlr->{entries}};
 
-    my %cmd_list = map { $_ => $config->{template}{independent}{$_}} qw( dither_enable dither_disable );
+    my %cmd_list = map { $_ => $config->{template}{independent}{$_}} (qw( dither_enable dither_disable ));
 
     my $index_end = $tlr->end_replica(4)->index();
     my $manvr_away_from_dfc = $tlr->manvr_away_from_dfc();
@@ -509,7 +509,7 @@ sub check_dither_enable_at_end{
     # confirm that the most recent dither command is correct
     my $match = entry_arrays_match( \@dith_cmd, $cmd_list{dither_enable} ); 
     $output{status} = $match->{status};
-    for my $data qw(info  criteria){
+    for my $data (qw(info  criteria)){
 	if ($match->{$data}){
 	    push @{$output{$data}}, @{$match->{$data}};
 	}
@@ -581,7 +581,7 @@ sub check_dither_param_before_replica{
     # confirm that the most recent dither command is correct
     my $match = entry_arrays_match( \@last_dith_param, $dither_null_param ); 
     $output{status} = $match->{status};
-    for my $data qw(info criteria){
+    for my $data (qw(info criteria)){
 	if ($match->{$data}){
 	    push @{$output{$data}}, @{$match->{$data}};
 	}
@@ -668,7 +668,7 @@ sub check_dither_param_at_end{
     # confirm that the most recent dither command is correct
     my $match = entry_arrays_match( \@dith_param, $dither_default_param ); 
     $output{status} = $match->{status};
-    for my $data qw(info criteria){
+    for my $data (qw(info criteria)){
 	if ($match->{$data}){
 	    push @{$output{$data}}, @{$match->{$data}};
 	}
@@ -1805,7 +1805,7 @@ use Ska::Convert qw(date2time);
 
 
 use Class::MakeMethods::Standard::Hash  (
-					 scalar => [ qw(
+					 scalar => [ (qw(
 							comm_desc
 							datestamp
 							replica
@@ -1813,7 +1813,7 @@ use Class::MakeMethods::Standard::Hash  (
 							index
 							trace_id
 							previous_entry
-							)
+							))
 						     ],
 					 );
 
