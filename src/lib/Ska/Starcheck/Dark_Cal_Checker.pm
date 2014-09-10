@@ -1858,7 +1858,8 @@ sub matches_entry{
 				  type => 'error' };
     }
 
-    my $step_rel_time_match = ($entry1->step_rel_time_replica() == $entry2->step_rel_time_replica());
+    my $REL_TIME_TOL = 1e-6; # seconds
+    my $step_rel_time_match = (($entry1->step_rel_time_replica() - $entry2->step_rel_time_replica()) < $REL_TIME_TOL);
     if ( !$step_rel_time_match ){
 #	push @{$output{error}} ,sprintf($entry1->datestamp() . "\t" . $entry1->comm_mnem() . "\t" . $entry1->comm_desc());
 #	push @{$output{error}}, sprintf("step relative time mismatch: " . $entry1->step_rel_time_replica() . " secs tlr, " . $entry2->step_rel_time_replica() . " secs template ");
@@ -1895,7 +1896,7 @@ sub matches_entry{
 	push @{$output{info}}, @{$hex_equal->{info}};
     }
     if (($entry1->comm_mnem() eq $entry2->comm_mnem()) and
-	($entry1->step_rel_time_replica() == $entry2->step_rel_time_replica()) and
+	(($entry1->step_rel_time_replica() - $entry2->step_rel_time_replica()) < $REL_TIME_TOL) and
 	($hex_equal->{status})){
 	$output{status} = 1;
     }
