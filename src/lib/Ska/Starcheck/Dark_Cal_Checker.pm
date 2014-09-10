@@ -858,7 +858,7 @@ sub check_momentum_unloads {
 	for my $entry (@{$bs}){
 		if ((defined $entry->{command}) and (defined $entry->{command}->{TLMSID})){
 			if ($entry->{command}->{TLMSID} =~ /AOMUNLGR/){
-				push @unloads, $entry->{datestamp};
+				push @unloads, $entry->{date};
 			}
 		}
 	}
