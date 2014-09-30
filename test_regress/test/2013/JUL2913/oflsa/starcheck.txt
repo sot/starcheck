@@ -32,11 +32,11 @@ Using ACABadPixel file from 2014104 Dark Cal
          ------  2013:210:02:16:30.842   OBC Load Segment Begins     CL210:0217 
 OBSID = 53522 at 2013:210:02:19:36.842   8 clean ACQ | 8 clean GUI | 
 OBSID = 53521 at 2013:210:02:33:51.423   8 clean ACQ | 8 clean GUI | 
-OBSID = 53520 at 2013:210:03:07:53.465   6 clean ACQ | 7 clean GUI | WARNINGS [ 3]
-OBSID = 53519 at 2013:210:05:11:11.655   7 clean ACQ | 8 clean GUI | WARNINGS [ 2]
-OBSID = 53518 at 2013:210:06:44:43.886   8 clean ACQ | 8 clean GUI | WARNINGS [ 1]
-OBSID = 53517 at 2013:210:07:49:28.985   8 clean ACQ | 8 clean GUI | WARNINGS [ 1]
-OBSID = 15039 at 2013:210:09:19:36.680   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID = 53520 at 2013:210:03:07:53.465   6 clean ACQ | 7 clean GUI | WARNINGS [ 2]
+OBSID = 53519 at 2013:210:05:11:11.655   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
+OBSID = 53518 at 2013:210:06:44:43.886   8 clean ACQ | 8 clean GUI | 
+OBSID = 53517 at 2013:210:07:49:28.985   8 clean ACQ | 8 clean GUI | 
+OBSID = 15039 at 2013:210:09:19:36.680   8 clean ACQ | 5 clean GUI | 
 OBSID = 15474 at 2013:211:01:16:04.433   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 15303 at 2013:211:10:27:25.630   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2013:211:12:35:01.285   OBC Load Segment Begins     CL211:1217 
@@ -143,7 +143,7 @@ MP_STARCAT at 2013:210:03:07:53.465 (VCDU count = 8975547)
 
 >> WARNING: [ 1] Search spoiler.  139214720: Y,Z,Radial,Mag seps:   3  71  71 -0.9
 >> WARNING: [ 9] Search spoiler.  140904992: Y,Z,Radial,Mag seps:  75 145 163 -0.8
->> WARNING: CCD temperature exceeds -15 C
+>> INFO   : CCD temperature exceeds -15 C
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.630	-7.467	-5.575	
 Acquisition Stars Expected  : 7.64
@@ -174,7 +174,7 @@ MP_STARCAT at 2013:210:05:11:11.655 (VCDU count = 9004418)
 [11]  7   466111312   ACQ  8x8   5.797   9.819  11.328  -1313  -1025  20   1  120    a2    
 
 >> WARNING: [ 9] Search spoiler.  464405536: Y,Z,Radial,Mag seps:  41 128 135 -0.7
->> WARNING: CCD temperature exceeds -15 C
+>> INFO   : CCD temperature exceeds -15 C
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.757	-7.587	-5.687	
 Acquisition Stars Expected  : 7.67
@@ -202,7 +202,7 @@ MP_STARCAT at 2013:210:06:44:43.886 (VCDU count = 9026320)
 [ 8]  7     2363400   GUI  8x8   5.797   7.850   9.359  -1932  -1053   1   1   25          
 [ 9]  7    79176512   ACQ  8x8   5.797   9.415  10.922   1694  -1212  20   1  120    a2    
 
->> WARNING: CCD temperature exceeds -15 C
+>> INFO   : CCD temperature exceeds -15 C
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.439	-7.331	
 Acquisition Stars Expected  : 7.87
@@ -231,7 +231,7 @@ MP_STARCAT at 2013:210:07:49:28.985 (VCDU count = 9041481)
 [ 9]  6    70261136   ACQ  8x8   5.797   9.868  11.375   1979    335  20   1  120    a2    
 [10]  7    70259024   ACQ  8x8   5.797  10.039  11.547   -136  -1669  20   1  120    a2    
 
->> WARNING: CCD temperature exceeds -15 C
+>> INFO   : CCD temperature exceeds -15 C
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.10	-7.873	-5.908	
 Acquisition Stars Expected  : 7.66
@@ -262,7 +262,7 @@ MP_STARCAT at 2013:210:09:19:36.680 (VCDU count = 9062584)
 [10]  1   685379016   ACQ  6x6   5.797   9.691  11.203   -566  -1449  20   1  120    a2    
 [11]  2   685379504   ACQ  6x6   5.797   9.901  11.406   -427  -1740  20   1  120    a2    
 
->> WARNING: CCD temperature exceeds -15 C
+>> INFO   : CCD temperature exceeds -15 C
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.485	-7.326	-5.440	
 Acquisition Stars Expected  : 7.60
