@@ -266,7 +266,6 @@ def get_week_states(tstart, tstop, bs_cmds, tlm):
                                                 vals=['obsid',
                                                       'pitch',
                                                       'q1', 'q2', 'q3', 'q4']))
-
     # Get the last state at least 3 days before tstart and at least one hour
     # before the last available telemetry
     cstate0 = cstates[(cstates['tstart'] < (DateTime(tstart) - 3).secs)
@@ -277,15 +276,18 @@ def get_week_states(tstart, tstop, bs_cmds, tlm):
     init_aacccdpt = np.mean(tlm['aacccdpt'][ok])
 
     pre_bs_states = cstates[(cstates['tstart'] >= cstate0['tstart'])
-                            & (cstates['tstop'] < tstart)]
+                            & (cstates['tstart'] < tstart)]
     # cmd_states.get_states needs an initial state dictionary, so
     # construct one from the last pre-backstop state
     last_pre_bs_state = {col: pre_bs_states[-1][col]
                          for col in pre_bs_states[-1].colnames}
     # Get the commanded states from last cmd_state through the end of backstop commands
     states = Table(cmd_states.get_states(last_pre_bs_state, bs_cmds))
-    states[-1].datestop = bs_cmds[-1]['date']
-    states[-1].tstop = bs_cmds[-1]['time']
+    states[-1]['datestop'] = bs_cmds[-1]['date']
+    states[-1]['tstop'] = bs_cmds[-1]['time']
+    # Truncate the last pre_bs_state at the new states start
+    pre_bs_states[-1]['datestop'] = states[0]['datestart']
+    pre_bs_states[-1]['tstop'] = states[0]['tstart']
     logger.info('Constructed %d commanded states from %s to %s' %
                 (len(states), states[0]['datestart'], states[-1]['datestop']))
     # Combine the pre-backstop states with the commanded states
