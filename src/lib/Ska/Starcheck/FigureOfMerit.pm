@@ -17,6 +17,7 @@ package Ska::Starcheck::FigureOfMerit;
 ##*****************************************************************************************
 
 use strict;
+use List::Util qw(min);
 
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
@@ -36,6 +37,7 @@ sub make_figure_of_merit{
     my $self = shift;
     return unless ($c = $self->find_command("MP_STARCAT"));
     my @probs;
+    my %slot_probs;
     foreach my $i (1..16) {
 	my %acq = ();
 	my $type = $c->{"TYPE$i"};
@@ -43,8 +45,11 @@ sub make_figure_of_merit{
 	    $acq{index} = $i;
 	    $acq{magnitude} = $c->{"GS_MAG$i"};
 	    $acq{warnings} = [grep {/\[\s{0,1}$i\]/} (@{$self->{warn}}, @{$self->{yellow_warn}})];
+            $acq{n100_warm_frac} = $self->{n100_warm_frac} || $self->{config}{n100_warm_frac_default};
 	    #find the probability of acquiring a star
-	    push @probs, star_prob(\%acq);
+            my $star_prob = star_prob(\%acq);
+	    push @probs, $star_prob;
+            $slot_probs{$c->{"IMNUM$i"}} = $star_prob;
 	}
     }
 #    push @{$self->{yellow_warn}}, "Probs = " .  join(" ",  map{ sprintf("%.4f",$_) } @probs) . "\n";
@@ -54,7 +59,7 @@ sub make_figure_of_merit{
     my @nacq_probs = prob_nstars($n_slot, @probs);
     #calculate the probability of acquiring at least n stars
     $self->{figure_of_merit} = cum_prob($n_slot, @nacq_probs);
-
+    $self->{acq_probs} = \%slot_probs;
 
 
 }
@@ -65,29 +70,33 @@ sub star_prob {
     my ($acq) = @_;
     my @warnings = @{ $acq->{warnings} };
     my $mag = $acq->{magnitude};
+    my $warm_frac = $acq->{n100_warm_frac};
 
-    my $prob; #initialize the probability   
- 
-    my $p_normal = .9846; #probability of acquiring any star
-    my $p_marsta = .4846; #probability of acquiring a B-V = 0.700 star
+    my $p_0p7color = .4294; #probability of acquiring a B-V = 0.700 star
+    my $p_1p5color = 0.9452; #probability of acquiring a B-V = 1.500 star
     my $p_seaspo = .9241; #probability of acquiring a search spoiled star
-    my @c_mag = qw(-1008.50 243.75 -13.41); #polynomial coefficients for magnitudes
 
-    my $j = 0;
-
-    $prob = $p_normal;
-
-    if ($mag > 9.5) {
-	my $coeff = ($c_mag[0]+$c_mag[1]*($mag)+$c_mag[2]*($mag**2))/100.0;
-	$coeff = 0.0 if ($coeff < 0.0);
-        $prob *= $coeff;
+    my $mag10 = $mag - 10.0;
+    # Minimum warm fraction seen in fit data
+    my $warm_frac_min = 0.0412;
+    # Co-efficients from 2013 State of the ACA polynomial fit
+    my $scale = 10. ** (0.185 + 0.990 * $mag10 + -0.491 * $mag10 ** 2);
+    my $offset = 10. ** (-1.489 + 0.888 * $mag10 + 0.280 * $mag10 ** 2);
+    my $prob = 1.0 - ($offset + $scale * ($warm_frac - $warm_frac_min));
+    my $max_star_prob = .985;
+    # If the star is brighter than 8.5 or has a calculated probability
+    # higher than the $max_star_prob, clip it at that value
+    if (($mag < 8.5) or ($prob > $max_star_prob)){
+        $prob = $max_star_prob;
     }
 
-    
     foreach my $warning (@warnings) {
 	if ($warning =~ /B-V = 0.700/) {
-	    $prob *= $p_marsta;
+	    $prob *= $p_0p7color;
 	}
+        if ($warning =~ /B-V = 1.500/) {
+            $prob *= $p_1p5color;
+        }
 	if ($warning =~ /Search Spoiler/) {
 	    $prob *= $p_seaspo;
 	}
@@ -97,7 +106,6 @@ sub star_prob {
             last;
 	}
     }
-
     return $prob;
 }
 
@@ -134,7 +142,7 @@ sub cum_prob {
     my $exp = 0;
     for my $i (1.. $n_slot) {
 	$exp += $i*$acq_prob[$i];
-	for my $j ($i.. $n_slot) { $cum_prob[$i] += $acq_prob[$j] };	
+	for my $j ($i.. $n_slot) { $cum_prob[$i] += $acq_prob[$j] };
     }
     for my $i (1.. $n_slot) { $cum_prob[$i] = substr(log(1.0 - $cum_prob[$i])/log(10.0),0,6) };
 

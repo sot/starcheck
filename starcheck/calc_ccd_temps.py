@@ -37,6 +37,7 @@ from Chandra.Time import DateTime
 import Chandra.cmd_states as cmd_states
 from Chandra.cmd_states import get_cmd_states
 import xija
+from mica.archive.aca_dark import dark_model
 
 from starcheck.version import version
 
@@ -194,6 +195,8 @@ def get_interval_temps(intervals, times, ccd_temp):
         ok_temps = ccd_temp[start_idx:stop_idx]
         if len(ok_temps) > 0:
             obs['ccd_temp'] = np.max(ok_temps)
+            obs['n100_warm_frac'] = dark_model.get_warm_fracs(
+                100, interval['tstart'], np.max(ok_temps))
         obstemps[str(interval['obsid'])] = obs
     return obstemps
 

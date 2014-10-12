@@ -98,6 +98,7 @@ sub new {
 #    @{$self->{agasc_stars}} = ();
     %{$self->{count_nowarn_stars}} = ();
     $self->{ccd_temp} = undef;
+    $self->{config} = \%config;
     return $self;
 }
     
@@ -1703,12 +1704,18 @@ sub print_report {
 		$idpad .= " ";
 		$idpad_n --;
 	    }
+            my $acq_prob = "";
+            if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
+                my $prob = $self->{acq_probs}->{$c->{"IMNUM${i}"}};
+                $acq_prob = sprintf("Prob Acq Success %5.3f", $prob);
+            }
 	    if ($db_stats->{acq} or $db_stats->{gui}){
 	    $table .= sprintf("${idpad}<A HREF=\"%s%s\" STYLE=\"text-decoration: none;\" "
 			      . "ONMOUSEOVER=\"return overlib ('"
 			      . "ACQ total:%d noid:%d <BR />"
 			      . "GUI total:%d bad:%d fail:%d obc_bad:%d <BR />"
-			      . "Avg Mag %4.2f"
+			      . "Avg Mag %4.2f <BR />"
+                              . "$acq_prob"
 			      . "', WIDTH, 220);\" ONMOUSEOUT=\"return nd();\">%s</A>", 
 			      $acq_stat_lookup, $c->{"GS_ID${i}"}, 
 			      $db_stats->{acq}, $db_stats->{acq_noid},
@@ -1722,7 +1729,18 @@ sub print_report {
                                       $acq_stat_lookup, $c->{"GS_ID${i}"}, $c->{"GS_ID${i}"});
                 }
                 else{
-                    $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
+                    # if no previous data but it is still an ACQ, provide the probability
+                    # by itself in the mouseover
+                    if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
+                        $table .= sprintf("${idpad}<A ID=\"star\" STYLE=\"text-decoration: none;\" "
+                                          . "ONMOUSEOVER=\"return overlib ('"
+                                          . "$acq_prob"
+                                          . "', WIDTH, 220);\" ONMOUSEOUT=\"return nd();\">%s</A>",
+                                          $c->{"GS_ID${i}"});
+                    }
+                    else{
+                        $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
+                    }
                 }
 	    }
 	    for my $field_idx (0 .. $#fields){
@@ -1789,7 +1807,8 @@ sub print_report {
     }
 
     if (defined $self->{ccd_temp}){
-        $o .= sprintf("Predicted Max CCD temperature: %.1f C \n", $self->{ccd_temp});
+        $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp})
+              . sprintf("\t N100 Warm Pix Frac %.3f \n", $self->{n100_warm_frac});
     }
     else{
         $o .= sprintf("No CCD temperature prediction\n")
@@ -2625,6 +2644,7 @@ sub set_ccd_temps{
     }
     # set the temperature to the value for the current obsid
     $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
+    $self->{n100_warm_frac} = $obsid_temps->{$self->{obsid}}->{n100_warm_frac};
     # add warnings for limit violations
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
         push @{$self->{warn}}, sprintf("$alarm CCD temperature exceeds %d C\n",
