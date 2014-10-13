@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2008/AUG1808/oflsa/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2008/AUG1808/oflsa/mps/ms230_1908.sum
 Using radmon file /data/mpcrit1/mplogs/2008/AUG1808/oflsa/History/RADMON.txt
-Using ACABadPixel file from 2014104 Dark Cal 
+Using ACABadPixel file from 2014220 Dark Cal 
 
 ------------  CCD TEMPERATURE PREDICTION -----------------
 
@@ -32,7 +32,7 @@ Using ACABadPixel file from 2014104 Dark Cal
          ------  2008:230:19:23:07.529   OBC Load Segment Begins     CL230:1900 
 OBSID = 57647 at 2008:230:19:26:13.529   8 clean ACQ | 8 clean GUI | 
 OBSID = 57646 at 2008:231:00:06:15.248   8 clean ACQ | 8 clean GUI | 
-OBSID = 57645 at 2008:231:05:29:52.903   8 clean ACQ | 8 clean GUI | 
+OBSID = 57645 at 2008:231:05:29:52.903   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID =  9482 at 2008:231:09:06:43.420   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  9841 at 2008:232:01:29:46.221   8 clean ACQ | 5 clean GUI | 
          ------  2008:232:05:15:01.285   OBC Load Segment Begins     CL232:0500 
@@ -40,7 +40,7 @@ OBSID =  9484 at 2008:232:06:24:26.221   8 clean ACQ | 5 clean GUI |
 OBSID =  9383 at 2008:232:22:27:17.221   8 clean ACQ | 5 clean GUI | 
 OBSID =  9077 at 2008:233:01:44:35.779   8 clean ACQ | 5 clean GUI | 
 OBSID =  8958 at 2008:233:05:02:55.861   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
-OBSID = 57644 at 2008:233:07:52:32.222   8 clean ACQ | 8 clean GUI | 
+OBSID = 57644 at 2008:233:07:52:32.222   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 57643 at 2008:233:10:45:30.972   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
          ------  2008:233:15:02:15.992   OBC Load Segment Begins     CL233:1500 
 OBSID = 57642 at 2008:233:15:05:21.992   7 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
@@ -137,6 +137,8 @@ MP_STARCAT at 2008:231:05:29:52.903 (VCDU count = 6444363)
 [ 9]  5   982123584   ACQ  8x8   5.797   9.967  11.469   -446    656  20   1  120    a2    
 [10]  6   982127848   ACQ  8x8   5.797  10.061  11.562   -449   2192  20   1  120    a2    
 [11]  7   982126744   ACQ  8x8   5.797  10.065  11.562  -2165    268  20   1  120    a2    
+
+>> WARNING: [ 3] Nearby ACA bad pixel. Y,Z,Radial seps:   1,  30,  30
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.19	-8.013	-6.089	
 Acquisition Stars Expected  : 7.75
@@ -350,6 +352,8 @@ MP_STARCAT at 2008:233:07:52:32.222 (VCDU count = 7152107)
 [ 9]  5   905975672   ACQ  8x8   5.797   9.454  10.953    974   1520  20   1  120    a2    
 [10]  6   905842496   ACQ  8x8   5.797   9.473  10.984    172  -1928  20   1  120    a2    
 [11]  7   905975352   ACQ  8x8   5.797   9.605  11.109   1781    572  20   1  120    a2    
+
+>> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  32,  19,  37
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.61	-9.286	-7.201	
 Acquisition Stars Expected  : 7.86
