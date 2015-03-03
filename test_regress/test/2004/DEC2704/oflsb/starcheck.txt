@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2004/DEC2704/oflsb/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_JUL01
 Using processing summary file /data/mpcrit1/mplogs/2004/DEC2704/oflsb/mps/ms361_1725.sum
 Using radmon file /data/mpcrit1/mplogs/2004/DEC2704/oflsb/History/RADMON.txt
-Using ACABadPixel file from 2014220 Dark Cal 
+Using ACABadPixel file from 2015014 Dark Cal 
 
 ------------  CCD TEMPERATURE PREDICTION -----------------
 
@@ -66,7 +66,7 @@ OBSID =  5904 at 2005:002:21:53:02.390   6 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID =  5379 at 2005:002:23:41:34.867   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2005:003:01:01:41.890   OBC Load Segment Begins     CL003:0103 
 OBSID =  6148 at 2005:003:01:04:47.890   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID = 59880 at 2005:003:08:28:46.490   7 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 59880 at 2005:003:08:28:46.490   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID =  5817 at 2005:003:08:56:35.989   4 clean ACQ | 4 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 59879 at 2005:003:12:33:49.708   8 clean ACQ | 8 clean GUI | 
 OBSID = 59878 at 2005:003:17:22:56.604   8 clean ACQ | 8 clean GUI | 
@@ -1084,7 +1084,6 @@ MP_STARCAT at 2005:003:08:28:46.490 (VCDU count = 13394221)
 [10]  6   941754856   ACQ  8x8   5.797   9.877  11.375  -2199   -402  20   1  120    a2    
 [11]  7   941895192   ACQ  8x8   5.797   9.795  11.297    381  -2140  20   1  120    a2    
 
->> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  39,   3,  39
 >> WARNING: [ 3] Search spoiler.  870980800: Y,Z,Radial,Mag seps:  39  69  80 -0.8
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.13	-8.850	-6.816	
