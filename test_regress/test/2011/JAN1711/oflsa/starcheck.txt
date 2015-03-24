@@ -22,7 +22,7 @@ Using mech check file /data/mpcrit1/mplogs/2011/JAN1711/oflsa/output/TEST_mechch
 Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2011/JAN1711/oflsa/mps/ms017_1042.sum
 Using radmon file /data/mpcrit1/mplogs/2011/JAN1711/oflsa/History/RADMON.txt
-Using ACABadPixel file from 2014220 Dark Cal 
+Using ACABadPixel file from 2015014 Dark Cal 
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
@@ -163,9 +163,9 @@ MP_STARCAT at 2011:017:10:23:21.565 (VCDU count = 14208241)
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.68, Pos_Err = 0.14
 >> WARNING: [11] Magnitude.  10.413
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.443	-5.556	-3.982	
-Acquisition Stars Expected  : 7.27
-Predicted Max CCD temperature: -19.5 C 	 N100 Warm Pix Frac 0.075
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.065	-5.221	-3.699	
+Acquisition Stars Expected  : 7.17
+Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
 ==================================================================================== 
 OBSID: 12280  A2665                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   357.691571     6.164982   296.901388
@@ -192,9 +192,9 @@ MP_STARCAT at 2011:017:12:48:36.214 (VCDU count = 14242249)
 [10]  1    77731848   ACQ  6x6   5.797   9.461  10.969   1540   1357  20   1  120    a2    
 [11]  2    77728320   ACQ  6x6   5.797   9.694  11.203   2182   1955  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.729	-7.639	-5.806	
-Acquisition Stars Expected  : 7.73
-Predicted Max CCD temperature: -19.2 C 	 N100 Warm Pix Frac 0.078
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.483	-7.425	-5.625	
+Acquisition Stars Expected  : 7.70
+Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
 ==================================================================================== 
 OBSID: 12746  3C 456                 ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   348.096726     9.335067   302.509950
@@ -223,9 +223,9 @@ MP_STARCAT at 2011:017:16:02:12.214 (VCDU count = 14287580)
 
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.36, Pos_Err = 0.08
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.515	-7.381	-5.514	
-Acquisition Stars Expected  : 7.62
-Predicted Max CCD temperature: -19.0 C 	 N100 Warm Pix Frac 0.081
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.416	-7.293	-5.439	
+Acquisition Stars Expected  : 7.60
+Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
 ==================================================================================== 
 OBSID: 13013  J225140.3+132713.4     ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   342.896380    13.461925   307.868897
@@ -252,9 +252,9 @@ MP_STARCAT at 2011:017:18:40:29.214 (VCDU count = 14324642)
 [10]  1   151924928   ACQ  6x6   5.797   9.983  11.484    716   1131  20   1  120    a2    
 [11]  2   151917032   ACQ  6x6   5.797   8.061   9.562    797   2209  20   1  120    a3    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.408	-6.384	-4.652	
-Acquisition Stars Expected  : 7.46
-Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.374	-6.353	-4.624	
+Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
 ==================================================================================== 
 OBSID: 55730  
 RA, Dec, Roll (deg):   342.896380    13.461925   307.868897
@@ -282,9 +282,9 @@ MP_STARCAT at 2011:018:00:39:35.018 (VCDU count = 14408723)
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Special Case ER
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.408	-6.384	-4.652	
-Acquisition Stars Expected  : 7.46
-Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.435	-6.408	-4.674	
+Acquisition Stars Expected  : 7.47
+Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55729  
 RA, Dec, Roll (deg):   356.800000    38.900000   306.957220
@@ -312,9 +312,9 @@ MP_STARCAT at 2011:018:00:51:08.312 (VCDU count = 14411428)
 
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.117	-7.081	-5.313	
-Acquisition Stars Expected  : 7.64
-Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.151	-7.111	-5.339	
+Acquisition Stars Expected  : 7.65
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55728  
 RA, Dec, Roll (deg):   356.784927    38.955867   306.984082
@@ -341,9 +341,9 @@ MP_STARCAT at 2011:018:01:12:49.409 (VCDU count = 14416506)
 
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.445	-7.356	-5.537	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.479	-7.387	-5.564	
 Acquisition Stars Expected  : 7.68
-Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55727  
 RA, Dec, Roll (deg):   356.784927    38.955867   306.993321
@@ -357,7 +357,7 @@ MP_TARGQUAT at 2011:018:01:36:47.766 (VCDU count = 14422119)
 >> INFO   : No Guide Star Summary for obsid 55727 (DC_T0). OK for 'DC_T' ER. 
 >> INFO   : No star catalog for obsid 55727 (DC_T0). OK for 'DC_T' ER. 
 
-Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.083
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55726  
 RA, Dec, Roll (deg):   356.784927    38.955867   307.000577
@@ -384,9 +384,9 @@ MP_STARCAT at 2011:018:01:55:49.409 (VCDU count = 14426574)
 
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.440	-7.352	-5.532	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.485	-7.392	-5.568	
 Acquisition Stars Expected  : 7.68
-Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.083
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55725  
 RA, Dec, Roll (deg):   356.745458    38.968877   307.039519
@@ -400,7 +400,7 @@ MP_TARGQUAT at 2011:018:02:19:47.766 (VCDU count = 14432187)
 >> INFO   : No Guide Star Summary for obsid 55725 (DC_T1). OK for 'DC_T' ER. 
 >> INFO   : No star catalog for obsid 55725 (DC_T1). OK for 'DC_T' ER. 
 
-Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55724  
 RA, Dec, Roll (deg):   356.784927    38.955867   307.016779
@@ -427,9 +427,9 @@ MP_STARCAT at 2011:018:02:38:49.409 (VCDU count = 14436642)
 
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.434	-7.346	-5.528	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.487	-7.395	-5.570	
 Acquisition Stars Expected  : 7.68
-Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55723  
 RA, Dec, Roll (deg):   356.801663    38.986556   307.018050
@@ -443,7 +443,7 @@ MP_TARGQUAT at 2011:018:03:02:47.766 (VCDU count = 14442255)
 >> INFO   : No Guide Star Summary for obsid 55723 (DC_T2). OK for 'DC_T' ER. 
 >> INFO   : No star catalog for obsid 55723 (DC_T2). OK for 'DC_T' ER. 
 
-Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55722  
 RA, Dec, Roll (deg):   356.784927    38.955867   307.032605
@@ -470,9 +470,9 @@ MP_STARCAT at 2011:018:03:21:49.409 (VCDU count = 14446711)
 
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.426	-7.339	-5.522	
-Acquisition Stars Expected  : 7.67
-Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.487	-7.394	-5.570	
+Acquisition Stars Expected  : 7.68
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55721  
 RA, Dec, Roll (deg):   356.824388    38.942856   307.011364
@@ -486,7 +486,7 @@ MP_TARGQUAT at 2011:018:03:45:47.766 (VCDU count = 14452324)
 >> INFO   : No Guide Star Summary for obsid 55721 (DC_T3). OK for 'DC_T' ER. 
 >> INFO   : No star catalog for obsid 55721 (DC_T3). OK for 'DC_T' ER. 
 
-Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55720  
 RA, Dec, Roll (deg):   356.784927    38.955867   307.047921
@@ -513,9 +513,9 @@ MP_STARCAT at 2011:018:04:04:49.409 (VCDU count = 14456779)
 
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.417	-7.331	-5.514	
-Acquisition Stars Expected  : 7.67
-Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.485	-7.392	-5.568	
+Acquisition Stars Expected  : 7.68
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55719  
 RA, Dec, Roll (deg):   356.768222    38.925171   307.063734
@@ -529,7 +529,7 @@ MP_TARGQUAT at 2011:018:04:28:47.766 (VCDU count = 14462392)
 >> INFO   : No Guide Star Summary for obsid 55719 (DC_T4). OK for 'DC_T' ER. 
 >> INFO   : No star catalog for obsid 55719 (DC_T4). OK for 'DC_T' ER. 
 
-Predicted Max CCD temperature: -18.6 C 	 N100 Warm Pix Frac 0.085
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55718  
 RA, Dec, Roll (deg):   356.784927    38.955867   307.069743
@@ -556,9 +556,9 @@ MP_STARCAT at 2011:018:05:01:58.000 (VCDU count = 14470159)
 
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.403	-7.318	-5.503	
-Acquisition Stars Expected  : 7.67
-Predicted Max CCD temperature: -18.6 C 	 N100 Warm Pix Frac 0.085
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.479	-7.387	-5.564	
+Acquisition Stars Expected  : 7.68
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 55717  
 RA, Dec, Roll (deg):   356.800000    38.900000   307.055885
@@ -586,9 +586,9 @@ MP_STARCAT at 2011:018:05:25:58.000 (VCDU count = 14475778)
 
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.039	-7.010	-5.252	
-Acquisition Stars Expected  : 7.63
-Predicted Max CCD temperature: -18.5 C 	 N100 Warm Pix Frac 0.086
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.141	-7.102	-5.331	
+Acquisition Stars Expected  : 7.65
+Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
 ==================================================================================== 
 OBSID: 55716  
 RA, Dec, Roll (deg):   339.000000    18.000000   313.340570
@@ -616,9 +616,9 @@ MP_STARCAT at 2011:018:06:57:48.000 (VCDU count = 14497281)
 
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.033	-6.970	-5.184	
-Acquisition Stars Expected  : 7.60
-Predicted Max CCD temperature: -18.5 C 	 N100 Warm Pix Frac 0.086
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.135	-7.062	-5.264	
+Acquisition Stars Expected  : 7.62
+Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
 ==================================================================================== 
 OBSID: 55715  
 RA, Dec, Roll (deg):   261.000000   -61.000000   128.595035
@@ -648,9 +648,9 @@ MP_STARCAT at 2011:018:07:18:44.046 (VCDU count = 14502182)
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.31, Pos_Err = 0.13
 >> WARNING: [10] Search spoiler. 1186465816: Y,Z,Radial,Mag seps:  88 151 175 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.193	-6.204	-4.517	
-Acquisition Stars Expected  : 7.44
-Predicted Max CCD temperature: -18.5 C 	 N100 Warm Pix Frac 0.086
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.294	-6.298	-4.601	
+Acquisition Stars Expected  : 7.47
+Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
 ==================================================================================== 
 OBSID: 55714  
 RA, Dec, Roll (deg):   182.000000   -62.000000    56.376490
@@ -677,7 +677,7 @@ MP_STARCAT at 2011:018:08:10:37.621 (VCDU count = 14514333)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.87	-9.507	-7.387	
 Acquisition Stars Expected  : 7.88
-Predicted Max CCD temperature: -18.5 C 	 N100 Warm Pix Frac 0.086
+Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
 ==================================================================================== 
 OBSID: 55713  
 RA, Dec, Roll (deg):   139.000000   -20.000000    25.917340
@@ -702,9 +702,9 @@ MP_STARCAT at 2011:018:08:34:02.861 (VCDU count = 14519817)
 [ 9]  6   791160288   ACQ  8x8   5.797   7.885   9.391     52   1591  20   1  120          
 [10]  7   791152888   ACQ  8x8   5.797   9.482  10.984    785   1490  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.46	-9.156	-7.088	
-Acquisition Stars Expected  : 7.85
-Predicted Max CCD temperature: -18.5 C 	 N100 Warm Pix Frac 0.087
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.51	-9.196	-7.122	
+Acquisition Stars Expected  : 7.86
+Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
 ==================================================================================== 
 OBSID: 55712  
 RA, Dec, Roll (deg):    87.000000    -5.000000   309.540856
@@ -729,9 +729,9 @@ MP_STARCAT at 2011:018:09:11:23.434 (VCDU count = 14528560)
 [ 9]  6   626006560   ACQ  8x8   5.797   9.304  10.812      7  -1797  20   1  120          
 [10]  7   626007888   ACQ  8x8   5.797   9.730  11.234    473    425  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.99	-8.726	-6.709	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.05	-8.784	-6.759	
 Acquisition Stars Expected  : 7.82
-Predicted Max CCD temperature: -18.4 C 	 N100 Warm Pix Frac 0.087
+Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.083
 ==================================================================================== 
 OBSID: 12386  RMC REFL9              ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):    98.768693     3.704776   311.096595
@@ -761,7 +761,7 @@ MP_STARCAT at 2011:018:11:20:53.016 (VCDU count = 14558881)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.87	-9.507	-7.387	
 Acquisition Stars Expected  : 7.88
-Predicted Max CCD temperature: -18.4 C 	 N100 Warm Pix Frac 0.087
+Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
 ==================================================================================== 
 OBSID: 12845  B3 0710+439            ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   108.425821    43.840462   206.967193
@@ -789,9 +789,9 @@ MP_STARCAT at 2011:018:21:34:29.312 (VCDU count = 14702554)
 [11]  1   387458880   ACQ  6x6   5.797   9.723  11.234   2022   1315  20   1  120    a2    
 [12]  2   387455744   ACQ  6x6   5.797   9.777  11.281   -319    801  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.70	-8.464	-6.477	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.68	-8.446	-6.461	
 Acquisition Stars Expected  : 7.79
-Predicted Max CCD temperature: -19.0 C 	 N100 Warm Pix Frac 0.081
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
 ==================================================================================== 
 OBSID: 12732  3C 234                 ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   150.473608    28.768991   100.555988
@@ -818,9 +818,9 @@ MP_STARCAT at 2011:019:09:20:11.987 (VCDU count = 14867794)
 [10]  1   257828176   ACQ  6x6   5.797   9.503  11.000   1003   1599  20   1  120    a2    
 [11]  2   258738368   ACQ  6x6   5.797   9.572  11.078  -2163  -1083  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.25	-8.970	-6.930	
-Acquisition Stars Expected  : 7.84
-Predicted Max CCD temperature: -20.0 C 	 N100 Warm Pix Frac 0.069
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.11	-8.846	-6.822	
+Acquisition Stars Expected  : 7.83
+Predicted Max CCD temperature: -19.3 C 	 N100 Warm Pix Frac 0.077
 ==================================================================================== 
 OBSID: 13132  XBootes IRAGN Field    ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   218.813470    34.123454    68.816328
@@ -850,9 +850,9 @@ MP_STARCAT at 2011:019:12:08:24.273 (VCDU count = 14907178)
 >> WARNING: [11] Bad Acquisition Star. 335026200 has 12 failed out of 38 attempts
 >> WARNING: [11] Magnitude.  10.598
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.450	-6.408	-4.655	
-Acquisition Stars Expected  : 7.37
-Predicted Max CCD temperature: -20.1 C 	 N100 Warm Pix Frac 0.069
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.176	-6.159	-4.438	
+Acquisition Stars Expected  : 7.32
+Predicted Max CCD temperature: -19.1 C 	 N100 Warm Pix Frac 0.078
 ==================================================================================== 
 OBSID: 12837  SIX-3                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   205.310518   -14.692465    68.797504
@@ -881,9 +881,9 @@ MP_STARCAT at 2011:019:20:24:35.273 (VCDU count = 15023358)
 [12]  1   727715552   ACQ  6x6   5.797   9.960  11.469    427    429  20   1  120    a2    
 [13]  2   727712976   ACQ  6x6   5.797  10.009  11.516   1645   -267  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.793	-7.664	-5.798	
-Acquisition Stars Expected  : 7.71
-Predicted Max CCD temperature: -19.9 C 	 N100 Warm Pix Frac 0.070
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.495	-7.394	-5.562	
+Acquisition Stars Expected  : 7.67
+Predicted Max CCD temperature: -19.0 C 	 N100 Warm Pix Frac 0.079
 ==================================================================================== 
 OBSID: 12393  18 Sco                 ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   243.910102    -8.391429    71.144372
@@ -914,7 +914,7 @@ MP_STARCAT at 2011:019:22:14:39.133 (VCDU count = 15049129)
 >> WARNING: [10] Magnitude.  10.633
 >> WARNING: [11] Magnitude.  10.883
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.023	-5.195	-3.644	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.022	-5.194	-3.643	
 Acquisition Stars Expected  : 6.90
 Predicted Max CCD temperature: -19.0 C 	 N100 Warm Pix Frac 0.081
 ==================================================================================== 
@@ -947,9 +947,9 @@ MP_STARCAT at 2011:020:16:16:53.865 (VCDU count = 15302533)
 >> WARNING: [ 2] Magnitude.  10.370
 >> INFO   : Special Case ER
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.429	-5.590	-4.022	
-Acquisition Stars Expected  : 7.22
-Predicted Max CCD temperature: -19.0 C 	 N100 Warm Pix Frac 0.081
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.586	-5.724	-4.133	
+Acquisition Stars Expected  : 7.26
+Predicted Max CCD temperature: -19.2 C 	 N100 Warm Pix Frac 0.078
 ==================================================================================== 
 OBSID: 55710  
 RA, Dec, Roll (deg):   132.500000    24.000000   110.256349
@@ -974,9 +974,9 @@ MP_STARCAT at 2011:020:16:28:27.159 (VCDU count = 15305238)
 [ 9]  6   254676240   ACQ  8x8   5.797   9.574  11.078   1900    438  20   1  120    a2    
 [10]  7   254684136   ACQ  8x8   5.797   9.772  11.281   -684  -2287  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.53	-8.327	-6.370	
-Acquisition Stars Expected  : 7.79
-Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.62	-8.407	-6.441	
+Acquisition Stars Expected  : 7.80
+Predicted Max CCD temperature: -19.2 C 	 N100 Warm Pix Frac 0.078
 ==================================================================================== 
 OBSID: 55709  
 RA, Dec, Roll (deg):   112.000000    24.000000   250.076149
@@ -1001,9 +1001,9 @@ MP_STARCAT at 2011:020:17:57:11.748 (VCDU count = 15326017)
 [ 9]  6   250349256   ACQ  8x8   5.797   9.099  10.609     49     18  20   1  120          
 [10]  7   250348688   ACQ  8x8   5.797   9.577  12.016   1427  -1106  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.18	-8.911	-6.880	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.27	-8.984	-6.943	
 Acquisition Stars Expected  : 7.84
-Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.081
+Predicted Max CCD temperature: -19.3 C 	 N100 Warm Pix Frac 0.077
 ==================================================================================== 
 OBSID: 55708  
 RA, Dec, Roll (deg):   107.000000    41.100000   216.695548
@@ -1030,7 +1030,7 @@ MP_STARCAT at 2011:020:19:47:01.526 (VCDU count = 15351733)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.87	-9.507	-7.387	
 Acquisition Stars Expected  : 7.88
-Predicted Max CCD temperature: -19.1 C 	 N100 Warm Pix Frac 0.079
+Predicted Max CCD temperature: -19.4 C 	 N100 Warm Pix Frac 0.076
 ==================================================================================== 
 OBSID: 55707  
 RA, Dec, Roll (deg):   110.000000    -1.000000   330.450316
@@ -1055,9 +1055,9 @@ MP_STARCAT at 2011:020:20:58:00.020 (VCDU count = 15368352)
 [ 9]  6   631266968   ACQ  8x8   5.797   9.296  10.797  -1409  -2182  20   1  120    a2    
 [10]  7   631252304   ACQ  8x8   5.797   9.769  11.266    419   -331  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.32	-9.013	-6.951	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.36	-9.047	-6.981	
 Acquisition Stars Expected  : 7.84
-Predicted Max CCD temperature: -19.2 C 	 N100 Warm Pix Frac 0.078
+Predicted Max CCD temperature: -19.5 C 	 N100 Warm Pix Frac 0.074
 ==================================================================================== 
 OBSID: 55706  
 RA, Dec, Roll (deg):   135.000000    -1.500000    28.898939
@@ -1083,9 +1083,9 @@ MP_STARCAT at 2011:020:22:13:26.000 (VCDU count = 15386014)
 
 >> INFO   : Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.54	-9.220	-7.142	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.57	-9.248	-7.166	
 Acquisition Stars Expected  : 7.86
-Predicted Max CCD temperature: -19.3 C 	 N100 Warm Pix Frac 0.077
+Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.074
 ==================================================================================== 
 OBSID: 55705  
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
@@ -1095,7 +1095,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 >> INFO   : No target/maneuver for obsid 55705 (RDX83). OK for 'RDX' ER. 
 >> INFO   : No star catalog for obsid 55705 (RDX83). OK for 'RDX' ER. 
 
-Predicted Max CCD temperature: -19.4 C 	 N100 Warm Pix Frac 0.075
+Predicted Max CCD temperature: -19.7 C 	 N100 Warm Pix Frac 0.073
 ==================================================================================== 
 OBSID: 11270  UM 461                 ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   177.890878    -2.395172    64.677760
@@ -1127,9 +1127,9 @@ MP_STARCAT at 2011:021:01:26:33.982 (VCDU count = 15431236)
 >> WARNING: [ 8] Magnitude.  10.536
 >> WARNING: [ 9] Magnitude.  10.460
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.479	-4.578	-3.011	
-Acquisition Stars Expected  : 6.63
-Predicted Max CCD temperature: -19.5 C 	 N100 Warm Pix Frac 0.075
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.267	-4.386	-2.846	
+Acquisition Stars Expected  : 6.52
+Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.081
 ==================================================================================== 
 OBSID: 12369  A66 33                 ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   144.781249    -2.830375    42.032645
@@ -1157,9 +1157,9 @@ MP_STARCAT at 2011:021:11:56:18.159 (VCDU count = 15578686)
 [11]  1   641466904   ACQ  6x6   5.797   9.983  11.484   1384    753  20   1  120    a2    
 [12]  2   641862416   ACQ  6x6   5.797  10.091  11.594   -554  -1285  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.163	-7.063	-5.244	
-Acquisition Stars Expected  : 7.61
-Predicted Max CCD temperature: -19.3 C 	 N100 Warm Pix Frac 0.076
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.905	-6.818	-5.020	
+Acquisition Stars Expected  : 7.55
+Predicted Max CCD temperature: -18.5 C 	 N100 Warm Pix Frac 0.086
 ==================================================================================== 
 OBSID: 11545  RXJ1131-1231           ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   172.964059   -12.554976    56.913231
@@ -1187,9 +1187,9 @@ MP_STARCAT at 2011:021:20:45:49.159 (VCDU count = 15702670)
 [11]  1   722871536   ACQ  6x6   5.797   9.935  11.438  -2108   1818  20   1  120    a2    
 [12]  2   722872912   ACQ  6x6   5.797   9.979  11.484      8   -639  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.035	-6.151	-4.546	
-Acquisition Stars Expected  : 7.50
-Predicted Max CCD temperature: -19.2 C 	 N100 Warm Pix Frac 0.078
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.507	-5.688	-4.157	
+Acquisition Stars Expected  : 7.40
+Predicted Max CCD temperature: -18.1 C 	 N100 Warm Pix Frac 0.091
 ==================================================================================== 
 OBSID: 12818  GZ_merger_AGN_8        ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   155.755554    34.768476   109.584262
@@ -1221,9 +1221,9 @@ MP_STARCAT at 2011:022:04:21:24.632 (VCDU count = 15809346)
 >> WARNING: [11] Magnitude.  10.384
 >> WARNING: [12] Magnitude.  10.431
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.035	-5.996	-4.260	
-Acquisition Stars Expected  : 7.27
-Predicted Max CCD temperature: -19.1 C 	 N100 Warm Pix Frac 0.079
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.649	-5.634	-3.930	
+Acquisition Stars Expected  : 7.13
+Predicted Max CCD temperature: -17.9 C 	 N100 Warm Pix Frac 0.092
 ==================================================================================== 
 OBSID: 12305  SLJ0850.5+4512         ACIS-I SIM Z offset:-3102 (-7.80mm) Grating: NONE 
 RA, Dec, Roll (deg):   132.597876    45.227936   161.477984
@@ -1251,9 +1251,9 @@ MP_STARCAT at 2011:022:06:15:33.853 (VCDU count = 15836074)
 [11]  1   447888448   ACQ  6x6   5.797   9.410  10.922  -1040    391  20   1  120          
 [12]  2   447888848   ACQ  6x6   5.797   9.116  10.781   2011  -2110  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.71	-9.373	-7.273	
-Acquisition Stars Expected  : 7.87
-Predicted Max CCD temperature: -19.1 C 	 N100 Warm Pix Frac 0.079
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.65	-9.316	-7.224	
+Acquisition Stars Expected  : 7.86
+Predicted Max CCD temperature: -17.9 C 	 N100 Warm Pix Frac 0.093
 ==================================================================================== 
 OBSID: 13133  XBootes IRAGN Field    ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   217.333903    34.349113    71.939159
@@ -1285,9 +1285,9 @@ MP_STARCAT at 2011:022:14:45:49.853 (VCDU count = 15955551)
 >> WARNING: [12] Magnitude.  10.336
 >> WARNING: [12] Search spoiler.  335023704: Y,Z,Radial,Mag seps: 134  84 159 -1.0
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.166	-7.073	-5.255	
-Acquisition Stars Expected  : 7.57
-Predicted Max CCD temperature: -19.2 C 	 N100 Warm Pix Frac 0.077
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.754	-6.701	-4.928	
+Acquisition Stars Expected  : 7.49
+Predicted Max CCD temperature: -18.1 C 	 N100 Warm Pix Frac 0.091
 ==================================================================================== 
 OBSID: 12172  SDSS J1659+2101        ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   254.802631    20.998670    53.612042
@@ -1316,9 +1316,9 @@ MP_STARCAT at 2011:022:23:29:38.094 (VCDU count = 16078198)
 [12]  1   201072808   ACQ  6x6   5.797   9.886  11.391   1829   2165  20   1  120    a2    
 [13]  2   201066016   ACQ  6x6   5.797  10.034  11.531   -196   -693  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.480	-7.360	-5.514	
-Acquisition Stars Expected  : 7.66
-Predicted Max CCD temperature: -19.1 C 	 N100 Warm Pix Frac 0.079
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.146	-7.055	-5.243	
+Acquisition Stars Expected  : 7.60
+Predicted Max CCD temperature: -18.1 C 	 N100 Warm Pix Frac 0.090
 ==================================================================================== 
 OBSID: 12364  NGC 6720               ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   283.380918    33.010708    24.402538
@@ -1347,9 +1347,9 @@ MP_STARCAT at 2011:023:01:41:15.876 (VCDU count = 16109019)
 [12]  1   346429880   ACQ  6x6   5.797   7.947   9.453    875    -63  20   1  120          
 [13]  2   346428968   ACQ  6x6   5.797   9.360  10.859   2185   -383  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.67	-9.335	-7.242	
-Acquisition Stars Expected  : 7.87
-Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.61	-9.286	-7.200	
+Acquisition Stars Expected  : 7.86
+Predicted Max CCD temperature: -18.1 C 	 N100 Warm Pix Frac 0.090
 ==================================================================================== 
 OBSID: 55704  
 RA, Dec, Roll (deg):   283.380918    33.010708    24.402538
@@ -1376,9 +1376,9 @@ MP_STARCAT at 2011:023:07:44:08.280 (VCDU count = 16193984)
 
 >> INFO   : Special Case ER
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.67	-9.334	-7.242	
-Acquisition Stars Expected  : 7.87
-Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.62	-9.297	-7.209	
+Acquisition Stars Expected  : 7.86
+Predicted Max CCD temperature: -18.3 C 	 N100 Warm Pix Frac 0.089
 ==================================================================================== 
 OBSID: 55703  
 RA, Dec, Roll (deg):   127.000000    38.000000   174.359817
@@ -1408,9 +1408,9 @@ MP_STARCAT at 2011:023:07:55:41.574 (VCDU count = 16196690)
 >> WARNING: [ 7] Magnitude.  10.325
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.53, Pos_Err = 0.15
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.091	-6.962	-5.110	
-Acquisition Stars Expected  : 7.49
-Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.988	-6.865	-5.021	
+Acquisition Stars Expected  : 7.46
+Predicted Max CCD temperature: -18.3 C 	 N100 Warm Pix Frac 0.089
 ==================================================================================== 
 OBSID: 55702  
 RA, Dec, Roll (deg):   110.000000    32.000000   231.203343
@@ -1438,9 +1438,9 @@ MP_STARCAT at 2011:023:09:49:40.845 (VCDU count = 16223379)
 >> WARNING: [ 2] Search spoiler.  321262632: Y,Z,Radial,Mag seps:  65  59  88 -0.8
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2011:023:11:00:02.000
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.42	-9.107	-7.034	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.39	-9.080	-7.009	
 Acquisition Stars Expected  : 7.84
-Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.084
+Predicted Max CCD temperature: -18.4 C 	 N100 Warm Pix Frac 0.088
 ==================================================================================== 
 OBSID: 55701  
 RA, Dec, Roll (deg):   127.000000    38.000000   174.933651
@@ -1468,9 +1468,9 @@ MP_STARCAT at 2011:023:12:07:23.790 (VCDU count = 16255625)
 >> WARNING: [ 7] Magnitude.  10.325
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.53, Pos_Err = 0.15
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.183	-7.050	-5.193	
-Acquisition Stars Expected  : 7.52
-Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.108	-6.980	-5.129	
+Acquisition Stars Expected  : 7.50
+Predicted Max CCD temperature: -18.5 C 	 N100 Warm Pix Frac 0.086
 ==================================================================================== 
 OBSID: 55700  
 RA, Dec, Roll (deg):   131.000000    63.000000   172.215233
@@ -1484,7 +1484,7 @@ MP_TARGQUAT at 2011:023:12:41:30.749 (VCDU count = 16263613)
 >> WARNING: No Guide Star Summary for obsid 55700 (G2_83). 
 >> WARNING: No star catalog for obsid 55700 (G2_83). 
 
-Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
+Predicted Max CCD temperature: -18.6 C 	 N100 Warm Pix Frac 0.085
 ==================================================================================== 
 OBSID: 55699  
 RA, Dec, Roll (deg):   123.000000    63.000000   183.162400
@@ -1498,7 +1498,7 @@ MP_TARGQUAT at 2011:023:13:02:09.472 (VCDU count = 16268447)
 >> WARNING: No Guide Star Summary for obsid 55699 (G3_83). 
 >> WARNING: No star catalog for obsid 55699 (G3_83). 
 
-Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.082
+Predicted Max CCD temperature: -18.6 C 	 N100 Warm Pix Frac 0.085
 ==================================================================================== 
 OBSID: 55698  
 RA, Dec, Roll (deg):   115.000000    63.000000   194.041271
@@ -1522,9 +1522,9 @@ MP_STARCAT at 2011:023:13:20:06.000 (VCDU count = 16272648)
 [ 8]  7   539631088   GUI  8x8   5.797   9.606  11.109  -1809  -2179   1   1   25    g2    
 [ 9]  7   539494688   ACQ  8x8   5.797   9.441  10.938    677  -1029  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.96	-8.715	-6.715	
-Acquisition Stars Expected  : 7.83
-Predicted Max CCD temperature: -18.9 C 	 N100 Warm Pix Frac 0.081
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.89	-8.656	-6.664	
+Acquisition Stars Expected  : 7.82
+Predicted Max CCD temperature: -18.6 C 	 N100 Warm Pix Frac 0.085
 ==================================================================================== 
 OBSID: 55697  
 RA, Dec, Roll (deg):   144.000000    37.200000   132.269030
@@ -1552,9 +1552,9 @@ MP_STARCAT at 2011:023:13:32:38.980 (VCDU count = 16275587)
 >> WARNING: [ 3] Search spoiler.  327683544: Y,Z,Radial,Mag seps:  80  83 115 -0.0
 >> INFO   : Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.785	-7.603	-5.690	
-Acquisition Stars Expected  : 7.65
-Predicted Max CCD temperature: -19.0 C 	 N100 Warm Pix Frac 0.081
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.718	-7.539	-5.630	
+Acquisition Stars Expected  : 7.63
+Predicted Max CCD temperature: -18.6 C 	 N100 Warm Pix Frac 0.085
 ==================================================================================== 
 OBSID: 55696  
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
@@ -1564,7 +1564,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 >> INFO   : No target/maneuver for obsid 55696 (RDX84). OK for 'RDX' ER. 
 >> INFO   : No star catalog for obsid 55696 (RDX84). OK for 'RDX' ER. 
 
-Predicted Max CCD temperature: -19.2 C 	 N100 Warm Pix Frac 0.078
+Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
 ==================================================================================== 
 OBSID: 13134  XBootes IRAGN Field    ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   218.252751    34.015479    72.258838
@@ -1596,9 +1596,9 @@ MP_STARCAT at 2011:023:17:36:21.371 (VCDU count = 16332650)
 >> WARNING: [10] Magnitude.  10.399
 >> WARNING: [11] Magnitude.  10.488
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.194	-4.602	-3.277	
-Acquisition Stars Expected  : 7.07
-Predicted Max CCD temperature: -19.3 C 	 N100 Warm Pix Frac 0.077
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.911	-4.363	-3.083	
+Acquisition Stars Expected  : 6.98
+Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
 ==================================================================================== 
 OBSID: 12714  0942+355               ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   146.383257    35.342096   126.006112
@@ -1625,7 +1625,7 @@ MP_STARCAT at 2011:024:02:05:09.574 (VCDU count = 16451784)
 [10]  1   328210128   ACQ  6x6   5.797   9.553  11.062   -238   2157  20   1  120    a2    
 [11]  2   328598904   ACQ  6x6   5.797  10.059  11.562     70    694  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.597	-7.503	-5.670	
-Acquisition Stars Expected  : 7.69
-Predicted Max CCD temperature: -19.2 C 	 N100 Warm Pix Frac 0.078
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.411	-7.338	-5.529	
+Acquisition Stars Expected  : 7.67
+Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.083
 ==================================================================================== 
