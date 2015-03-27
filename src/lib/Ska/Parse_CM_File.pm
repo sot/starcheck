@@ -288,9 +288,11 @@ sub get_fid_actions {
     # 2001211.190731558   | AFLC02D1 FID 02 ON
     if (defined $fs_file){
 	my @fidsel_text = io($fs_file)->slurp;
-	# take the last thousand entries
-#	my @reduced_fidsel_text = @fidsel_text;
-	my @reduced_fidsel_text = @fidsel_text[($#fidsel_text-1000) ... $#fidsel_text];
+	# take the last thousand entries if there are more than a 1000
+	my @reduced_fidsel_text = @fidsel_text;
+        if ($#fidsel_text > 1000){
+            my @reduced_fidsel_text = @fidsel_text[($#fidsel_text-1000) ... $#fidsel_text];
+        }
 #    if ($fs_file && ($fidsel_fh = new IO::File $fs_file, "r")) {
 	for my $fidsel_line (@reduced_fidsel_text){
 	    if ($fidsel_line =~ /(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
