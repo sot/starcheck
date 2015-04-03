@@ -1656,11 +1656,9 @@ sub print_report {
     my $acq_stat_lookup = "$config{paths}->{acq_stat_query}?id=";
 
 
+    my $table;
     if ($c = find_command($self, "MP_STARCAT")) {
 
-
-
-	my $table;
 
 	my @fid_fields = qw (TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
 	my @fid_format = ( '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
@@ -1758,11 +1756,12 @@ sub print_report {
 	}
 
 
-    $o .= $table;
-
+    }
+    else{
+        $table = sprintf(" " x 93 . "\n");
     }
 
-
+    $o .= $table;
     
     $o .= "\n" if (@{$self->{warn}} || @{$self->{yellow_warn}} || @{$self->{fyi}} );
 
