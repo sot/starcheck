@@ -510,7 +510,7 @@ sub set_npm_times{
             # just use next obsid start time
             my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
             if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
-		push @{$self->{fyi}}, "$info Next obsid has no manvr; using next obsid start date for NPM checks (dither, momentum)\n";
+		push @{$self->{fyi}}, "$info Next obsid has no manvr; using next obs start date for checks (dither, momentum)\n";
                 $obs_tstop = $next_cmd_obsid->{time};
                 $self->{no_following_manvr} = 1;
             }
@@ -521,7 +521,7 @@ sub set_npm_times{
     }
 
     if (not defined $obs_tstart or not defined $obs_tstop){
-        push @{$self->{warn}}, "$alarm Could not determine obsid start and stop times for NPM checks (dither, momentum)\n";
+        push @{$self->{warn}}, "$alarm Could not determine obsid start and stop times for checks (dither, momentum)\n";
     }
     else{
         $self->{obs_tstart} = $obs_tstart;
