@@ -94,12 +94,12 @@ sub new{
     
     my $manvrs = maneuver_parse($dot_aref);
     my $dwells = calc_dwells($manvrs);
-    my $timelines = iu_timeline($tlr);
+    my ($timelines, $trans_changes) = iu_timeline($tlr);
     my @trim_tlr = @{ trim_tlr( $tlr, \%config )};
 
     $feedback{aca_init_command} = compare_timingncommanding( [$tlr->{first_aca_hw_cmd}], [$templates{A}->{entries}[0]], \%config, 
                                                              "First ACA command is the template-independent init command");
-    %feedback = (%feedback, %{replicas($tlr, \%templates, $timelines, \%config)});
+    %feedback = (%feedback, %{replicas($tlr, \%templates, $timelines, $trans_changes, \%config)});
     
     $feedback{check_dither_enable_at_end} = check_dither_enable_at_end($tlr, \%config);
     $feedback{check_dither_param_at_end} = check_dither_param_at_end($tlr, \%config);
@@ -185,6 +185,7 @@ sub replicas{
 	my $tlr = shift;
 	my $templates = shift;
 	my $timelines = shift;
+        my $trans_changes = shift;
 	my $config = shift;
 	my @trim_tlr = @{ trim_tlr( $tlr, $config )};
 	my %feedback;
@@ -232,7 +233,8 @@ sub replicas{
 														 r_datestart => $replica_tlr[0]->datestamp(),
 														 r_datestop => $replica_tlr[-1]->datestamp(),
 														 transponder => $best_guess, 
-														 timelines => $timelines, 
+														 timelines => $timelines,
+                                                                 trans_changes => $trans_changes,
 														 config => $config});
 		# also confirm that dither is disabled before the start of the replica
 		$feedback{"dither_disable_${r_idx}"} = check_dither_disable_before_replica( $tlr, $config, $r_idx);		
@@ -246,8 +248,8 @@ sub replicas{
 sub check_iu{
 ##***************************************************************************
 	my $check_cfg = shift;
-	my ($replica, $r_datestart, $transponder, $timelines, $config) = 
-		@{$check_cfg}{(qw(replica r_datestart transponder timelines config))};
+	my ($replica, $r_datestart, $transponder, $timelines, $trans_changes, $config) = 
+		@{$check_cfg}{(qw(replica r_datestart transponder timelines trans_changes config))};
 
 	#my $r_tstart $r_tstop, $transponder, $timelines, $config) = @_;
 	my %output = (
@@ -266,6 +268,7 @@ sub check_iu{
 				 B => $config->{template}->{B}->{transponder});
 
 
+        my $want_iu;
 	my $state;
 	for my $t (reverse @{$timelines}){
 		next unless $t->{time} < $check_cfg->{r_tstart};
@@ -277,7 +280,7 @@ sub check_iu{
 		$output{status} = 0;
 	}
 	else{
-		my $want_iu = ($transponder eq 'A') ? 'CIU512T' : 'CIU512X';
+		$want_iu = ($transponder eq 'A') ? 'CIU512T' : 'CIU512X';
 		if ($state->{iu} eq $want_iu){
 			push @{$output{info}}, { text => "IU config set to $want_iu at ". $state->{datestart}, type => 'info' };
 		}
@@ -287,24 +290,40 @@ sub check_iu{
 		}
 	}
 
-	# check for changes during the replica
-	if ($state->{tstop} < $check_cfg->{r_tstop}){
-		push @{$output{info}}, { text => "Transponder state change during replica at $state->{datestop}", type => 'error' };
-	}
-	else{
-		push @{$output{info}}, { text => "Transponder state unchanged through replica end at $check_cfg->{r_datestop}", type => 'info' };
-	}
-
 
 	my %want = %{$tmpl{$transponder}};
-	my @tinfo;
+        $want{iu} = $want_iu;
 	my $t_select = 1;
+	my @tinfo;
+	push @{$output{info}}, {text => "Checking against config for intended transponder $transponder", type => 'info'};
 	for my $cm (keys %want){
-		push @tinfo, { text => "transponder state $cm set to " . $state->{$cm} . ", should be " . $want{$cm}
-					   , type => $state->{$cm} ne $want{$cm} ? 'error' : 'info'};
-		$t_select = 0 if ($state->{$cm} ne $want{$cm});
+            next if ($cm eq 'iu');
+            push @tinfo, { text => "transponder state $cm set to " . $state->{$cm} . ", should be " . $want{$cm},
+                           type => $state->{$cm} ne $want{$cm} ? 'error' : 'info'};
+            $t_select = 0 if ($state->{$cm} ne $want{$cm});
 	}
-	push @{$output{info}}, { text => "Checking against config for intended transponder $transponder", type => 'info'};
+	# check for changes during the replica
+	if ($state->{tstop} < $check_cfg->{r_tstop}){
+            for my $ch (@{$trans_changes}){
+                if (($ch->{time} >= $check_cfg->{r_tstart}) & ($ch->{time} <= $check_cfg->{r_tstop})){
+                    for my $cm (keys %{$ch}){
+                        next if ($cm eq 'time');
+                        next if ($cm eq 'date');
+                        if ($ch->{$cm} ne $want{$cm}){
+                            push @tinfo, {text => "transponder commanding during replica at " . $ch->{date} . " sets bad value",
+                                          type => 'error'};
+                            push @tinfo, {text => "\tsets $cm to " . $state->{$cm} . ", should be " . $want{$cm},
+                                          type => 'error'};
+                            $t_select = 0;
+                        }
+                    }
+                }
+            }
+	}
+	else{
+            push @{$output{info}}, { text => "Transponder state unchanged through replica end at $check_cfg->{r_datestop}", type => 'info' };
+	}
+
 	push @{$output{info}}, @tinfo;
 	if ($t_select == 0){
 		$output{status} = 0;
@@ -341,6 +360,7 @@ sub iu_timeline{
 	my %tog = ( 'ON' => 'ON',
 				'OF' => 'OFF');
 
+        my @changes;
 	for my $entry (@{$tlr->{entries}}){
 		if (defined $entry->comm_mnem()){
 			if ($entry->comm_mnem() eq 'CIMODESL'){
@@ -357,6 +377,9 @@ sub iu_timeline{
 					}
 					push @timelines, {%timeline};
 				}
+                                push @changes, {'time' => $entry->time(),
+                                                'date' => $entry->datestamp(),
+                                                'iu' => $iu};
 			}
 			if ($entry->comm_mnem() =~ /^(C(TX|PA))(A|B)(ON|OF)/){
 				my $tkey = "$1$3";
@@ -372,11 +395,14 @@ sub iu_timeline{
 					}
 					push @timelines, {%timeline};
 				}
-			}
-		}
-	}
+                                push @changes, {'time' => $entry->time(),
+                                                'date' => $entry->datestamp(),
+                                                $tkey => $tval};
+                            }
+                    }
+            }
 
-	return \@timelines;
+        return \@timelines, \@changes;
 
 }
 
