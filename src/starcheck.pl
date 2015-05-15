@@ -35,7 +35,6 @@ use PoorTextFormat;
 use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
 use Carp;
-use YAML;
 use JSON ();
 
 use Ska::Convert qw( date2time );
@@ -73,7 +72,7 @@ my %par = (dir  => '.',
 		   html => 1,
 		   text => 1,
 		   yaml => 1,
-		   config_file => "characteristics.yaml",
+		   config_file => "characteristics.json",
 		   fid_char => "fid_CHARACTERISTICS",
 		   );
 
@@ -138,7 +137,16 @@ my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
 
 my $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
 
-my $config_ref = YAML::LoadFile($config_file);
+my $config_json;
+{
+  local $/; #Enable 'slurp' mode
+  open(my $CHAR, "<", $config_file) 
+      or die "Couldn't open $config_file for reading\n";
+  $config_json = <$CHAR>;
+  close $CHAR;
+}
+my $config_ref = JSON::decode_json($config_json);
+
 my $mp_top_link = guess_mp_toplevel({ path => abs_path($par{dir}), 
 									  config => $config_ref });
 
