@@ -135,7 +135,7 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     # the yaml subset of json is sufficient for the
     # JSON we have from the Perl code
-    sc_obsids = yaml.load(json_obsids)
+    sc_obsids = json.load(json_obsids)
 
     tnow = DateTime().secs
 
