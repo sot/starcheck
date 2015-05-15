@@ -133,9 +133,11 @@ def get_ccd_temps(oflsdir, outdir='out',
     # save spec file in out directory
     shutil.copy(model_spec, outdir)
 
-    # the yaml subset of json is sufficient for the
-    # JSON we have from the Perl code
-    sc_obsids = yaml.load(json_obsids)
+    # json_obsids can be either a string or a file-like object.  Try those options in order.
+    try:
+        sc_obsids = json.loads(json_obsids)
+    except TypeError:
+        sc_obsids = json.load(json_obsids)
 
     tnow = DateTime().secs
 
