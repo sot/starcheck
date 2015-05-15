@@ -17,7 +17,6 @@ import time
 import shutil
 import numpy as np
 import json
-import yaml
 
 # Matplotlib setup
 # Use Agg backend for command-line (non-interactive) operation
@@ -128,14 +127,14 @@ def get_ccd_temps(oflsdir, outdir='out',
                 '######################################\n')
 
     # load more general starcheck characteristics to get red/yellow limits
-    char = yaml.load(open(char_file))
+    char = json.load(open(char_file))
 
     # save spec file in out directory
     shutil.copy(model_spec, outdir)
 
     # the yaml subset of json is sufficient for the
     # JSON we have from the Perl code
-    sc_obsids = yaml.load(json_obsids)
+    sc_obsids = json.load(json_obsids)
 
     tnow = DateTime().secs
 
