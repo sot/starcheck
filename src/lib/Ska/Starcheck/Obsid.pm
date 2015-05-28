@@ -936,7 +936,7 @@ sub check_star_catalog {
     }
 
     # Adjust mag limits based on CCD temperature
-    if ($self->{ccd_temp} > -14){
+    if ((defined $self->{ccd_temp}) and ($self->{ccd_temp} > -14)){
         my $mag_delta = ($self->{ccd_temp} - -14) * 0.15;
         $mag_faint_red -= $mag_delta;
         $mag_faint_yellow -= $mag_delta;
