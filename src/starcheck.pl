@@ -424,9 +424,10 @@ for my $obsid_idx (0 .. ($#obsid_id)){
     $obs{$obsid_id[$obsid_idx]}->{next} = ( $obsid_idx < $#obsid_id) ? $obs{$obsid_id[$obsid_idx+1]} : undef;
 }
 
-
-
-
+# Set the NPM times.  This requires the PREV/NEXT entries
+foreach my $obsid (@obsid_id) {
+    $obs{$obsid}->set_npm_times();
+}
 
 # Check that every Guide summary OFLS ID has a matching OFLS ID in DOT
 
@@ -471,51 +472,6 @@ foreach my $mc (@mc) {
 }
 foreach (@bs) {
     push @sim_trans, $_ if ($_->{cmd} eq 'SIMTRANS');
-}
-
-# Do main checking
-foreach my $obsid (@obsid_id) {
-    $obs{$obsid}->get_agasc_stars($agasc_dir);
-    $obs{$obsid}->identify_stars();
-    if ($par{plot}) {
-	eval{
-	    $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.png") ;
-	    $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.png") ;
-	    $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.png");
-	};
-	if ($@){
-	    print STDERR "Problem with plots for Obsid $obs{$obsid}->{obsid}\n error: $@ will wait 5 sec and retry...\n";
-            sleep(5);
-            # repeat the block using an ugly code copy
-            eval{
-              $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.png") ;
-              $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.png") ;
-              $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.png");
-            };
-            if ($@){
-              print STDERR " Retry not successful for $obs{$obsid}->{obsid}\n";
-              warning ("Could not create plots for Obsid $obs{$obsid}->{obsid}.\n error $@");
-            }
-            else{
-              print STDERR " Retry successful for $obs{$obsid}->{obsid}\n";
-            }
-          }
-      }
-
-    $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
-    $obs{$obsid}->check_flick_pix_mon();
-    $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
-    $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
-    $obs{$obsid}->set_npm_times();
-    $obs{$obsid}->check_bright_perigee($radmon);
-    $obs{$obsid}->check_dither($dither);
-	$obs{$obsid}->check_momentum_unload(\@bs);
-    $obs{$obsid}->check_for_special_case_er();
-    $obs{$obsid}->count_good_stars();
-
-# Make sure there is only one star catalog per obsid
-    warning ("More than one star catalog assigned to Obsid $obsid\n")
-	if ($obs{$obsid}->find_command('MP_STARCAT',2));
 }
 
 
@@ -581,19 +537,55 @@ if ($@){
     push @global_warn, "Error getting temperatures from get_ccd_temps\n";
 }
 
-
-# Since we need set_npm_times to have run on all obsids
-# to get the (n+1) obs stop time for setting max temperatures
-# this is just run it its own loop
 if ($obsid_temps){
     foreach my $obsid (@obsid_id) {
         $obs{$obsid}->set_ccd_temps($obsid_temps);
     }
 }
 
-# Make a figure of merit now that we have all the temperatures
+
+# Do main checking
 foreach my $obsid (@obsid_id) {
+    $obs{$obsid}->get_agasc_stars($agasc_dir);
+    $obs{$obsid}->identify_stars();
+    if ($par{plot}) {
+	eval{
+	    $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.png") ;
+	    $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.png") ;
+	    $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.png");
+	};
+	if ($@){
+	    print STDERR "Problem with plots for Obsid $obs{$obsid}->{obsid}\n error: $@ will wait 5 sec and retry...\n";
+            sleep(5);
+            # repeat the block using an ugly code copy
+            eval{
+              $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.png") ;
+              $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.png") ;
+              $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.png");
+            };
+            if ($@){
+              print STDERR " Retry not successful for $obs{$obsid}->{obsid}\n";
+              warning ("Could not create plots for Obsid $obs{$obsid}->{obsid}.\n error $@");
+            }
+            else{
+              print STDERR " Retry successful for $obs{$obsid}->{obsid}\n";
+            }
+          }
+      }
+
+    $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
+    $obs{$obsid}->check_flick_pix_mon();
+    $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
+    $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
+    $obs{$obsid}->check_bright_perigee($radmon);
+    $obs{$obsid}->check_dither($dither);
+	$obs{$obsid}->check_momentum_unload(\@bs);
+    $obs{$obsid}->check_for_special_case_er();
+    $obs{$obsid}->count_good_stars();
     $obs{$obsid}->make_figure_of_merit();
+# Make sure there is only one star catalog per obsid
+    warning ("More than one star catalog assigned to Obsid $obsid\n")
+	if ($obs{$obsid}->find_command('MP_STARCAT',2));
 }
 
 my $final_json = json_obsids();
