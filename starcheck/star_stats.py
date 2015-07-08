@@ -1,12 +1,18 @@
+"""
+Functions related to probabilities for star acquisition and guide tracking.
+"""
+
 from __future__ import print_function, division
 
-from Chandra.Time import DateTime
 from itertools import izip
+
+from scipy.optimize import brentq
 import numpy as np
+from Chandra.Time import DateTime
 
 # Scale and offset fit of polynomial to acq failures in log space.
 # Derived in the fit_sota_model_probit.ipynb IPython notebook for data
-# covering 2007-Jan-01 - 2015-July-01.
+# covering 2007-Jan-01 - 2015-July-01.  This is in the state_of_aca repo.
 #
 # scale = scl2 * m10**2 + scl1 * m10 + scl0, where m10 = mag - 10,
 # and likewise for offset.
@@ -29,10 +35,49 @@ SOTA_FIT_ONLY_1P5 = [8.541709287866361,
                      0.30973569068842272]
 
 
-def t_ccd_for_n_acq(date, mags):
-    def n_acq(t_ccd):
-        probs = get_acq_success(date, t_ccd, mags)
-        return np.sum(probs)
+def t_ccd_warm_limit(date, mags, colors=0,
+                     min_n_acq=5.0,
+                     cold_t_ccd=-21,
+                     warm_t_ccd=-5):
+    """
+    Find the warmest CCD temperature at which at least ``min_n_acq`` acquisition stars
+    expected.  This returns a value between ``cold_t_ccd`` and ``warm_t_ccd``.  At the
+    cold end the result may be below ``min_n_acq``, in which case the star catalog
+    may be rejected.
+
+    :param date: observation date (any Chandra.Time valid format)
+    :param mags: star ACA mags
+    :param colors: star B-V colors
+    :param min_n_acq: minimum required expected stars
+    :param cold_t_ccd: coldest CCD temperature to consider
+    :param warm_t_ccd: warmest CCD temperature to consider
+
+    :returns: (t_ccd, n_acq) tuple with CCD temperature upper limit and number of
+              expected ACQ stars at that temperature.
+    """
+
+    def n_acq_above_min(t_ccd):
+        probs = acq_success_prob(date=date, t_ccd=t_ccd, mag=mags, color=colors)
+        return np.sum(probs) - min_n_acq
+
+    if n_acq_above_min(warm_t_ccd) >= 0:
+        # If there are enough ACQ stars at the warmest reasonable CCD temperature
+        # then use that temperature.
+        t_ccd = warm_t_ccd
+
+    elif n_acq_above_min(cold_t_ccd) <= 0:
+        # If there are not enough ACQ stars at the coldest CCD temperature then stop there
+        # as well.  The ACA thermal model will never predict a temperature below this
+        # value so this catalog will fail thermal check.
+        t_ccd = cold_t_ccd
+
+    else:
+        # At this point there must be a zero in the range [cold_t_ccd, warm_t_ccd]
+        t_ccd = brentq(n_acq_above_min, cold_t_ccd, warm_t_ccd, xtol=1e-4, rtol=1e-4)
+
+    n_acq = n_acq_above_min(t_ccd) + min_n_acq
+
+    return t_ccd, n_acq
 
 
 def acq_success_prob(date=None, t_ccd=-19.0, mag=10.0, color=0.6, spoiler=False):
@@ -43,13 +88,15 @@ def acq_success_prob(date=None, t_ccd=-19.0, mag=10.0, color=0.6, spoiler=False)
     the broadcasted dimension of the inputs.
 
     This is based on the dark model and acquisition success model presented
-    in the State of the ACA 2013.
+    in the State of the ACA 2013, and subsequently updated to use a Probit
+    transform and separately fit B-V=1.5 stars.  This is available in the
+    state_of_aca repo as fit_sota_model_probit.ipynb.
 
-    :param date: Date(s) (scalar or np.ndarray)
-    :param t_ccd: CD temperature(s) (degC, scalar or np.ndarray)
-    :param mag: Star magnitude(s) (scalar or np.ndarray)
-    :param color: Star color(s) (scalar or np.ndarray)
-    :param spoil: Star spoiled (boolean or np.ndarray)
+    :param date: Date(s) (scalar or np.ndarray, default=NOW)
+    :param t_ccd: CD temperature(s) (degC, scalar or np.ndarray, default=-19C)
+    :param mag: Star magnitude(s) (scalar or np.ndarray, default=10.0)
+    :param color: Star color(s) (scalar or np.ndarray, default=0.6)
+    :param spoil: Star spoiled (boolean or np.ndarray, default=False)
 
     :returns: Acquisition success probability(s)
     """
@@ -88,17 +135,21 @@ def model_acq_success_prob(mag, warm_frac, color=0):
     """
     Calculate raw model probability of acquisition success for a star with ``mag``
     magnitude and a CCD warm fraction ``warm_frac``.  This is not typically used directly
-    since it does not account for star properties like spoiled, color etc, and can return
-    probability values outside of 0 to 1.
+    since it does not account for star properties like spoiled or color=0.7.
 
     Uses the empirical relation::
 
        P_acq_fail = Normal_CDF(offset(mag) + scale(mag) * warm_frac)
        P_acq_success = 1 - P_acq_fail
 
-    :param mag: ACA magnitude (float)
-    :param warm_frac: N100 warm fraction (float)
-    :param color: B-V color (used to check for B-V=1.5 => red star)
+    This is based on the dark model and acquisition success model presented
+    in the State of the ACA 2013, and subsequently updated to use a Probit
+    transform and separately fit B-V=1.5 stars.  This is available in the
+    state_of_aca repo as fit_sota_model_probit.ipynb.
+
+    :param mag: ACA magnitude (float or np.ndarray)
+    :param warm_frac: N100 warm fraction (float or np.ndarray)
+    :param color: B-V color to check for B-V=1.5 => red star (float or np.ndarray)
     """
     from scipy.stats import norm
 
