@@ -4,6 +4,7 @@ Functions related to probabilities for star acquisition and guide tracking.
 
 from __future__ import print_function, division
 
+from numba import jit
 from itertools import izip
 
 from scipy.optimize import brentq
@@ -78,6 +79,45 @@ def t_ccd_warm_limit(date, mags, colors=0,
     n_acq = n_acq_above_min(t_ccd) + min_n_acq
 
     return t_ccd, n_acq
+
+
+@jit(nopython=True)
+def _prob_n_acq(star_probs, n_stars, n_acq_probs):
+    """
+    Jit-able portion of prob_n_acq
+    """
+    for cfg in range(1 << n_stars):
+        prob = 1.0
+        n_acq = 0
+        for slot in range(n_stars):
+            success = cfg & (1 << slot)
+            if success > 0:
+                prob = prob * star_probs[slot]
+                n_acq += 1
+            else:
+                prob = prob * (1 - star_probs[slot])
+        n_acq_probs[n_acq] += prob
+
+
+def prob_n_acq(star_probs):
+    """
+    Given an input array of star acquisition probabilities ``star_probs``,
+    return the probabilities of acquiring exactly n_acq stars, where n_acq
+    is evaluated at values 0 to n_stars.  This is returned as an array
+    of length n_stars.  In addition the cumulative sum, which represents
+    the probability of acquiring n_acq or fewer stars, is returned.
+
+    :param star_probs: array of star acq probabilities (list or ndarray)
+
+    :returns n_acq_probs, cum_n_acq_probs: tuple of ndarray, ndarray
+    """
+    star_probs = np.array(star_probs, dtype=np.float64)
+    n_stars = len(star_probs)
+    n_acq_probs = np.zeros(n_stars + 1, dtype=np.float64)
+
+    _prob_n_acq(star_probs, n_stars, n_acq_probs)
+
+    return n_acq_probs, np.cumsum(n_acq_probs)
 
 
 def acq_success_prob(date=None, t_ccd=-19.0, mag=10.0, color=0.6, spoiler=False):
