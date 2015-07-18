@@ -51,13 +51,16 @@ import sys
 import perl
 # this provides an interface back to the Perl namespace
 
+try:
+    from starcheck.calc_ccd_temps import get_ccd_temps
+    from starcheck import star_probs
+except ImportError as err:
+    # write errors to starcheck's global warnings and STDERR
+    perl.warning("Error with Inline::Python imports \n".format(err))
+
 def ccd_temp_wrapper(kwargs):
-    try:
-        from starcheck.calc_ccd_temps import get_ccd_temps
-    except ImportError as err:
-        # write errors to starcheck's global warnings and STDERR
-        perl.warning("Error with Inline::Python imports {}\n".format(err))
     return get_ccd_temps(**kwargs)
+
 };
 
 # cheat to get the OS (major)
