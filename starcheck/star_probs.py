@@ -146,6 +146,7 @@ def acq_success_prob(date=None, t_ccd=-19.0, mag=10.0, color=0.6, spoiler=False)
 
     is_scalar, dates, t_ccds, mags, colors, spoilers = broadcast_arrays(date, t_ccd, mag,
                                                                         color, spoiler)
+    spoilers = spoilers.astype(bool)
 
     warm_fracs = []
     for date, t_ccd in izip(dates.ravel(), t_ccds.ravel()):
