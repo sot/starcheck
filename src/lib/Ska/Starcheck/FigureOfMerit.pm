@@ -9,15 +9,11 @@ package Ska::Starcheck::FigureOfMerit;
 #
 #                     Individual star probabilities are hard coded and will need
 #                     regular updates.
-#                            
-#Last Updated - 3/20/03 Brett Unks
-#
-# Part of the starcheck cvs project
 #
 ##*****************************************************************************************
 
 use strict;
-use List::Util qw(min);
+use List::Util qw(min sum);
 
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
@@ -28,42 +24,63 @@ our @EXPORT = qw();
 our @EXPORT_OK = qw( make_figure_of_merit );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
+use Inline Python => q{
+import sys
+import perl
+# this provides an interface back to the Perl namespace
 
-our $CUM_PROB_LIMIT = -5.2;
+try:
+    from starcheck.star_probs import acq_success_prob, prob_n_acq
+except ImportError as err:
+    # write errors to starcheck's global warnings and STDERR
+    perl.warning("Error with Inline::Python imports \n".format(err))
 
+def _acq_success_prob(date, t_ccd, mag, color, spoiler):
+    out = acq_success_prob(date, t_ccd, mag, color, spoiler)
+    return out.tolist()
+
+def _prob_n_acq(acq_probs):
+    n_acq_probs, n_or_fewer_probs = prob_n_acq(acq_probs)
+    return n_acq_probs.tolist(), n_or_fewer_probs.tolist()
+};
+
+our $CUM_PROB_LIMIT = 10 ** -5.2;
 
 sub make_figure_of_merit{
     my $c;
     my $self = shift;
     return unless ($c = $self->find_command("MP_STARCAT"));
+
     my @probs;
     my %slot_probs;
+
+    my $t_ccd = 19.0;  # ??
+    my $date = $c->{date};
+
     foreach my $i (1..16) {
-	my %acq = ();
-	my $type = $c->{"TYPE$i"};
-	if ($type =~ /BOT|ACQ/) {
-	    $acq{index} = $i;
-	    $acq{magnitude} = $c->{"GS_MAG$i"};
-	    $acq{warnings} = [grep {/\[\s{0,1}$i\]/} (@{$self->{warn}}, @{$self->{yellow_warn}})];
-            $acq{n100_warm_frac} = $self->{n100_warm_frac} || $self->{config}{n100_warm_frac_default};
-	    #find the probability of acquiring a star
-            my $star_prob = star_prob(\%acq);
+	if ($c->{"TYPE$i"} =~ /BOT|ACQ/) {
+	    my $mag = $c->{"GS_MAG$i"};
+            my @warnings = grep {/\[\s{0,1}$i\]/} (@{$self->{warn}}, @{$self->{yellow_warn}});
+            my $spoiler = grep(/Search Spoiler/, @warnings) ? 1 : 0;
+            my $color = $c->{"GS_BV$i"};
+            my $star_prob = _acq_success_prob($date, $t_ccd, $mag, $color, $spoiler);
 	    push @probs, $star_prob;
             $slot_probs{$c->{"IMNUM$i"}} = $star_prob;
+            $c->{"P_SUCC$i"} = $star_prob;
 	}
     }
-#    push @{$self->{yellow_warn}}, "Probs = " .  join(" ",  map{ sprintf("%.4f",$_) } @probs) . "\n";
-
-    #calculate the probability of acquiring n stars
-    my $n_slot = $#probs+1;
-    my @nacq_probs = prob_nstars($n_slot, @probs);
-    #calculate the probability of acquiring at least n stars
-    $self->{figure_of_merit} = cum_prob($n_slot, @nacq_probs);
     $self->{acq_probs} = \%slot_probs;
 
+    # Calculate the probability of acquiring n stars
+    my ($n_acq_probs, $n_or_fewer_probs) = _prob_n_acq(\@probs);
+
+    $self->{figure_of_merit} = {expected => substr(sum(@probs), 0, 4),
+                                cum_prob => [map { log($_) / log(10.0) } @{$n_or_fewer_probs}],
+                                cum_prob_bad => ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT)
+    };
 
 }
-	        
+
 ##*****************************************************************************************
 sub star_prob {
 ##*****************************************************************************************
@@ -107,50 +124,6 @@ sub star_prob {
 	}
     }
     return $prob;
-}
-
-##*****************************************************************************************
-sub prob_nstars {
-##*****************************************************************************************
-    my ($n_slot, @p) = @_;
-    my @acq_prob = ();
-    for my $i (0.. 2**$n_slot-1) {
-	my $total_prob = 1.0;
-        my $n_acq = 0;
-	my $prob;
-	for my $slot (0..$n_slot-1) { # cycle through slots 
-	    if (($i & 2**$slot) >= 1) {
-		$prob = $p[$slot]; 
-		$n_acq = $n_acq + 1;
-	    }
-	    else {
-		$prob = (1-$p[$slot]);
-	    }
-	    $total_prob = $total_prob * $prob;
-	}
-	$acq_prob[$n_acq] += $total_prob;
-    }
-    return @acq_prob;
-}
-    
-##*****************************************************************************************
-sub cum_prob {
-##*****************************************************************************************
-    my ($n_slot, @acq_prob) = @_;
-    my @cum_prob = ();
-    my @fom = ();
-    my $exp = 0;
-    for my $i (1.. $n_slot) {
-	$exp += $i*$acq_prob[$i];
-	for my $j ($i.. $n_slot) { $cum_prob[$i] += $acq_prob[$j] };
-    }
-    for my $i (1.. $n_slot) { $cum_prob[$i] = substr(log(1.0 - $cum_prob[$i])/log(10.0),0,6) };
-
-
-    return {expected => substr($exp,0,4),
-	    cum_prob => [ @cum_prob ],
-	    cum_prob_bad => ($cum_prob[2] > $CUM_PROB_LIMIT)
-	    };
 }
 
 
