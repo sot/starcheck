@@ -81,6 +81,41 @@ def t_ccd_warm_limit(date, mags, colors=0,
     return t_ccd, n_acq
 
 
+def mag_for_p_acq(p_acq, date=None, t_ccd=-19.0):
+    """
+    For a given ``date`` and ``t_ccd``, find the star magnitude that has an
+    acquisition probability of ``p_acq``.
+
+    :param p_acq: acquisition probability (0 to 1.0)
+    :param date: observation date (any Chandra.Time valid format)
+    :param t_ccd: ACA CCD temperature (deg C)
+
+    :returns mag: star magnitude
+    """
+
+    def prob_minus_p_acq(mag):
+        prob = acq_success_prob(date=date, t_ccd=t_ccd, mag=mag)
+        return prob - p_acq
+
+    # prob_minus_p_acq is monotonically decreasing from the (minimum)
+    # bright mag to the (maximum) faint_mag.
+    bright_mag = 5.0
+    faint_mag = 12.0
+    if prob_minus_p_acq(bright_mag) <= 0:
+        # Below zero already at bright mag limit so return the bright limit.
+        mag = bright_mag
+
+    elif prob_minus_p_acq(faint_mag) >= 0:
+        # Above zero still at the faint mag limit so return the faint limit.
+        mag = faint_mag
+
+    else:
+        # At this point there must be a zero in the range [bright_mag, faint_mag]
+        mag = brentq(prob_minus_p_acq, bright_mag, faint_mag, xtol=1e-4, rtol=1e-4)
+
+    return mag
+
+
 @jit(nopython=True)
 def _prob_n_acq(star_probs, n_stars, n_acq_probs):
     """
