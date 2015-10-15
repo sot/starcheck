@@ -39,8 +39,8 @@ def symsize(mag):
     return np.interp(mag, [6.0, 11.0], [20.0, 1])
 
 
-def star_plot(catalog=None, quat=None, field=None, title=None, figsize=(5, 5)):
-    fig = plt.figure(figsize=figsize)
+def star_plot(catalog=None, quat=None, field=None, title=None):
+    fig = plt.figure(figsize=(4, 4))
     ax = fig.add_subplot(1, 1, 1)
     face = backcolor
 
@@ -183,5 +183,5 @@ def field_plot(ra, dec, roll, starcat_time, field=None, title=None):
         field = agasc.get_agasc_cone(ra, dec,
                                      radius=1.5,
                                      date=DateTime(starcat_time).date)
-    fig = star_plot(catalog=None, quat=quat, field=field, title=title, figsize=(2, 2))
+    fig = star_plot(catalog=None, quat=quat, field=field, title=title)
     return fig
