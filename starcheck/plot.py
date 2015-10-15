@@ -124,8 +124,8 @@ def star_plot(catalog=None, quat=None, field=None, title=None, faint_plot_mag=11
     box1 = plt.Rectangle((b1hw, -b1hw), -2 * b1hw, 2 * b1hw,
                          fill=False)
     ax.add_patch(box1)
-    b2hw = 2600
-    box2 = plt.Rectangle((b2hw, -b2hw), -2 * b2hw, 2 * b2hw,
+    b2w = 2600
+    box2 = plt.Rectangle((b2w, -b1hw), -2 * b2w, 2 * b1hw,
                          fill=False)
     ax.add_patch(box2)
 
