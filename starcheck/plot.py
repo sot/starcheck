@@ -1,5 +1,4 @@
 import os
-import logging
 
 import Quaternion
 import numpy as np
@@ -8,9 +7,6 @@ from Chandra.Time import DateTime
 import matplotlib.pyplot as plt
 from Ska.quatutil import radec2yagzag
 from astropy.table import Table, Column
-
-TASK_NAME = 'starcheck_plotting'
-logger = logging.getLogger(TASK_NAME)
 
 # rc definitions
 frontcolor = 'black'
