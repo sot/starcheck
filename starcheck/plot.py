@@ -7,8 +7,7 @@ import agasc
 from Chandra.Time import DateTime
 import matplotlib.pyplot as plt
 from Ska.quatutil import radec2yagzag
-import Ska.Numpy
-from astropy.table import Table
+from astropy.table import Table, Column
 
 TASK_NAME = 'starcheck_plotting'
 logger = logging.getLogger(TASK_NAME)
@@ -89,10 +88,11 @@ def plot_catalog_items(ax, catalog):
 
 
 def plot_field_items(ax, field, quat, faint_plot_mag):
-    bright_field = field[field['MAG_ACA'] < faint_plot_mag]
+    field = Table(field)
+    field = field[field['MAG_ACA'] < faint_plot_mag]
     yags = []
     zags = []
-    for star in bright_field:
+    for star in field:
         yag, zag = radec2yagzag(star['RA_PMCORR'],
                                 star['DEC_PMCORR'],
                                 quat)
@@ -101,22 +101,18 @@ def plot_field_items(ax, field, quat, faint_plot_mag):
         yags.append(yag)
         zags.append(zag)
 
-    bright_field = Ska.Numpy.add_column(bright_field,
-                                        'yang',
-                                        yags)
-    bright_field = Ska.Numpy.add_column(bright_field,
-                                        'zang',
-                                        zags)
-    color = np.ones(len(bright_field), dtype='|S10')
+    field.add_column(Column(name='yang', data=yags))
+    field.add_column(Column(name='zang', data=zags))
+    color = np.ones(len(field), dtype='|S10')
     color[:] = 'red'
-    faint = ((bright_field['CLASS'] == 0)
-             & (bright_field['MAG_ACA'] >= 10.7))
+    faint = ((field['CLASS'] == 0)
+             & (field['MAG_ACA'] >= 10.7))
     color[faint] = 'orange'
-    ok = ((bright_field['CLASS'] == 0)
-          & (bright_field['MAG_ACA'] < 10.7))
+    ok = ((field['CLASS'] == 0)
+          & (field['MAG_ACA'] < 10.7))
     color[ok] = frontcolor
-    size = symsize(bright_field['MAG_ACA'])
-    ax.scatter(bright_field['yang'], bright_field['zang'],
+    size = symsize(field['MAG_ACA'])
+    ax.scatter(field['yang'], field['zang'],
                c=color.tolist(), s=size, edgecolors=color.tolist())
 
 
