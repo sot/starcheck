@@ -73,15 +73,15 @@ def plot_catalog_items(ax, catalog):
         ax.add_patch(acq_box)
     ax.scatter(fid['yang'], fid['zang'],
                facecolors=face,
-               edgecolors='green',
+               edgecolors='red',
                marker='o',
-               s=200)
+               s=175)
     ax.scatter(fid['yang'], fid['zang'],
                facecolors=face,
-               edgecolors='green',
+               edgecolors='red',
                marker='+',
-               linewidth=3,
-               s=200)
+               linewidth=1,
+               s=175)
 
 
 def plot_field_items(ax, field, quat, faint_plot_mag):
@@ -114,7 +114,7 @@ def plot_field_items(ax, field, quat, faint_plot_mag):
 
 
 def star_plot(catalog=None, quat=None, field=None, title=None, faint_plot_mag=10.7):
-    fig = plt.figure(figsize=(4, 4))
+    fig = plt.figure(figsize=(5.2, 5.2))
     ax = fig.add_subplot(1, 1, 1)
 
     # plot the box and set the labels
