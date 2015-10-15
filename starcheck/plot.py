@@ -1,12 +1,13 @@
 import os
-
-import Quaternion
 import numpy as np
+import matplotlib.pyplot as plt
+
+from astropy.table import Table, Column
 import agasc
 from Chandra.Time import DateTime
-import matplotlib.pyplot as plt
+import Quaternion
 from Ska.quatutil import radec2yagzag
-from astropy.table import Table, Column
+
 
 # rc definitions
 frontcolor = 'black'
