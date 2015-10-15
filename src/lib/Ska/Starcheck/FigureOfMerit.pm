@@ -25,15 +25,8 @@ our @EXPORT_OK = qw( make_figure_of_merit );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 use Inline Python => q{
-import sys
-import perl
-# this provides an interface back to the Perl namespace
 
-try:
-    from starcheck.star_probs import acq_success_prob, prob_n_acq
-except ImportError as err:
-    # write errors to starcheck's global warnings and STDERR
-    perl.warning("Error with Inline::Python imports \n".format(err))
+from starcheck.star_probs import acq_success_prob, prob_n_acq
 
 def _acq_success_prob(date, t_ccd, mag, color, spoiler):
     out = acq_success_prob(date, t_ccd, mag, color, spoiler)

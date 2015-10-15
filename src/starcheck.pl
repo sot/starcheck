@@ -47,16 +47,9 @@ use Ska::AGASC;
 
 
 use Inline Python => q{
-import sys
-import perl
-# this provides an interface back to the Perl namespace
 
-try:
-    from starcheck.calc_ccd_temps import get_ccd_temps
-    from starcheck import star_probs
-except ImportError as err:
-    # write errors to starcheck's global warnings and STDERR
-    perl.warning("Error with Inline::Python imports \n".format(err))
+from starcheck.calc_ccd_temps import get_ccd_temps
+from starcheck import star_probs
 
 def ccd_temp_wrapper(kwargs):
     return get_ccd_temps(**kwargs)
@@ -517,22 +510,18 @@ my $json_text = json_obsids();
 my $obsid_temps;
 eval{
     my $json_obsid_temps;
-    local $SIG{ALRM}=sub{ die "get_ccd_temps timed out\n"};
     eval{
-        alarm 300;
         $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                               outdir=>$STARCHECK,
                                               json_obsids => $json_text,
                                               model_spec => "$Starcheck_Data/aca_spec.json",
                                               char_file => "$Starcheck_Data/characteristics.yaml",
                                              });
-        alarm 0;
     };
     if ($@){
         push @global_warn, "ERROR: $@";
         die "$@\n";
     }
-    alarm 0;
     # convert back from JSON outside the timeout
     $obsid_temps = JSON::from_json($json_obsid_temps);
 };
