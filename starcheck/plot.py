@@ -39,10 +39,90 @@ def symsize(mag):
     return np.interp(mag, [6.0, 11.0], [20.0, 1])
 
 
-def star_plot(catalog=None, quat=None, field=None, title=None):
+def plot_catalog_items(ax, catalog):
+    cat = Table(catalog)
+    face = backcolor
+    gui = cat[cat['type'] == 'GUI']
+    acq = cat[cat['type'] == 'ACQ']
+    bot = cat[cat['type'] == 'BOT']
+    fid = cat[cat['type'] == 'FID']
+    for row in cat:
+        ax.annotate("%s" % row['idx'],
+                    xy=(row['yang'] - 120, row['zang'] + 60))
+    ax.scatter(gui['yang'], gui['zang'],
+               facecolors=face,
+               edgecolors='green',
+               s=100)
+    ax.scatter(bot['yang'], bot['zang'],
+               facecolors=face,
+               edgecolors='green',
+               s=100)
+    for acq_star in acq:
+        acq_box = plt.Rectangle(
+            (acq_star['yang'] - acq_star['halfw'],
+             acq_star['zang'] - acq_star['halfw']),
+            width=acq_star['halfw'] * 2,
+            height=acq_star['halfw'] * 2,
+            color='blue',
+            fill=False)
+        ax.add_patch(acq_box)
+    for acq_star in bot:
+        acq_box = plt.Rectangle(
+            (acq_star['yang'] - acq_star['halfw'],
+             acq_star['zang'] - acq_star['halfw']),
+            width=acq_star['halfw'] * 2,
+            height=acq_star['halfw'] * 2,
+            color='blue',
+            fill=False)
+        ax.add_patch(acq_box)
+    ax.scatter(fid['yang'], fid['zang'],
+               facecolors=face,
+               edgecolors='green',
+               marker='o',
+               s=200)
+    ax.scatter(fid['yang'], fid['zang'],
+               facecolors=face,
+               edgecolors='green',
+               marker='+',
+               linewidth=3,
+               s=200)
+
+
+def plot_field_items(ax, field, quat, faint_plot_mag):
+    bright_field = field[field['MAG_ACA'] < faint_plot_mag]
+    yags = []
+    zags = []
+    for star in bright_field:
+        yag, zag = radec2yagzag(star['RA_PMCORR'],
+                                star['DEC_PMCORR'],
+                                quat)
+        yag *= 3600
+        zag *= 3600
+        yags.append(yag)
+        zags.append(zag)
+
+    bright_field = Ska.Numpy.add_column(bright_field,
+                                        'yang',
+                                        yags)
+    bright_field = Ska.Numpy.add_column(bright_field,
+                                        'zang',
+                                        zags)
+    color = np.ones(len(bright_field), dtype='|S10')
+    color[:] = 'red'
+    faint = ((bright_field['CLASS'] == 0)
+             & (bright_field['MAG_ACA'] >= 10.7))
+    color[faint] = 'orange'
+    ok = ((bright_field['CLASS'] == 0)
+          & (bright_field['MAG_ACA'] < 10.7))
+    color[ok] = frontcolor
+    size = symsize(bright_field['MAG_ACA'])
+    ax.scatter(bright_field['yang'], bright_field['zang'],
+               c=color.tolist(), s=size, edgecolors=color.tolist())
+
+
+def star_plot(catalog=None, quat=None, field=None, title=None, faint_plot_mag=11.0):
     fig = plt.figure(figsize=(4, 4))
     ax = fig.add_subplot(1, 1, 1)
-    face = backcolor
 
     # plot the box and set the labels
     plt.xlim(2900, -2900)
@@ -68,86 +148,12 @@ def star_plot(catalog=None, quat=None, field=None, title=None):
 
     # plot starcheck catalog
     if catalog is not None:
-        cat = Table(catalog)
-        gui = cat[cat['type'] == 'GUI']
-        acq = cat[cat['type'] == 'ACQ']
-        bot = cat[cat['type'] == 'BOT']
-        fid = cat[cat['type'] == 'FID']
-        for row in cat:
-            ax.annotate("%s" % row['idx'],
-                        xy=(row['yang'] - 120, row['zang'] + 60))
-        ax.scatter(gui['yang'], gui['zang'],
-                   facecolors=face,
-                   edgecolors='green',
-                   s=100)
-        ax.scatter(bot['yang'], bot['zang'],
-                   facecolors=face,
-                   edgecolors='green',
-                   s=100)
-        for acq_star in acq:
-            acq_box = plt.Rectangle(
-                (acq_star['yang'] - acq_star['halfw'],
-                 acq_star['zang'] - acq_star['halfw']),
-                width=acq_star['halfw'] * 2,
-                height=acq_star['halfw'] * 2,
-                color='blue',
-                fill=False)
-            ax.add_patch(acq_box)
-        for acq_star in bot:
-            acq_box = plt.Rectangle(
-                (acq_star['yang'] - acq_star['halfw'],
-                 acq_star['zang'] - acq_star['halfw']),
-                width=acq_star['halfw'] * 2,
-                height=acq_star['halfw'] * 2,
-                color='blue',
-                fill=False)
-            ax.add_patch(acq_box)
-        ax.scatter(fid['yang'], fid['zang'],
-                   facecolors=face,
-                   edgecolors='green',
-                   marker='o',
-                   s=200)
-        ax.scatter(fid['yang'], fid['zang'],
-                   facecolors=face,
-                   edgecolors='green',
-                   marker='+',
-                   linewidth=3,
-                   s=200)
-
+        plot_catalog_items(ax, catalog)
     # plot field if present
     if field is not None:
-        faint_plot_mag = 11.0
-        bright_field = field[field['MAG_ACA'] < faint_plot_mag]
-        yags = []
-        zags = []
-        for star in bright_field:
-            yag, zag = radec2yagzag(star['RA_PMCORR'],
-                                    star['DEC_PMCORR'],
-                                    quat)
-            yag *= 3600
-            zag *= 3600
-            yags.append(yag)
-            zags.append(zag)
-
-        bright_field = Ska.Numpy.add_column(bright_field,
-                                            'yang',
-                                            yags)
-        bright_field = Ska.Numpy.add_column(bright_field,
-                                            'zang',
-                                            zags)
-        color = np.ones(len(bright_field), dtype='|S10')
-        color[:] = 'red'
-        faint = ((bright_field['CLASS'] == 0)
-                 & (bright_field['MAG_ACA'] >= 10.7))
-        color[faint] = 'orange'
-        ok = ((bright_field['CLASS'] == 0)
-              & (bright_field['MAG_ACA'] < 10.7))
-        color[ok] = frontcolor
-        size = symsize(bright_field['MAG_ACA'])
-        ax.scatter(bright_field['yang'], bright_field['zang'],
-                   c=color.tolist(), s=size, edgecolors=color.tolist())
-        if title is not None:
-            fig.suptitle(title)
+        plot_field_items(ax, field, quat, faint_plot_mag)
+    if title is not None:
+        fig.suptitle(title)
     return fig
 
 
