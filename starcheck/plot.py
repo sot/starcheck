@@ -113,7 +113,7 @@ def plot_field_items(ax, field, quat, faint_plot_mag):
                c=color.tolist(), s=size, edgecolors=color.tolist())
 
 
-def star_plot(catalog=None, quat=None, field=None, title=None, faint_plot_mag=11.0):
+def star_plot(catalog=None, quat=None, field=None, title=None, faint_plot_mag=10.7):
     fig = plt.figure(figsize=(4, 4))
     ax = fig.add_subplot(1, 1, 1)
 
