@@ -44,7 +44,9 @@ def plot_catalog_items(ax, catalog):
     fid = cat[cat['type'] == 'FID']
     for row in cat:
         ax.annotate("%s" % row['idx'],
-                    xy=(row['yang'] - 120, row['zang'] + 60))
+                    xy=(row['yang'] - 120, row['zang'] + 60),
+                    color='red',
+                    fontsize=12)
     ax.scatter(gui['yang'], gui['zang'],
                facecolors=face,
                edgecolors='green',
