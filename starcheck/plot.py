@@ -42,6 +42,7 @@ def plot_catalog_items(ax, catalog):
     acq = cat[cat['type'] == 'ACQ']
     bot = cat[cat['type'] == 'BOT']
     fid = cat[cat['type'] == 'FID']
+    mon = cat[cat['type'] == 'MON']
     for row in cat:
         ax.annotate("%s" % row['idx'],
                     xy=(row['yang'] - 120, row['zang'] + 60),
@@ -73,6 +74,16 @@ def plot_catalog_items(ax, catalog):
             color='blue',
             fill=False)
         ax.add_patch(acq_box)
+    for mon_box in mon:
+        # starcheck convention was to plot monitor boxes at 2X halfw
+        box = plt.Rectangle(
+            (mon_box['yang'] - (mon_box['halfw'] * 2),
+             mon_box['zang'] - (mon_box['halfw'] * 2)),
+             width=mon_box['halfw'] * 4,
+             height=mon_box['halfw'] * 4,
+             color='orange',
+             fill=False)
+        ax.add_patch(box)
     ax.scatter(fid['yang'], fid['zang'],
                facecolors=face,
                edgecolors='red',
