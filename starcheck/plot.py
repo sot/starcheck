@@ -174,7 +174,7 @@ def plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir):
                             title="Stars at RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll))
     cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)))
     plt.close(cat_plot)
-    f_plot = field_plot(ra, dec, roll, starcat_time, field=field, title='field')
+    f_plot = field_plot(ra, dec, roll, starcat_time, field=field)
     f_plot.savefig(os.path.join(outdir, 'star_view_{}.png'.format(obsid)))
     plt.close(f_plot)
 
