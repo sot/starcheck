@@ -2,7 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-from astropy.table import Table, Column
+from astropy.table import hstack, Table, Column
 import agasc
 from Chandra.Time import DateTime
 import Quaternion
@@ -100,19 +100,12 @@ def plot_catalog_items(ax, catalog):
 def plot_field_items(ax, field, quat, faint_plot_mag):
     field = Table(field)
     field = field[field['MAG_ACA'] < faint_plot_mag]
-    yags = []
-    zags = []
-    for star in field:
-        yag, zag = radec2yagzag(star['RA_PMCORR'],
-                                star['DEC_PMCORR'],
-                                quat)
-        yag *= 3600
-        zag *= 3600
-        yags.append(yag)
-        zags.append(zag)
+    # Add star Y angle and Z angle in arcsec to the field_stars table
+    yagzags = (radec2yagzag(star['RA_PMCORR'], star['DEC_PMCORR'], quat)
+               for star in field)
+    yagzags = Table(rows=[(y * 3600, z * 3600) for y, z in yagzags], names=['yang', 'zang'])
+    field = hstack([field, yagzags])
 
-    field.add_column(Column(name='yang', data=yags))
-    field.add_column(Column(name='zang', data=zags))
     color = np.ones(len(field), dtype='|S10')
     color[:] = 'red'
     faint = ((field['CLASS'] == 0)
