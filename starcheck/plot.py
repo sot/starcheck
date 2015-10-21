@@ -215,6 +215,9 @@ def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir):
     f_plot = plot_star_field(ra, dec, roll, starcat_time, field_stars=field_stars)
     f_plot.savefig(os.path.join(outdir, 'star_view_{}.png'.format(obsid)))
     plt.close(f_plot)
+    compass_plot = plot_compass(roll)
+    compass_plot.savefig(os.path.join(outdir, 'compass{}.png'.format(obsid)))
+    plt.close(compass_plot)
 
 
 def plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time=DateTime(),
@@ -261,4 +264,27 @@ def plot_star_field(ra, dec, roll, starcat_time=DateTime(),
                                            radius=1.5,
                                            date=DateTime(starcat_time).date)
     fig = star_plot(catalog=None, attitude=[ra, dec, roll], field_stars=field_stars, title=title)
+    return fig
+
+
+def plot_compass(roll):
+    """
+    Make a compass plot.
+
+    :param roll: Attitude roll for compass plot.
+    :returns: matplotlib figure
+    """
+    fig = plt.figure(figsize=(3, 3))
+    ax = plt.subplot(polar=True)
+    ax.annotate("", xy=(0, 0), xytext=(0, 1),
+                arrowprops=dict(arrowstyle="<-", color="k"))
+    ax.annotate("", xy=(0, 0), xytext=(np.radians(90), 1),
+                arrowprops=dict(arrowstyle="<-", color="k"))
+    ax.annotate("N", xy=(0, 0), xytext=(0, 1.2))
+    ax.annotate("E", xy=(0, 0), xytext=(np.radians(90), 1.2))
+    ax.set_theta_offset(np.radians(90 + roll))
+    ax.grid(False)
+    ax.set_yticklabels([])
+    plt.ylim(0, 1.4)
+    plt.tight_layout()
     return fig
