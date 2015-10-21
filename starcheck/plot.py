@@ -35,7 +35,16 @@ def symsize(mag):
     return np.interp(mag, [6.0, 11.0], [20.0, 1])
 
 
-def plot_catalog_items(ax, catalog):
+def _plot_catalog_items(ax, catalog):
+    """
+    Plot catalog items (guide, acq, bot, mon, fid) in yang and zang on the supplied
+    axes object in place.
+
+    :param ax: matplotlib axes
+    :param catalog: data structure containing starcheck-style columns/attributes
+                    catalog records.  This can be anything that will work with
+                    astropy.table.Table(catalog).  A list of dicts is the convention.
+    """
     cat = Table(catalog)
     face = backcolor
     gui = cat[cat['type'] == 'GUI']
@@ -97,25 +106,35 @@ def plot_catalog_items(ax, catalog):
                s=175)
 
 
-def plot_field_items(ax, field, quat, faint_plot_mag):
-    field = Table(field)
-    field = field[field['MAG_ACA'] < faint_plot_mag]
+def _plot_field_stars(ax, field_stars, quat, faint_plot_mag):
+    """
+    Plot plot field stars in yang and zang on the supplied
+    axes object in place.
+
+    :param ax: matplotlib axes
+    :param field_stars: astropy.table compatible set of records of agasc entries
+    :param quat: attitude quaternion as a Quat
+    :param faint_plot_mag: faint limit for plotting.  Star not plotted at all if
+                           dimmer than this mag.
+    """
+    field_stars = Table(field_stars)
+    field_stars = field_stars[field_stars['MAG_ACA'] < faint_plot_mag]
     # Add star Y angle and Z angle in arcsec to the field_stars table
     yagzags = (radec2yagzag(star['RA_PMCORR'], star['DEC_PMCORR'], quat)
-               for star in field)
+               for star in field_stars)
     yagzags = Table(rows=[(y * 3600, z * 3600) for y, z in yagzags], names=['yang', 'zang'])
-    field = hstack([field, yagzags])
+    field_stars = hstack([field_stars, yagzags])
 
-    color = np.ones(len(field), dtype='|S10')
+    color = np.ones(len(field_stars), dtype='|S10')
     color[:] = 'red'
-    faint = ((field['CLASS'] == 0)
-             & (field['MAG_ACA'] >= 10.7))
+    faint = ((field_stars['CLASS'] == 0)
+             & (field_stars['MAG_ACA'] >= 10.7))
     color[faint] = 'orange'
-    ok = ((field['CLASS'] == 0)
-          & (field['MAG_ACA'] < 10.7))
+    ok = ((field_stars['CLASS'] == 0)
+          & (field_stars['MAG_ACA'] < 10.7))
     color[ok] = frontcolor
-    size = symsize(field['MAG_ACA'])
-    ax.scatter(field['yang'], field['zang'],
+    size = symsize(field_stars['MAG_ACA'])
+    ax.scatter(field_stars['yang'], field_stars['zang'],
                c=color.tolist(), s=size, edgecolors=color.tolist())
 
 
@@ -147,10 +166,10 @@ def star_plot(catalog=None, quat=None, field=None, title=None, faint_plot_mag=10
 
     # plot starcheck catalog
     if catalog is not None:
-        plot_catalog_items(ax, catalog)
+        _plot_catalog_items(ax, catalog)
     # plot field if present
     if field is not None:
-        plot_field_items(ax, field, quat, faint_plot_mag)
+        _plot_field_stars(ax, field, quat, faint_plot_mag)
     if title is not None:
         fig.suptitle(title, fontsize='small')
     return fig
