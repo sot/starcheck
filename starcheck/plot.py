@@ -159,7 +159,7 @@ def star_plot(catalog=None, quat=None, field=None, title=None, faint_plot_mag=10
     if field is not None:
         plot_field_items(ax, field, quat, faint_plot_mag)
     if title is not None:
-        fig.suptitle(title)
+        fig.suptitle(title, fontsize='small')
     return fig
 
 
@@ -171,7 +171,7 @@ def plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir):
                                  radius=1.5,
                                  date=DateTime(starcat_time).date)
     cat_plot = catalog_plot(ra, dec, roll, starcat_time, catalog, field=field,
-                            title="RA %.2f Dec %.2f" % (ra, dec))
+                            title="Stars at RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll))
     cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)))
     plt.close(cat_plot)
     f_plot = field_plot(ra, dec, roll, starcat_time, field=field, title='field')
