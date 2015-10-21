@@ -61,11 +61,11 @@ def ccd_temp_wrapper(kwargs):
 
 def plot_cat_wrapper(kwargs):
     try:
-        from starcheck.plot import plots_for_obsid
+        from starcheck.plot import make_plots_for_obsid
     except ImportError as err:
         # write errors to starcheck's global warnings and STDERR
         perl.warning("Error with Inline::Python imports {}\n".format(err))
-    return plots_for_obsid(**kwargs)
+    return make_plots_for_obsid(**kwargs)
 
 };
 

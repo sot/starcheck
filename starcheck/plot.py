@@ -88,10 +88,10 @@ def _plot_catalog_items(ax, catalog):
         box = plt.Rectangle(
             (mon_box['yang'] - (mon_box['halfw'] * 2),
              mon_box['zang'] - (mon_box['halfw'] * 2)),
-             width=mon_box['halfw'] * 4,
-             height=mon_box['halfw'] * 4,
-             color='orange',
-             fill=False)
+            width=mon_box['halfw'] * 4,
+            height=mon_box['halfw'] * 4,
+            color='orange',
+            fill=False)
         ax.add_patch(box)
     ax.scatter(fid['yang'], fid['zang'],
                facecolors=face,
@@ -114,7 +114,7 @@ def _plot_field_stars(ax, field_stars, quat, faint_plot_mag):
     :param ax: matplotlib axes
     :param field_stars: astropy.table compatible set of records of agasc entries
     :param quat: attitude quaternion as a Quat
-    :param faint_plot_mag: faint limit for plotting.  Star not plotted at all if
+    :param faint_plot_mag: star faint limit for plotting.  Star not plotted at all if
                            dimmer than this mag.
     """
     field_stars = Table(field_stars)
@@ -127,18 +127,27 @@ def _plot_field_stars(ax, field_stars, quat, faint_plot_mag):
 
     color = np.ones(len(field_stars), dtype='|S10')
     color[:] = 'red'
-    faint = ((field_stars['CLASS'] == 0)
-             & (field_stars['MAG_ACA'] >= 10.7))
+    faint = ((field_stars['CLASS'] == 0) & (field_stars['MAG_ACA'] >= 10.7))
     color[faint] = 'orange'
-    ok = ((field_stars['CLASS'] == 0)
-          & (field_stars['MAG_ACA'] < 10.7))
+    ok = ((field_stars['CLASS'] == 0) & (field_stars['MAG_ACA'] < 10.7))
     color[ok] = frontcolor
     size = symsize(field_stars['MAG_ACA'])
     ax.scatter(field_stars['yang'], field_stars['zang'],
                c=color.tolist(), s=size, edgecolors=color.tolist())
 
 
-def star_plot(catalog=None, quat=None, field=None, title=None, faint_plot_mag=10.7):
+def star_plot(catalog=None, attitude=None, field_stars=None, title=None, faint_plot_mag=10.7):
+    """
+    Plot a starcheck catalog, a star field, or both in a matplotlib figure.
+    If supplying a star field, an attitude must also be supplied.
+
+    :param catalog: Records describing starcheck catalog.  Must be astropy table compatible.
+    :param attitude: A Quaternion compatible attitude for the pointing
+    :param field_stars: astropy table compatible set of agasc records
+    :param title: string to be used as suptitle for the figure
+    :param faint_plot_mag: faint limit for field star plotting
+    :returns: matplotlib figure
+    """
     fig = plt.figure(figsize=(5.2, 5.2))
     ax = fig.add_subplot(1, 1, 1)
 
@@ -168,44 +177,88 @@ def star_plot(catalog=None, quat=None, field=None, title=None, faint_plot_mag=10
     if catalog is not None:
         _plot_catalog_items(ax, catalog)
     # plot field if present
-    if field is not None:
-        _plot_field_stars(ax, field, quat, faint_plot_mag)
+    if field_stars is not None:
+        if attitude is None:
+            raise ValueError("Must supply attitude to plot field stars")
+        _plot_field_stars(ax, field_stars, Quaternion.Quat(attitude), faint_plot_mag)
     if title is not None:
         fig.suptitle(title, fontsize='small')
     return fig
 
 
-def plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir):
+def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir):
+    """
+    Make standard starcheck plots for obsid and save as pngs with standard names.
+    Writes out to stars_{obsid}.png and star_view_{obsid}.png in supplied outdir.
+
+    :param obsid:  Obsid used for file names
+    :param ra: RA in degrees
+    :param dec: Dec in degrees
+    :param roll: Roll in degrees
+
+    :param catalog: list of dicts or other astropy.table compatible structure with conventional
+                    starcheck catalog parameters for a set of ACQ/BOT/GUI/FID/MON items.
+    :param outdir: output directory for png plot files
+    """
+    # explicitly float convert these, as we may be receiving this from Perl passing strings
     ra = float(ra)
     dec = float(dec)
     roll = float(roll)
-    field = agasc.get_agasc_cone(ra, dec,
-                                 radius=1.5,
-                                 date=DateTime(starcat_time).date)
-    cat_plot = catalog_plot(ra, dec, roll, starcat_time, catalog, field=field,
-                            title="Stars at RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll))
+    # get the agasc field once and then use it for both plots that have stars
+    field_stars = agasc.get_agasc_cone(ra, dec,
+                                       radius=1.5,
+                                       date=DateTime(starcat_time).date)
+    cat_plot = plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time, field_stars=field_stars,
+                                      title="Stars at RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll))
     cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)))
     plt.close(cat_plot)
-    f_plot = field_plot(ra, dec, roll, starcat_time, field=field)
+    f_plot = plot_star_field(ra, dec, roll, starcat_time, field_stars=field_stars)
     f_plot.savefig(os.path.join(outdir, 'star_view_{}.png'.format(obsid)))
     plt.close(f_plot)
 
 
-def catalog_plot(ra, dec, roll, starcat_time, catalog, field=None, title=None):
-    quat = Quaternion.Quat([ra, dec, roll])
-    if field is None:
-        field = agasc.get_agasc_cone(ra, dec,
-                                     radius=1.5,
-                                     date=DateTime(starcat_time).date)
-    fig = star_plot(catalog, quat, field, title=title)
+def plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time=DateTime(),
+                           field_stars=None, title=None):
+    """
+    Make standard starcheck catalog plot with a star field and the elements of a catalog.
+
+    :param ra: RA in degrees
+    :param dec: Dec in degrees
+    :param roll: Roll in degrees
+    :param catalog: list of dicts or other astropy.table compatible record structure with
+                    conventional starcheck catalog parameters for a set of
+                    ACQ/BOT/GUI/FID/MON items.
+    :param starcat_time: star catalog time.  Used as time for proper motion correction.
+    :param field_stars: astropy table compatible set of agasc records.  If not supplied,
+                        these will be fetched for the supplied attitude
+    :param title: string to be used as suptitle for the figure
+    :returns: matplotlib figure
+    """
+    if field_stars is None:
+        field_stars = agasc.get_agasc_cone(ra, dec,
+                                           radius=1.5,
+                                           date=DateTime(starcat_time).date)
+    fig = star_plot(catalog, attitude=[ra, dec, roll], field_stars=field_stars, title=title)
     return fig
 
 
-def field_plot(ra, dec, roll, starcat_time, field=None, title=None):
-    quat = Quaternion.Quat([ra, dec, roll])
-    if field is None:
-        field = agasc.get_agasc_cone(ra, dec,
-                                     radius=1.5,
-                                     date=DateTime(starcat_time).date)
-    fig = star_plot(catalog=None, quat=quat, field=field, title=title)
+def plot_star_field(ra, dec, roll, starcat_time=DateTime(),
+                    field_stars=None, title=None):
+    """
+    Make standard starcheck star field plot.
+
+    :param ra: RA in degrees
+    :param dec: Dec in degrees
+    :param roll: Roll in degrees
+    :param starcat_time: star catalog time.  Used as time for proper motion correction.
+    :param field_stars: astropy table compatible set of agasc records.  If not supplied,
+                        these will be fetched for the supplied attitude
+    :param title: string to be used as suptitle for the figure
+    :returns: matplotlib figure
+    """
+    if field_stars is None:
+        field_stars = agasc.get_agasc_cone(ra, dec,
+                                           radius=1.5,
+                                           date=DateTime(starcat_time).date)
+    fig = star_plot(catalog=None, attitude=[ra, dec, roll], field_stars=field_stars, title=title)
     return fig
