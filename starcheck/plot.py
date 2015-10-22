@@ -7,7 +7,7 @@ import agasc
 from Chandra.Time import DateTime
 import Quaternion
 from Ska.quatutil import radec2yagzag
-
+from chandra_aca import pixels_to_yagzag
 
 # rc definitions
 frontcolor = 'black'
@@ -123,7 +123,8 @@ def _plot_field_stars(ax, field_stars, quat, faint_plot_mag):
                c=color.tolist(), s=size, edgecolors=color.tolist())
 
 
-def star_plot(catalog=None, attitude=None, field_stars=None, title=None, faint_plot_mag=10.7):
+def star_plot(catalog=None, attitude=None, field_stars=None, title=None, faint_plot_mag=10.7,
+              quad_bound=True, grid=True):
     """
     Plot a starcheck catalog, a star field, or both in a matplotlib figure.
     If supplying a star field, an attitude must also be supplied.
@@ -133,6 +134,8 @@ def star_plot(catalog=None, attitude=None, field_stars=None, title=None, faint_p
     :param field_stars: astropy table compatible set of agasc records
     :param title: string to be used as suptitle for the figure
     :param faint_plot_mag: faint limit for field star plotting
+    :param quad_bound: boolean, plot inner quadrant boundaries
+    :param grid: boolean, plot axis grid
     :returns: matplotlib figure
     """
     fig = plt.figure(figsize=(5.325, 5.325))
@@ -158,9 +161,19 @@ def star_plot(catalog=None, attitude=None, field_stars=None, title=None, faint_p
                s=symsize(np.array([10.0, 9.0, 8.0, 7.0, 6.0])))
 
     [l.set_rotation(90) for l in ax.get_yticklabels()]
-    ax.grid()
+    ax.grid(grid)
     ax.set_ylabel("Zag (arcsec)")
     ax.set_xlabel("Yag (arcsec)")
+
+    if quad_bound:
+        pix_range = np.linspace(-510, 510, 50)
+        minus_half_pix = -0.5 * np.ones_like(pix_range)
+        # plot the row = -0.5 line
+        yag, zag = pixels_to_yagzag(minus_half_pix, pix_range)
+        ax.plot(yag, zag, color='magenta', alpha=.4)
+        # plot the col = -0.5 line
+        yag, zag = pixels_to_yagzag(pix_range, minus_half_pix)
+        ax.plot(yag, zag, color='magenta', alpha=.4)
 
     # plot starcheck catalog
     if catalog is not None:
@@ -252,7 +265,8 @@ def plot_star_field(ra, dec, roll, starcat_time=DateTime(),
         field_stars = agasc.get_agasc_cone(ra, dec,
                                            radius=1.5,
                                            date=DateTime(starcat_time).date)
-    fig = star_plot(catalog=None, attitude=[ra, dec, roll], field_stars=field_stars, title=title)
+    fig = star_plot(catalog=None, attitude=[ra, dec, roll], field_stars=field_stars, title=title,
+                    quad_bound=False)
     return fig
 
 
