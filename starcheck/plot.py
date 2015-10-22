@@ -266,7 +266,7 @@ def plot_star_field(ra, dec, roll, starcat_time=DateTime(),
                                            radius=1.5,
                                            date=DateTime(starcat_time).date)
     fig = star_plot(catalog=None, attitude=[ra, dec, roll], field_stars=field_stars, title=title,
-                    quad_bound=False)
+                    quad_bound=False, faint_plot_mag=11.0)
     return fig
 
 
