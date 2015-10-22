@@ -148,8 +148,10 @@ def star_plot(catalog=None, attitude=None, field_stars=None, title=None, faint_p
     :param faint_plot_mag: faint limit for field star plotting
     :returns: matplotlib figure
     """
-    fig = plt.figure(figsize=(5.2, 5.2))
+    fig = plt.figure(figsize=(5.325, 5.325))
     ax = fig.add_subplot(1, 1, 1)
+    plt.subplots_adjust(top=0.95)
+    ax.set_aspect('equal')
 
     # plot the box and set the labels
     plt.xlim(2900, -2900)
