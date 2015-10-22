@@ -212,13 +212,13 @@ def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir):
                                        date=DateTime(starcat_time).date)
     cat_plot = plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time, field_stars=field_stars,
                                       title="Stars at RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll))
-    cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)))
+    cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)), dpi=80)
     plt.close(cat_plot)
     f_plot = plot_star_field(ra, dec, roll, starcat_time, field_stars=field_stars)
-    f_plot.savefig(os.path.join(outdir, 'star_view_{}.png'.format(obsid)))
+    f_plot.savefig(os.path.join(outdir, 'star_view_{}.png'.format(obsid)), dpi=80)
     plt.close(f_plot)
     compass_plot = plot_compass(roll)
-    compass_plot.savefig(os.path.join(outdir, 'compass{}.png'.format(obsid)))
+    compass_plot.savefig(os.path.join(outdir, 'compass{}.png'.format(obsid)), dpi=80)
     plt.close(compass_plot)
 
 
