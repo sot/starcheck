@@ -2198,12 +2198,10 @@ sub star_image_map {
 
 	# notes for pixel scaling.
 	# these will need to change if we resize the images.
-	# bottom left +43+383
-	# top left +43+42
-	# bottom right +383+383
-	# top right +383*43
+        # top right +384+39
+        # top left +54+39
 	# 2900x2900
-	my $pix_scale = 340 / (2900. * 2);
+	my $pix_scale = 330 / (2900. * 2);
 	my $map = "<map name=\"starmap_${obsid}\" id=\"starmap_${obsid}\"> \n";
 	for my $star_id (keys %plot_ids){
 		my $cat_star = $self->{agasc_hash}->{$star_id};
@@ -2214,8 +2212,8 @@ sub star_image_map {
 		eval{
 			($pix_row, $pix_col) = toPixels($yag, $zag);		
 		};
-		my $image_x = 43 + ((2900 - $yag) * $pix_scale);
-		my $image_y = 43 + ((2900 - $zag) * $pix_scale);
+		my $image_x = 54 + ((2900 - $yag) * $pix_scale);
+		my $image_y = 39 + ((2900 - $zag) * $pix_scale);
 		my $star = '<area href="javascript:void(0);"' . "\n"
 			. 'ONMOUSEOVER="return overlib (' 
 			. "'id=$sid <br/>" 
