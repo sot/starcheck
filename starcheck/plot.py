@@ -47,9 +47,8 @@ def _plot_catalog_items(ax, catalog):
     """
     cat = Table(catalog)
     face = backcolor
-    gui = cat[cat['type'] == 'GUI']
-    acq = cat[cat['type'] == 'ACQ']
-    bot = cat[cat['type'] == 'BOT']
+    gui = cat[(cat['type'] == 'GUI') | (cat['type'] == 'BOT')]
+    acq = cat[(cat['type'] == 'ACQ') | (cat['type'] == 'BOT')]
     fid = cat[cat['type'] == 'FID']
     mon = cat[cat['type'] == 'MON']
     for row in cat:
@@ -61,20 +60,7 @@ def _plot_catalog_items(ax, catalog):
                facecolors=face,
                edgecolors='green',
                s=100)
-    ax.scatter(bot['yang'], bot['zang'],
-               facecolors=face,
-               edgecolors='green',
-               s=100)
     for acq_star in acq:
-        acq_box = plt.Rectangle(
-            (acq_star['yang'] - acq_star['halfw'],
-             acq_star['zang'] - acq_star['halfw']),
-            width=acq_star['halfw'] * 2,
-            height=acq_star['halfw'] * 2,
-            color='blue',
-            fill=False)
-        ax.add_patch(acq_box)
-    for acq_star in bot:
         acq_box = plt.Rectangle(
             (acq_star['yang'] - acq_star['halfw'],
              acq_star['zang'] - acq_star['halfw']),
