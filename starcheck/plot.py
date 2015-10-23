@@ -211,7 +211,7 @@ def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir):
                                        radius=1.5,
                                        date=DateTime(starcat_time).date)
     cat_plot = plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time, field_stars=field_stars,
-                                      title="Stars at RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll))
+                                      title="RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll))
     cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)), dpi=80)
     plt.close(cat_plot)
     f_plot = plot_star_field(ra, dec, roll, starcat_time, field_stars=field_stars)
