@@ -6,9 +6,9 @@ ACA Load Review Checklist
    file in the starcheck git project
 
 
-Date: 2012-Sep-26
+Date: 2015-Oct-30
 
-Version: 3.1
+Version: 3.2
 
 Author: E. Martin, S. Bucher, T. Aldcroft, J. Connelly
 
@@ -66,6 +66,8 @@ Load Input Files
       * Observing: ./CRddd_hhvv.tlr
 
       * Vehicle: ./vehicle/VRddd_hhvv.tlr
+
+  - Characteristics file: 
 
 Starcheck's Data Files
 ----------------------
@@ -349,6 +351,13 @@ Checks
 |ACA-046|Magnitude         |X|X|Perigee catalogs have 3 or more GS         |n/a |Possible Bright |
 |       |                  | | |magnitude 9.0 or brighter                  |    |Star Hold; NSM  |
 |       |                  | | |                                           |    |safing action   |
++-------+------------------+-+-+-------------------------------------------+----+----------------+
+|ACA-047|Pointing          |X|X|Characteristics file is no more than 4     |n/a |Reduced science |
+|       |                  | | |weeks old                                  |    |quality         |
++-------+------------------+-+-+-------------------------------------------+----+----------------+
+|ACA-048|Pointing          |X|X|Confirm that PCAD attitudes match expected |n/a |Reduced science |
+|       |                  | | |values based on target coordinates, target |    |quality         |
+|       |                  | | |offsets, and ODB_SI_ALIGN values           |    |                |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
                            
                            
