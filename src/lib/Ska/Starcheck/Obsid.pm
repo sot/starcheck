@@ -890,8 +890,6 @@ sub check_star_catalog {
 
     my $mag_faint_slot_diff = 1.4; # used in slot test like:
                                    # $c->{"MAXMAG$i"} - $c->{"GS_MAG$i"} >= $mag_faint_slot_diff
-    my $mag_faint_red   = 10.6;	# Faint mag limit (red)
-    my $mag_faint_yellow= 10.3;	# Faint mag limit (yellow)
     my $mag_bright      = 6.0;	# Bright mag limit 
 
     my $fid_faint = 7.2;
@@ -911,6 +909,9 @@ sub check_star_catalog {
     my $min_acq      = $is_science ? 4 : 5;
     my $min_fid      = 3;
     ########################################################################
+
+    $self->{mag_faint_red} = 15.0;
+    $self->{mag_faint_yellow} = 15.0;
 
     # Set smallest maximums and largest minimums for rectangle edges
     my $max_y = $y_ang_min;
@@ -1115,10 +1116,10 @@ sub check_star_catalog {
 	# Faint and bright limits ~ACA-009 ACA-010
 	if ($type ne 'MON' and $mag ne '---') {
 
-	    if ($mag < $mag_bright or $mag > $mag_faint_red) {
+	    if ($mag < $mag_bright or $mag > $self->{mag_faint_red}) {
 		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
 	    } 
-	    elsif ($mag > $mag_faint_yellow) {
+	    elsif ($mag > $self->{mag_faint_yellow}) {
 		push @yellow_warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
 	    }
 	
