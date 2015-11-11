@@ -669,7 +669,7 @@ if (@global_warn) {
 # Run independent attitude checker
 my $CHAR_REQUIRED_AFTER = '2015:315:00:00:00.000';
 if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
-    $out .= "------------  VERIFY TARGETS (SI_ALIGN CHECK)  -----------------\n\n";
+    $out .= "------------  VERIFY ATTITUDE (SI_ALIGN CHECK)  -----------------\n\n";
     if (not defined $char_file){
         $out .= "Error.  Characteristics file not found. \n";
     }
