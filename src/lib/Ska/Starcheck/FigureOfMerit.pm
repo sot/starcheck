@@ -30,7 +30,7 @@ import perl
 # this provides an interface back to the Perl namespace
 
 try:
-    from starcheck.star_probs import acq_success_prob, prob_n_acq
+    from starcheck.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
 except ImportError as err:
     # write errors to starcheck's global warnings and STDERR
     perl.warning("Error with Inline::Python imports \n".format(err))
@@ -77,8 +77,11 @@ sub make_figure_of_merit{
     $self->{figure_of_merit} = {expected => substr(sum(@probs), 0, 4),
                                 cum_prob => [map { log($_) / log(10.0) } @{$n_or_fewer_probs}],
                                 cum_prob_bad => ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT)
-    };
+                                };
 
+    # Dynamic mag limits based on 75% and 50% chance of successful star acq
+    $self->{mag_faint_yellow} = mag_for_p_acq(0.75, $date, $t_ccd);
+    $self->{mag_faint_red} = mag_for_p_acq(0.5, $date, $t_ccd);
 }
 
 ##*****************************************************************************************

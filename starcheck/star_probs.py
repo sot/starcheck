@@ -112,6 +112,7 @@ def mag_for_p_acq(p_acq, date=None, t_ccd=-19.0):
     else:
         # At this point there must be a zero in the range [bright_mag, faint_mag]
         mag = brentq(prob_minus_p_acq, bright_mag, faint_mag, xtol=1e-4, rtol=1e-4)
+        mag = float(mag)
 
     return mag
 
