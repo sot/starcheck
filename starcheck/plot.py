@@ -93,49 +93,68 @@ def _plot_catalog_items(ax, catalog):
                s=175)
 
 
-def _plot_field_stars(ax, field_stars, quat, faint_plot_mag):
+def _plot_field_stars(ax, stars, quat, red_mag_lim=None, bad_stars=None):
     """
     Plot plot field stars in yang and zang on the supplied
     axes object in place.
 
     :param ax: matplotlib axes
-    :param field_stars: astropy.table compatible set of records of agasc entries
+    :param stars: astropy.table compatible set of records of agasc entries of stars
     :param quat: attitude quaternion as a Quat
-    :param faint_plot_mag: star faint limit for plotting.  Star not plotted at all if
-                           dimmer than this mag.
+    :param red_mag_lim: faint limit
+    :param bad_stars: boolean mask of stars to be plotted in red
     """
-    field_stars = Table(field_stars)
-    field_stars = field_stars[field_stars['MAG_ACA'] < faint_plot_mag]
+    stars = Table(stars)
+
     # Add star Y angle and Z angle in arcsec to the field_stars table
     yagzags = (radec2yagzag(star['RA_PMCORR'], star['DEC_PMCORR'], quat)
-               for star in field_stars)
+               for star in stars)
     yagzags = Table(rows=[(y * 3600, z * 3600) for y, z in yagzags], names=['yang', 'zang'])
-    field_stars = hstack([field_stars, yagzags])
+    stars = hstack([stars, yagzags])
 
-    color = np.ones(len(field_stars), dtype='|S10')
-    color[:] = 'red'
-    faint = ((field_stars['CLASS'] == 0) & (field_stars['MAG_ACA'] >= 10.7))
-    color[faint] = 'orange'
-    ok = ((field_stars['CLASS'] == 0) & (field_stars['MAG_ACA'] < 10.7))
-    color[ok] = frontcolor
-    size = symsize(field_stars['MAG_ACA'])
-    ax.scatter(field_stars['yang'], field_stars['zang'],
+    if red_mag_lim:
+        nsigma = 3.0
+        mag_error_low_limit = 1.5
+        randerr = 0.26
+        caterr = stars['MAG_ACA_ERR'] / 100.
+        error = nsigma * np.sqrt(randerr*randerr + caterr*caterr)
+        error[error < mag_error_low_limit] = mag_error_low_limit
+        faint = ((stars['MAG_ACA'] >= red_mag_lim)
+                 & ((stars['MAG_ACA'] - error) < red_mag_lim))
+        too_dim_to_plot = ((stars['MAG_ACA'] >= red_mag_lim)
+                            & ((stars['MAG_ACA'] - error) >= red_mag_lim))
+        # All of the indices are on stars, so reindex without too_dim_to_plot
+        stars = stars[~too_dim_to_plot]
+        faint = faint[~too_dim_to_plot]
+        if bad_stars is not None:
+            bad_stars = bad_stars[~too_dim_to_plot]
+
+    color = np.ones(len(stars), dtype='|S10')
+    color[:] = 'black'
+    if red_mag_lim:
+        color[faint] = 'orange'
+    if bad_stars is not None:
+        color[bad_stars] = 'magenta'
+    size = symsize(stars['MAG_ACA'])
+    ax.scatter(stars['yang'], stars['zang'],
                c=color.tolist(), s=size, edgecolors=color.tolist())
 
 
-def star_plot(catalog=None, attitude=None, field_stars=None, title=None, faint_plot_mag=10.7,
-              quad_bound=True, grid=True):
+def star_plot(catalog=None, attitude=None, stars=None, title=None,
+              red_mag_lim=None, quad_bound=True, grid=True, bad_stars=None):
     """
     Plot a starcheck catalog, a star field, or both in a matplotlib figure.
     If supplying a star field, an attitude must also be supplied.
 
     :param catalog: Records describing starcheck catalog.  Must be astropy table compatible.
     :param attitude: A Quaternion compatible attitude for the pointing
-    :param field_stars: astropy table compatible set of agasc records
+    :param stars: astropy table compatible set of agasc records of stars
     :param title: string to be used as suptitle for the figure
-    :param faint_plot_mag: faint limit for field star plotting
+    :param red_mag_lim: faint limit for field star plotting.
     :param quad_bound: boolean, plot inner quadrant boundaries
     :param grid: boolean, plot axis grid
+    :param bad_stars: boolean mask on 'stars' of those that don't meet minimum requirements
+                      to be selected as acq stars
     :returns: matplotlib figure
     """
     fig = plt.figure(figsize=(5.325, 5.325))
@@ -179,16 +198,17 @@ def star_plot(catalog=None, attitude=None, field_stars=None, title=None, faint_p
     if catalog is not None:
         _plot_catalog_items(ax, catalog)
     # plot field if present
-    if field_stars is not None:
+    if stars is not None:
         if attitude is None:
             raise ValueError("Must supply attitude to plot field stars")
-        _plot_field_stars(ax, field_stars, Quaternion.Quat(attitude), faint_plot_mag)
+        _plot_field_stars(ax, stars, Quaternion.Quat(attitude),
+                          bad_stars=bad_stars, red_mag_lim=red_mag_lim)
     if title is not None:
         fig.suptitle(title, fontsize='small')
     return fig
 
 
-def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir):
+def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir, red_mag_lim=10.7):
     """
     Make standard starcheck plots for obsid and save as pngs with standard names.
     Writes out to stars_{obsid}.png and star_view_{obsid}.png in supplied outdir.
@@ -201,7 +221,9 @@ def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir):
     :param catalog: list of dicts or other astropy.table compatible structure with conventional
                     starcheck catalog parameters for a set of ACQ/BOT/GUI/FID/MON items.
     :param outdir: output directory for png plot files
+    :param red_mag_lim: faint limit
     """
+
     # explicitly float convert these, as we may be receiving this from Perl passing strings
     ra = float(ra)
     dec = float(dec)
@@ -210,20 +232,29 @@ def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir):
     field_stars = agasc.get_agasc_cone(ra, dec,
                                        radius=1.5,
                                        date=DateTime(starcat_time).date)
-    cat_plot = plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time, field_stars=field_stars,
-                                      title="RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll))
-    cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)), dpi=80)
-    plt.close(cat_plot)
-    f_plot = plot_star_field(ra, dec, roll, starcat_time, field_stars=field_stars)
+
+    # Mark bad stars from current limits in characteristics
+    bad_stars = ((field_stars['CLASS'] != 0) | (field_stars['MAG_ACA_ERR'] > 100) |
+                 (field_stars['POS_ERR'] > 3000) | (field_stars['ASPQ1'] > 0) |
+                 (field_stars['ASPQ2'] > 0) | (field_stars['ASPQ3'] > 999) |
+                 (field_stars['VAR'] > -9999))
+    f_plot = plot_star_field(ra, dec, roll, starcat_time, stars=field_stars,
+                             bad_stars=bad_stars, red_mag_lim=None)
     f_plot.savefig(os.path.join(outdir, 'star_view_{}.png'.format(obsid)), dpi=80)
     plt.close(f_plot)
+    cat_plot = plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time, stars=field_stars,
+                                      bad_stars=bad_stars,
+                                      title="RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll),
+                                      red_mag_lim=red_mag_lim)
+    cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)), dpi=80)
+    plt.close(cat_plot)
     compass_plot = plot_compass(roll)
     compass_plot.savefig(os.path.join(outdir, 'compass{}.png'.format(obsid)), dpi=80)
     plt.close(compass_plot)
 
 
 def plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time=DateTime(),
-                           field_stars=None, title=None):
+                           stars=None, bad_stars=None, red_mag_lim=None, title=None):
     """
     Make standard starcheck catalog plot with a star field and the elements of a catalog.
 
@@ -234,21 +265,23 @@ def plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time=DateTime(),
                     conventional starcheck catalog parameters for a set of
                     ACQ/BOT/GUI/FID/MON items.
     :param starcat_time: star catalog time.  Used as time for proper motion correction.
-    :param field_stars: astropy table compatible set of agasc records.  If not supplied,
-                        these will be fetched for the supplied attitude
+    :param stars: astropy table compatible set of agasc records of stars.  If not supplied,
+                  these will be fetched for the supplied attitude
+    :param bad_stars: mask of stars that should be plotted in red
     :param title: string to be used as suptitle for the figure
     :returns: matplotlib figure
     """
-    if field_stars is None:
-        field_stars = agasc.get_agasc_cone(ra, dec,
-                                           radius=1.5,
-                                           date=DateTime(starcat_time).date)
-    fig = star_plot(catalog, attitude=[ra, dec, roll], field_stars=field_stars, title=title)
+    if stars is None:
+        stars = agasc.get_agasc_cone(ra, dec,
+                                     radius=1.5,
+                                     date=DateTime(starcat_time).date)
+    fig = star_plot(catalog, attitude=[ra, dec, roll], stars=stars, title=title,
+                    bad_stars=bad_stars, red_mag_lim=red_mag_lim)
     return fig
 
 
-def plot_star_field(ra, dec, roll, starcat_time=DateTime(),
-                    field_stars=None, title=None):
+def plot_star_field(ra, dec, roll, starcat_time=DateTime(), stars=None, bad_stars=None,
+                    red_mag_lim=None, title=None):
     """
     Make standard starcheck star field plot.
 
@@ -256,17 +289,18 @@ def plot_star_field(ra, dec, roll, starcat_time=DateTime(),
     :param dec: Dec in degrees
     :param roll: Roll in degrees
     :param starcat_time: star catalog time.  Used as time for proper motion correction.
-    :param field_stars: astropy table compatible set of agasc records.  If not supplied,
-                        these will be fetched for the supplied attitude
+    :param stars: astropy table compatible set of agasc records of stars.  If not supplied,
+                  these will be fetched for the supplied attitude
+    :param bad_stars: mask of stars that should be plotted in red
     :param title: string to be used as suptitle for the figure
     :returns: matplotlib figure
     """
-    if field_stars is None:
-        field_stars = agasc.get_agasc_cone(ra, dec,
-                                           radius=1.5,
-                                           date=DateTime(starcat_time).date)
-    fig = star_plot(catalog=None, attitude=[ra, dec, roll], field_stars=field_stars, title=title,
-                    quad_bound=False, faint_plot_mag=11.0)
+    if stars is None:
+        stars = agasc.get_agasc_cone(ra, dec,
+                                     radius=1.5,
+                                     date=DateTime(starcat_time).date)
+    fig = star_plot(catalog=None, attitude=[ra, dec, roll], stars=stars, title=title,
+                    quad_bound=False, red_mag_lim=red_mag_lim, bad_stars=bad_stars)
     return fig
 
 
