@@ -141,17 +141,12 @@ my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
 # Check for characteristics.  Ignore the get_file required vs not API and just pre-check
 # to see if there is characteristics
 my $char_file;
-my $char_glob = "$par{dir}/${sosa_dir_slash}mps/ode/characteristics/CHARACTERIS*";
-my $char_check = glob($char_glob);
-if ($char_check){
-    $char_file  = get_file($char_glob,'characteristics');
-}
-# Check for local characteristics
-my $local_char_glob = "$par{dir}/${sosa_dir_slash}mps/ode/characteristics/L_*_CHARACTERIS*";
-my $local_char_check = glob($local_char_glob);
-if ($local_char_check){
-    print STDERR "Overriding characteristics with local characteristics\n";
-    $char_file = get_file($local_char_glob, 'local characteristics');
+for my $char_glob ("$par{dir}/mps/ode/characteristics/L_*_CHARACTERIS*",
+                   "$par{dir}/mps/ode/characteristics/CHARACTERIS*"){
+    if (glob($char_glob)){
+        $char_file  = get_file($char_glob, 'characteristics');
+        last;
+    }
 }
 
 
