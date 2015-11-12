@@ -1,5 +1,40 @@
+import re
 import hopper
 from parse_cm import read_maneuver_summary
+from Chandra.Time import DateTime
+
+
+def check_characteristics_date(ofls_characteristics_file, ref_date=None):
+    match = re.search(r'CHARACTERIS_(\d\d)([A-Z]{3})(\d\d)', ofls_characteristics_file)
+    if not match:
+        return False
+
+    day, mon, yr = match.groups()
+    yr = int(yr)
+    yr += 1900 if (yr > 90) else 2000
+    mon = mon.lower().capitalize()
+    file_date = DateTime('{}{}{} at 00:00:00.000'.format(yr, mon, day))
+
+    return False if (DateTime(ref_date) - file_date > 30) else True
+
+
+def test_check_characteristics_date():
+    ok = check_characteristics_date('blah/blah/L_blah_CHARACTERIS_01OCT15',
+                                    '2015Oct30 at 00:00:00.000')
+    assert ok is True
+
+    ok = check_characteristics_date('blah/blah/L_blah_CHARACTERIS_01OCT15',
+                                    '2015Nov02 at 00:00:00.000')
+    assert ok is False
+
+    ok = check_characteristics_date('blah/blah/L_blah_CHARACTERIS_99OCT15',
+                                    '1999Oct20 at 00:00:00.000')
+    assert ok is True
+
+    ok = check_characteristics_date('blah/blah/L_blah',
+                                    '2015Nov02 at 00:00:00.000')
+    assert ok is False
+
 
 def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=None,
                                     ofls_characteristics_file=None, out=None,

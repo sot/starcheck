@@ -51,7 +51,7 @@ import sys
 import perl
 # this provides an interface back to the Perl namespace
 
-from starcheck.pcad_att_check import make_pcad_attitude_check_report
+from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 
 def ccd_temp_wrapper(kwargs):
     try:
@@ -678,10 +678,16 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
         my $att_ok = make_pcad_attitude_check_report(
             $backstop, $or_file, $mm_file, $char_file, $att_report);
         if ($att_ok){
-            $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n\n";
+            $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n";
         }
         else{
-            $out .= "<A HREF=\"${att_report}\">[NOT OK] Coordinate mismatch or error.</A>\n\n";
+            $out .= "<A HREF=\"${att_report}\">[NOT OK] Coordinate mismatch or error.</A>\n";
+        }
+        if (check_characteristics_date($char_file, $date[0])){
+            $out .= "[OK] Characteristics file newer than 30 days\n\n";
+        }
+        else{
+            $out .= "[NOT OK] Characteristics file older than 30 days\n\n";
         }
     }
 }
