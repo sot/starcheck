@@ -676,7 +676,7 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
     else{
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
         my $att_ok = make_pcad_attitude_check_report(
-            $backstop, $or_file, $char_file, $att_report);
+            $backstop, $or_file, $mm_file, $char_file, $att_report);
         if ($att_ok){
             $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n\n";
         }
