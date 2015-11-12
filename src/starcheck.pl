@@ -684,10 +684,10 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
             $out .= "<A HREF=\"${att_report}\">[NOT OK] Coordinate mismatch or error.</A>\n";
         }
         if (check_characteristics_date($char_file, $date[0])){
-            $out .= "<A HREF=\"${att_report}\">[OK] Characteristics file newer than 30 days</A>\n\n";
+            $out .= "[OK] Characteristics file newer than 30 days\n\n";
         }
         else{
-            $out .= "<A HREF=\"${att_report}\">[NOT OK] Characteristics file older than 30 days</A>\n\n";
+            $out .= "[NOT OK] Characteristics file older than 30 days\n\n";
         }
     }
 }
