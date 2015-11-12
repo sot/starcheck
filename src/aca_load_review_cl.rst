@@ -67,7 +67,13 @@ Load Input Files
 
       * Vehicle: ./vehicle/VRddd_hhvv.tlr
 
-  - Characteristics file: 
+  - Characteristics file:
+
+      * ./mps/ode/characteristics/L_*_CHARACTERIS_DDMMMYY
+
+      or
+
+      * ./mps/ode/characteristics/CHARACTERIS_DDMMMYY
 
 Starcheck's Data Files
 ----------------------
