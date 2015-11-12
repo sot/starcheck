@@ -51,6 +51,8 @@ import sys
 import perl
 # this provides an interface back to the Perl namespace
 
+from starcheck.pcad_att_check import make_pcad_attitude_check_report
+
 def ccd_temp_wrapper(kwargs):
     try:
         from starcheck.calc_ccd_temps import get_ccd_temps
@@ -136,6 +138,18 @@ my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');
 my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither'); 
 my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
 
+# Check for characteristics.  Ignore the get_file required vs not API and just pre-check
+# to see if there is characteristics
+my $char_file;
+for my $char_glob ("$par{dir}/mps/ode/characteristics/L_*_CHARACTERIS*",
+                   "$par{dir}/mps/ode/characteristics/CHARACTERIS*"){
+    if (glob($char_glob)){
+        $char_file  = get_file($char_glob, 'characteristics');
+        last;
+    }
+}
+
+
 my $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
 
 my $config_ref = YAML::LoadFile($config_file);
@@ -201,6 +215,9 @@ for my $data_file ('up.gif', 'down.gif', 'overlib.js'){
     copy( "${Starcheck_Data}/${data_file}", "${STARCHECK}/${data_file}")
 	or print STDERR "copy(${Starcheck_Data}/${data_file}, ${STARCHECK}/${data_file}) failed: $! \n";
 }
+
+
+
 
 
 # First read the Backstop file, and split into components
@@ -646,6 +663,27 @@ if (@global_warn) {
         push @{$save_hash{processing_warning}}, $_;
     }
     $out .= qq{${font_stop}\n};
+}
+
+
+# Run independent attitude checker
+my $CHAR_REQUIRED_AFTER = '2015:315:00:00:00.000';
+if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
+    $out .= "------------  VERIFY ATTITUDE (SI_ALIGN CHECK)  -----------------\n\n";
+    if (not defined $char_file){
+        $out .= "Error.  Characteristics file not found. \n";
+    }
+    else{
+        my $att_report = "${STARCHECK}/pcad_att_check.txt";
+        my $att_ok = make_pcad_attitude_check_report(
+            $backstop, $or_file, $mm_file, $char_file, $att_report);
+        if ($att_ok){
+            $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n\n";
+        }
+        else{
+            $out .= "<A HREF=\"${att_report}\">[NOT OK] Coordinate mismatch or error.</A>\n\n";
+        }
+    }
 }
 
 # Dark Cal Checker
