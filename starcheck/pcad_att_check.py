@@ -1,6 +1,6 @@
 import re
 import hopper
-from parse_cm import read_maneuver_summary
+from parse_cm import read_backstop, read_maneuver_summary
 from Chandra.Time import DateTime
 
 
@@ -36,7 +36,24 @@ def test_check_characteristics_date():
     assert ok is False
 
 
+def recent_sim_history(time, file):
+    """
+    Read from the end of the a SIM history file and return the
+    first (last) time and value before the given time.  Specific
+    to SIM focus and transition history based on the regex for
+    parsing and the int cast of the parsed data.
+    """
+    for line in reversed(open(file).readlines()):
+        match = re.match('^(\d+\.\d+)\s+\|\s+(\S+)\s*$',
+                         line)
+        if match:
+            greta_time, value = match.groups()
+            if (DateTime(greta_time, format='greta').secs < time):
+                return greta_time, int(value)
+
+
 def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=None,
+                                    simtrans_file=None, simfocus_file=None,
                                     ofls_characteristics_file=None, out=None,
                                     ):
     """
@@ -45,18 +62,21 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=No
     """
     mm = read_maneuver_summary(mm_file)
     q = [mm[0][key] for key in ['q1_0', 'q2_0', 'q3_0', 'q4_0']]
+    bs = read_backstop(backstop_file)
+    simfa_time, simfa = recent_sim_history(DateTime(bs[0]['date']).secs,
+                                       simfocus_file)
+    simpos_time, simpos = recent_sim_history(DateTime(bs[0]['date']).secs,
+                                       simtrans_file)
     initial_state = {'q_att': q,
-                     'simpos': 75624,
-                     'simfa_pos': -468}
+                     'simpos': simpos,
+                     'simfa_pos': simfa}
 
     # Run the commands and populate attributes in `sc`, the spacecraft state.
     # In particular sc.checks is a dict of checks by obsid.
     # Any state value (e.g. obsid or q_att) has a corresponding plural that
     # gives the history of updates as a dict with a `value` and `date` key.
-    # This does not define the initial state from continuity at this time.
     sc = hopper.run_cmds(backstop_file, or_list_file, ofls_characteristics_file,
-                         initial_state=None)
-
+                         initial_state=initial_state)
     all_ok = True
 
     # Iterate through obsids in order
