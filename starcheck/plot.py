@@ -112,7 +112,7 @@ def _plot_field_stars(ax, stars, quat, red_mag_lim=None, bad_stars=None):
     """
     stars = Table(stars)
 
-    # Add star Y angle and Z angle in arcsec to the field_stars table
+    # Add star Y angle and Z angle in arcsec to the stars table
     yagzags = (radec2yagzag(star['RA_PMCORR'], star['DEC_PMCORR'], quat)
                for star in stars)
     yagzags = Table(rows=[(y * 3600, z * 3600) for y, z in yagzags], names=['yang', 'zang'])
@@ -257,16 +257,15 @@ def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir, re
     dec = float(dec)
     roll = float(roll)
     # get the agasc field once and then use it for both plots that have stars
-    field_stars = agasc.get_agasc_cone(ra, dec,
-                                       radius=1.5,
-                                       date=DateTime(starcat_time).date)
-
-    bad_stars = bad_acq_stars(field_stars)
-    f_plot = plot_star_field(ra, dec, roll, starcat_time, stars=field_stars,
+    stars = agasc.get_agasc_cone(ra, dec,
+                                 radius=1.5,
+                                 date=DateTime(starcat_time).date)
+    bad_stars = bad_acq_stars(stars)
+    f_plot = plot_star_field(ra, dec, roll, starcat_time, stars=stars,
                              bad_stars=bad_stars, red_mag_lim=None)
     f_plot.savefig(os.path.join(outdir, 'star_view_{}.png'.format(obsid)), dpi=80)
     plt.close(f_plot)
-    cat_plot = plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time, stars=field_stars,
+    cat_plot = plot_starcheck_catalog(ra, dec, roll, catalog, starcat_time, stars=stars,
                                       bad_stars=bad_stars,
                                       title="RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll),
                                       red_mag_lim=red_mag_lim)
