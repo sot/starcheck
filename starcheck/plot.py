@@ -61,7 +61,7 @@ def _plot_catalog_items(ax, catalog):
         ax.annotate("%s" % row['idx'],
                     xy=(row['yang'] - 120, row['zang'] + 60),
                     color='red',
-                    fontsize=12, weight='light')
+                    fontsize=12)
     ax.scatter(gui['yang'], gui['zang'],
                facecolors='none',
                edgecolors='green',
