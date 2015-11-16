@@ -35,10 +35,10 @@ FAINT_STAR_ALPHA = .5
 
 def symsize(mag):
     # map mags to figsizes, defining
-    # mag 6 as 30 and mag 11 as 1
+    # mag 6 as 40 and mag 11 as 3
     # interp should leave it at the bounding value outside
     # the range
-    return np.interp(mag, [6.0, 11.0], [30.0, 1])
+    return np.interp(mag, [6.0, 11.0], [40.0, 3.0])
 
 
 def _plot_catalog_items(ax, catalog):
