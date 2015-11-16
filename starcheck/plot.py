@@ -221,6 +221,20 @@ def star_plot(catalog=None, attitude=None, stars=None, title=None,
         fig.suptitle(title, fontsize='small')
     return fig
 
+def bad_acq_stars(stars):
+    """
+    Return mask of 'bad' stars, by evaluating AGASC star parameters.
+    :param stars: astropy table-compatible set of agasc records of stars
+    :returns: boolean mask true for 'bad' stars
+    """
+    return ((stars['CLASS'] != 0) |
+            (stars['MAG_ACA_ERR'] > 100) |
+            (stars['POS_ERR'] > 3000) |
+            (stars['ASPQ1'] > 0) |
+            (stars['ASPQ2'] > 0) |
+            (stars['ASPQ3'] > 999) |
+            (stars['VAR'] > -9999))
+
 
 def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir, red_mag_lim=10.7):
     """
@@ -247,11 +261,7 @@ def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir, re
                                        radius=1.5,
                                        date=DateTime(starcat_time).date)
 
-    # Mark bad stars from current limits in characteristics
-    bad_stars = ((field_stars['CLASS'] != 0) | (field_stars['MAG_ACA_ERR'] > 100) |
-                 (field_stars['POS_ERR'] > 3000) | (field_stars['ASPQ1'] > 0) |
-                 (field_stars['ASPQ2'] > 0) | (field_stars['ASPQ3'] > 999) |
-                 (field_stars['VAR'] > -9999))
+    bad_stars = bad_acq_stars(field_stars)
     f_plot = plot_star_field(ra, dec, roll, starcat_time, stars=field_stars,
                              bad_stars=bad_stars, red_mag_lim=None)
     f_plot.savefig(os.path.join(outdir, 'star_view_{}.png'.format(obsid)), dpi=80)
