@@ -27,6 +27,12 @@ plt.rcParams['savefig.facecolor'] = backcolor
 plt.rcParams['savefig.edgecolor'] = backcolor
 
 
+BAD_STAR_COLOR = 'tomato'
+BAD_STAR_ALPHA = .5
+FAINT_STAR_COLOR = 'lightseagreen'
+FAINT_STAR_ALPHA = .5
+
+
 def symsize(mag):
     # map mags to figsizes, defining
     # mag 6 as 30 and mag 11 as 1
@@ -57,7 +63,7 @@ def _plot_catalog_items(ax, catalog):
                     color='red',
                     fontsize=12, weight='light')
     ax.scatter(gui['yang'], gui['zang'],
-               facecolors=face,
+               facecolors='none',
                edgecolors='green',
                s=100)
     for acq_star in acq:
@@ -80,13 +86,13 @@ def _plot_catalog_items(ax, catalog):
             fill=False)
         ax.add_patch(box)
     ax.scatter(fid['yang'], fid['zang'],
-               facecolors=face,
+               facecolors='none',
                edgecolors='red',
                linewidth=.5,
                marker='o',
                s=175)
     ax.scatter(fid['yang'], fid['zang'],
-               facecolors=face,
+               facecolors='none',
                edgecolors='red',
                marker='+',
                linewidth=.5,
@@ -111,6 +117,7 @@ def _plot_field_stars(ax, stars, quat, red_mag_lim=None, bad_stars=None):
                for star in stars)
     yagzags = Table(rows=[(y * 3600, z * 3600) for y, z in yagzags], names=['yang', 'zang'])
     stars = hstack([stars, yagzags])
+    ok = np.ones(len(stars), dtype='bool')
 
     if red_mag_lim:
         nsigma = 3.0
@@ -126,18 +133,25 @@ def _plot_field_stars(ax, stars, quat, red_mag_lim=None, bad_stars=None):
         # All of the indices are on stars, so reindex without too_dim_to_plot
         stars = stars[~too_dim_to_plot]
         faint = faint[~too_dim_to_plot]
+        ok = ok[~too_dim_to_plot]
+        ok[faint] = False
         if bad_stars is not None:
             bad_stars = bad_stars[~too_dim_to_plot]
-
-    color = np.ones(len(stars), dtype='|S10')
-    color[:] = 'black'
-    if red_mag_lim:
-        color[faint] = 'orange'
     if bad_stars is not None:
-        color[bad_stars] = 'magenta'
+        ok[bad_stars] = False
+
     size = symsize(stars['MAG_ACA'])
-    ax.scatter(stars['yang'], stars['zang'],
-               c=color.tolist(), s=size, edgecolors=color.tolist())
+    ax.scatter(stars[ok]['yang'], stars[ok]['zang'],
+               c='black', s=size[ok])
+    if red_mag_lim:
+        ax.scatter(stars[faint]['yang'], stars[faint]['zang'],
+                   c=FAINT_STAR_COLOR, s=size[faint], edgecolor='none',
+                   alpha=FAINT_STAR_ALPHA)
+    if bad_stars is not None:
+        ax.scatter(stars[bad_stars]['yang'], stars[bad_stars]['zang'],
+                   c=BAD_STAR_COLOR, s=size[bad_stars], edgecolor='none',
+                   alpha=BAD_STAR_ALPHA)
+
 
 
 def star_plot(catalog=None, attitude=None, stars=None, title=None,
@@ -176,7 +190,7 @@ def star_plot(catalog=None, attitude=None, stars=None, title=None,
 
     ax.scatter([-2700, -2700, -2700, -2700, -2700],
                [2400, 2100, 1800, 1500, 1200],
-               c='orange', edgecolors='orange',
+               c='orange', edgecolors='none',
                s=symsize(np.array([10.0, 9.0, 8.0, 7.0, 6.0])))
 
     [l.set_rotation(90) for l in ax.get_yticklabels()]
@@ -194,15 +208,15 @@ def star_plot(catalog=None, attitude=None, stars=None, title=None,
         yag, zag = pixels_to_yagzag(pix_range, minus_half_pix)
         ax.plot(yag, zag, color='magenta', alpha=.4)
 
-    # plot starcheck catalog
-    if catalog is not None:
-        _plot_catalog_items(ax, catalog)
     # plot field if present
     if stars is not None:
         if attitude is None:
             raise ValueError("Must supply attitude to plot field stars")
         _plot_field_stars(ax, stars, Quaternion.Quat(attitude),
                           bad_stars=bad_stars, red_mag_lim=red_mag_lim)
+    # plot starcheck catalog
+    if catalog is not None:
+        _plot_catalog_items(ax, catalog)
     if title is not None:
         fig.suptitle(title, fontsize='small')
     return fig
