@@ -935,6 +935,17 @@ sub check_star_catalog {
 	$dither = 20.0;
     }
 
+    # Adjust mag limits based on CCD temperature
+    if ((defined $self->{ccd_temp}) and ($self->{ccd_temp} > -14)){
+        my $mag_delta = ($self->{ccd_temp} - -14) * 0.15;
+        $mag_faint_red -= $mag_delta;
+        $mag_faint_yellow -= $mag_delta;
+    }
+    # Save these limit values
+    $self->{mag_faint_yellow} = $mag_faint_yellow;
+    $self->{mag_faint_red} = $mag_faint_red;
+
+
     my @warn = ();
     my @yellow_warn = ();
 
@@ -1808,7 +1819,9 @@ sub print_report {
 
     if (defined $self->{ccd_temp}){
         $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp})
-              . sprintf("\t N100 Warm Pix Frac %.3f \n", $self->{n100_warm_frac});
+              . sprintf("\t N100 Warm Pix Frac %.3f \n", $self->{n100_warm_frac})
+              . sprintf("Dynamic Mag Limits: Yellow %.2f \t Red %.2f\n",
+                        $self->{mag_faint_yellow}, $self->{mag_faint_red});
     }
     else{
         $o .= sprintf("No CCD temperature prediction\n")
