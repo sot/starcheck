@@ -288,9 +288,11 @@ sub get_fid_actions {
     # 2001211.190731558   | AFLC02D1 FID 02 ON
     if (defined $fs_file){
 	my @fidsel_text = io($fs_file)->slurp;
-	# take the last thousand entries
-#	my @reduced_fidsel_text = @fidsel_text;
-	my @reduced_fidsel_text = @fidsel_text[($#fidsel_text-1000) ... $#fidsel_text];
+	# take the last thousand entries if there are more than a 1000
+	my @reduced_fidsel_text = @fidsel_text;
+        if ($#fidsel_text > 1000){
+            my @reduced_fidsel_text = @fidsel_text[($#fidsel_text-1000) ... $#fidsel_text];
+        }
 #    if ($fs_file && ($fidsel_fh = new IO::File $fs_file, "r")) {
 	for my $fidsel_line (@reduced_fidsel_text){
 	    if ($fidsel_line =~ /(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
@@ -622,28 +624,25 @@ sub PS {
 
     my @ps_all_lines = io($ps_file)->slurp;
 
-    my $beg_block = 0;
+    my $date_re = '\d{4}:\d{3}:\d{2}:\d{2}:\d{2}\.\d{3}';
+    my $rel_date_re = '\d{3}:\d{2}:\d{2}:\d{2}\.\d{3}';
 
     for my $ps_line (@ps_all_lines){
-        my @tmp = split ' ', $ps_line;
-        next unless scalar(@tmp) >= 4;
-        if ($tmp[1] eq 'MANVR') {
-            $beg_block = 1;
-	    push @ps, $ps_line;
+        if ($ps_line =~ /.*${date_re}\s+${date_re}\s+${rel_date_re}.*/){
+            my @tmp = split ' ', $ps_line;
+            if ($tmp[1] eq 'MANVR') {
+                push @ps, $ps_line;
+            }
+            if ($tmp[1] eq 'OBS') {
+                push @ps, $ps_line;
+            }
+            if (($ps_line =~ /OBSID\s=\s(\d\d\d\d\d)/) && (scalar(@tmp) >= 8)) {
+                push @ps, $ps_line;
+            }
         }
-        if ($tmp[1] eq 'OBS'  && ($beg_block)) {
-	    push @ps, $ps_line;
-        } 
-	if (($ps_line =~ /OBSID\s=\s(\d\d\d\d\d)/) && (scalar(@tmp) >= 8 && ($beg_block))) {
-	    push @ps, $ps_line;
-        }
-	last if (($beg_block) && ($ps_line =~ /^\s*$/));
     }
-    
     return @ps;
 }
-
-    
 
 
 
