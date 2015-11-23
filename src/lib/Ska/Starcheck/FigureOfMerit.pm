@@ -26,7 +26,7 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 use Inline Python => q{
 
-from starcheck.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
+from chandra_aca.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
 
 def _acq_success_prob(date, t_ccd, mag, color, spoiler):
     out = acq_success_prob(date, t_ccd, mag, color, spoiler)
