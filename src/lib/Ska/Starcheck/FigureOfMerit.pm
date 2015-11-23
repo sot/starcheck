@@ -21,7 +21,7 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 our @EXPORT = qw();
-our @EXPORT_OK = qw( make_figure_of_merit );
+our @EXPORT_OK = qw( make_figure_of_merit set_dynamic_mag_limits );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 use Inline Python => q{
@@ -43,11 +43,12 @@ sub make_figure_of_merit{
     my $c;
     my $self = shift;
     return unless ($c = $self->find_command("MP_STARCAT"));
+    return unless (defined $self->{ccd_temp});
 
     my @probs;
     my %slot_probs;
 
-    my $t_ccd = 19.0;  # ??
+    my $t_ccd = $self->{ccd_temp};
     my $date = $c->{date};
 
     foreach my $i (1..16) {
@@ -71,11 +72,22 @@ sub make_figure_of_merit{
                                 cum_prob => [map { log($_) / log(10.0) } @{$n_or_fewer_probs}],
                                 cum_prob_bad => ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT)
                                 };
+}
 
+
+sub set_dynamic_mag_limits{
+    my $c;
+    my $self = shift;
+    return unless ($c = $self->find_command("MP_STARCAT"));
+    return unless (defined $self->{ccd_temp});
+
+    my $date = $c->{date};
+    my $t_ccd = $self->{ccd_temp};
     # Dynamic mag limits based on 75% and 50% chance of successful star acq
     $self->{mag_faint_yellow} = mag_for_p_acq(0.75, $date, $t_ccd);
     $self->{mag_faint_red} = mag_for_p_acq(0.5, $date, $t_ccd);
 }
+
 
 ##*****************************************************************************************
 sub star_prob {

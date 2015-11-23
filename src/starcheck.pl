@@ -49,7 +49,6 @@ use Ska::AGASC;
 use Inline Python => q{
 
 from starcheck.calc_ccd_temps import get_ccd_temps
-from starcheck import star_probs
 
 def ccd_temp_wrapper(kwargs):
     return get_ccd_temps(**kwargs)
@@ -567,6 +566,7 @@ foreach my $obsid (@obsid_id) {
 
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_flick_pix_mon();
+    $obs{$obsid}->set_dynamic_mag_limits();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
     $obs{$obsid}->check_bright_perigee($radmon);
