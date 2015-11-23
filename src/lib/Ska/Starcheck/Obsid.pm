@@ -29,7 +29,7 @@ use English;
 use IO::All;
 use Ska::Convert qw(date2time);
 
-use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit );
+use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit set_dynamic_mag_limits );
 use RDB;
 
 use Ska::AGASC;
@@ -909,9 +909,6 @@ sub check_star_catalog {
     my $min_acq      = $is_science ? 4 : 5;
     my $min_fid      = 3;
     ########################################################################
-
-    $self->{mag_faint_red} = 15.0;
-    $self->{mag_faint_yellow} = 15.0;
 
     # Set smallest maximums and largest minimums for rectangle edges
     my $max_y = $y_ang_min;
@@ -1799,7 +1796,9 @@ sub print_report {
 
     if (defined $self->{ccd_temp}){
         $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp})
-              . sprintf("\t N100 Warm Pix Frac %.3f \n", $self->{n100_warm_frac});
+              . sprintf("\t N100 Warm Pix Frac %.3f \n", $self->{n100_warm_frac})
+              . sprintf("Dynamic Mag Limits: Yellow %.2f \t Red %.2f\n",
+                        $self->{mag_faint_yellow}, $self->{mag_faint_red});
     }
     else{
         $o .= sprintf("No CCD temperature prediction\n")
