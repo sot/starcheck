@@ -527,22 +527,18 @@ my $json_text = json_obsids();
 my $obsid_temps;
 eval{
     my $json_obsid_temps;
-    local $SIG{ALRM}=sub{ die "get_ccd_temps timed out\n"};
     eval{
-        alarm 300;
         $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                               outdir=>$STARCHECK,
                                               json_obsids => $json_text,
                                               model_spec => "$Starcheck_Data/aca_spec.json",
                                               char_file => "$Starcheck_Data/characteristics.yaml",
                                              });
-        alarm 0;
     };
     if ($@){
         push @global_warn, "ERROR: $@";
         die "$@\n";
     }
-    alarm 0;
     # convert back from JSON outside the timeout
     $obsid_temps = JSON::from_json($json_obsid_temps);
 };
