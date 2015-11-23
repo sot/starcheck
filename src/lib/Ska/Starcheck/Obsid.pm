@@ -1807,13 +1807,17 @@ sub print_report {
 
     if (defined $self->{ccd_temp}){
         $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp})
-              . sprintf("\t N100 Warm Pix Frac %.3f \n", $self->{n100_warm_frac})
-              . sprintf("Dynamic Mag Limits: Yellow %.2f \t Red %.2f\n",
-                        $self->{mag_faint_yellow}, $self->{mag_faint_red});
+            . sprintf("\t N100 Warm Pix Frac %.3f \n", $self->{n100_warm_frac});
+        # Don't print dynamic limits if there is no catalog
+        if ($c = find_command($self, "MP_STARCAT")){
+            $o .= sprintf("Dynamic Mag Limits: Yellow %.2f \t Red %.2f\n",
+                          $self->{mag_faint_yellow}, $self->{mag_faint_red});
+        }
     }
     else{
         $o .= sprintf("No CCD temperature prediction\n")
     }
+
     # cute little table for buttons for previous and next obsid
     $o .= "</PRE></TD><TD VALIGN=TOP>\n";
     if (defined $self->{prev}->{obsid} or defined $self->{next}->{obsid}){
