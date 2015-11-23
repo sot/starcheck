@@ -565,7 +565,7 @@ eval{
                                           model_spec => "$Starcheck_Data/aca_spec.json",
                                           char_file => "$Starcheck_Data/characteristics.yaml",
                                       });
-    # convert back from JSON outside the eval
+    # convert back from JSON outside
     $obsid_temps = JSON::from_json($json_obsid_temps);
 };
 if ($@){
