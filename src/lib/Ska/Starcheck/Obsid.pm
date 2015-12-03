@@ -613,6 +613,11 @@ sub check_dither {
     my %dthr_cmd = (ON => 'ENAB',   # Translation from OR terminology to dither state term.
 		    OFF => 'DISA');
 
+    my %standard_y_dither = (20 => 1087.0,
+                             8 => 1000.0);
+    my %standard_z_dither = (20 => 768.6,
+                             8 => 707.1);
+
     my $obs_beg_pad = 8*60;       # Check dither status at obs start + 8 minutes to allow 
                                   # for disabled dither because of mon star commanding
     my $obs_end_pad = 3*60;
@@ -658,8 +663,30 @@ sub check_dither {
 				       $y_amp, $z_amp, 
 				       $dither->{ampl_y}, $dither->{ampl_p});
                     push @{$self->{warn}}, $warn;
-	       }
-	    }
+              }
+              # Use weak rounding (int (value + .5)) to see if the amplitude
+              # has a match in our hash of standard values
+              if (not defined $standard_y_dither{int($y_amp + .5)}
+                      or not defined $standard_z_dither{int($z_amp + .5)}){
+                  push @{$self->{yellow_warn}}, "$alarm Non-standard dither amplitude\n";
+              }
+              else{
+                  if (defined $dither->{period_y}
+                      and defined $dither->{period_p}
+                      and $dither->{source} == 'backstop'){
+                      my $y_period = $dither->{period_y};
+                      my $z_period = $dither->{period_p};
+                      my $standard_y_period = $standard_y_dither{int($y_amp + .5)};
+                      my $standard_z_period = $standard_z_dither{int($z_amp + .5)};
+                      # Explicitly confirm that the dither period is within 10 seconds of the
+                      # expected dither period used with this amplitude
+                      if ((abs($y_period - $standard_y_period) > 10)
+                          or (abs($z_period - $standard_z_period) > 10)){
+                          push @{$self->{yellow_warn}}, "$alarm Non-standard dither period\n";
+                      }
+                  }
+              }
+            }
             last;
 	}
         # ACA-003
