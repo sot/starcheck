@@ -732,8 +732,15 @@ sub check_bright_perigee{
                               and ($c->{"GS_MAG$_"} < $min_mag) } (0 .. 16);
     my $bright_count = scalar(@bright_stars);
     if ($bright_count < $min_n_stars){
-      push @{$self->{warn}}, "$alarm $bright_count star(s) brighter than $min_mag mag. "
-      . "Perigee requires at least $min_n_stars\n";
+        if ($self->{special_case_er} == 1){
+            push @{$self->{fyi}}, "$info Only $bright_count star(s) brighter than $min_mag mag. "
+                . "Acceptable for Special Case ER\n";
+        }
+        else{
+            push @{$self->{warn}}, "$alarm $bright_count star(s) brighter than $min_mag mag. "
+                . "Perigee requires at least $min_n_stars\n";
+        }
+
     }
 }
 
