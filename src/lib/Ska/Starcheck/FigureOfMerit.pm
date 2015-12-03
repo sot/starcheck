@@ -79,7 +79,6 @@ sub set_dynamic_mag_limits{
     my $c;
     my $self = shift;
     return unless ($c = $self->find_command("MP_STARCAT"));
-    return unless (defined $self->{ccd_temp});
 
     my $date = $c->{date};
     my $t_ccd = $self->{ccd_temp};
