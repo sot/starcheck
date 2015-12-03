@@ -29,7 +29,7 @@ use Inline Python => q{
 from chandra_aca.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
 
 def _acq_success_prob(date, t_ccd, mag, color, spoiler):
-    out = acq_success_prob(date, t_ccd, mag, color, spoiler)
+    out = acq_success_prob(date, float(t_ccd), float(mag), float(color), spoiler)
     return out.tolist()
 
 def _prob_n_acq(acq_probs):
