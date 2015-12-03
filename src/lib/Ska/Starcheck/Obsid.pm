@@ -2644,6 +2644,9 @@ sub set_ccd_temps{
     if ((not defined $obsid_temps->{$self->{obsid}})
         or (not defined $obsid_temps->{$self->{obsid}}->{ccd_temp})){
         push @{$self->{warn}}, "$alarm No CCD temperature prediction for obsid\n";
+        push @{$self->{warn}}, sprintf("$alarm Using %s (planning limit) for t_ccd for mag limits\n",
+                                       $config{ccd_temp_red_limit});
+        $self->{ccd_temp} = $config{ccd_temp_red_limit};
         return;
     }
     # set the temperature to the value for the current obsid
