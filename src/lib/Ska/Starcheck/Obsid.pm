@@ -610,6 +610,7 @@ sub check_dither {
     my $self = shift;
 
     my $dthr = shift;		  # Ref to array of hashes containing dither states
+    my $backstop = shift;
     my %dthr_cmd = (ON => 'ENAB',   # Translation from OR terminology to dither state term.
 		    OFF => 'DISA');
 
@@ -617,6 +618,7 @@ sub check_dither {
                              8 => 1000.0);
     my %standard_z_dither = (20 => 768.6,
                              8 => 707.1);
+    my $large_dith_thresh = 30;   # Amplitude larger than this requires special checking/handling
 
     my $obs_beg_pad = 8*60;       # Check dither status at obs start + 8 minutes to allow 
                                   # for disabled dither because of mon star commanding
@@ -669,6 +671,10 @@ sub check_dither {
               if (not defined $standard_y_dither{int($y_amp + .5)}
                       or not defined $standard_z_dither{int($z_amp + .5)}){
                   push @{$self->{yellow_warn}}, "$alarm Non-standard dither amplitude\n";
+                  # More checking for large dither
+                  if ($y_amp > $large_dith_thresh or $z_amp > $large_dith_thresh){
+                      $self->large_dither_checks($backstop, $dthr);
+                  }
               }
               else{
                   if (defined $dither->{period_y}
@@ -698,6 +704,63 @@ sub check_dither {
 	}
     }
 }
+
+#############################################################################################
+sub large_dither_checks {
+#############################################################################################
+    # Check the subset of monitor-window-style commanding that should be used on
+    # observations with large dither.
+
+    my $self = shift;
+    my $backstop = shift;      # Reference to array of backstop commands
+    my $dither = shift;
+    my $time_tol = 10;         # Commands must be within $time_tol of expectation
+
+    # Find the associated maneuver command for this obsid.  Need this to get the
+    # exact time of the end of maneuver
+    my $manv;
+    unless ($manv = find_command($self, "MP_TARGQUAT", -1)) {
+      push @{$self->{warn}}, sprintf("$alarm Cannot find maneuver for checking dither commanding\n");
+      return;
+    }
+
+    # Now check in backstop commands for :
+    #  Dither is disabled (AODSDITH) 1 min prior to the end of the maneuver (EOM)
+    #    to the target attitude.
+    #  Dither is enabled (AOENDITH) 5 min after EOM
+    # ACA-040
+    my $t_manv = $manv->{tstop};
+    my %dt = (AODSDITH => -60, AOENDITH => 300);
+    my %cnt = map { $_ => 0 } keys %dt;
+    my $all_dither_count = 0;
+    foreach my $bs (grep { $_->{cmd} eq 'COMMAND_SW' } @{$backstop}) {
+       my %param = Ska::Parse_CM_File::parse_params($bs->{params});
+       next unless $bs->{time} >= ($t_manv - ($dt{AODSDITH} + $time_tol + 1));
+       next unless ($param{TLMSID} =~ /^AO/);
+       # Search for all relevant dither commands
+       foreach my $cmd ('AODSDITH', 'AOENDITH', 'AODITPAR') {
+            $all_dither_count++;
+            # Check the AODSDITH and AOENDITH commands for time tolerance
+           if ($cmd =~ /$param{TLMSID}/){
+               if ( abs($bs->{time} - ($t_manv+$dt{$cmd})) < $time_tol){
+                   $cnt{$cmd}++;
+               }
+           }
+       }
+    }
+
+    # Add warning messages unless exactly one of each command was found at the right time
+    foreach my $cmd (qw (AODSDITH AOENDITH)) {
+       next if ($cnt{$cmd} == 1);
+       $cnt{$cmd} = 'no' if ($cnt{$cmd} == 0);
+       push @{$self->{warn}}, "$alarm Large Dither Check Found $cnt{$cmd} $cmd commands near " . time2date($t_manv+$dt{$cmd}) . "\n";
+    }
+
+}
+
+
+
+
 
 #############################################################################################
 sub check_bright_perigee{
