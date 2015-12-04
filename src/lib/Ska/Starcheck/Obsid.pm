@@ -676,20 +676,18 @@ sub check_dither {
                       $self->large_dither_checks($backstop, $dthr);
                   }
               }
-              else{
-                  if (defined $dither->{period_y}
+              if (defined $dither->{period_y}
                       and defined $dither->{period_p}
-                      and $dither->{source} == 'backstop'){
-                      my $y_period = $dither->{period_y};
-                      my $z_period = $dither->{period_p};
-                      my $standard_y_period = $standard_y_dither{int($y_amp + .5)};
-                      my $standard_z_period = $standard_z_dither{int($z_amp + .5)};
-                      # Explicitly confirm that the dither period is within 10 seconds of the
-                      # expected dither period used with this amplitude
-                      if ((abs($y_period - $standard_y_period) > 10)
+                          and $dither->{source} eq 'backstop'){
+                  my $y_period = $dither->{period_y};
+                  my $z_period = $dither->{period_p};
+                  my $standard_y_period = $standard_y_dither{int($y_amp + .5)};
+                  my $standard_z_period = $standard_z_dither{int($z_amp + .5)};
+                  # Explicitly confirm that the dither period is within 10 seconds of the
+                  # expected dither period used with this amplitude
+                  if ((abs($y_period - $standard_y_period) > 10)
                           or (abs($z_period - $standard_z_period) > 10)){
-                          push @{$self->{yellow_warn}}, "$alarm Non-standard dither period\n";
-                      }
+                      push @{$self->{yellow_warn}}, "$alarm Non-standard dither period\n";
                   }
               }
             }
