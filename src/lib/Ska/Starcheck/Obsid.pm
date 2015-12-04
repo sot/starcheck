@@ -29,7 +29,7 @@ use English;
 use IO::All;
 use Ska::Convert qw(date2time);
 
-use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit );
+use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit set_dynamic_mag_limits );
 use RDB;
 
 use Ska::AGASC;
@@ -920,9 +920,6 @@ sub check_star_catalog {
     my $min_fid      = 3;
     ########################################################################
 
-    $self->{mag_faint_red} = 15.0;
-    $self->{mag_faint_yellow} = 15.0;
-
     # Set smallest maximums and largest minimums for rectangle edges
     my $max_y = $y_ang_min;
     my $min_y = $y_ang_max;
@@ -1808,13 +1805,18 @@ sub print_report {
                       $self->{figure_of_merit}->{expected});
     }
 
-    if (defined $self->{ccd_temp}){
-        $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp})
-              . sprintf("\t N100 Warm Pix Frac %.3f \n", $self->{n100_warm_frac});
+
+    # Don't print CCD temperature and dynamic limits if there is no catalog
+    if ($c = find_command($self, "MP_STARCAT")){
+        $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp});
+        if (defined $self->{n100_warm_frac}){
+            $o .= sprintf("\t N100 Warm Pix Frac %.3f", $self->{n100_warm_frac});
+        }
+        $o .= "\n";
+        $o .= sprintf("Dynamic Mag Limits: Yellow %.2f \t Red %.2f\n",
+                      $self->{mag_faint_yellow}, $self->{mag_faint_red});
     }
-    else{
-        $o .= sprintf("No CCD temperature prediction\n")
-    }
+
     # cute little table for buttons for previous and next obsid
     $o .= "</PRE></TD><TD VALIGN=TOP>\n";
     if (defined $self->{prev}->{obsid} or defined $self->{next}->{obsid}){
@@ -2642,6 +2644,9 @@ sub set_ccd_temps{
     if ((not defined $obsid_temps->{$self->{obsid}})
         or (not defined $obsid_temps->{$self->{obsid}}->{ccd_temp})){
         push @{$self->{warn}}, "$alarm No CCD temperature prediction for obsid\n";
+        push @{$self->{warn}}, sprintf("$alarm Using %s (planning limit) for t_ccd for mag limits\n",
+                                       $config{ccd_temp_red_limit});
+        $self->{ccd_temp} = $config{ccd_temp_red_limit};
         return;
     }
     # set the temperature to the value for the current obsid

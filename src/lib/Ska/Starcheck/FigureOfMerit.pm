@@ -21,22 +21,15 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 our @EXPORT = qw();
-our @EXPORT_OK = qw( make_figure_of_merit );
+our @EXPORT_OK = qw( make_figure_of_merit set_dynamic_mag_limits );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 use Inline Python => q{
-import sys
-import perl
-# this provides an interface back to the Perl namespace
 
-try:
-    from starcheck.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
-except ImportError as err:
-    # write errors to starcheck's global warnings and STDERR
-    perl.warning("Error with Inline::Python imports \n".format(err))
+from chandra_aca.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
 
 def _acq_success_prob(date, t_ccd, mag, color, spoiler):
-    out = acq_success_prob(date, t_ccd, mag, color, spoiler)
+    out = acq_success_prob(date, float(t_ccd), float(mag), float(color), spoiler)
     return out.tolist()
 
 def _prob_n_acq(acq_probs):
@@ -50,11 +43,12 @@ sub make_figure_of_merit{
     my $c;
     my $self = shift;
     return unless ($c = $self->find_command("MP_STARCAT"));
+    return unless (defined $self->{ccd_temp});
 
     my @probs;
     my %slot_probs;
 
-    my $t_ccd = 19.0;  # ??
+    my $t_ccd = $self->{ccd_temp};
     my $date = $c->{date};
 
     foreach my $i (1..16) {
@@ -78,11 +72,22 @@ sub make_figure_of_merit{
                                 cum_prob => [map { log($_) / log(10.0) } @{$n_or_fewer_probs}],
                                 cum_prob_bad => ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT)
                                 };
-
-    # Dynamic mag limits based on 75% and 50% chance of successful star acq
-    $self->{mag_faint_yellow} = mag_for_p_acq(0.75, $date, $t_ccd);
-    $self->{mag_faint_red} = mag_for_p_acq(0.5, $date, $t_ccd);
 }
+
+
+sub set_dynamic_mag_limits{
+    my $c;
+    my $self = shift;
+    return unless ($c = $self->find_command("MP_STARCAT"));
+
+    my $date = $c->{date};
+    my $t_ccd = $self->{ccd_temp};
+    # Dynamic mag limits based on 75% and 50% chance of successful star acq
+    # Maximum limits of 10.3 and 10.6
+    $self->{mag_faint_yellow} = min(10.3, mag_for_p_acq(0.75, $date, $t_ccd));
+    $self->{mag_faint_red} = min(10.6, mag_for_p_acq(0.5, $date, $t_ccd));
+}
+
 
 ##*****************************************************************************************
 sub star_prob {
