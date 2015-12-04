@@ -83,8 +83,9 @@ sub set_dynamic_mag_limits{
     my $date = $c->{date};
     my $t_ccd = $self->{ccd_temp};
     # Dynamic mag limits based on 75% and 50% chance of successful star acq
-    $self->{mag_faint_yellow} = mag_for_p_acq(0.75, $date, $t_ccd);
-    $self->{mag_faint_red} = mag_for_p_acq(0.5, $date, $t_ccd);
+    # Maximum limits of 10.3 and 10.6
+    $self->{mag_faint_yellow} = min(10.3, mag_for_p_acq(0.75, $date, $t_ccd));
+    $self->{mag_faint_red} = min(10.6, mag_for_p_acq(0.5, $date, $t_ccd));
 }
 
 
