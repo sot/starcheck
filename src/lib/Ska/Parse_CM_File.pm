@@ -122,14 +122,20 @@ sub dither {
     my $bs_start = $bs_arr->[0]->{time};
     my $r2a = 3600. * 180. / 3.14159265;
     my $pi = 3.14159265;
+
+    my $dither_state;
+    my $dither_ampl_p;
+    my $dither_ampl_y;
+    my $dither_period_p;
+    my $dither_period_y;
  
     foreach (0 .. $#state) {
-      my $dither_state = $state[$_] if defined $state[$_];
-      my $dither_ampl_p = $params[$_]->{COEFP} * $r2a if defined $params[$_]->{COEFP};
-      my $dither_ampl_y = $params[$_]->{COEFY} * $r2a if defined $params[$_]->{COEFY};
-      my $dither_period_p = 1 / ($params[$_]->{RATEP} / (2 * $pi))
+      $dither_state = $state[$_] if defined $state[$_];
+      $dither_ampl_p = $params[$_]->{COEFP} * $r2a if defined $params[$_]->{COEFP};
+      $dither_ampl_y = $params[$_]->{COEFY} * $r2a if defined $params[$_]->{COEFY};
+      $dither_period_p = 1 / ($params[$_]->{RATEP} / (2 * $pi))
          if defined $params[$_]->{RATEP};
-      my $dither_period_y = 1 / ($params[$_]->{RATEY} / (2 * $pi))
+      $dither_period_y = 1 / ($params[$_]->{RATEY} / (2 * $pi))
          if defined $params[$_]->{RATEP};
       push @dither, { time => $time[$_],
 		      state => $dither_state,
