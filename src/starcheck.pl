@@ -541,23 +541,13 @@ my $json_text = json_obsids();
 my $obsid_temps;
 eval{
     my $json_obsid_temps;
-    local $SIG{ALRM}=sub{ die "get_ccd_temps timed out\n"};
-    eval{
-        alarm 300;
-        $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
-                                              outdir=>$STARCHECK,
-                                              json_obsids => $json_text,
-                                              model_spec => "$Starcheck_Data/aca_spec.json",
-                                              char_file => "$Starcheck_Data/characteristics.yaml",
-                                             });
-        alarm 0;
-    };
-    if ($@){
-        push @global_warn, "ERROR: $@";
-        die "$@\n";
-    }
-    alarm 0;
-    # convert back from JSON outside the timeout
+    $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
+                                          outdir=>$STARCHECK,
+                                          json_obsids => $json_text,
+                                          model_spec => "$Starcheck_Data/aca_spec.json",
+                                          char_file => "$Starcheck_Data/characteristics.yaml",
+                                      });
+    # convert back from JSON outside the eval
     $obsid_temps = JSON::from_json($json_obsid_temps);
 };
 if ($@){
@@ -576,29 +566,19 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->get_agasc_stars($agasc_dir);
     $obs{$obsid}->identify_stars();
     eval{
-        local $SIG{ALRM}=sub{ die " timed out\n"};
-        eval{
-            alarm 300;
-            my $cat = Ska::Starcheck::Obsid::find_command($obs{$obsid}, "MP_STARCAT");
-            my $cat_as_array = catalog_array($cat);
-            my %plot_args = (obsid=>"$obs{$obsid}->{obsid}",
-                             ra=>$obs{$obsid}->{ra},
-                             dec=>$obs{$obsid}->{dec},
-                             roll=>$obs{$obsid}->{roll},
-                             catalog=>$cat_as_array,
-                             starcat_time=>"$obs{$obsid}->{date}",
-                             outdir=>$STARCHECK);
-            plot_cat_wrapper(\%plot_args);
-            alarm 0;
-        };
-        if ($@){
-            push @global_warn, "ERROR: $@";
-            die "$@\n";
-        }
-        alarm 0;
+        my $cat = Ska::Starcheck::Obsid::find_command($obs{$obsid}, "MP_STARCAT");
+        my $cat_as_array = catalog_array($cat);
+        my %plot_args = (obsid=>"$obs{$obsid}->{obsid}",
+                         ra=>$obs{$obsid}->{ra},
+                         dec=>$obs{$obsid}->{dec},
+                         roll=>$obs{$obsid}->{roll},
+                         catalog=>$cat_as_array,
+                         starcat_time=>"$obs{$obsid}->{date}",
+                         outdir=>$STARCHECK);
+        plot_cat_wrapper(\%plot_args);
     };
     if ($@){
-        push @global_warn, "Error python plotting catalogs\n";
+        push @global_warn, "Error Python plotting catalog\n";
     }
     $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
     $obs{$obsid}->{plot_field_file} = "$STARCHECK/star_view_$obs{$obsid}->{obsid}.png";
