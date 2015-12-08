@@ -488,6 +488,9 @@ sub catalog_array{
     my $cat = shift;
     my @catarr;
     for $i (1 .. 16){
+        if (not exists $cat->{"TYPE$i"}){
+            next;
+        }
         if ($cat->{"TYPE$i"} eq 'NUL'){
             next;
         }
@@ -565,8 +568,9 @@ if ($obsid_temps){
 foreach my $obsid (@obsid_id) {
     $obs{$obsid}->get_agasc_stars($agasc_dir);
     $obs{$obsid}->identify_stars();
-    eval{
-        my $cat = Ska::Starcheck::Obsid::find_command($obs{$obsid}, "MP_STARCAT");
+    my $cat = Ska::Starcheck::Obsid::find_command($obs{$obsid}, "MP_STARCAT");
+    # If the catalog is empty, don't make plots
+    if (defined $cat){
         my $cat_as_array = catalog_array($cat);
         my %plot_args = (obsid=>"$obs{$obsid}->{obsid}",
                          ra=>$obs{$obsid}->{ra},
@@ -575,14 +579,16 @@ foreach my $obsid (@obsid_id) {
                          catalog=>$cat_as_array,
                          starcat_time=>"$obs{$obsid}->{date}",
                          outdir=>$STARCHECK);
-        plot_cat_wrapper(\%plot_args);
-    };
-    if ($@){
-        push @global_warn, "Error Python plotting catalog\n";
+        eval{
+            plot_cat_wrapper(\%plot_args);
+        };
+        if ($@){
+            push @global_warn, "Error Python plotting catalog\n";
+        }
+        $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
+        $obs{$obsid}->{plot_field_file} = "$STARCHECK/star_view_$obs{$obsid}->{obsid}.png";
+        $obs{$obsid}->{compass_file} = "$STARCHECK/compass$obs{$obsid}->{obsid}.png";
     }
-    $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
-    $obs{$obsid}->{plot_field_file} = "$STARCHECK/star_view_$obs{$obsid}->{obsid}.png";
-    $obs{$obsid}->{compass_file} = "$STARCHECK/compass$obs{$obsid}->{obsid}.png";
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_flick_pix_mon();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
@@ -763,10 +769,13 @@ foreach $obsid (@obsid_id) {
     my $pict1 = qq{};
     my $pict2 = qq{};
     my $pict3 = qq{};
+#    use Data::Dumper;
+#    $Data::Dumper::Maxdepth = 1;
+#    print Dumper $obs{$obsid};
     if ($obs{$obsid}->{plot_file}){
-		my $obs = $obs{$obsid}->{obsid};
-		my $obsmap = $obs{$obsid}->star_image_map();
-		$pict1 = qq{$obsmap <img src="$obs{$obsid}->{plot_file}" usemap=\#starmap_${obs}
+        my $obs = $obs{$obsid}->{obsid};
+        my $obsmap = $obs{$obsid}->star_image_map();
+        $pict1 = qq{$obsmap <img src="$obs{$obsid}->{plot_file}" usemap=\#starmap_${obs}
 						width=426 height=426 border=0> };
     }
     if ($obs{$obsid}->{plot_field_file}){
