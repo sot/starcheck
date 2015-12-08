@@ -698,6 +698,12 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
 # Dark Cal Checker
 if ($dark_cal_checker->{dark_cal_present}){
     $out .= "------------  DARK CURRENT CALIBRATION CHECKS  -----------------\n\n";
+    # Add a link to the comm summary if we've figured out a mission planning week name for these products
+    if ($mp_top_link){
+        my $url = sprintf("http://occweb.cfa.harvard.edu/occweb/web/fot_web/ops/load_reviews/%s_CommSum.php",
+                          $mp_top_link->{week});
+        $out .= sprintf("<A HREF=\"%s\">Comm Summary: %s</A>\n\n", $url, $mp_top_link->{week});
+    }
     $out .= dark_cal_print($dark_cal_checker, $STARCHECK);
     $out .= "\n";
 }
