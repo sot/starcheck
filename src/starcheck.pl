@@ -483,7 +483,9 @@ foreach (@bs) {
     push @sim_trans, $_ if ($_->{cmd} eq 'SIMTRANS');
 }
 
-
+# Take the MP_STARCAT hash from find_command and convert it into an array with
+# a record for each catalog index.  This is used for the Python plotting of the
+# catalog
 sub catalog_array{
     my $cat = shift;
     my @catarr;
