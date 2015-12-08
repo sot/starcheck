@@ -771,9 +771,6 @@ foreach $obsid (@obsid_id) {
     my $pict1 = qq{};
     my $pict2 = qq{};
     my $pict3 = qq{};
-#    use Data::Dumper;
-#    $Data::Dumper::Maxdepth = 1;
-#    print Dumper $obs{$obsid};
     if ($obs{$obsid}->{plot_file}){
         my $obs = $obs{$obsid}->{obsid};
         my $obsmap = $obs{$obsid}->star_image_map();
