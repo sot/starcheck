@@ -681,10 +681,12 @@ sub check_dither {
             push @{$self->{warn}}, $warn;
         }
     }
-
-
     # Check for standard and large dither based solely on backstop/history values
     if (($bs_val eq 'ENAB') and (defined $dither->{ampl_y} and defined $dither->{ampl_p})){
+        $self->{cmd_dither_y_amp} = $dither->{ampl_y};
+        $self->{cmd_dither_z_amp} = $dither->{ampl_p};
+        $self->{cmd_dither_y_period} = $dither->{period_y};
+        $self->{cmd_dither_z_period} = $dither->{period_z};
         if (not standard_dither($dither)){
             push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
             if ($dither->{ampl_y} > $large_dith_thresh or $dither->{ampl_p} > $large_dith_thresh){
@@ -1074,10 +1076,11 @@ sub check_star_catalog {
     my $min_z = $z_ang_max;
 
     my $dither;			# Global dither for observation
-    if (defined $self->{DITHER_Y_AMP} and defined $self->{DITHER_Z_AMP}) {
-	$dither = ($self->{DITHER_Y_AMP} > $self->{DITHER_Z_AMP} ?
-		   $self->{DITHER_Y_AMP} : $self->{DITHER_Z_AMP}) * 3600.0;
+    if (defined $self->{cmd_dither_y_amp} and defined $self->{cmd_dither_z_amp}) {
+	$dither = ($self->{cmd_dither_y_amy} > $self->{cmd_dither_z_amp} ?
+		   $self->{cmd_dither_y_amp} : $self->{cmd_dither_z_amp});
     } else {
+        $self->{used_default_dither} = 1;
 	$dither = 20.0;
     }
 
