@@ -593,7 +593,7 @@ sub set_star_catalog {
 	$c->{"YMIN$i"} = $c->{"YANG$i"} - $c->{"HALFW$i"};
 	$c->{"ZMAX$i"} = $c->{"ZANG$i"} + $c->{"HALFW$i"};
 	$c->{"ZMIN$i"} = $c->{"ZANG$i"} - $c->{"HALFW$i"};
-        $c->{"P_SUCC$i"} = 1.0;
+        $c->{"P_ACQ$i"} = '---';
 
 	# Fudge in values for guide star summary, in case it isn't there
 	$c->{"GS_ID$i"} = '---';	
@@ -1737,6 +1737,10 @@ sub print_report {
                 if (($fields[$field_idx] eq 'GS_MAG')
                     and ($c->{"$fields[$field_idx]$i"} ne '---')){
                     $curr_format = "%8.3f";
+                }
+                if (($fields[$field_idx] eq 'P_ACQ')
+                    and ($c->{"$fields[$field_idx]$i"} eq '---')){
+                    $curr_format = "%8s";
                 }
 		$table .= sprintf($curr_format, $c->{"$fields[$field_idx]$i"});
 	    }
