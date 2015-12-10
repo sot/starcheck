@@ -1649,14 +1649,14 @@ sub print_report {
     if ($c = find_command($self, "MP_STARCAT")) {
 
 
-	my @fid_fields = qw (TYPE  SIZE P_SUCC GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+	my @fid_fields = qw (TYPE  SIZE P_ACQ GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
 	my @fid_format = ( '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
-	my @star_fields = qw (   TYPE  SIZE P_SUCC GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+	my @star_fields = qw (   TYPE  SIZE P_ACQ GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
 	my @star_format = ( '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
 
 	$table.= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu})\n";
 	$table.= sprintf "---------------------------------------------------------------------------------------------\n";
-	$table.= sprintf " IDX SLOT        ID  TYPE   SZ  P_SUCC    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES\n";
+	$table.= sprintf " IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES\n";
 #                      [ 4]  3   971113176   GUI  6x6   1.000   7.314   8.844  -2329  -2242   1   1   25  bcmp
 	$table.= sprintf "---------------------------------------------------------------------------------------------\n";
 	

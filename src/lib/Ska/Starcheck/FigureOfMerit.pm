@@ -60,7 +60,7 @@ sub make_figure_of_merit{
             my $star_prob = _acq_success_prob($date, $t_ccd, $mag, $color, $spoiler);
 	    push @probs, $star_prob;
             $slot_probs{$c->{"IMNUM$i"}} = $star_prob;
-            $c->{"P_SUCC$i"} = $star_prob;
+            $c->{"P_ACQ$i"} = $star_prob;
 	}
     }
     $self->{acq_probs} = \%slot_probs;
