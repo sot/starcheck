@@ -143,7 +143,9 @@ sub dither {
 		      ampl_p => $dither_ampl_p,
 		      ampl_y => $dither_ampl_y,
                       period_p => $dither_period_p,
-                      period_y => $dither_period_y};
+                      period_y => $dither_period_y,
+                      tlmsid => $params[$_]->{TLMSID},
+                  };
   }
     return ($dither_time_violation, \@dither);
 }
