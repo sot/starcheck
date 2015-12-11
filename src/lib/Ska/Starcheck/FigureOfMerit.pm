@@ -37,7 +37,7 @@ def _prob_n_acq(acq_probs):
     return n_acq_probs.tolist(), n_or_fewer_probs.tolist()
 };
 
-our $CUM_PROB_LIMIT = 10 ** -5.2;
+our $CUM_PROB_LIMIT = 8e-3;
 
 sub make_figure_of_merit{
     my $c;
