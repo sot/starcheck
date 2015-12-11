@@ -72,6 +72,10 @@ sub make_figure_of_merit{
                                 cum_prob => [map { log($_) / log(10.0) } @{$n_or_fewer_probs}],
                                 cum_prob_bad => ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT)
                                 };
+    if ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT){
+        push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $CUM_PROB_LIMIT\n";
+    }
+
 }
 
 
