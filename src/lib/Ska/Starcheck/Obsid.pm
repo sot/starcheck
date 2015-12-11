@@ -1732,17 +1732,60 @@ sub print_report {
 	    }
 	    for my $field_idx (0 .. $#fields){
 		my $curr_format = $format[$field_idx];
+                my $field_color = 'black';
                 # override mag formatting if it lost its 3
                 # decimal places during JSONifying
                 if (($fields[$field_idx] eq 'GS_MAG')
                     and ($c->{"$fields[$field_idx]$i"} ne '---')){
                     $curr_format = "%8.3f";
                 }
+
+                # For P_ACQ fields, if it is a string, use that format
+                # If it is defined, and probability is less than .50, print red
+                # If it is defined, and probability is less than .75, print "yellow"
                 if (($fields[$field_idx] eq 'P_ACQ')
-                    and ($c->{"$fields[$field_idx]$i"} eq '---')){
+                    and ($c->{"P_ACQ$i"} eq '---')){
                     $curr_format = "%8s";
                 }
-		$table .= sprintf($curr_format, $c->{"$fields[$field_idx]$i"});
+                elsif (($fields[$field_idx] eq 'P_ACQ')
+                           and ($c->{"P_ACQ$i"} < .50)){
+                    $field_color = 'red';
+                }
+                elsif (($fields[$field_idx] eq 'P_ACQ')
+                        and ($c->{"P_ACQ$i"} < .75)){
+                    $field_color = 'yellow';
+                }
+
+                # For MAG fields, if the P_ACQ probability is defined and has a color,
+                # share that color.  Otherwise, if the MAG violates the yellow/red warning
+                # limit, colorize.
+                if ($fields[$field_idx] eq 'GS_MAG'){
+                    if (($c->{"P_ACQ$i"} ne '---') and ($c->{"P_ACQ$i"} < .50)){
+                        $field_color = 'red';
+                    }
+                    elsif (($c->{"P_ACQ$i"} ne '---') and ($c->{"P_ACQ$i"} < .75)){
+                        $field_color = 'yellow';
+                    }
+                    elsif (($c->{"P_ACQ$i"} eq '---') and ($c->{"GS_MAG$i"} ne '---')
+                               and ($c->{"GS_MAG$i"} > $self->{mag_faint_red})){
+                        $field_color = 'red';
+                    }
+                    elsif (($c->{"P_ACQ$i"} eq '---') and ($c->{"GS_MAG$i"} ne '---')
+                               and ($c->{"GS_MAG$i"} > $self->{mag_faint_yellow})){
+                        $field_color = 'yellow';
+                    }
+                }
+
+                # Use colors if required
+                if ($field_color eq 'red'){
+                    $curr_format = $red_font_start . $curr_format . $font_stop;
+                }
+                if ($field_color eq 'yellow'){
+                    $curr_format = $yellow_font_start . $curr_format . $font_stop;
+                }
+                $table .= sprintf($curr_format, $c->{"$fields[$field_idx]$i"});
+
+
 	    }
 	    $table.= $font_stop if ($color);
 	    $table.= sprintf "\n";
