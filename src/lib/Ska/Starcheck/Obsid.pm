@@ -21,6 +21,7 @@ package Ska::Starcheck::Obsid;
 use strict;
 use warnings;
 
+use List::Util qw( max );
 use Quat;
 use Ska::ACACoordConvert;
 use File::Basename;
@@ -1077,8 +1078,7 @@ sub check_star_catalog {
 
     my $dither;			# Global dither for observation
     if (defined $self->{cmd_dither_y_amp} and defined $self->{cmd_dither_z_amp}) {
-	$dither = ($self->{cmd_dither_y_amy} > $self->{cmd_dither_z_amp} ?
-		   $self->{cmd_dither_y_amp} : $self->{cmd_dither_z_amp});
+	$dither = max($self->{cmd_dither_y_amy}, $self->{cmd_dither_z_amp});
     } else {
 	$dither = 20.0;
     }
