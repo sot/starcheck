@@ -773,18 +773,27 @@ sub large_dither_checks {
             sprintf("$alarm Dither should be disabled 1 min before obs start for Large Dither\n");
     }
 
-    # Are parameters set to normal values 5 minutes before the end of the observation?
+
+    # Find the dither state at the end of the observation
     my $obs_stop_dither;
     foreach my $dither (reverse @{$all_dither}) {
-	if ($self->{obs_tstop} - 300 >= $dither->{time}) {
+	if ($self->{obs_tstop} >= $dither->{time}) {
             $obs_stop_dither = $dither;
             last;
         }
     }
+    # Check that the dither state at the end of the observation started 5 minutes before
+    # the end (within time_tol)
+    if ((abs($self->{obs_tstop} - $obs_stop_dither->{time} - 300) > $time_tol)){
+        push @{$self->{warn}},
+            sprintf("$alarm Last dither state for Large Dither should start 5 minutes before obs end.\n");
+    }
+    # Check that the dither state at the end of the observation is standard
     if (not standard_dither($obs_stop_dither)){
         push @{$self->{warn}},
-            sprintf("$alarm Dither parameters not set to standard values 5 minutes before obs end\n");
+            sprintf("$alarm Dither parameters not set to standard values before obs end\n");
     }
+
 }
 
 
