@@ -1080,7 +1080,6 @@ sub check_star_catalog {
 	$dither = ($self->{cmd_dither_y_amy} > $self->{cmd_dither_z_amp} ?
 		   $self->{cmd_dither_y_amp} : $self->{cmd_dither_z_amp});
     } else {
-        $self->{used_default_dither} = 1;
 	$dither = 20.0;
     }
 
