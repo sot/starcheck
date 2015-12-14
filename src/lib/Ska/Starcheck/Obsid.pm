@@ -742,6 +742,11 @@ sub large_dither_checks {
     my $all_dither = shift;
     my $time_tol = 10;         # Commands must be within $time_tol of expectation
 
+    # Correct times in the maneuver summary by 10 seconds
+    my $manvr_sum_offset = 10;
+    my $obs_tstart = $self->{obs_tstart} - $manvr_sum_offset;
+    my $obs_tstop = $self->{obs_tstop} - $manvr_sum_offset;
+
     # Now check in backstop commands for :
     #  Dither is disabled (AODSDITH) 1 min prior to the end of the maneuver (EOM)
     #    to the target attitude.
@@ -752,22 +757,21 @@ sub large_dither_checks {
     # obs_tstop is defined as the time of the maneuver away or the end of the schedule
 
     # Is the large dither command enabled 5 minutes after EOM?
-    if (abs($dither_state->{time} - $self->{obs_tstart} - 300) > $time_tol){
+    if (abs($dither_state->{time} - $obs_tstart - 300) > $time_tol){
         push @{$self->{warn}},
             sprintf("$alarm Large Dither not enabled 5 min after EOM (%s)\n",
-                    time2date($self->{obs_tstart}));
+                    time2date($obs_tstart));
     }
     # What's the dither state at EOM?
     my $obs_start_dither;
     foreach my $dither (reverse @{$all_dither}) {
-	if ($self->{obs_tstart} >= $dither->{time}) {
+	if ($obs_tstart >= $dither->{time}) {
             $obs_start_dither = $dither;
             last;
         }
     }
-
     # Is dither disabled at EOM and one minute before?
-    if ((abs($self->{obs_tstart} - $obs_start_dither->{time} - 60) > $time_tol)
+    if ((abs($obs_tstart - $obs_start_dither->{time} - 60) > $time_tol)
             or ($obs_start_dither->{state} ne 'DISA')){
         push @{$self->{warn}},
             sprintf("$alarm Dither should be disabled 1 min before obs start for Large Dither\n");
@@ -777,14 +781,14 @@ sub large_dither_checks {
     # Find the dither state at the end of the observation
     my $obs_stop_dither;
     foreach my $dither (reverse @{$all_dither}) {
-	if ($self->{obs_tstop} >= $dither->{time}) {
+	if ($obs_tstop >= $dither->{time}) {
             $obs_stop_dither = $dither;
             last;
         }
     }
     # Check that the dither state at the end of the observation started 5 minutes before
     # the end (within time_tol)
-    if ((abs($self->{obs_tstop} - $obs_stop_dither->{time} - 300) > $time_tol)){
+    if ((abs($obs_tstop - $obs_stop_dither->{time} - 300) > $time_tol)){
         push @{$self->{warn}},
             sprintf("$alarm Last dither state for Large Dither should start 5 minutes before obs end.\n");
     }
