@@ -683,18 +683,20 @@ sub check_dither {
         }
     }
 
-
+    # Loop again to check for dither changes during the observation
+    # ACA-003
     if (not defined $obs_tstop ){
         push @{$self->{warn}},
             "$alarm Unable to determine obs tstop; could not check for dither changes during obs\n";
     }
     else{
-        # Loop again to check for dither changes during the observation
-        # ACA-003
-        foreach my $dither (@{$dthr}) {
+        foreach my $dither (reverse @{$dthr}) {
             if ($dither->{time} > ($obs_tstart + $obs_beg_pad)
                     && $dither->{time} <= $obs_tstop - $obs_end_pad) {
                 push @{$self->{warn}}, "$alarm Dither commanding at $dither->{time}.  During observation.\n";
+            }
+            if ($dither->{time} < $obs_tstart){
+                last;
             }
         }
     }
