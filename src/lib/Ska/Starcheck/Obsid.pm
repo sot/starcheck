@@ -624,6 +624,10 @@ sub check_dither {
     if ( $self->{obsid} =~ /^\d*$/){
 	return if ($self->{obsid} > 50000); # For eng obs, don't have OR to specify dither
     }
+    # If there's no starcat on purpose, return
+    if (defined $self->{ok_no_starcat} and $self->{ok_no_starcat}){
+        return;
+    }
     unless ($manvr = find_command($self, "MP_TARGQUAT", -1)
             and defined $manvr->{tstart}) {
 	push @{$self->{warn}}, "$alarm Dither status not checked\n";
