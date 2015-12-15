@@ -649,12 +649,22 @@ sub check_dither {
         }
     }
 
-    my ($or_val, $bs_val) = ($dthr_cmd{$self->{DITHER_ON}}, $dither->{state});
-    # ACA-002
-    push @{$self->{warn}}, "$alarm Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
-        if ($or_val ne $bs_val);
-    # If dither is anabled, check that parameters match OR vs Backstop
-    if ($or_val eq 'ENAB'){
+    my $bs_val = $dither->{state};
+    # Get the OR value of dither and compare if available
+    my $or_val;
+    if (defined $self->{DITHER_ON}){
+        $or_val = $dthr_cmd{$self->{DITHER_ON}};
+        # ACA-002
+        push @{$self->{warn}}, "$alarm Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
+            if ($or_val ne $bs_val);
+    }
+    else{
+        push @{$self->{warn}},
+            "$alarm Unable to determine dither from OR list\n";
+    }
+
+    # If dither is anabled according to the OR, check that parameters match OR vs Backstop
+    if ((defined $or_val) and ($or_val eq 'ENAB')){
         my $y_amp = $self->{DITHER_Y_AMP} * 3600;
         my $z_amp = $self->{DITHER_Z_AMP} * 3600;
         if (defined $dither->{ampl_y}
@@ -667,18 +677,20 @@ sub check_dither {
                                $dither->{ampl_y}, $dither->{ampl_p});
             push @{$self->{warn}}, $warn;
         }
-        # If we have amplitudes, save them to the obsid and check that dither is standard
-        if (defined $dither->{ampl_y} and defined $dither->{ampl_p}){
-            if (not standard_dither($dither)){
-                push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
-                if ($y_amp > $large_dith_thresh or $z_amp > $large_dith_thresh){
-                    $self->large_dither_checks($dither, $dthr);
-                    # If this is a large dither, set a larger pad at the end, as we expect
-                    # standard dither parameters to be commanded at 5 minutes before end,
-                    # which is greater than the 3 minutes used in the "no dither changes
-                    # during observation check below
-                    $obs_end_pad = 5.5 * 60;
-                }
+    }
+
+
+    # Check for standard and large dither based solely on backstop/history values
+    if (($bs_val eq 'ENAB') and (defined $dither->{ampl_y} and defined $dither->{ampl_p})){
+        if (not standard_dither($dither)){
+            push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
+            if ($dither->{ampl_y} > $large_dith_thresh or $dither->{ampl_p} > $large_dith_thresh){
+                $self->large_dither_checks($dither, $dthr);
+                # If this is a large dither, set a larger pad at the end, as we expect
+                # standard dither parameters to be commanded at 5 minutes before end,
+                # which is greater than the 3 minutes used in the "no dither changes
+                # during observation check below
+                $obs_end_pad = 5.5 * 60;
             }
         }
     }
