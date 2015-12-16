@@ -29,7 +29,7 @@ use English;
 use IO::All;
 use Ska::Convert qw(date2time);
 
-use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit );
+use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit set_dynamic_mag_limits );
 use RDB;
 
 use Ska::AGASC;
@@ -593,6 +593,7 @@ sub set_star_catalog {
 	$c->{"YMIN$i"} = $c->{"YANG$i"} - $c->{"HALFW$i"};
 	$c->{"ZMAX$i"} = $c->{"ZANG$i"} + $c->{"HALFW$i"};
 	$c->{"ZMIN$i"} = $c->{"ZANG$i"} - $c->{"HALFW$i"};
+        $c->{"P_ACQ$i"} = '---';
 
 	# Fudge in values for guide star summary, in case it isn't there
 	$c->{"GS_ID$i"} = '---';	
@@ -889,8 +890,6 @@ sub check_star_catalog {
 
     my $mag_faint_slot_diff = 1.4; # used in slot test like:
                                    # $c->{"MAXMAG$i"} - $c->{"GS_MAG$i"} >= $mag_faint_slot_diff
-    my $mag_faint_red   = 10.6;	# Faint mag limit (red)
-    my $mag_faint_yellow= 10.3;	# Faint mag limit (yellow)
     my $mag_bright      = 6.0;	# Bright mag limit 
 
     my $fid_faint = 7.2;
@@ -1114,10 +1113,10 @@ sub check_star_catalog {
 	# Faint and bright limits ~ACA-009 ACA-010
 	if ($type ne 'MON' and $mag ne '---') {
 
-	    if ($mag < $mag_bright or $mag > $mag_faint_red) {
+	    if ($mag < $mag_bright or $mag > $self->{mag_faint_red}) {
 		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
 	    } 
-	    elsif ($mag > $mag_faint_yellow) {
+	    elsif ($mag > $self->{mag_faint_yellow}) {
 		push @yellow_warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
 	    }
 	
@@ -1650,15 +1649,15 @@ sub print_report {
     if ($c = find_command($self, "MP_STARCAT")) {
 
 
-	my @fid_fields = qw (TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+	my @fid_fields = qw (TYPE  SIZE P_ACQ GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
 	my @fid_format = ( '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
-	my @star_fields = qw (   TYPE  SIZE MINMAG GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
+	my @star_fields = qw (   TYPE  SIZE P_ACQ GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
 	my @star_format = ( '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
 
 	$table.= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu})\n";
 	$table.= sprintf "---------------------------------------------------------------------------------------------\n";
-	$table.= sprintf " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES\n";
-#                      [ 4]  3   971113176   GUI  6x6   5.797   7.314   8.844  -2329  -2242   1   1   25  bcmp
+	$table.= sprintf " IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES\n";
+#                      [ 4]  3   971113176   GUI  6x6   1.000   7.314   8.844  -2329  -2242   1   1   25  bcmp
 	$table.= sprintf "---------------------------------------------------------------------------------------------\n";
 	
 	
@@ -1733,13 +1732,60 @@ sub print_report {
 	    }
 	    for my $field_idx (0 .. $#fields){
 		my $curr_format = $format[$field_idx];
+                my $field_color = 'black';
                 # override mag formatting if it lost its 3
                 # decimal places during JSONifying
                 if (($fields[$field_idx] eq 'GS_MAG')
                     and ($c->{"$fields[$field_idx]$i"} ne '---')){
                     $curr_format = "%8.3f";
                 }
-		$table .= sprintf($curr_format, $c->{"$fields[$field_idx]$i"});
+
+                # For P_ACQ fields, if it is a string, use that format
+                # If it is defined, and probability is less than .50, print red
+                # If it is defined, and probability is less than .75, print "yellow"
+                if (($fields[$field_idx] eq 'P_ACQ')
+                    and ($c->{"P_ACQ$i"} eq '---')){
+                    $curr_format = "%8s";
+                }
+                elsif (($fields[$field_idx] eq 'P_ACQ')
+                           and ($c->{"P_ACQ$i"} < .50)){
+                    $field_color = 'red';
+                }
+                elsif (($fields[$field_idx] eq 'P_ACQ')
+                        and ($c->{"P_ACQ$i"} < .75)){
+                    $field_color = 'yellow';
+                }
+
+                # For MAG fields, if the P_ACQ probability is defined and has a color,
+                # share that color.  Otherwise, if the MAG violates the yellow/red warning
+                # limit, colorize.
+                if ($fields[$field_idx] eq 'GS_MAG'){
+                    if (($c->{"P_ACQ$i"} ne '---') and ($c->{"P_ACQ$i"} < .50)){
+                        $field_color = 'red';
+                    }
+                    elsif (($c->{"P_ACQ$i"} ne '---') and ($c->{"P_ACQ$i"} < .75)){
+                        $field_color = 'yellow';
+                    }
+                    elsif (($c->{"P_ACQ$i"} eq '---') and ($c->{"GS_MAG$i"} ne '---')
+                               and ($c->{"GS_MAG$i"} > $self->{mag_faint_red})){
+                        $field_color = 'red';
+                    }
+                    elsif (($c->{"P_ACQ$i"} eq '---') and ($c->{"GS_MAG$i"} ne '---')
+                               and ($c->{"GS_MAG$i"} > $self->{mag_faint_yellow})){
+                        $field_color = 'yellow';
+                    }
+                }
+
+                # Use colors if required
+                if ($field_color eq 'red'){
+                    $curr_format = $red_font_start . $curr_format . $font_stop;
+                }
+                if ($field_color eq 'yellow'){
+                    $curr_format = $yellow_font_start . $curr_format . $font_stop;
+                }
+                $table .= sprintf($curr_format, $c->{"$fields[$field_idx]$i"});
+
+
 	    }
 	    $table.= $font_stop if ($color);
 	    $table.= sprintf "\n";
@@ -1795,13 +1841,18 @@ sub print_report {
                       $self->{figure_of_merit}->{expected});
     }
 
-    if (defined $self->{ccd_temp}){
-        $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp})
-              . sprintf("\t N100 Warm Pix Frac %.3f \n", $self->{n100_warm_frac});
+
+    # Don't print CCD temperature and dynamic limits if there is no catalog
+    if ($c = find_command($self, "MP_STARCAT")){
+        $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp});
+        if (defined $self->{n100_warm_frac}){
+            $o .= sprintf("\t N100 Warm Pix Frac %.3f", $self->{n100_warm_frac});
+        }
+        $o .= "\n";
+        $o .= sprintf("Dynamic Mag Limits: Yellow %.2f \t Red %.2f\n",
+                      $self->{mag_faint_yellow}, $self->{mag_faint_red});
     }
-    else{
-        $o .= sprintf("No CCD temperature prediction\n")
-    }
+
     # cute little table for buttons for previous and next obsid
     $o .= "</PRE></TD><TD VALIGN=TOP>\n";
     if (defined $self->{prev}->{obsid} or defined $self->{next}->{obsid}){
@@ -2348,6 +2399,9 @@ sub set_ccd_temps{
     if ((not defined $obsid_temps->{$self->{obsid}})
         or (not defined $obsid_temps->{$self->{obsid}}->{ccd_temp})){
         push @{$self->{warn}}, "$alarm No CCD temperature prediction for obsid\n";
+        push @{$self->{warn}}, sprintf("$alarm Using %s (planning limit) for t_ccd for mag limits\n",
+                                       $config{ccd_temp_red_limit});
+        $self->{ccd_temp} = $config{ccd_temp_red_limit};
         return;
     }
     # set the temperature to the value for the current obsid

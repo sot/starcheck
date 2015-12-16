@@ -47,18 +47,11 @@ use Ska::AGASC;
 
 
 use Inline Python => q{
-import sys
-import perl
-# this provides an interface back to the Perl namespace
 
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
+from starcheck.calc_ccd_temps import get_ccd_temps
 
 def ccd_temp_wrapper(kwargs):
-    try:
-        from starcheck.calc_ccd_temps import get_ccd_temps
-    except ImportError as err:
-        # write errors to starcheck's global warnings and STDERR
-        perl.warning("Error with Inline::Python imports {}\n".format(err))
     return get_ccd_temps(**kwargs)
 
 def plot_cat_wrapper(kwargs):
@@ -571,7 +564,7 @@ eval{
                                           model_spec => "$Starcheck_Data/aca_spec.json",
                                           char_file => "$Starcheck_Data/characteristics.yaml",
                                       });
-    # convert back from JSON outside the eval
+    # convert back from JSON outside
     $obsid_temps = JSON::from_json($json_obsid_temps);
 };
 if ($@){
@@ -612,6 +605,7 @@ foreach my $obsid (@obsid_id) {
     }
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_flick_pix_mon();
+    $obs{$obsid}->set_dynamic_mag_limits();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
     $obs{$obsid}->check_bright_perigee($radmon);
