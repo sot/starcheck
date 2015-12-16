@@ -49,16 +49,6 @@ my %Default_SIM_Z = ('ACIS-I' => 92905,
 		     'ACIS-S' => 75620,
 		     'HRC-I'  => -50505,
 		     'HRC-S'  => -99612);
-my %pg_colors = (white   => 1,
-		 red     => 2,
-		 green   => 3,
-		 blue    => 4,
-		 cyan    => 5,
-		 yellow  => 7,
-		 orange  => 8,
-		 purple  => 12,
-		 magenta => 6);
-
 
 my $font_stop = qq{</font>};
 my ($red_font_start, $blue_font_start, $yellow_font_start);
@@ -2207,12 +2197,10 @@ sub star_image_map {
 
 	# notes for pixel scaling.
 	# these will need to change if we resize the images.
-	# bottom left +43+383
-	# top left +43+42
-	# bottom right +383+383
-	# top right +383*43
+        # top right +384+39
+        # top left +54+39
 	# 2900x2900
-	my $pix_scale = 340 / (2900. * 2);
+	my $pix_scale = 330 / (2900. * 2);
 	my $map = "<map name=\"starmap_${obsid}\" id=\"starmap_${obsid}\"> \n";
 	for my $star_id (keys %plot_ids){
 		my $cat_star = $self->{agasc_hash}->{$star_id};
@@ -2223,8 +2211,8 @@ sub star_image_map {
 		eval{
 			($pix_row, $pix_col) = toPixels($yag, $zag);		
 		};
-		my $image_x = 43 + ((2900 - $yag) * $pix_scale);
-		my $image_y = 43 + ((2900 - $zag) * $pix_scale);
+		my $image_x = 54 + ((2900 - $yag) * $pix_scale);
+		my $image_y = 39 + ((2900 - $zag) * $pix_scale);
 		my $star = '<area href="javascript:void(0);"' . "\n"
 			. 'ONMOUSEOVER="return overlib (' 
 			. "'id=$sid <br/>" 
@@ -2244,267 +2232,6 @@ sub star_image_map {
 	}	
 	$map .= "</map> \n";          
 	return $map;
-}
-
-
-#############################################################################################
-sub plot_stars {
-##  Make a plot of the field
-#############################################################################################
-    
-    eval 'use PGPLOT';
-    if ($@){
-        croak(__PACKAGE__ .": !$@");
-    }
-    # it is OK to croak, because I catch the exception in starcheck.pl
-
-    my $self = shift;
-    my $c;
-    return unless ($c = find_command($self, 'MP_STARCAT'));
-    return unless ((defined $self->{ra}) and (defined $self->{dec}) and (defined $self->{roll}));
-    $self->{plot_file} = shift;
-    
-    my %sym_type = (FID => 8,
-		 BOT => 17,
-		 ACQ => 17,
-		 GUI => 17,
-		 MON => 17,
-		 field_star => 17,
-		 bad_mag => 12);
-
-    my %sym_color = (FID => 2,
-		  BOT => 4,
-		  ACQ => 4,
-		  GUI => 3,
-		  MON => 8,
-		  field_star => 1);
-
-    # Setup pgplot
-    my $dev = $self->{plot_file} . "/png"; # unless defined $dev;  # "?" will prompt for device
-    pgbegin(0,$dev,1,1);  # Open plot device 
-    pgpap(5.0, 1.0);
-    pgscf(1);             # Set character font
-    pgscr(0, 1.0, 1.0, 1.0);
-    pgscr(1, 0.0, 0.0, 0.0);
-    
-    # Define data limits and plot axes
-    pgpage();
-    pgsch(1.2);
-    pgvsiz (0.5, 4.5, 0.5, 4.5);
-    pgswin (2900,-2900,-2900,2900);
-    pgbox  ('BCNST', 0.0, 0, 'BCNST', 0.0, 0);
-    pglabel("Yag (arcsec)","Zag (arcsec)","Stars at RA=$self->{ra} Dec=$self->{dec} Roll=$self->{roll}");	# Labels
-    pgtext(1900, 2975, "Yag Axis now matches SAUSAGE/SKY");
-    box(0,0,2560,2560);
-    box(0,0,2600,2560);
-
-    # Plot field stars from AGASC
-    foreach my $star (values %{$self->{agasc_hash}}) {
-	next if ($star->{mag_aca} > $faint_plot_mag);
-
-	# First set defaults
-	my $color = $pg_colors{red}; # By default, assume star is bad
-	my $symbol = $sym_type{field_star};
-	my $size = sym_size($star->{mag_aca});
-
-	$color = $pg_colors{magenta} if ($star->{class} == 0 and $star->{mag_aca} >= 10.7);  # faint
-	$color = $pg_colors{white}   if ($star->{class} == 0 and $star->{mag_aca} < 10.7);   # OK
-	if ($star->{mag_aca} < -10) {                                                        # Bad mag
-	    $color=$pg_colors{red};
-	    $size=3.0;
-	    $symbol = $sym_type{bad_mag};
-	}
-	    
-	pgsci($color);
-	pgsch($size); # Set character height
-	pgpoint(1, $star->{yag}, $star->{zag}, $symbol);
-    }
-
-    # Plot fids/stars in star catalog
-    for my $i (1 .. 16) {	
-	next if ($c->{"TYPE$i"} eq 'NUL');
-	my $mag = $c->{"GS_MAG$i"} eq '---' ? $c->{"MAXMAG$i"} - 1.5 : $c->{"GS_MAG$i"};
-	pgsch(sym_size($mag)); # Set character height
-	my $x = $c->{"YANG$i"};
-	my $y = $c->{"ZANG$i"};
-	pgsci($sym_color{$c->{"TYPE$i"}});             # Change colour
-	if ($c->{"TYPE$i"} eq 'FID'){ # Make open (fid)
-	    pgpoint(1, $x, $y, $sym_type{$c->{"TYPE$i"}});
-	}
-    if ($c->{"TYPE$i"} =~ /(BOT|ACQ)/) {           # Plot search box
-	    box($x, $y, $c->{"HALFW$i"}, $c->{"HALFW$i"});
-	}
-	if ($c->{"TYPE$i"} =~ /MON/) {             # Plot monitor windows double size for visibility
-	    box($x, $y, $c->{"HALFW$i"}*2, $c->{"HALFW$i"}*2);
-	}
-	if ($c->{"TYPE$i"} =~ /(BOT|GUI)/) {           # Larger open circle for guide stars
-	    pgpoint(1, $x, $y, 24);
-	}
-	pgsch(1.2);
-	pgsci(2);
-	pgtext($x-150, $y, "$i");
-    }
-
-    pgsci(8);			# Orange for size key
-    my @x = (-2700, -2700, -2700, -2700, -2700);
-    my @y = (2400, 2100, 1800, 1500, 1200);
-    my @mag = (10, 9, 8, 7, 6);
-    foreach (0..$#x) {
-	pgsch(sym_size($mag[$_])); # Set character height
-	pgpoint(1, $x[$_], $y[$_], $sym_type{field_star});
-    }
-    pgend();				# Close plot
-    unless (-s $self->{plot_file}){
-      die("$self->{plot_file} was not created");
-    }
-}
-
-
-
-#############################################################################################
-sub plot_star_field {
-##  Make a plot of the field 
-##  for quick examination
-#############################################################################################
-
-    
-    eval 'use PGPLOT';
-    if ($@){
-        croak(__PACKAGE__ .": !$@");
-    }
-    # it is OK to croak, because I catch the exception in starcheck.pl
-
-    my $self = shift;
-    my $c;
-    return unless ($c = find_command($self, 'MP_STARCAT'));
-    $self->{plot_field_file} = shift;
-
-    my %sym_type = (
-		    very_faint => -1,
-		    field_star => 17,
-		    bad_mag => 12);
-
-    # Setup pgplot
-    my $dev = $self->{plot_field_file} . "/png"; # unless defined $dev;  # "?" will prompt for device
-    pgbegin(0,$dev,1,1);  # Open plot device 
-    pgpap(2.7, 1.0);
-    pgscf(1);             # Set character font
-    pgscr(0, 1.0, 1.0, 1.0);
-    pgscr(1, 0.0, 0.0, 0.0);
-    
-    # Define data limits and plot axes
-    pgpage();
-    pgsch(1.2);
-    pgvsiz (0.2, 2.5, 0.2, 2.5);
-    pgswin (2900,-2900,-2900,2900);
-    pgbox  ('BCNST', 0.0, 0, 'BCNST', 0.0, 0);
-
-    # Plot field stars from AGASC
-    foreach my $star (values %{$self->{agasc_hash}}) {
-	
-	# First set defaults
-	my $color = $pg_colors{white};
-	my $symbol = $sym_type{field_star};
-	my $size = sym_size($star->{mag_aca});
-
-	pgsci($color);
-	pgsch($size); # Set character height
-
-	if ( $star->{mag_aca} > $faint_plot_mag ){
-	    $symbol = $sym_type{very_faint};
-	}
-	pgpoint(1, $star->{yag}, $star->{zag}, $symbol);
-    }
-
-    pgend();				# Close plot
-    unless (-s $self->{plot_field_file}){
-      die("$self->{plot_field_file} was not created");
-    }
-}
-
-#############################################################################################
-sub plot_compass{
-#############################################################################################
-
-    eval 'use PGPLOT';
-    if ($@){
-        croak(__PACKAGE__ .": !$@");
-    }
-
-    my $self = shift;
-    my $c;
-    return unless ($c = find_command($self, 'MP_STARCAT'));
-    return unless ( (defined $self->{ra}) and (defined $self->{dec}) and (defined $self->{roll}));
-    $self->{compass_file} = shift;
-    
-    # Setup pgplot
-    my $dev = $self->{compass_file} . "/png"; # unless defined $dev;  # "?" will prompt for device
-    pgbegin(0,$dev,1,1);  # Open plot device 
-    pgpap(1.8, 1.0);
-    pgscf(1);             # Set character font
-    pgscr(0, 1.0, 1.0, 1.0);
-    pgscr(1, 0.0, 0.0, 0.0);
-
-    # Define data limits and plot axes
-    pgpage();
-    pgsch(1.2);
-    pgvsiz (0.1, 1.7, 0.1, 1.7);
-    pgswin (2900,-2900,-2900,2900);
-    pgbox  ('BCNST', 0.0, 0, 'BCNST', 0.0, 0);
-
-
-    my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
-
-    my $plotrad = 1750/3600.;
-    my $testrad = 1/3600;
-
-    my ($ra_angle, $dec_angle);
-    my ($ra_diff, $dec_diff);
-
-    # Let's walk around a circle and find the points that have the biggest decrease in
-    # RA and Dec from the focus of the circle
-    for my $point ( 0 ... 360){
-	my $rad = ($point/360) * (2* 3.14159);
-	$ra_angle = $rad if not defined $ra_angle;
-	$dec_angle = $rad if not defined $dec_angle;
-	my $yag = $testrad * -1 * sin($rad);
-	my $zag = $testrad * cos($rad);
-	my ($point_ra, $point_dec) = Quat::yagzag2radec( $yag, $zag, $q_aca);
-	my $point_ra_diff = $point_ra - $self->{ra};
-	my $point_dec_diff = $point_dec - $self->{dec};
-	$ra_diff = $point_ra_diff if not defined $ra_diff;
-	$dec_diff = $point_dec_diff if not defined $dec_diff;
-	if ( $point_ra_diff > $ra_diff ){
-	    $ra_diff = $point_ra_diff;
-	    $ra_angle = $rad;
-	}
-	if ($point_dec_diff > $dec_diff ){
-	    $dec_diff = $point_dec_diff;
-	    $dec_angle = $rad;
-	}
-    }
-
-    pgarro( 0, 0, $plotrad * 3600 * -1 * sin($ra_angle), $plotrad * 3600 * cos($ra_angle) );
-    pgarro( 0, 0, $plotrad * 3600 * -1 * sin($dec_angle),  $plotrad * 3600 * cos($dec_angle) );
-
-    # pgptxt has angle increasing counter-clockwise, so let's convert to deg and flip it around
-    my $text_angle = ( 360 - (( $dec_angle / (2 * 3.14159)) * 360))  ;
-    my $text_offset = 200/3600.;
-
-    pgsch(3);             # Set character font
-
-    pgptxt( ($plotrad + $text_offset ) * 3600 * -1 * sin($ra_angle), 
-	    ($plotrad + $text_offset ) * 3600 * cos($ra_angle), $text_angle, 0.5, 
-	    'E' );
-    pgptxt( ($plotrad + $text_offset ) * 3600 * -1 * sin($dec_angle), 
-	    ($plotrad + $text_offset ) * 3600 * cos($dec_angle), $text_angle, 0.5, 
-	    'N' );
-
-    pgend();				# Close plot
-    unless (-s $self->{compass_file}){
-      die("$self->{compass_file} was not created");
-    }
-
 }
 
 
@@ -2533,24 +2260,6 @@ sub quat2radecroll {
     $roll += 360 if ($roll < 0);
 
     return ($ra, $dec, $roll);
-}
-
-#############################################################################################
-sub box {
-#############################################################################################
-    my ($x, $y, $xs, $ys) = @_;
-    my @x = ($x-$xs, $x-$xs, $x+$xs, $x+$xs, $x-$xs);
-    my @y = ($y-$ys, $y+$ys, $y+$ys, $y-$ys, $y-$ys);
-    pgline(5, \@x, \@y);
-}
-
-#############################################################################################
-sub sym_size {
-#############################################################################################
-    my $mag = shift;
-    $mag = 10 if ($mag < -10);
-    my $size = ( (0.5 - 3.0) * ($mag - 6.0) / (12.0 - 6.0) + 2.5);
-    return ($size > 0.8) ? $size : 0.8;
 }
 
 ###################################################################################

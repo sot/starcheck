@@ -60,6 +60,15 @@ def ccd_temp_wrapper(kwargs):
         # write errors to starcheck's global warnings and STDERR
         perl.warning("Error with Inline::Python imports {}\n".format(err))
     return get_ccd_temps(**kwargs)
+
+def plot_cat_wrapper(kwargs):
+    try:
+        from starcheck.plot import make_plots_for_obsid
+    except ImportError as err:
+        # write errors to starcheck's global warnings and STDERR
+        perl.warning("Error with Inline::Python imports {}\n".format(err))
+    return make_plots_for_obsid(**kwargs)
+
 };
 
 # cheat to get the OS (major)
@@ -493,6 +502,29 @@ foreach (@bs) {
     push @sim_trans, $_ if ($_->{cmd} eq 'SIMTRANS');
 }
 
+# Take the MP_STARCAT hash from find_command and convert it into an array with
+# a record for each catalog index.  This is used for the Python plotting of the
+# catalog
+sub catalog_array{
+    my $cat = shift;
+    my @catarr;
+    for $i (1 .. 16){
+        if (not exists $cat->{"TYPE$i"}){
+            next;
+        }
+        if ($cat->{"TYPE$i"} eq 'NUL'){
+            next;
+        }
+        my %catrow = ('yang'=>$cat->{"YANG$i"},
+                      'zang'=>$cat->{"ZANG$i"},
+                      'halfw'=>$cat->{"HALFW$i"},
+                      'type'=>$cat->{"TYPE$i"},
+                      'idx'=>$i);
+        push @catarr, \%catrow;
+    }
+    return \@catarr;
+}
+
 
 # Write out Obsid objects as JSON
 # include a routine to change the internal context to a float/int
@@ -533,23 +565,13 @@ my $json_text = json_obsids();
 my $obsid_temps;
 eval{
     my $json_obsid_temps;
-    local $SIG{ALRM}=sub{ die "get_ccd_temps timed out\n"};
-    eval{
-        alarm 300;
-        $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
-                                              outdir=>$STARCHECK,
-                                              json_obsids => $json_text,
-                                              model_spec => "$Starcheck_Data/aca_spec.json",
-                                              char_file => "$Starcheck_Data/characteristics.yaml",
-                                             });
-        alarm 0;
-    };
-    if ($@){
-        push @global_warn, "ERROR: $@";
-        die "$@\n";
-    }
-    alarm 0;
-    # convert back from JSON outside the timeout
+    $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
+                                          outdir=>$STARCHECK,
+                                          json_obsids => $json_text,
+                                          model_spec => "$Starcheck_Data/aca_spec.json",
+                                          char_file => "$Starcheck_Data/characteristics.yaml",
+                                      });
+    # convert back from JSON outside the eval
     $obsid_temps = JSON::from_json($json_obsid_temps);
 };
 if ($@){
@@ -567,31 +589,27 @@ if ($obsid_temps){
 foreach my $obsid (@obsid_id) {
     $obs{$obsid}->get_agasc_stars($agasc_dir);
     $obs{$obsid}->identify_stars();
-    if ($par{plot}) {
-	eval{
-	    $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.png") ;
-	    $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.png") ;
-	    $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.png");
-	};
-	if ($@){
-	    print STDERR "Problem with plots for Obsid $obs{$obsid}->{obsid}\n error: $@ will wait 5 sec and retry...\n";
-            sleep(5);
-            # repeat the block using an ugly code copy
-            eval{
-              $obs{$obsid}->plot_stars("$STARCHECK/stars_$obs{$obsid}->{obsid}.png") ;
-              $obs{$obsid}->plot_star_field("$STARCHECK/star_view_$obs{$obsid}->{obsid}.png") ;
-              $obs{$obsid}->plot_compass("$STARCHECK/compass$obs{$obsid}->{obsid}.png");
-            };
-            if ($@){
-              print STDERR " Retry not successful for $obs{$obsid}->{obsid}\n";
-              warning ("Could not create plots for Obsid $obs{$obsid}->{obsid}.\n error $@");
-            }
-            else{
-              print STDERR " Retry successful for $obs{$obsid}->{obsid}\n";
-            }
-          }
-      }
-
+    my $cat = Ska::Starcheck::Obsid::find_command($obs{$obsid}, "MP_STARCAT");
+    # If the catalog is empty, don't make plots
+    if (defined $cat){
+        my $cat_as_array = catalog_array($cat);
+        my %plot_args = (obsid=>"$obs{$obsid}->{obsid}",
+                         ra=>$obs{$obsid}->{ra},
+                         dec=>$obs{$obsid}->{dec},
+                         roll=>$obs{$obsid}->{roll},
+                         catalog=>$cat_as_array,
+                         starcat_time=>"$obs{$obsid}->{date}",
+                         outdir=>$STARCHECK);
+        eval{
+            plot_cat_wrapper(\%plot_args);
+        };
+        if ($@){
+            push @global_warn, "Error Python plotting catalog\n";
+        }
+        $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
+        $obs{$obsid}->{plot_field_file} = "$STARCHECK/star_view_$obs{$obsid}->{obsid}.png";
+        $obs{$obsid}->{compass_file} = "$STARCHECK/compass$obs{$obsid}->{obsid}.png";
+    }
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_flick_pix_mon();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
@@ -801,9 +819,9 @@ foreach $obsid (@obsid_id) {
     my $pict2 = qq{};
     my $pict3 = qq{};
     if ($obs{$obsid}->{plot_file}){
-		my $obs = $obs{$obsid}->{obsid};
-		my $obsmap = $obs{$obsid}->star_image_map();
-		$pict1 = qq{$obsmap <img src="$obs{$obsid}->{plot_file}" usemap=\#starmap_${obs}
+        my $obs = $obs{$obsid}->{obsid};
+        my $obsmap = $obs{$obsid}->star_image_map();
+        $pict1 = qq{$obsmap <img src="$obs{$obsid}->{plot_file}" usemap=\#starmap_${obs}
 						width=426 height=426 border=0> };
     }
     if ($obs{$obsid}->{plot_field_file}){
