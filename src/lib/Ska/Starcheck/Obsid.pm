@@ -610,7 +610,6 @@ sub check_dither {
     my $self = shift;
 
     my $dthr = shift;		  # Ref to array of hashes containing dither states
-    my $backstop = shift;
     my %dthr_cmd = (ON => 'ENAB',   # Translation from OR terminology to dither state term.
 		    OFF => 'DISA');
 
