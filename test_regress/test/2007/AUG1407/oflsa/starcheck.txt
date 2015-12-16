@@ -65,12 +65,12 @@ Could not find a match in DOT for MP_STARCAT at 2007:225:22:43:11.448
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2007:224:17:10:49.663   OBC Load Segment Begins     CL224:1707 
-OBSID = NONE1 at 2007:224:17:13:55.663   Undefined Obsid; ER? OR?  | WARNINGS [12] WARNINGS [ 4]
-OBSID = NONE2 at 2007:224:20:33:58.922   Undefined Obsid; ER? OR?  | WARNINGS [13] WARNINGS [ 1]
-OBSID = NONE3 at 2007:224:22:23:40.556   Undefined Obsid; ER? OR?  | WARNINGS [13] WARNINGS [ 1]
-OBSID = NONE4 at 2007:224:23:35:00.556   Undefined Obsid; ER? OR?  | WARNINGS [13] WARNINGS [ 1]
-OBSID = NONE5 at 2007:225:10:40:33.637   Undefined Obsid; ER? OR?  | WARNINGS [12] WARNINGS [ 2]
-OBSID = NONE6 at 2007:225:12:59:16.015   Undefined Obsid; ER? OR?  | WARNINGS [ 9] WARNINGS [ 5]
+OBSID = NONE1 at 2007:224:17:13:55.663   Undefined Obsid; ER? OR?  | WARNINGS [13] WARNINGS [ 4]
+OBSID = NONE2 at 2007:224:20:33:58.922   Undefined Obsid; ER? OR?  | WARNINGS [14] WARNINGS [ 1]
+OBSID = NONE3 at 2007:224:22:23:40.556   Undefined Obsid; ER? OR?  | WARNINGS [14] WARNINGS [ 1]
+OBSID = NONE4 at 2007:224:23:35:00.556   Undefined Obsid; ER? OR?  | WARNINGS [14] WARNINGS [ 1]
+OBSID = NONE5 at 2007:225:10:40:33.637   Undefined Obsid; ER? OR?  | WARNINGS [13] WARNINGS [ 2]
+OBSID = NONE6 at 2007:225:12:59:16.015   Undefined Obsid; ER? OR?  | WARNINGS [10] WARNINGS [ 5]
 OBSID = NONE7 at 2007:225:22:43:11.448   Undefined Obsid; ER? OR?  | WARNINGS [ 7] WARNINGS [ 2]
 OBSID =  7485 at 2007:226:04:55:53.700   8 clean ACQ | 5 clean GUI | 
          ------  2007:226:19:19:00.918   OBC Load Segment Begins     CL226:1907 
@@ -103,28 +103,29 @@ MP_TARGQUAT at 2007:224:17:13:54.020 (VCDU count = 15399428)
 
 MP_STARCAT at 2007:224:17:13:55.663 (VCDU count = 15399435)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0         ---   FID  8x8   5.797     ---   8.000    919   -844   1   1   25          
-[ 2]  1         ---   FID  8x8   5.797     ---   8.000   -774   -850   1   1   25          
-[ 3]  2         ---   FID  8x8   5.797     ---   8.000   2140   1055   1   1   25          
-[ 4]  3  *747252024   BOT  6x6   5.797   8.961  10.469  -1643   1226  20   1  120          
-[ 5]  4  *747112584   GUI  6x6   5.797   7.434   8.938   -318  -2384   1   1   25          
-[ 6]  5  *747117232   GUI  6x6   5.797   9.396  10.906  -2149  -2157   1   1   25          
-[ 7]  6  *747254504   GUI  6x6   5.797   9.324  10.828   -855    666   1   1   25          
-[ 8]  7  *747249184   GUI  6x6   5.797   9.389  10.891   -759    996   1   1   25          
-[ 9]  4  *747248216   ACQ  6x6   5.797   6.347   7.844  -1528   -405  20   1  120          
-[10]  5  *747253560   ACQ  6x6   5.797   9.582  11.078  -1240  -1037  20   1  120          
-[11]  6  *747246240   ACQ  6x6   5.797   9.586  11.719    591    834  20   1  120          
-[12]  7  *747253608   ACQ  6x6   5.797   9.612  11.109   -257  -1226  20   1  120          
-[13]  0  *747769744   ACQ  6x6   5.797   9.687  11.594   1477   -293  20   1  120          
-[14]  1  *747246520   ACQ  6x6   5.797   9.688  11.188  -1602  -1160  20   1  120          
-[15]  2  *747254264   ACQ  6x6   5.797   9.963  11.469   -155   1107  20   1  120          
+[ 1]  0         ---   FID  8x8     ---     ---   8.000    919   -844   1   1   25          
+[ 2]  1         ---   FID  8x8     ---     ---   8.000   -774   -850   1   1   25          
+[ 3]  2         ---   FID  8x8     ---     ---   8.000   2140   1055   1   1   25          
+[ 4]  3  *747252024   BOT  6x6   0.985   8.961  10.469  -1643   1226  20   1  120          
+[ 5]  4  *747112584   GUI  6x6     ---   7.434   8.938   -318  -2384   1   1   25          
+[ 6]  5  *747117232   GUI  6x6     ---   9.396  10.906  -2149  -2157   1   1   25          
+[ 7]  6  *747254504   GUI  6x6     ---   9.324  10.828   -855    666   1   1   25          
+[ 8]  7  *747249184   GUI  6x6     ---   9.389  10.891   -759    996   1   1   25          
+[ 9]  4  *747248216   ACQ  6x6   0.985   6.347   7.844  -1528   -405  20   1  120          
+[10]  5  *747253560   ACQ  6x6   0.977   9.582  11.078  -1240  -1037  20   1  120          
+[11]  6  *747246240   ACQ  6x6   0.887   9.586  11.719    591    834  20   1  120          
+[12]  7  *747253608   ACQ  6x6   0.975   9.612  11.109   -257  -1226  20   1  120          
+[13]  0  *747769744   ACQ  6x6   0.854   9.687  11.594   1477   -293  20   1  120          
+[14]  1  *747246520   ACQ  6x6   0.970   9.688  11.188  -1602  -1160  20   1  120          
+[15]  2  *747254264   ACQ  6x6   0.938   9.963  11.469   -155   1107  20   1  120          
 
 >> WARNING: Could not find obsid NONE1 in processing summary
->> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
+>> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE1 (NONE1). 
 >> WARNING: No CCD temperature prediction for obsid
+>> WARNING: Using -14 (planning limit) for t_ccd for mag limits
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
 >> WARNING: [ 1] Magnitude.   0.000
@@ -138,9 +139,10 @@ MP_STARCAT at 2007:224:17:13:55.663 (VCDU count = 15399435)
 >> WARNING: [10] Search spoiler.  747253784: Y,Z,Radial,Mag seps:   6 194 194 -0.9
 >> WARNING: [15] Search spoiler.  747246048: Y,Z,Radial,Mag seps:  29  62  68 -0.5
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.628	-5.757	-4.193	
-Acquisition Stars Expected  : 7.39
-No CCD temperature prediction
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.907	-5.126	-3.585	
+Acquisition Stars Expected  : 7.57
+Predicted Max CCD temperature: -14.0 C 
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE2  
 RA, Dec, Roll (deg):   255.224053   -46.167747   276.201640
@@ -151,25 +153,26 @@ MP_TARGQUAT at 2007:224:20:33:57.279 (VCDU count = 15446270)
 
 MP_STARCAT at 2007:224:20:33:58.922 (VCDU count = 15446277)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0         ---   FID  8x8   5.797     ---   8.000    922  -1737   1   1   25          
-[ 2]  1         ---   FID  8x8   5.797     ---   8.000  -1826    160   1   1   25          
-[ 3]  2         ---   FID  8x8   5.797     ---   8.000    388    803   1   1   25          
-[ 4]  3 *1091436872   BOT  6x6   5.797   8.850  10.359   1370   1108  15   1   95          
-[ 5]  4 *1091436944   BOT  6x6   5.797   7.507   9.016    216   1288  20   1  120          
-[ 6]  5 *1091443144   BOT  6x6   5.797   8.277   9.781  -1736  -1498  20   1  120          
-[ 7]  6 *1091450176   BOT  6x6   5.797   8.293   9.797   -842  -1647  20   1  120          
-[ 8]  7 *1091440288   GUI  6x6   5.797   8.817  10.328   1754  -1976   1   1   25          
-[ 9]  7 *1091443112   ACQ  6x6   5.797   7.869   9.375  -1038  -1364  20   1  120          
-[10]  0 *1091446872   ACQ  6x6   5.797   8.432   9.938   -266  -1194  20   1  120          
-[11]  1 *1091447304   ACQ  6x6   5.797   9.155  10.656  -1743   -411  20   1  120          
-[12]  2 *1091437792   ACQ  6x6   5.797   8.619  10.125     93    847  20   1  120          
+[ 1]  0         ---   FID  8x8     ---     ---   8.000    922  -1737   1   1   25          
+[ 2]  1         ---   FID  8x8     ---     ---   8.000  -1826    160   1   1   25          
+[ 3]  2         ---   FID  8x8     ---     ---   8.000    388    803   1   1   25          
+[ 4]  3 *1091436872   BOT  6x6   0.985   8.850  10.359   1370   1108  15   1   95          
+[ 5]  4 *1091436944   BOT  6x6   0.985   7.507   9.016    216   1288  20   1  120          
+[ 6]  5 *1091443144   BOT  6x6   0.985   8.277   9.781  -1736  -1498  20   1  120          
+[ 7]  6 *1091450176   BOT  6x6   0.985   8.293   9.797   -842  -1647  20   1  120          
+[ 8]  7 *1091440288   GUI  6x6     ---   8.817  10.328   1754  -1976   1   1   25          
+[ 9]  7 *1091443112   ACQ  6x6   0.985   7.869   9.375  -1038  -1364  20   1  120          
+[10]  0 *1091446872   ACQ  6x6   0.985   8.432   9.938   -266  -1194  20   1  120          
+[11]  1 *1091447304   ACQ  6x6   0.985   9.155  10.656  -1743   -411  20   1  120          
+[12]  2 *1091437792   ACQ  6x6   0.985   8.619  10.125     93    847  20   1  120          
 
 >> WARNING: Could not find obsid NONE2 in processing summary
->> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
+>> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE2 (NONE2). 
 >> WARNING: No CCD temperature prediction for obsid
+>> WARNING: Using -14 (planning limit) for t_ccd for mag limits
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
 >> WARNING: [ 1] Magnitude.   0.000
@@ -181,9 +184,10 @@ MP_STARCAT at 2007:224:20:33:58.922 (VCDU count = 15446277)
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:224:20:33:57.279
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.75	-9.411	-7.306	
-Acquisition Stars Expected  : 7.87
-No CCD temperature prediction
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
+Acquisition Stars Expected  : 7.88
+Predicted Max CCD temperature: -14.0 C 
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE3  
 RA, Dec, Roll (deg):   221.435046   -59.510181   253.326987
@@ -194,25 +198,26 @@ MP_TARGQUAT at 2007:224:22:23:38.913 (VCDU count = 15471955)
 
 MP_STARCAT at 2007:224:22:23:40.556 (VCDU count = 15471961)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0         ---   FID  8x8   5.797     ---   8.000   -773  -1741   1   1   25          
-[ 2]  1         ---   FID  8x8   5.797     ---   8.000   2140    166   1   1   25          
-[ 3]  2         ---   FID  8x8   5.797     ---   8.000    388    803   1   1   25          
-[ 4]  3 *1139280104   BOT  6x6   5.797   7.518   9.016   1567  -2119  20   1  120          
-[ 5]  4 *1139286992   BOT  6x6   5.797   8.929  10.438  -2213  -1593  20   1  120          
-[ 6]  5 *1139289672   BOT  6x6   5.797   8.574  10.078  -1794   1287  12   1   80          
-[ 7]  6 *1180603928   BOT  6x6   5.797   8.813  10.312   2036   1044  20   1  120          
-[ 8]  7 *1139291160   GUI  6x6   5.797   8.368   9.875  -1428    784   1   1   25          
-[ 9]  7 *1139279832   ACQ  6x6   5.797   9.380  10.891    830    611  20   1  120          
-[10]  0 *1180608240   ACQ  6x6   5.797   8.931  10.438   1681    915  20   1  120          
-[11]  1 *1180607104   ACQ  6x6   5.797   9.226  10.734   1512   2139  20   1  120          
-[12]  2 *1139280768   ACQ  6x6   5.797   9.625  11.531    383   -505  20   1  120          
+[ 1]  0         ---   FID  8x8     ---     ---   8.000   -773  -1741   1   1   25          
+[ 2]  1         ---   FID  8x8     ---     ---   8.000   2140    166   1   1   25          
+[ 3]  2         ---   FID  8x8     ---     ---   8.000    388    803   1   1   25          
+[ 4]  3 *1139280104   BOT  6x6   0.985   7.518   9.016   1567  -2119  20   1  120          
+[ 5]  4 *1139286992   BOT  6x6   0.985   8.929  10.438  -2213  -1593  20   1  120          
+[ 6]  5 *1139289672   BOT  6x6   0.985   8.574  10.078  -1794   1287  12   1   80          
+[ 7]  6 *1180603928   BOT  6x6   0.985   8.813  10.312   2036   1044  20   1  120          
+[ 8]  7 *1139291160   GUI  6x6     ---   8.368   9.875  -1428    784   1   1   25          
+[ 9]  7 *1139279832   ACQ  6x6   0.985   9.380  10.891    830    611  20   1  120          
+[10]  0 *1180608240   ACQ  6x6   0.985   8.931  10.438   1681    915  20   1  120          
+[11]  1 *1180607104   ACQ  6x6   0.985   9.226  10.734   1512   2139  20   1  120          
+[12]  2 *1139280768   ACQ  6x6   0.875   9.625  11.531    383   -505  20   1  120          
 
 >> WARNING: Could not find obsid NONE3 in processing summary
->> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
+>> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE3 (NONE3). 
 >> WARNING: No CCD temperature prediction for obsid
+>> WARNING: Using -14 (planning limit) for t_ccd for mag limits
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
 >> WARNING: [ 1] Magnitude.   0.000
@@ -224,9 +229,10 @@ MP_STARCAT at 2007:224:22:23:40.556 (VCDU count = 15471961)
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:224:22:23:38.913
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.65	-8.418	-6.433	
-Acquisition Stars Expected  : 7.78
-No CCD temperature prediction
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.696	-6.643	-4.806	
+Acquisition Stars Expected  : 7.77
+Predicted Max CCD temperature: -14.0 C 
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE4  
 RA, Dec, Roll (deg):   277.843880    -2.072666   251.104300
@@ -237,26 +243,27 @@ MP_TARGQUAT at 2007:224:23:34:58.913 (VCDU count = 15488657)
 
 MP_STARCAT at 2007:224:23:35:00.556 (VCDU count = 15488664)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0         ---   FID  8x8   5.797     ---   8.000    919   -844   1   1   25          
-[ 2]  1         ---   FID  8x8   5.797     ---   8.000   2140   1055   1   1   25          
-[ 3]  2         ---   FID  8x8   5.797     ---   8.000  -1828   1053   1   1   25          
-[ 4]  3  *668339728   BOT  6x6   5.797   7.821   9.328   -428  -1573  20   1  120          
-[ 5]  4  *668860704   BOT  6x6   5.797   8.819  10.328   1662  -1620  20   1  120          
-[ 6]  5  *670567232   BOT  6x6   5.797   9.391  10.891   -583   1215  20   1  120          
-[ 7]  6  *670564456   GUI  6x6   5.797   9.279  10.781   2125   -448   1   1   25          
-[ 8]  7  *670567344   GUI  6x6   5.797   7.817   9.328   -905   2335   1   1   25          
-[ 9]  6  *670564496   ACQ  6x6   5.797   8.856  10.359   -378   -965  20   1  120          
-[10]  7  *668860840   ACQ  6x6   5.797   9.983  11.484   1472  -1286  20   1  120          
-[11]  0  *670041680   ACQ  6x6   5.797   9.958  11.469  -1632   -997  20   1  120          
-[12]  1  *670564504   ACQ  6x6   5.797   9.981  11.484    609   -552  20   1  120          
-[13]  2  *670567656   ACQ  6x6   5.797   6.862   8.359   1062    739  20   1  120          
+[ 1]  0         ---   FID  8x8     ---     ---   8.000    919   -844   1   1   25          
+[ 2]  1         ---   FID  8x8     ---     ---   8.000   2140   1055   1   1   25          
+[ 3]  2         ---   FID  8x8     ---     ---   8.000  -1828   1053   1   1   25          
+[ 4]  3  *668339728   BOT  6x6   0.985   7.821   9.328   -428  -1573  20   1  120          
+[ 5]  4  *668860704   BOT  6x6   0.985   8.819  10.328   1662  -1620  20   1  120          
+[ 6]  5  *670567232   BOT  6x6   0.985   9.391  10.891   -583   1215  20   1  120          
+[ 7]  6  *670564456   GUI  6x6     ---   9.279  10.781   2125   -448   1   1   25          
+[ 8]  7  *670567344   GUI  6x6     ---   7.817   9.328   -905   2335   1   1   25          
+[ 9]  6  *670564496   ACQ  6x6   0.985   8.856  10.359   -378   -965  20   1  120          
+[10]  7  *668860840   ACQ  6x6   0.934   9.983  11.484   1472  -1286  20   1  120          
+[11]  0  *670041680   ACQ  6x6   0.939   9.958  11.469  -1632   -997  20   1  120          
+[12]  1  *670564504   ACQ  6x6   0.935   9.981  11.484    609   -552  20   1  120          
+[13]  2  *670567656   ACQ  6x6   0.985   6.862   8.359   1062    739  20   1  120          
 
 >> WARNING: Could not find obsid NONE4 in processing summary
->> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
+>> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE4 (NONE4). 
 >> WARNING: No CCD temperature prediction for obsid
+>> WARNING: Using -14 (planning limit) for t_ccd for mag limits
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
 >> WARNING: [ 1] Magnitude.   0.000
@@ -268,9 +275,10 @@ MP_STARCAT at 2007:224:23:35:00.556 (VCDU count = 15488664)
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:224:23:34:58.913
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.403	-6.321	-4.532	
-Acquisition Stars Expected  : 7.33
-No CCD temperature prediction
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.934	-6.003	-4.302	
+Acquisition Stars Expected  : 7.73
+Predicted Max CCD temperature: -14.0 C 
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE5  
 RA, Dec, Roll (deg):   305.000000   -39.000000   322.609182
@@ -281,22 +289,23 @@ MP_TARGQUAT at 2007:225:10:40:31.994 (VCDU count = 15644494)
 
 MP_STARCAT at 2007:225:10:40:33.637 (VCDU count = 15644500)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0 *1041771784   BOT  8x8   5.797   8.383   9.891  -1581  -1055  16   1  100          
-[ 2]  1 *1041773456   BOT  8x8   5.797   8.743  10.250  -2012   2041  20   1  120          
-[ 3]  2 *1041774104   BOT  8x8   5.797   7.903   9.406  -1076   -613  13   1   85          
-[ 4]  3 *1041774584   BOT  8x8   5.797   8.287   9.797  -1014   -464  13   1   85          
-[ 5]  4 *1041776136   BOT  8x8   5.797   6.921   8.422  -1577  -1220  20   1  120          
-[ 6]  5 *1041904480   BOT  8x8   5.797   7.971   9.469   1209    238  20   1  120          
-[ 7]  6 *1042298632   BOT  8x8   5.797   7.020   8.531   1410  -1993  20   1  120          
-[ 8]  7 *1042295352   GUI  8x8   5.797   8.515  10.016   -771  -2441   1   1   25          
-[ 9]  7 *1041771800   ACQ  8x8   5.797   9.725  11.750    308  -1392  20   1  120          
+[ 1]  0 *1041771784   BOT  8x8   0.985   8.383   9.891  -1581  -1055  16   1  100          
+[ 2]  1 *1041773456   BOT  8x8   0.985   8.743  10.250  -2012   2041  20   1  120          
+[ 3]  2 *1041774104   BOT  8x8   0.985   7.903   9.406  -1076   -613  13   1   85          
+[ 4]  3 *1041774584   BOT  8x8   0.985   8.287   9.797  -1014   -464  13   1   85          
+[ 5]  4 *1041776136   BOT  8x8   0.985   6.921   8.422  -1577  -1220  20   1  120          
+[ 6]  5 *1041904480   BOT  8x8   0.985   7.971   9.469   1209    238  20   1  120          
+[ 7]  6 *1042298632   BOT  8x8   0.985   7.020   8.531   1410  -1993  20   1  120          
+[ 8]  7 *1042295352   GUI  8x8     ---   8.515  10.016   -771  -2441   1   1   25          
+[ 9]  7 *1041771800   ACQ  8x8   0.840   9.725  11.750    308  -1392  20   1  120          
 
 >> WARNING: Could not find obsid NONE5 in processing summary
->> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
+>> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE5 (NONE5). 
 >> WARNING: No CCD temperature prediction for obsid
+>> WARNING: Using -14 (planning limit) for t_ccd for mag limits
 >> WARNING: [ 1] Search Box Size. Search Box smaller than slew error 
 >> WARNING: [ 1] Search spoiler. 1041776136: Y,Z,Radial,Mag seps:   4 164 164  1.5
 >> WARNING: [ 3] Search Box Size. Search Box smaller than slew error 
@@ -308,9 +317,10 @@ MP_STARCAT at 2007:225:10:40:33.637 (VCDU count = 15644500)
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:225:10:40:31.994
 >> WARNING: [ 3] Search spoiler. 1041774584: Y,Z,Radial,Mag seps:  61 149 161 -0.4
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.09	-8.784	-6.728	
-Acquisition Stars Expected  : 7.79
-No CCD temperature prediction
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.591	-6.541	-4.708	
+Acquisition Stars Expected  : 7.73
+Predicted Max CCD temperature: -14.0 C 
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE6  
 RA, Dec, Roll (deg):   336.000000   -41.000000    27.596940
@@ -321,24 +331,25 @@ MP_TARGQUAT at 2007:225:12:59:14.372 (VCDU count = 15676971)
 
 MP_STARCAT at 2007:225:12:59:16.015 (VCDU count = 15676978)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0 *1048445832   BOT  8x8   5.797   7.467   8.969   -128  -1508  20   1  120          
-[ 2]  1 *1048446056   BOT  8x8   5.797  10.204  11.703   -484   2095  20   1  120          
-[ 3]  2 *1048446120   BOT  8x8   5.797   9.704  11.203  -1566    265  20   1  120          
-[ 4]  3 *1048446232   BOT  8x8   5.797   8.339   9.844  -1508   -870  20   1  120          
-[ 5]  4 *1048448920   BOT  8x8   5.797   9.443  10.953  -1478   1420  20   1  120          
-[ 6]  5 *1048447448   GUI  8x8   5.797   9.025  10.531  -2356   1027   1   1   25          
-[ 7]  6 *1048450456   GUI  8x8   5.797   9.438  10.938  -2230  -2371   1   1   25          
-[ 8]  7 *1048579768   GUI  8x8   5.797   9.907  11.406   1932  -2336   1   1   25          
-[ 9]  5 *1048445048   ACQ  8x8   5.797   9.917  11.422   1329  -1098  20   1  120          
-[10]  6 *1048586096   ACQ  8x8   5.797  10.137  11.641   2050   -597  20   1  120          
-[11]  7 *1048582512   ACQ  8x8   5.797   9.970  11.469   1864  -1261  20   1  120          
+[ 1]  0 *1048445832   BOT  8x8   0.985   7.467   8.969   -128  -1508  20   1  120          
+[ 2]  1 *1048446056   BOT  8x8   0.882  10.204  11.703   -484   2095  20   1  120          
+[ 3]  2 *1048446120   BOT  8x8   0.969   9.704  11.203  -1566    265  20   1  120          
+[ 4]  3 *1048446232   BOT  8x8   0.985   8.339   9.844  -1508   -870  20   1  120          
+[ 5]  4 *1048448920   BOT  8x8   0.983   9.443  10.953  -1478   1420  20   1  120          
+[ 6]  5 *1048447448   GUI  8x8     ---   9.025  10.531  -2356   1027   1   1   25          
+[ 7]  6 *1048450456   GUI  8x8     ---   9.438  10.938  -2230  -2371   1   1   25          
+[ 8]  7 *1048579768   GUI  8x8     ---   9.907  11.406   1932  -2336   1   1   25          
+[ 9]  5 *1048445048   ACQ  8x8   0.945   9.917  11.422   1329  -1098  20   1  120          
+[10]  6 *1048586096   ACQ  8x8   0.901  10.137  11.641   2050   -597  20   1  120          
+[11]  7 *1048582512   ACQ  8x8   0.937   9.970  11.469   1864  -1261  20   1  120          
 
 >> WARNING: Could not find obsid NONE6 in processing summary
->> WARNING: Could not determine obsid start and stop times for NPM checks (dither, momentum)
+>> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE6 (NONE6). 
 >> WARNING: No CCD temperature prediction for obsid
+>> WARNING: Using -14 (planning limit) for t_ccd for mag limits
 >> WARNING: [ 1] Search spoiler. 1048446792: Y,Z,Radial,Mag seps: 206 100 229  2.0
 >> WARNING: [ 1] Search spoiler. 1048457496: Y,Z,Radial,Mag seps: 214 101 237  0.7
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
@@ -350,9 +361,10 @@ MP_STARCAT at 2007:225:12:59:16.015 (VCDU count = 15676978)
 >> WARNING: [ 3] Search spoiler. 1048447320: Y,Z,Radial,Mag seps:  43 193 197 -0.7
 >> WARNING: [ 9] Search spoiler. 1048581064: Y,Z,Radial,Mag seps: 225 180 288 -1.0
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.367	-4.570	-3.132	
-Acquisition Stars Expected  : 6.90
-No CCD temperature prediction
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.844	-5.082	-3.565	
+Acquisition Stars Expected  : 7.58
+Predicted Max CCD temperature: -14.0 C 
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE7  
 RA, Dec, Roll (deg):   357.100000   -16.500000    91.435339
@@ -363,17 +375,17 @@ MP_TARGQUAT at 2007:225:22:43:09.805 (VCDU count = 15813695)
 
 MP_STARCAT at 2007:225:22:43:11.448 (VCDU count = 15813701)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0  *839385216   BOT  8x8   5.797   9.232  10.734    823   -271  20   1  120          
-[ 2]  1  *839385760   BOT  8x8   5.797   9.164  10.672   2345    567  10   1   70          
-[ 3]  2  *839387472   BOT  8x8   5.797   8.408   9.906   1883    644  20   1  120          
-[ 4]  3  *839390992   BOT  8x8   5.797  10.066  11.578  -1148   1898  20   1  120          
-[ 5]  4  *839391520   BOT  8x8   5.797   9.802  11.312   1129   -564  20   1  120          
-[ 6]  5  *839391704   BOT  8x8   5.797   7.823   9.328  -2242   2054  18   1  110          
-[ 7]  6  *839522344   BOT  8x8   5.797   8.842  10.344   1297  -2133  20   1  120          
-[ 8]  7  *839523728   GUI  8x8   5.797   9.735  11.234    -36  -2443   1   1   25          
-[ 9]  7  *839524112   ACQ  8x8   5.797   5.926   7.422   2273  -1033  20   1  120          
+[ 1]  0  *839385216   BOT  8x8   0.985   9.232  10.734    823   -271  20   1  120          
+[ 2]  1  *839385760   BOT  8x8   0.985   9.164  10.672   2345    567  10   1   70          
+[ 3]  2  *839387472   BOT  8x8   0.985   8.408   9.906   1883    644  20   1  120          
+[ 4]  3  *839390992   BOT  8x8   0.970  10.066  11.578  -1148   1898  20   1  120          
+[ 5]  4  *839391520   BOT  8x8   0.983   9.802  11.312   1129   -564  20   1  120          
+[ 6]  5  *839391704   BOT  8x8   0.985   7.823   9.328  -2242   2054  18   1  110          
+[ 7]  6  *839522344   BOT  8x8   0.985   8.842  10.344   1297  -2133  20   1  120          
+[ 8]  7  *839523728   GUI  8x8     ---   9.735  11.234    -36  -2443   1   1   25          
+[ 9]  7  *839524112   ACQ  8x8   0.985   5.926   7.422   2273  -1033  20   1  120          
 
 >> WARNING: Could not find obsid NONE7 in processing summary
 >> WARNING: No Guide Star Summary for obsid NONE7 (NONE7). 
@@ -385,9 +397,10 @@ MP_STARCAT at 2007:225:22:43:11.448 (VCDU count = 15813701)
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:225:22:43:09.805
 >> WARNING: [ 5] Search spoiler.  839388784: Y,Z,Radial,Mag seps: 125  96 158 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.21	-8.918	-6.874	
-Acquisition Stars Expected  : 7.83
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.214	-7.135	-5.263	
+Acquisition Stars Expected  : 7.86
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 7485   GRS 1915+105           ACIS-S SIM Z offset:-3182 (-8.00mm) Grating: HETG 
 RA, Dec, Roll (deg):   288.800376    10.968211   234.137830
@@ -400,23 +413,24 @@ MP_TARGQUAT at 2007:226:04:55:52.057 (VCDU count = 15900962)
 
 MP_STARCAT at 2007:226:04:55:53.700 (VCDU count = 15900968)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0           2   FID  8x8   5.797   7.000   8.000   -773  -1906   1   1   25          
-[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140      2   1   1   25          
-[ 3]  2           6   FID  8x8   5.797   7.000   8.000    388    639   1   1   25          
-[ 4]  3   136974408   BOT  6x6   5.797   6.868   8.375   2191   1612  20   1  120          
-[ 5]  4   136974776   BOT  6x6   5.797   7.820   9.328   1751   1011  20   1  120          
-[ 6]  5   136977584   BOT  6x6   5.797   8.407   9.906   1546    398  20   1  120          
-[ 7]  6   137497048   BOT  6x6   5.797   7.966   9.469  -1908   -961  20   1  120          
-[ 8]  7   137498872   BOT  6x6   5.797   7.070   8.578   -170  -2080  20   1  120          
-[ 9]  0   136979152   ACQ  6x6   5.797   8.750  10.250   2022    316  18   1  110          
-[10]  1   137102976   ACQ  6x6   5.797   8.538  10.047   -847   1101  20   1  120          
-[11]  2   136976592   ACQ  6x6   5.797   9.430  10.938   1181    779  20   1  120    a2    
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1906   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140      2   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    388    639   1   1   25          
+[ 4]  3   136974408   BOT  6x6   0.985   6.868   8.375   2191   1612  20   1  120          
+[ 5]  4   136974776   BOT  6x6   0.985   7.820   9.328   1751   1011  20   1  120          
+[ 6]  5   136977584   BOT  6x6   0.985   8.407   9.906   1546    398  20   1  120          
+[ 7]  6   137497048   BOT  6x6   0.985   7.966   9.469  -1908   -961  20   1  120          
+[ 8]  7   137498872   BOT  6x6   0.985   7.070   8.578   -170  -2080  20   1  120          
+[ 9]  0   136979152   ACQ  6x6   0.985   8.750  10.250   2022    316  18   1  110          
+[10]  1   137102976   ACQ  6x6   0.985   8.538  10.047   -847   1101  20   1  120          
+[11]  2   136976592   ACQ  6x6   0.985   9.430  10.938   1181    779  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.87	-9.507	-7.387	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
 Acquisition Stars Expected  : 7.88
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 58264  
 RA, Dec, Roll (deg):   265.000000   -25.000000   269.160997
@@ -428,25 +442,26 @@ MP_TARGQUAT at 2007:226:19:22:05.275 (VCDU count = 16103784)
 
 MP_STARCAT at 2007:226:19:22:06.918 (VCDU count = 16103791)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   895353160   BOT  8x8   5.797   8.843  10.344  -1426  -2255  20   1  120    a3    
-[ 2]  1   895353504   BOT  8x8   5.797   8.634  10.141  -1000  -1808  20   1  120          
-[ 3]  2   895353600   BOT  8x8   5.797   9.279  10.781    -34   2027  20   1  120          
-[ 4]  3   895353944   BOT  8x8   5.797   9.281  10.781   2246   1699  20   1  120  a2g2    
-[ 5]  4   895354048   BOT  8x8   5.797   9.092  10.594   2241    506  20   1  120          
-[ 6]  5   895354312   BOT  8x8   5.797   8.724  10.234    -94  -1703  20   1  120          
-[ 7]  6   895354568   BOT  8x8   5.797   9.478  10.984   1161    851  13   1   85  a2g2    
-[ 8]  7   895353224   GUI  8x8   5.797   9.736  11.234  -1528  -2206   1   1   25    g2    
-[ 9]  7   895353896   ACQ  8x8   5.797   9.601  11.109  -2061    979  20   1  120    a2    
+[ 1]  0   895353160   BOT  8x8   0.985   8.843  10.344  -1426  -2255  20   1  120    a3    
+[ 2]  1   895353504   BOT  8x8   0.985   8.634  10.141  -1000  -1808  20   1  120          
+[ 3]  2   895353600   BOT  8x8   0.985   9.279  10.781    -34   2027  20   1  120          
+[ 4]  3   895353944   BOT  8x8   0.977   9.281  10.781   2246   1699  20   1  120  a2g2    
+[ 5]  4   895354048   BOT  8x8   0.985   9.092  10.594   2241    506  20   1  120          
+[ 6]  5   895354312   BOT  8x8   0.985   8.724  10.234    -94  -1703  20   1  120          
+[ 7]  6   895354568   BOT  8x8   0.985   9.478  10.984   1161    851  13   1   85  a2g2    
+[ 8]  7   895353224   GUI  8x8     ---   9.736  11.234  -1528  -2206   1   1   25    g2    
+[ 9]  7   895353896   ACQ  8x8   0.985   9.601  11.109  -2061    979  20   1  120    a2    
 
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 >> WARNING: [ 1] Search spoiler.  895353224: Y,Z,Radial,Mag seps: 102  48 113 -0.9
 >> WARNING: [ 9] Search spoiler.  895353688: Y,Z,Radial,Mag seps: 138 151 205 -0.7
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.79	-9.442	-7.333	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.362	-7.264	-5.370	
 Acquisition Stars Expected  : 7.87
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 7468   IGR J17522-2657        HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   268.072546   -26.942865   271.899317
@@ -459,24 +474,25 @@ MP_TARGQUAT at 2007:226:19:50:21.512 (VCDU count = 16110404)
 
 MP_STARCAT at 2007:226:19:50:23.155 (VCDU count = 16110410)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
-[ 2]  1           8   FID  8x8   5.797   7.000   8.000    836  -1308   1   1   25          
-[ 3]  2           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
-[ 4]  3   896009152   BOT  6x6   5.797   7.249   8.750    379  -1566  20   1  120          
-[ 5]  4   896011832   BOT  6x6   5.797   8.556  10.062   1573  -2181  20   1  120          
-[ 6]  5   897712576   BOT  6x6   5.797   8.246   9.750  -2171    667  20   1  120          
-[ 7]  6   897721184   BOT  6x6   5.797   8.508  10.016  -1054   1814  20   1  120          
-[ 8]  7   897717760   GUI  6x6   5.797   7.209   8.719   1257    983   1   1   25          
-[ 9]  7   897717296   ACQ  6x6   5.797   8.201   9.703   -258   -475  20   1  120          
-[10]  0   897717824   ACQ  6x6   5.797   8.562  10.062   -380   1546  20   1  120          
-[11]  1   897712808   ACQ  6x6   5.797   8.808  10.312   2237   2177  20   1  120          
-[12]  2   896011072   ACQ  6x6   5.797   8.873  10.375   1602   -987  20   1  120          
+[ 1]  0           7   FID  8x8     ---   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           8   FID  8x8     ---   7.000   8.000    836  -1308   1   1   25          
+[ 3]  2           9   FID  8x8     ---   7.000   8.000  -1204    998   1   1   25          
+[ 4]  3   896009152   BOT  6x6   0.985   7.249   8.750    379  -1566  20   1  120          
+[ 5]  4   896011832   BOT  6x6   0.985   8.556  10.062   1573  -2181  20   1  120          
+[ 6]  5   897712576   BOT  6x6   0.985   8.246   9.750  -2171    667  20   1  120          
+[ 7]  6   897721184   BOT  6x6   0.985   8.508  10.016  -1054   1814  20   1  120          
+[ 8]  7   897717760   GUI  6x6     ---   7.209   8.719   1257    983   1   1   25          
+[ 9]  7   897717296   ACQ  6x6   0.985   8.201   9.703   -258   -475  20   1  120          
+[10]  0   897717824   ACQ  6x6   0.985   8.562  10.062   -380   1546  20   1  120          
+[11]  1   897712808   ACQ  6x6   0.985   8.808  10.312   2237   2177  20   1  120          
+[12]  2   896011072   ACQ  6x6   0.985   8.873  10.375   1602   -987  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.87	-9.507	-7.387	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
 Acquisition Stars Expected  : 7.88
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 7467   AX J1754.2-2754        HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   268.531209   -27.897578   272.835985
@@ -489,24 +505,25 @@ MP_TARGQUAT at 2007:226:20:18:18.617 (VCDU count = 16116949)
 
 MP_STARCAT at 2007:226:20:18:20.260 (VCDU count = 16116955)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0           7   FID  8x8   5.797   7.000   8.000   -776  -1306   1   1   25          
-[ 2]  1           9   FID  8x8   5.797   7.000   8.000  -1204    998   1   1   25          
-[ 3]  2          10   FID  8x8   5.797   7.000   8.000   1266    995   1   1   25          
-[ 4]  3   896011072   BOT  6x6   5.797   8.873  10.375  -1912  -2307  20   1  120          
-[ 5]  4   897712584   BOT  6x6   5.797   7.493   9.000    369  -1698  20   1  120          
-[ 6]  5   897717760   BOT  6x6   5.797   7.209   8.719  -2232   -333  20   1  120          
-[ 7]  6   897721048   BOT  6x6   5.797   8.315   9.812    553   1430  20   1  120          
-[ 8]  7   898236640   GUI  6x6   5.797   9.033  10.531   1094   1096   1   1   25          
-[ 9]  7   897717672   ACQ  6x6   5.797   8.812  10.312   -343  -1507  20   1  120          
-[10]  0   897720600   ACQ  6x6   5.797   8.194   9.703   -998   -625  20   1  120          
-[11]  1   897721112   ACQ  6x6   5.797   8.783  10.281    544   -640  20   1  120          
-[12]  2   897722208   ACQ  6x6   5.797   8.811  10.312  -2156    382  20   1  120          
+[ 1]  0           7   FID  8x8     ---   7.000   8.000   -776  -1306   1   1   25          
+[ 2]  1           9   FID  8x8     ---   7.000   8.000  -1204    998   1   1   25          
+[ 3]  2          10   FID  8x8     ---   7.000   8.000   1266    995   1   1   25          
+[ 4]  3   896011072   BOT  6x6   0.985   8.873  10.375  -1912  -2307  20   1  120          
+[ 5]  4   897712584   BOT  6x6   0.985   7.493   9.000    369  -1698  20   1  120          
+[ 6]  5   897717760   BOT  6x6   0.985   7.209   8.719  -2232   -333  20   1  120          
+[ 7]  6   897721048   BOT  6x6   0.985   8.315   9.812    553   1430  20   1  120          
+[ 8]  7   898236640   GUI  6x6     ---   9.033  10.531   1094   1096   1   1   25          
+[ 9]  7   897717672   ACQ  6x6   0.985   8.812  10.312   -343  -1507  20   1  120          
+[10]  0   897720600   ACQ  6x6   0.985   8.194   9.703   -998   -625  20   1  120          
+[11]  1   897721112   ACQ  6x6   0.985   8.783  10.281    544   -640  20   1  120          
+[12]  2   897722208   ACQ  6x6   0.985   8.811  10.312  -2156    382  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.87	-9.507	-7.387	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
 Acquisition Stars Expected  : 7.88
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 7722   NGC 5548               HRC-S  SIM Z offset:0     (0.00mm) Grating: LETG 
 RA, Dec, Roll (deg):   214.484330    25.158469   261.605953
@@ -519,27 +536,28 @@ MP_TARGQUAT at 2007:226:20:43:58.668 (VCDU count = 16122959)
 
 MP_STARCAT at 2007:226:20:44:00.311 (VCDU count = 16122965)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
-[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
-[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
-[ 4]  3   263464688   BOT  6x6   5.797   9.160  10.656   -604    471  20   1  120          
-[ 5]  4   263595296   BOT  6x6   5.797   9.867  11.375  -1947   1174  20   1  120  a2g3    
-[ 6]  5   263195064   BOT  6x6   5.797   9.276  10.781   1159   2304  20   1  120    aX    
-[ 7]  6   263464240   BOT  6x6   5.797   9.621  11.125    874  -2358  20   1  120  aXg2    
-[ 8]  7   263065336   BOT  6x6   5.797   9.914  11.422   1706  -2403  20   1  120  aXg3    
-[ 9]  0   263464584   ACQ  6x6   5.797  10.492  12.000   -321    149  20   1  120    a3    
-[10]  1   263593416   ACQ  6x6   5.797  10.530  12.031   -196   2239  20   1  120    a3    
-[11]  2   263067400   ACQ  6x6   5.797  10.708  12.219   1786   -328  20   1  120    a4    
+[ 1]  0          11   FID  8x8     ---   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8     ---   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8     ---   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   263464688   BOT  6x6   0.985   9.160  10.656   -604    471  20   1  120          
+[ 5]  4   263595296   BOT  6x6   0.980   9.867  11.375  -1947   1174  20   1  120  a2g3    
+[ 6]  5   263195064   BOT  6x6   0.985   9.276  10.781   1159   2304  20   1  120    aX    
+[ 7]  6   263464240   BOT  6x6   0.985   9.621  11.125    874  -2358  20   1  120  aXg2    
+[ 8]  7   263065336   BOT  6x6   0.978   9.914  11.422   1706  -2403  20   1  120  aXg3    
+[ 9]  0   263464584   ACQ  6x6   0.912  10.492  12.000   -321    149  20   1  120    a3    
+[10]  1   263593416   ACQ  6x6   0.903  10.530  12.031   -196   2239  20   1  120    a3    
+[11]  2   263067400   ACQ  6x6   0.847  10.708  12.219   1786   -328  20   1  120    a4    
 
 >> WARNING: [11] Magnitude.  10.708
 >> WARNING: [ 9] Magnitude.  10.492
 >> WARNING: [10] Magnitude.  10.530
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.433	-6.406	-4.664	
-Acquisition Stars Expected  : 7.42
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.103	-5.260	-3.662	
+Acquisition Stars Expected  : 7.57
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 8292   Betelgeuse             HRC-S  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):    88.727999     7.799458   101.574924
@@ -552,25 +570,26 @@ MP_TARGQUAT at 2007:228:00:52:46.365 (VCDU count = 16518384)
 
 MP_STARCAT at 2007:228:00:52:48.008 (VCDU count = 16518390)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
-[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
-[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
-[ 4]  3    93853008   BOT  6x6   5.797   8.306   9.812   1826     81  12   1   80          
-[ 5]  4    93854800   BOT  6x6   5.797   7.569   9.078   -255   1333  20   1  120          
-[ 6]  5    93856056   BOT  6x6   5.797   7.900   9.406   -469   2211  20   1  120          
-[ 7]  6    16912512   GUI  6x6   5.797   7.918   9.422  -2306    751   1   1   25          
-[ 8]  7    16913360   GUI  6x6   5.797   8.375   9.875  -2269  -1176   1   1   25          
-[ 9]  6    16910760   ACQ  6x6   5.797   9.175  10.672  -1340   -933  20   1  120          
-[10]  7    93855168   ACQ  6x6   5.797   9.064  10.562    -43  -1059  20   1  120          
-[11]  0    93854728   ACQ  6x6   5.797   9.530  11.797    875    857  20   1  120    a2    
-[12]  1    93852736   ACQ  6x6   5.797   9.581  11.578   2151  -1574  20   1  120    a2    
-[13]  2    93852536   ACQ  6x6   5.797   9.614  11.125   -560   1256  20   1  120    a2    
+[ 1]  0          11   FID  8x8     ---   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8     ---   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8     ---   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3    93853008   BOT  6x6   0.985   8.306   9.812   1826     81  12   1   80          
+[ 5]  4    93854800   BOT  6x6   0.985   7.569   9.078   -255   1333  20   1  120          
+[ 6]  5    93856056   BOT  6x6   0.985   7.900   9.406   -469   2211  20   1  120          
+[ 7]  6    16912512   GUI  6x6     ---   7.918   9.422  -2306    751   1   1   25          
+[ 8]  7    16913360   GUI  6x6     ---   8.375   9.875  -2269  -1176   1   1   25          
+[ 9]  6    16910760   ACQ  6x6   0.985   9.175  10.672  -1340   -933  20   1  120          
+[10]  7    93855168   ACQ  6x6   0.985   9.064  10.562    -43  -1059  20   1  120          
+[11]  0    93854728   ACQ  6x6   0.951   9.530  11.797    875    857  20   1  120    a2    
+[12]  1    93852736   ACQ  6x6   0.943   9.581  11.578   2151  -1574  20   1  120    a2    
+[13]  2    93852536   ACQ  6x6   0.985   9.614  11.125   -560   1256  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.69	-9.357	-7.262	
-Acquisition Stars Expected  : 7.87
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.597	-6.585	-4.789	
+Acquisition Stars Expected  : 7.80
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 58263  
 RA, Dec, Roll (deg):   357.100000   -16.500000    89.632979
@@ -582,27 +601,28 @@ MP_TARGQUAT at 2007:228:02:32:44.320 (VCDU count = 16541790)
 
 MP_STARCAT at 2007:228:02:32:45.963 (VCDU count = 16541797)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   839385216   BOT  8x8   5.797   9.232  10.734    831   -245  20   1  120          
-[ 2]  1   839385760   BOT  8x8   5.797   9.164  10.672   2326    641  11   1   75          
-[ 3]  2   839387472   BOT  8x8   5.797   8.408   9.906   1862    703  20   1  120          
-[ 4]  3   839390992   BOT  8x8   5.797  10.066  11.578  -1207   1861  20   1  120  a2g3    
-[ 5]  4   839391520   BOT  8x8   5.797   9.802  11.312   1146   -529  20   1  120  a2g2    
-[ 6]  5   839522344   BOT  8x8   5.797   8.842  10.344   1364  -2091  20   1  120          
-[ 7]  6   839391704   GUI  8x8   5.797   7.823   9.328  -2305   1983   1   1   25          
-[ 8]  7   839388672   GUI  8x8   5.797  10.315  11.812    736   2380   1   1   25    g3    
-[ 9]  6   839385632   ACQ  8x8   5.797   8.256   9.766    860   -624  20   1  120    a3    
-[10]  7   839392376   ACQ  8x8   5.797  10.439  11.938   -285    279  20   1  120    a3    
+[ 1]  0   839385216   BOT  8x8   0.985   9.232  10.734    831   -245  20   1  120          
+[ 2]  1   839385760   BOT  8x8   0.985   9.164  10.672   2326    641  11   1   75          
+[ 3]  2   839387472   BOT  8x8   0.985   8.408   9.906   1862    703  20   1  120          
+[ 4]  3   839390992   BOT  8x8   0.970  10.066  11.578  -1207   1861  20   1  120  a2g3    
+[ 5]  4   839391520   BOT  8x8   0.983   9.802  11.312   1146   -529  20   1  120  a2g2    
+[ 6]  5   839522344   BOT  8x8   0.985   8.842  10.344   1364  -2091  20   1  120          
+[ 7]  6   839391704   GUI  8x8     ---   7.823   9.328  -2305   1983   1   1   25          
+[ 8]  7   839388672   GUI  8x8     ---  10.315  11.812    736   2380   1   1   25    g3    
+[ 9]  6   839385632   ACQ  8x8   0.985   8.256   9.766    860   -624  20   1  120    a3    
+[10]  7   839392376   ACQ  8x8   0.923  10.439  11.938   -285    279  20   1  120    a3    
 
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 >> WARNING: [ 5] Search spoiler.  839388784: Y,Z,Radial,Mag seps: 128  92 158 -0.9
 >> WARNING: [ 8] Magnitude.  10.315
 >> WARNING: [10] Magnitude.  10.439
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.42	-8.195	-6.227	
-Acquisition Stars Expected  : 7.74
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.611	-6.597	-4.798	
+Acquisition Stars Expected  : 7.80
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 58262  
 RA, Dec, Roll (deg):   336.000000   -41.000000    22.268075
@@ -614,24 +634,25 @@ MP_TARGQUAT at 2007:228:04:55:44.849 (VCDU count = 16575275)
 
 MP_STARCAT at 2007:228:04:55:46.492 (VCDU count = 16575282)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0  1048445048   BOT  8x8   5.797   9.917  11.422   1426   -969  20   1  120  a2g3    
-[ 2]  1  1048446120   BOT  8x8   5.797   9.704  11.203  -1583    118  20   1  120  a2g2    
-[ 3]  2  1048446232   BOT  8x8   5.797   8.339   9.844  -1421  -1006  20   1  120          
-[ 4]  3  1048448920   BOT  8x8   5.797   9.443  10.953  -1603   1276  20   1  120  a2g2    
-[ 5]  4  1048579768   BOT  8x8   5.797   9.907  11.406   2140  -2146  20   1  120  a2g3    
-[ 6]  5  1048582512   BOT  8x8   5.797   9.970  11.469   1973  -1082  20   1  120  a2g3    
-[ 7]  6  1048448448   GUI  8x8   5.797   9.583  11.094  -2354  -1198   1   1   25    g2    
-[ 8]  7  1048446088   GUI  8x8   5.797   9.682  11.188  -1303   2310   1   1   25    g3    
-[ 9]  6  1048445832   ACQ  8x8   5.797   7.467   8.969     12  -1513  20   1  120          
-[10]  7  1048446056   ACQ  8x8   5.797  10.204  11.703   -676   2041  20   1  120    a2    
+[ 1]  0  1048445048   BOT  8x8   0.978   9.917  11.422   1426   -969  20   1  120  a2g3    
+[ 2]  1  1048446120   BOT  8x8   0.985   9.704  11.203  -1583    118  20   1  120  a2g2    
+[ 3]  2  1048446232   BOT  8x8   0.985   8.339   9.844  -1421  -1006  20   1  120          
+[ 4]  3  1048448920   BOT  8x8   0.985   9.443  10.953  -1603   1276  20   1  120  a2g2    
+[ 5]  4  1048579768   BOT  8x8   0.979   9.907  11.406   2140  -2146  20   1  120  a2g3    
+[ 6]  5  1048582512   BOT  8x8   0.975   9.970  11.469   1973  -1082  20   1  120  a2g3    
+[ 7]  6  1048448448   GUI  8x8     ---   9.583  11.094  -2354  -1198   1   1   25    g2    
+[ 8]  7  1048446088   GUI  8x8     ---   9.682  11.188  -1303   2310   1   1   25    g3    
+[ 9]  6  1048445832   ACQ  8x8   0.985   7.467   8.969     12  -1513  20   1  120          
+[10]  7  1048446056   ACQ  8x8   0.958  10.204  11.703   -676   2041  20   1  120    a2    
 
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.20	-8.042	-6.135	
-Acquisition Stars Expected  : 7.76
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.733	-6.726	-4.928	
+Acquisition Stars Expected  : 7.82
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 58261  
 RA, Dec, Roll (deg):   298.000000    -4.000000   248.438589
@@ -643,27 +664,28 @@ MP_TARGQUAT at 2007:228:12:55:15.318 (VCDU count = 16687550)
 
 MP_STARCAT at 2007:228:12:55:16.961 (VCDU count = 16687557)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   675546640   BOT  8x8   5.797   9.326  10.844    858  -1740  20   1  120  a2g3    
-[ 2]  1   675549992   BOT  8x8   5.797   9.764  11.266   2273   -731  20   1  120  a2g2    
-[ 3]  2   675677496   BOT  8x8   5.797   9.487  10.984   -710    597  20   1  120  a2g2    
-[ 4]  3   675166544   GUI  8x8   5.797   8.809  10.312  -1422   1114   1   1   25          
-[ 5]  4   675552080   GUI  8x8   5.797   8.509  10.016   2209   -233   1   1   25          
-[ 6]  5   675689744   GUI  8x8   5.797   7.380   8.891   1483   1859   1   1   25          
-[ 7]  6   675167008   GUI  8x8   5.797   9.273  10.781  -1430   1019   1   1   25    g2    
-[ 8]  7   675690816   GUI  8x8   5.797   9.568  11.078   1838   1532   1   1   25    g2    
-[ 9]  3   675166360   ACQ  8x8   5.797   9.502  11.359  -1798   1141  20   1  120    a2    
-[10]  4   675547344   ACQ  8x8   5.797   9.511  11.531   -222   -173  20   1  120    a2    
-[11]  5   675031064   ACQ  8x8   5.797   9.791  11.641  -1020     78  20   1  120    a2    
-[12]  6   675679072   ACQ  8x8   5.797   9.899  11.672   1242   1398  20   1  120    a2    
-[13]  7   675548456   ACQ  8x8   5.797   9.958  11.469    927    658  20   1  120    a2    
+[ 1]  0   675546640   BOT  8x8   0.974   9.326  10.844    858  -1740  20   1  120  a2g3    
+[ 2]  1   675549992   BOT  8x8   0.984   9.764  11.266   2273   -731  20   1  120  a2g2    
+[ 3]  2   675677496   BOT  8x8   0.957   9.487  10.984   -710    597  20   1  120  a2g2    
+[ 4]  3   675166544   GUI  8x8     ---   8.809  10.312  -1422   1114   1   1   25          
+[ 5]  4   675552080   GUI  8x8     ---   8.509  10.016   2209   -233   1   1   25          
+[ 6]  5   675689744   GUI  8x8     ---   7.380   8.891   1483   1859   1   1   25          
+[ 7]  6   675167008   GUI  8x8     ---   9.273  10.781  -1430   1019   1   1   25    g2    
+[ 8]  7   675690816   GUI  8x8     ---   9.568  11.078   1838   1532   1   1   25    g2    
+[ 9]  3   675166360   ACQ  8x8   0.955   9.502  11.359  -1798   1141  20   1  120    a2    
+[10]  4   675547344   ACQ  8x8   0.954   9.511  11.531   -222   -173  20   1  120    a2    
+[11]  5   675031064   ACQ  8x8   0.899   9.791  11.641  -1020     78  20   1  120    a2    
+[12]  6   675679072   ACQ  8x8   0.867   9.899  11.672   1242   1398  20   1  120    a2    
+[13]  7   675548456   ACQ  8x8   0.976   9.958  11.469    927    658  20   1  120    a2    
 
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.80	-8.571	-6.591	
-Acquisition Stars Expected  : 7.82
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.611	-4.921	-3.458	
+Acquisition Stars Expected  : 7.56
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 7828   FLS6                   ACIS-I SIM Z offset:159   (0.40mm) Grating: NONE 
 RA, Dec, Roll (deg):   260.935292    59.427293   241.588853
@@ -676,24 +698,25 @@ MP_TARGQUAT at 2007:228:19:25:04.320 (VCDU count = 1609)
 
 MP_STARCAT at 2007:228:19:25:05.963 (VCDU count = 1615)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0           1   FID  8x8   5.797   7.000   8.000    919   -835   1   1   25          
-[ 2]  1           5   FID  8x8   5.797   7.000   8.000  -1828   1062   1   1   25          
-[ 3]  2           6   FID  8x8   5.797   7.000   8.000    385   1706   1   1   25          
-[ 4]  3   511181080   BOT  6x6   5.797   9.791  11.297  -1157   -550  20   1  120  a2g2    
-[ 5]  4   511187368   BOT  6x6   5.797   8.678  10.188   1435   -945  20   1  120          
-[ 6]  5   511189312   BOT  6x6   5.797   6.835   8.344   1929   2289  14   1   90          
-[ 7]  6   511191200   BOT  6x6   5.797   9.164  10.672   2200   1445  10   1   70          
-[ 8]  7   511186496   GUI  6x6   5.797   7.799   9.297    624   1774   1   1   25          
-[ 9]  7   511183160   ACQ  6x6   5.797   9.705  11.203     80   -861  20   1  120    a2    
-[10]  0   511183856   ACQ  6x6   5.797   9.768  11.266   1641     80  20   1  120    a2    
-[11]  1   511189800   ACQ  6x6   5.797   9.855  11.359    703    768  20   1  120    a2    
-[12]  2   511188888   ACQ  6x6   5.797  10.014  11.516    473    -50  20   1  120    a2    
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -835   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1062   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1706   1   1   25          
+[ 4]  3   511181080   BOT  6x6   0.983   9.791  11.297  -1157   -550  20   1  120  a2g2    
+[ 5]  4   511187368   BOT  6x6   0.985   8.678  10.188   1435   -945  20   1  120          
+[ 6]  5   511189312   BOT  6x6   0.985   6.835   8.344   1929   2289  14   1   90          
+[ 7]  6   511191200   BOT  6x6   0.985   9.164  10.672   2200   1445  10   1   70          
+[ 8]  7   511186496   GUI  6x6     ---   7.799   9.297    624   1774   1   1   25          
+[ 9]  7   511183160   ACQ  6x6   0.985   9.705  11.203     80   -861  20   1  120    a2    
+[10]  0   511183856   ACQ  6x6   0.984   9.768  11.266   1641     80  20   1  120    a2    
+[11]  1   511189800   ACQ  6x6   0.981   9.855  11.359    703    768  20   1  120    a2    
+[12]  2   511188888   ACQ  6x6   0.973  10.014  11.516    473    -50  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.67	-8.460	-6.500	
-Acquisition Stars Expected  : 7.81
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.159	-7.092	-5.231	
+Acquisition Stars Expected  : 7.86
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 8600   NGC 5548               HRC-S  SIM Z offset:0     (0.00mm) Grating: LETG 
 RA, Dec, Roll (deg):   214.484330    25.158469   261.605953
@@ -706,27 +729,28 @@ MP_TARGQUAT at 2007:229:03:43:46.895 (VCDU count = 118380)
 
 MP_STARCAT at 2007:229:03:43:48.538 (VCDU count = 118386)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0          11   FID  8x8   5.797   7.000   8.000  -1174   -468   1   1   25          
-[ 2]  1          12   FID  8x8   5.797   7.000   8.000   1224   -460   1   1   25          
-[ 3]  2          13   FID  8x8   5.797   7.000   8.000  -1177    561   1   1   25          
-[ 4]  3   263195064   BOT  6x6   5.797   9.276  10.781   1159   2304  11   1   75    a3    
-[ 5]  4   263464240   BOT  6x6   5.797   9.621  11.125    874  -2358  11   1   75  a2g2    
-[ 6]  5   263464688   BOT  6x6   5.797   9.160  10.656   -604    471  20   1  120          
-[ 7]  6   263595296   BOT  6x6   5.797   9.867  11.375  -1947   1174  20   1  120  a2g3    
-[ 8]  7   263065336   BOT  6x6   5.797   9.914  11.422   1706  -2403  20   1  120  aXg3    
-[ 9]  0   263464584   ACQ  6x6   5.797  10.492  12.000   -321    149  20   1  120    a3    
-[10]  1   263593416   ACQ  6x6   5.797  10.530  12.031   -196   2239  20   1  120    a3    
-[11]  2   263067400   ACQ  6x6   5.797  10.708  12.219   1786   -328  20   1  120    a4    
+[ 1]  0          11   FID  8x8     ---   7.000   8.000  -1174   -468   1   1   25          
+[ 2]  1          12   FID  8x8     ---   7.000   8.000   1224   -460   1   1   25          
+[ 3]  2          13   FID  8x8     ---   7.000   8.000  -1177    561   1   1   25          
+[ 4]  3   263195064   BOT  6x6   0.985   9.276  10.781   1159   2304  11   1   75    a3    
+[ 5]  4   263464240   BOT  6x6   0.985   9.621  11.125    874  -2358  11   1   75  a2g2    
+[ 6]  5   263464688   BOT  6x6   0.985   9.160  10.656   -604    471  20   1  120          
+[ 7]  6   263595296   BOT  6x6   0.980   9.867  11.375  -1947   1174  20   1  120  a2g3    
+[ 8]  7   263065336   BOT  6x6   0.978   9.914  11.422   1706  -2403  20   1  120  aXg3    
+[ 9]  0   263464584   ACQ  6x6   0.912  10.492  12.000   -321    149  20   1  120    a3    
+[10]  1   263593416   ACQ  6x6   0.903  10.530  12.031   -196   2239  20   1  120    a3    
+[11]  2   263067400   ACQ  6x6   0.847  10.708  12.219   1786   -328  20   1  120    a4    
 
 >> WARNING: [11] Magnitude.  10.708
 >> WARNING: [ 9] Magnitude.  10.492
 >> WARNING: [10] Magnitude.  10.530
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.430	-6.403	-4.661	
-Acquisition Stars Expected  : 7.42
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.101	-5.258	-3.661	
+Acquisition Stars Expected  : 7.57
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 58260  
 RA, Dec, Roll (deg):   290.000000    11.000000   236.924924
@@ -738,25 +762,26 @@ MP_TARGQUAT at 2007:229:14:26:47.106 (VCDU count = 268936)
 
 MP_STARCAT at 2007:229:14:26:48.749 (VCDU count = 268943)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   137102976   BOT  8x8   5.797   8.538  10.047   1614  -2350  12   1   80          
-[ 2]  1   137103408   BOT  8x8   5.797   9.137  10.641   2174   -133  20   1  120          
-[ 3]  2   137103824   BOT  8x8   5.797   6.949   8.453   -671   1551  20   1  120          
-[ 4]  3   137104352   BOT  8x8   5.797   8.309   9.812    701   1214  20   1  120          
-[ 5]  4   137106080   BOT  8x8   5.797   8.403   9.906   -251   -222  20   1  120          
-[ 6]  5   137104432   GUI  8x8   5.797   8.546  10.047   -130    790   1   1   25          
-[ 7]  6   137107872   GUI  8x8   5.797   8.572  10.078    871   2290   1   1   25          
-[ 8]  7   137630304   GUI  8x8   5.797   9.196  10.703  -1320  -2197   1   1   25          
-[ 9]  5   137103296   ACQ  8x8   5.797   9.092  10.594    835    779  20   1  120          
-[10]  6   137105456   ACQ  8x8   5.797   9.303  10.812   1588   1302  11   1   75          
-[11]  7   137630376   ACQ  8x8   5.797   6.378   7.875  -1558  -1136  20   1  120    a2    
+[ 1]  0   137102976   BOT  8x8   0.985   8.538  10.047   1614  -2350  12   1   80          
+[ 2]  1   137103408   BOT  8x8   0.985   9.137  10.641   2174   -133  20   1  120          
+[ 3]  2   137103824   BOT  8x8   0.985   6.949   8.453   -671   1551  20   1  120          
+[ 4]  3   137104352   BOT  8x8   0.985   8.309   9.812    701   1214  20   1  120          
+[ 5]  4   137106080   BOT  8x8   0.985   8.403   9.906   -251   -222  20   1  120          
+[ 6]  5   137104432   GUI  8x8     ---   8.546  10.047   -130    790   1   1   25          
+[ 7]  6   137107872   GUI  8x8     ---   8.572  10.078    871   2290   1   1   25          
+[ 8]  7   137630304   GUI  8x8     ---   9.196  10.703  -1320  -2197   1   1   25          
+[ 9]  5   137103296   ACQ  8x8   0.985   9.092  10.594    835    779  20   1  120          
+[10]  6   137105456   ACQ  8x8   0.985   9.303  10.812   1588   1302  11   1   75          
+[11]  7   137630376   ACQ  8x8   0.985   6.378   7.875  -1558  -1136  20   1  120    a2    
 
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.87	-9.507	-7.387	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
 Acquisition Stars Expected  : 7.88
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 7924   HCG 92                 ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   338.999959    33.986876   163.797936
@@ -769,26 +794,27 @@ MP_TARGQUAT at 2007:229:14:58:32.173 (VCDU count = 276371)
 
 MP_STARCAT at 2007:229:14:58:33.816 (VCDU count = 276377)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0           1   FID  8x8   5.797   7.000   8.000    922  -1737   1   1   25          
-[ 2]  1           5   FID  8x8   5.797   7.000   8.000  -1826    160   1   1   25          
-[ 3]  2           6   FID  8x8   5.797   7.000   8.000    388    803   1   1   25          
-[ 4]  3   359013608   BOT  6x6   5.797   8.890  10.391    399   2193  20   1  120    a3    
-[ 5]  4   359538352   BOT  6x6   5.797   8.679  10.188   1939    726  20   1  120          
-[ 6]  5   359540136   BOT  6x6   5.797   8.703  10.203    591  -2194  20   1  120          
-[ 7]  6   359541464   BOT  6x6   5.797   8.624  10.125    462  -2368  13   1   85          
-[ 8]  7   359008568   GUI  6x6   5.797   8.269   9.766  -2340    970   1   1   25          
-[ 9]  7   359532480   ACQ  6x6   5.797   9.204  10.703   1964    126  12   1   80          
-[10]  0   359010248   ACQ  6x6   5.797   9.955  11.453   -759   1922  20   1  120    a2    
-[11]  1   359545488   ACQ  6x6   5.797  10.087  11.594    167   -266  20   1  120    a2    
-[12]  2   359544784   ACQ  6x6   5.797  10.162  11.672   -173   -413  14   1   90    a2    
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    922  -1737   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    388    803   1   1   25          
+[ 4]  3   359013608   BOT  6x6   0.985   8.890  10.391    399   2193  20   1  120    a3    
+[ 5]  4   359538352   BOT  6x6   0.985   8.679  10.188   1939    726  20   1  120          
+[ 6]  5   359540136   BOT  6x6   0.985   8.703  10.203    591  -2194  20   1  120          
+[ 7]  6   359541464   BOT  6x6   0.985   8.624  10.125    462  -2368  13   1   85          
+[ 8]  7   359008568   GUI  6x6     ---   8.269   9.766  -2340    970   1   1   25          
+[ 9]  7   359532480   ACQ  6x6   0.985   9.204  10.703   1964    126  12   1   80          
+[10]  0   359010248   ACQ  6x6   0.976   9.955  11.453   -759   1922  20   1  120    a2    
+[11]  1   359545488   ACQ  6x6   0.968  10.087  11.594    167   -266  20   1  120    a2    
+[12]  2   359544784   ACQ  6x6   0.962  10.162  11.672   -173   -413  14   1   90    a2    
 
 >> WARNING: [12] Search spoiler.  359533936: Y,Z,Radial,Mag seps: 105  14 106 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.54	-8.322	-6.356	
-Acquisition Stars Expected  : 7.78
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.761	-6.746	-4.942	
+Acquisition Stars Expected  : 7.83
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 58259  
 RA, Dec, Roll (deg):   357.100000   -16.500000    87.152978
@@ -800,26 +826,27 @@ MP_TARGQUAT at 2007:230:17:55:09.649 (VCDU count = 654898)
 
 MP_STARCAT at 2007:230:17:55:11.292 (VCDU count = 654904)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   839385216   BOT  8x8   5.797   9.232  10.734    841   -209  20   1  120          
-[ 2]  1   839385632   BOT  8x8   5.797   8.256   9.766    886   -586  20   1  120    a3    
-[ 3]  2   839385760   BOT  8x8   5.797   9.164  10.672   2296    741  20   1  120          
-[ 4]  3   839387472   BOT  8x8   5.797   8.408   9.906   1830    783  20   1  120          
-[ 5]  4   839390992   BOT  8x8   5.797  10.066  11.578  -1286   1807  20   1  120  a2g3    
-[ 6]  5   839391520   BOT  8x8   5.797   9.802  11.312   1168   -478  20   1  120  a2g2    
-[ 7]  6   839522344   BOT  8x8   5.797   8.842  10.344   1453  -2030  20   1  120          
-[ 8]  7   839388672   GUI  8x8   5.797  10.315  11.812    632   2410   1   1   25    g3    
-[ 9]  7   839392376   ACQ  8x8   5.797  10.439  11.938   -296    266  20   1  120    a3    
+[ 1]  0   839385216   BOT  8x8   0.985   9.232  10.734    841   -209  20   1  120          
+[ 2]  1   839385632   BOT  8x8   0.985   8.256   9.766    886   -586  20   1  120    a3    
+[ 3]  2   839385760   BOT  8x8   0.985   9.164  10.672   2296    741  20   1  120          
+[ 4]  3   839387472   BOT  8x8   0.985   8.408   9.906   1830    783  20   1  120          
+[ 5]  4   839390992   BOT  8x8   0.969  10.066  11.578  -1286   1807  20   1  120  a2g3    
+[ 6]  5   839391520   BOT  8x8   0.983   9.802  11.312   1168   -478  20   1  120  a2g2    
+[ 7]  6   839522344   BOT  8x8   0.985   8.842  10.344   1453  -2030  20   1  120          
+[ 8]  7   839388672   GUI  8x8     ---  10.315  11.812    632   2410   1   1   25    g3    
+[ 9]  7   839392376   ACQ  8x8   0.923  10.439  11.938   -296    266  20   1  120    a3    
 
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 >> WARNING: [ 6] Search spoiler.  839388784: Y,Z,Radial,Mag seps: 132  87 158 -0.9
 >> WARNING: [ 8] Magnitude.  10.315
 >> WARNING: [ 9] Magnitude.  10.439
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-10.41	-8.193	-6.225	
-Acquisition Stars Expected  : 7.74
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.610	-6.595	-4.797	
+Acquisition Stars Expected  : 7.80
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 58258  
 RA, Dec, Roll (deg):   330.000000   -42.000000     4.710615
@@ -831,23 +858,24 @@ MP_TARGQUAT at 2007:230:20:17:01.171 (VCDU count = 688113)
 
 MP_STARCAT at 2007:230:20:17:02.814 (VCDU count = 688120)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0  1047267928   BOT  8x8   5.797   9.220  10.719   -979    326  20   1  120  a2g3    
-[ 2]  1  1048317872   BOT  8x8   5.797   9.201  10.703   1021   -343  20   1  120    a2    
-[ 3]  2  1048317896   BOT  8x8   5.797   8.230   9.734   1617   -442  20   1  120          
-[ 4]  3  1048320632   BOT  8x8   5.797   7.288   8.797    220  -1650  20   1  120          
-[ 5]  4  1048324136   BOT  8x8   5.797   9.222  10.719   1393   2081  16   1  100          
-[ 6]  5  1048707744   BOT  8x8   5.797   9.141  10.641   1102  -2068  11   1   75          
-[ 7]  6  1048707752   BOT  8x8   5.797   9.118  10.625   1218  -2114  11   1   75          
-[ 8]  7  1048707408   GUI  8x8   5.797   9.848  11.359   1661  -2028   1   1   25    g2    
-[ 9]  7  1048320088   ACQ  8x8   5.797  10.135  11.641   1076  -1306  20   1  120    a2    
+[ 1]  0  1047267928   BOT  8x8   0.985   9.220  10.719   -979    326  20   1  120  a2g3    
+[ 2]  1  1048317872   BOT  8x8   0.985   9.201  10.703   1021   -343  20   1  120    a2    
+[ 3]  2  1048317896   BOT  8x8   0.985   8.230   9.734   1617   -442  20   1  120          
+[ 4]  3  1048320632   BOT  8x8   0.985   7.288   8.797    220  -1650  20   1  120          
+[ 5]  4  1048324136   BOT  8x8   0.985   9.222  10.719   1393   2081  16   1  100          
+[ 6]  5  1048707744   BOT  8x8   0.985   9.141  10.641   1102  -2068  11   1   75          
+[ 7]  6  1048707752   BOT  8x8   0.985   9.118  10.625   1218  -2114  11   1   75          
+[ 8]  7  1048707408   GUI  8x8     ---   9.848  11.359   1661  -2028   1   1   25    g2    
+[ 9]  7  1048320088   ACQ  8x8   0.964  10.135  11.641   1076  -1306  20   1  120    a2    
 
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.36	-9.048	-6.979	
-Acquisition Stars Expected  : 7.84
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.197	-7.116	-5.243	
+Acquisition Stars Expected  : 7.85
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 58257  
 RA, Dec, Roll (deg):   300.000000     0.000000   243.981387
@@ -859,29 +887,30 @@ MP_TARGQUAT at 2007:231:04:53:26.875 (VCDU count = 809033)
 
 MP_STARCAT at 2007:231:04:53:28.518 (VCDU count = 809040)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0    63063312   BOT  8x8   5.797   8.871  10.750    -17  -2305  18   1  110  a2g2    
-[ 2]  1   674641600   BOT  8x8   5.797   8.633  10.141   1767   -168  20   1  120          
-[ 3]  2   676339272   BOT  8x8   5.797   8.995  10.500   1689   1032  15   1   95          
-[ 4]  3    63055776   GUI  8x8   5.797   9.388  10.891   -860  -2390   1   1   25          
-[ 5]  4    63056416   GUI  8x8   5.797   9.321  10.828  -1257  -1786   1   1   25          
-[ 6]  5    63060704   GUI  8x8   5.797   8.219  10.219    154  -2300   1   1   25    g2    
-[ 7]  6    64753128   GUI  8x8   5.797   9.409  10.906  -1270   1089   1   1   25    g2    
-[ 8]  7   676336280   GUI  8x8   5.797   9.204  10.703    280    292   1   1   25    g2    
-[ 9]  3    63066848   ACQ  8x8   5.797   9.689  11.188   -417  -1709  20   1  120    a2    
-[10]  4    63056320   ACQ  8x8   5.797   9.565  11.062   -698  -1464  20   1  120    a2    
-[11]  5    63055888   ACQ  8x8   5.797   9.517  11.016   -119  -1163  20   1  120    a2    
-[12]  6    63056864   ACQ  8x8   5.797   9.476  10.984   -224   -525  20   1  120    a2    
-[13]  7   674642560   ACQ  8x8   5.797   9.453  10.953   1024  -1266  20   1  120    a2    
+[ 1]  0    63063312   BOT  8x8   0.985   8.871  10.750    -17  -2305  18   1  110  a2g2    
+[ 2]  1   674641600   BOT  8x8   0.985   8.633  10.141   1767   -168  20   1  120          
+[ 3]  2   676339272   BOT  8x8   0.985   8.995  10.500   1689   1032  15   1   95          
+[ 4]  3    63055776   GUI  8x8     ---   9.388  10.891   -860  -2390   1   1   25          
+[ 5]  4    63056416   GUI  8x8     ---   9.321  10.828  -1257  -1786   1   1   25          
+[ 6]  5    63060704   GUI  8x8     ---   8.219  10.219    154  -2300   1   1   25    g2    
+[ 7]  6    64753128   GUI  8x8     ---   9.409  10.906  -1270   1089   1   1   25    g2    
+[ 8]  7   676336280   GUI  8x8     ---   9.204  10.703    280    292   1   1   25    g2    
+[ 9]  3    63066848   ACQ  8x8   0.985   9.689  11.188   -417  -1709  20   1  120    a2    
+[10]  4    63056320   ACQ  8x8   0.985   9.565  11.062   -698  -1464  20   1  120    a2    
+[11]  5    63055888   ACQ  8x8   0.985   9.517  11.016   -119  -1163  20   1  120    a2    
+[12]  6    63056864   ACQ  8x8   0.958   9.476  10.984   -224   -525  20   1  120    a2    
+[13]  7   674642560   ACQ  8x8   0.985   9.453  10.953   1024  -1266  20   1  120    a2    
 
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 >> WARNING: [12] Search spoiler.   63061360: Y,Z,Radial,Mag seps:  13  75  76 -0.9
 >> WARNING: [13] Search spoiler.  674636320: Y,Z,Radial,Mag seps:   4  68  68 -1.0
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.66	-9.325	-7.234	
-Acquisition Stars Expected  : 7.87
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.138	-7.063	-5.196	
+Acquisition Stars Expected  : 7.85
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 7903   RXJ1648.7+6019         ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   252.135657    60.320213   251.708524
@@ -894,24 +923,25 @@ MP_TARGQUAT at 2007:231:11:21:29.649 (VCDU count = 899893)
 
 MP_STARCAT at 2007:231:11:21:31.292 (VCDU count = 899899)
 ---------------------------------------------------------------------------------------------
- IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0           2   FID  8x8   5.797   7.000   8.000   -773  -1741   1   1   25          
-[ 2]  1           4   FID  8x8   5.797   7.000   8.000   2140    166   1   1   25          
-[ 3]  2           5   FID  8x8   5.797   7.000   8.000  -1826    160   1   1   25          
-[ 4]  3   509215520   BOT  6x6   5.797   8.617  10.125   1525   -408  20   1  120    a2    
-[ 5]  4   509217968   BOT  6x6   5.797   8.781  10.281   2251   2101  20   1  120          
-[ 6]  5   549327856   BOT  6x6   5.797   7.915   9.422  -1087   1219  20   1  120          
-[ 7]  6   549328768   BOT  6x6   5.797   9.163  10.672   -280    466  18   1  110          
-[ 8]  7   549341696   BOT  6x6   5.797   8.243   9.750    526    515  20   1  120          
-[ 9]  0   549335456   ACQ  6x6   5.797   9.037  10.547    569   1060  20   1  120          
-[10]  1   549339232   ACQ  6x6   5.797   9.641  11.141  -1651   2111  20   1  120    a2    
-[11]  2   509227680   ACQ  6x6   5.797   9.790  11.297   2274  -1068  20   1  120    a2    
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   509215520   BOT  6x6   0.985   8.617  10.125   1525   -408  20   1  120    a2    
+[ 5]  4   509217968   BOT  6x6   0.985   8.781  10.281   2251   2101  20   1  120          
+[ 6]  5   549327856   BOT  6x6   0.985   7.915   9.422  -1087   1219  20   1  120          
+[ 7]  6   549328768   BOT  6x6   0.985   9.163  10.672   -280    466  18   1  110          
+[ 8]  7   549341696   BOT  6x6   0.985   8.243   9.750    526    515  20   1  120          
+[ 9]  0   549335456   ACQ  6x6   0.985   9.037  10.547    569   1060  20   1  120          
+[10]  1   549339232   ACQ  6x6   0.985   9.641  11.141  -1651   2111  20   1  120    a2    
+[11]  2   509227680   ACQ  6x6   0.983   9.790  11.297   2274  -1068  20   1  120    a2    
 
 >> WARNING: [ 4] Search spoiler.  509232384: Y,Z,Radial,Mag seps:  32 121 125 -0.9
 >> WARNING: [11] Search spoiler.  509221904: Y,Z,Radial,Mag seps:  36 163 167 -0.8
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-11.55	-9.230	-7.152	
-Acquisition Stars Expected  : 7.86
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.468	-7.354	-5.445	
+Acquisition Stars Expected  : 7.87
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.046
+Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
