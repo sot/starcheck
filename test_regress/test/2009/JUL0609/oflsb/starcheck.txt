@@ -28,6 +28,8 @@ Using ACABadPixel file from 2015014 Dark Cal
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
+Comm Summary: JUL0609B
+
 VERBOSE SUPERVERBOSE
 Using tlr file /data/mpcrit1/mplogs/2009/JUL0609/oflsb/CR186_1602.tlr 
 Using DOT file /data/mpcrit1/mplogs/2009/JUL0609/oflsb//mps/md186_1602.dot 
@@ -79,7 +81,7 @@ Transponder B	before 2009:190:01:14:41.674
 OBSID = 10264 at 2009:186:16:37:13.822   8 clean ACQ | 5 clean GUI | 
 OBSID = 56991 at 2009:186:18:28:33.822   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 10460 at 2009:186:18:51:44.542   8 clean ACQ | 5 clean GUI | 
-OBSID = 56990 at 2009:187:07:42:58.619   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 56990 at 2009:187:07:42:58.619   8 clean ACQ | 8 clean GUI | 
 OBSID = 56989 at 2009:187:07:53:05.053   8 clean ACQ | 8 clean GUI | 
 OBSID = 56988 at 2009:187:09:12:24.551   8 clean ACQ | 8 clean GUI | 
 OBSID = 56987 at 2009:187:19:37:46.053   8 clean ACQ | 8 clean GUI | 
@@ -96,7 +98,7 @@ OBSID = 10259 at 2009:189:10:45:50.268   8 clean ACQ | 5 clean GUI |
 OBSID = 56984 at 2009:189:12:37:10.268   8 clean ACQ | 8 clean GUI | 
 OBSID = 10671 at 2009:189:13:27:54.231   8 clean ACQ | 5 clean GUI | 
 OBSID = 10472 at 2009:189:22:23:15.480   8 clean ACQ | 5 clean GUI | 
-OBSID = 56983 at 2009:190:00:18:22.376   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 56983 at 2009:190:00:18:22.376   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 56982 at 2009:190:00:28:28.810   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 56981 at 2009:190:00:44:47.674   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 56980 at 2009:190:01:08:41.674   0 clean ACQ | 0 clean GUI | 
@@ -120,7 +122,7 @@ OBSID = 10729 at 2009:191:12:05:42.410   8 clean ACQ | 5 clean GUI |
 OBSID = 10544 at 2009:191:15:25:22.672   8 clean ACQ | 5 clean GUI | 
          ------  2009:192:10:05:00.000   OBC Load Segment Begins     CL192:1002 
 OBSID = 10568 at 2009:192:12:56:14.672   4 clean ACQ | 4 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
-OBSID = 56966 at 2009:192:14:46:30.985   4 clean ACQ | 4 clean GUI | WARNINGS [ 5] WARNINGS [ 3]
+OBSID = 56966 at 2009:192:14:46:30.985   4 clean ACQ | 4 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
 OBSID = 56965 at 2009:192:14:56:37.419   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 56964 at 2009:192:18:04:34.334   7 clean ACQ | 7 clean GUI | WARNINGS [ 3]
 OBSID = 56963 at 2009:193:02:59:55.361   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
@@ -240,8 +242,8 @@ MP_STARCAT at 2009:187:07:42:58.619 (VCDU count = 9904464)
 [ 9]  6  1101269976   ACQ  8x8   0.985   8.130   9.641  -1557    -37  20   1  120          
 [10]  7  1101406992   ACQ  8x8   0.982   9.674  11.172    469    422  20   1  120    a2    
 
->> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Special Case ER
+>> INFO   : Only 1 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.535	-6.548	-4.774	
 Acquisition Stars Expected  : 7.80
@@ -693,9 +695,9 @@ MP_STARCAT at 2009:190:00:18:22.376 (VCDU count = 10811874)
 [ 8]  7   503054544   GUI  8x8     ---  10.333  11.844  -2072   2166   1   1   25    g4    
 [ 9]  7   503056176   ACQ  8x8   0.925  10.287  11.797    298   2240  20   1  120    a3    
 
->> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Magnitude.  10.333
 >> INFO   : Special Case ER
+>> INFO   : Only 1 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.693	-5.818	-4.169	
 Acquisition Stars Expected  : 7.71
@@ -1294,11 +1296,11 @@ MP_STARCAT at 2009:192:14:46:30.985 (VCDU count = 11689488)
 >> WARNING: [ 2] Magnitude.  10.635
 >> WARNING: [ 3] Magnitude.  10.729
 >> WARNING: [ 9] Magnitude.  10.677
->> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.29, Pos_Err = 0.05
 >> WARNING: [ 8] Magnitude.  10.425
 >> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.35, Pos_Err = 0.09
 >> INFO   : Special Case ER
+>> INFO   : Only 0 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.902	-2.460	-1.350	
 Acquisition Stars Expected  : 6.14

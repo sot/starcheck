@@ -28,6 +28,8 @@ Using ACABadPixel file from 2015014 Dark Cal
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
+Comm Summary: JAN1110A
+
 VERBOSE SUPERVERBOSE
 Using tlr file /data/mpcrit1/mplogs/2010/JAN1110/oflsa/CR011_0303.tlr 
 Using DOT file /data/mpcrit1/mplogs/2010/JAN1110/oflsa//mps/md011_0305.dot 
@@ -101,7 +103,7 @@ OBSID = 11450 at 2010:014:01:26:55.008   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 11044 at 2010:014:02:32:52.798   8 clean ACQ | 5 clean GUI | 
 OBSID = 11058 at 2010:014:11:28:07.695   8 clean ACQ | 4 clean GUI | 
          ------  2010:015:10:08:27.483   OBC Load Segment Begins     CL015:1003 
-OBSID = 56524 at 2010:015:10:11:33.483   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 56524 at 2010:015:10:11:33.483   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 56523 at 2010:015:10:21:36.558   8 clean ACQ | 8 clean GUI | 
 OBSID = 56522 at 2010:015:12:16:30.250   8 clean ACQ | 8 clean GUI | 
 OBSID = 56521 at 2010:015:15:36:55.697   8 clean ACQ | 8 clean GUI | 
@@ -822,9 +824,9 @@ MP_STARCAT at 2010:015:10:11:33.483 (VCDU count = 7904337)
 [10]  7  1186202864   ACQ  8x8   0.933   9.538  11.047    -89  -2173  20   1  120    a2    
 
 >> WARNING: [ 8] Monitor Commanding. DTS should be set to self
->> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Obsid contains flickering pixel MON
 >> INFO   : Special Case ER
+>> INFO   : Only 2 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.944	-6.882	-5.032	
 Acquisition Stars Expected  : 7.82

@@ -28,6 +28,8 @@ Using ACABadPixel file from 2015014 Dark Cal
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
+Comm Summary: JUL0510B
+
 VERBOSE SUPERVERBOSE
 Using tlr file /data/mpcrit1/mplogs/2010/JUL0510/oflsb/CR185_2300.tlr 
 Using DOT file /data/mpcrit1/mplogs/2010/JUL0510/oflsb//mps/md185_2300.dot 
@@ -93,7 +95,7 @@ OBSID = 11073 at 2010:187:22:56:33.819   8 clean ACQ | 5 clean GUI |
 OBSID = 11504 at 2010:189:02:55:03.756   8 clean ACQ | 5 clean GUI | 
 OBSID = 10136 at 2010:189:09:00:30.036   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID = 11582 at 2010:189:20:38:24.284   8 clean ACQ | 5 clean GUI | 
-OBSID = 56144 at 2010:189:22:29:43.279   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 56144 at 2010:189:22:29:43.279   8 clean ACQ | 8 clean GUI | 
 OBSID = 56143 at 2010:189:22:41:16.573   8 clean ACQ | 8 clean GUI | 
 OBSID = 56142 at 2010:189:23:13:04.429   7 clean ACQ | 8 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 56141 at 2010:189:23:27:48.433   7 clean ACQ | 8 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
@@ -118,7 +120,7 @@ OBSID = 11974 at 2010:191:12:39:36.925   8 clean ACQ | 5 clean GUI |
 OBSID = 12122 at 2010:191:18:33:29.925   8 clean ACQ | 5 clean GUI | 
 OBSID = 11851 at 2010:192:01:41:43.219   8 clean ACQ | 5 clean GUI | 
 OBSID = 12230 at 2010:192:03:26:33.148   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
-OBSID = 56128 at 2010:192:13:49:01.354   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 56128 at 2010:192:13:49:01.354   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 56127 at 2010:192:14:00:57.064   8 clean ACQ | 8 clean GUI |
 ==================================================================================== 
 OBSID: 11551  HE0435-1223            ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
@@ -613,8 +615,8 @@ MP_STARCAT at 2010:189:22:29:43.279 (VCDU count = 16413232)
 [ 7]  6   992092280   BOT  8x8   0.970   9.853  11.359   -972  -1378  20   1  120  a2g3    
 [ 8]  7   992093896   BOT  8x8   0.932  10.177  11.688  -1407   -762  20   1  120  a2g3    
 
->> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Special Case ER
+>> INFO   : Only 0 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.042	-5.293	-3.771	
 Acquisition Stars Expected  : 7.65
@@ -1220,9 +1222,9 @@ MP_STARCAT at 2010:192:13:49:01.354 (VCDU count = 525608)
 [ 8]  7   845813656   GUI  8x8     ---  10.286  11.797  -2275  -1397   1   1   25    g3    
 [ 9]  7   845808520   ACQ  8x8   0.920  10.238  11.750   -567  -1303  20   1  120    a3    
 
->> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 7] Magnitude.  10.412
 >> INFO   : Special Case ER
+>> INFO   : Only 1 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.043	-5.223	-3.653	
 Acquisition Stars Expected  : 7.59

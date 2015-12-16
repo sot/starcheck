@@ -28,6 +28,8 @@ Using ACABadPixel file from 2015014 Dark Cal
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
 
+Comm Summary: OCT0509A
+
 VERBOSE SUPERVERBOSE
 Using tlr file /data/mpcrit1/mplogs/2009/OCT0509/oflsa/CR277_0801.tlr 
 Using DOT file /data/mpcrit1/mplogs/2009/OCT0509/oflsa//mps/md277_0811.dot 
@@ -86,7 +88,7 @@ OBSID = 10461 at 2009:277:20:52:19.178   8 clean ACQ | 5 clean GUI |
          ------  2009:278:20:30:00.000   OBC Load Segment Begins     CL278:2001 
 OBSID = 10728 at 2009:279:01:27:45.178   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 11977 at 2009:279:06:46:22.237   8 clean ACQ | 5 clean GUI | 
-OBSID = 56782 at 2009:279:21:18:56.268   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 56782 at 2009:279:21:18:56.268   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 56781 at 2009:279:21:29:02.702   8 clean ACQ | 8 clean GUI | 
 OBSID = 56780 at 2009:279:22:00:29.126   8 clean ACQ | 8 clean GUI | 
 OBSID = 56779 at 2009:279:22:35:11.949   8 clean ACQ | 8 clean GUI | 
@@ -111,7 +113,7 @@ OBSID = 11748 at 2009:280:22:55:48.702   8 clean ACQ | 5 clean GUI |
 OBSID = 10880 at 2009:281:06:43:16.594   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2009:281:19:25:00.000   OBC Load Segment Begins     CL281:1901 
 OBSID = 12003 at 2009:281:23:51:52.605   8 clean ACQ | 5 clean GUI | 
-OBSID = 56763 at 2009:282:12:45:19.295   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 56763 at 2009:282:12:45:19.295   8 clean ACQ | 8 clean GUI | 
 OBSID = 56762 at 2009:282:12:55:25.729   6 clean ACQ | 8 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
 OBSID = 56761 at 2009:282:17:37:12.165   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 56760 at 2009:282:23:22:49.708   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
@@ -392,9 +394,9 @@ MP_STARCAT at 2009:279:21:18:56.268 (VCDU count = 7560792)
 [ 8]  7     7865408   GUI  8x8     ---  10.324  11.828   1878    939   1   1   25    g3    
 [ 9]  7     7865232   ACQ  8x8   0.970   9.902  11.406    262   1761  20   1  120    a2    
 
->> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Magnitude.  10.324
 >> INFO   : Special Case ER
+>> INFO   : Only 2 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.914	-6.881	-5.057	
 Acquisition Stars Expected  : 7.84
@@ -949,8 +951,8 @@ MP_STARCAT at 2009:282:12:45:19.295 (VCDU count = 8452043)
 [ 7]  6   335157088   BOT  8x8   0.985   9.041  10.547    424  -1920  16   1  100          
 [ 8]  7   335158416   BOT  8x8   0.970   9.937  11.438    926   1878  20   1  120  a2g3    
 
->> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Special Case ER
+>> INFO   : Only 2 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.756	-6.737	-4.930	
 Acquisition Stars Expected  : 7.82

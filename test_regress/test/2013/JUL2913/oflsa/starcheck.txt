@@ -44,7 +44,7 @@ OBSID = 15303 at 2013:211:10:27:25.630   7 clean ACQ | 5 clean GUI | WARNINGS [ 
          ------  2013:211:12:35:01.285   OBC Load Segment Begins     CL211:1217 
 OBSID = 14654 at 2013:211:16:36:14.651   8 clean ACQ | 5 clean GUI | 
 OBSID = 14597 at 2013:212:06:17:20.845   8 clean ACQ | 5 clean GUI | 
-OBSID = 53516 at 2013:212:15:17:55.267   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 53516 at 2013:212:15:17:55.267   8 clean ACQ | 8 clean GUI | 
 OBSID = 53515 at 2013:212:15:29:28.561   8 clean ACQ | 8 clean GUI | 
 OBSID = 53514 at 2013:212:16:00:55.713   8 clean ACQ | 8 clean GUI | 
 OBSID = 53513 at 2013:212:17:13:38.549   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
@@ -55,7 +55,7 @@ OBSID = 53510 at 2013:212:23:20:14.029   6 clean ACQ | 6 clean GUI | WARNINGS [ 
 OBSID = 14663 at 2013:213:01:19:25.355   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID = 15180 at 2013:213:14:15:50.255   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2013:214:12:20:00.000   OBC Load Segment Begins     CL214:1217 
-OBSID = 53509 at 2013:215:05:56:21.844   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 53509 at 2013:215:05:56:21.844   8 clean ACQ | 8 clean GUI | 
 OBSID = 53508 at 2013:215:06:08:14.272   8 clean ACQ | 8 clean GUI | 
 OBSID = 53507 at 2013:215:07:30:26.958   8 clean ACQ | 8 clean GUI | 
 OBSID = 53506 at 2013:215:08:34:22.768   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
@@ -419,8 +419,8 @@ MP_STARCAT at 2013:212:15:17:55.267 (VCDU count = 9820823)
 [10]  6  1132338408   ACQ  8x8   0.976   9.493  11.000   1364  -1034  20   1  120    a2    
 [11]  7  1132340392   ACQ  8x8   0.971   9.566  11.078    315   1353  20   1  120    a2    
 
->> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Special Case ER
+>> INFO   : Only 2 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.777	-6.770	-4.971	
 Acquisition Stars Expected  : 7.83
@@ -686,8 +686,8 @@ MP_STARCAT at 2013:215:05:56:21.844 (VCDU count = 10700848)
 [ 9]  6   115349744   ACQ  8x8   0.840  10.190  11.688    437  -2296  20   1  120    a2    
 [10]  7   115347520   ACQ  8x8   0.850  10.164  11.672   -267   -154  20   1  120    a2    
 
->> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> INFO   : Special Case ER
+>> INFO   : Only 2 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.328	-4.541	-3.019	
 Acquisition Stars Expected  : 7.30
