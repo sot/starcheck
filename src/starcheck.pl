@@ -608,10 +608,10 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_dynamic_mag_limits();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
-    $obs{$obsid}->check_bright_perigee($radmon);
     $obs{$obsid}->check_dither($dither);
 	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->check_for_special_case_er();
+    $obs{$obsid}->check_bright_perigee($radmon);
     $obs{$obsid}->count_good_stars();
     $obs{$obsid}->make_figure_of_merit();
 # Make sure there is only one star catalog per obsid
