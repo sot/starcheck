@@ -38,7 +38,7 @@ OBSID =  9169 at 2008:126:03:48:25.930   8 clean ACQ | 5 clean GUI |
 OBSID =  9560 at 2008:126:12:03:08.930   8 clean ACQ | 5 clean GUI | 
 OBSID =  9561 at 2008:126:16:34:00.930   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  9562 at 2008:126:20:48:25.930   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID =  9067 at 2008:127:01:02:50.930   8 clean ACQ | 5 clean GUI | 
+OBSID =  9067 at 2008:127:01:02:50.930   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  9170 at 2008:127:02:54:10.930   8 clean ACQ | 5 clean GUI | 
          ------  2008:127:10:35:00.000   OBC Load Segment Begins     CL127:1001 
 OBSID =  9111 at 2008:127:10:55:21.930   8 clean ACQ | 5 clean GUI | 
@@ -291,6 +291,8 @@ MP_STARCAT at 2008:127:01:02:50.930 (VCDU count = 4870516)
 [ 9]  0   897616624   ACQ  6x6   0.985   6.094   7.594  -1578  -1076  20   1  120    a2    
 [10]  1   897469264   ACQ  6x6   0.985   7.215   8.719  -2240   1764  20   1  120    a2    
 [11]  2   897598080   ACQ  6x6   0.954   9.478  11.562    532  -1240  20   1  120    a2    
+
+>> WARNING: Non-standard dither
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.103	-7.030	-5.167	
 Acquisition Stars Expected  : 7.84
