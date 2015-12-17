@@ -686,8 +686,6 @@ sub check_dither {
     if (($bs_val eq 'ENAB') and (defined $dither->{ampl_y} and defined $dither->{ampl_p})){
         $self->{cmd_dither_y_amp} = $dither->{ampl_y};
         $self->{cmd_dither_z_amp} = $dither->{ampl_p};
-        $self->{cmd_dither_y_period} = $dither->{period_y};
-        $self->{cmd_dither_z_period} = $dither->{period_z};
         if (not standard_dither($dither)){
             push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
             if ($dither->{ampl_y} > $large_dith_thresh or $dither->{ampl_p} > $large_dith_thresh){
