@@ -1,0 +1,2923 @@
+
+Short Term Schedule: JAN1215B
+
+------------  PROCESSING FILES  -----------------
+
+Using DOT file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/mps/md011_1533.dot
+Using OR file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/mps/or/JAN1215_A.or
+Using SOE file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/mps/soe/ms011_1533.soe
+Using TLR file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/CR011_1508.tlr
+Using acq_star_rdb file /proj/sot/ska/data/starcheck/bad_acq_stars.rdb
+Using backstop file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/CR011_1508.backstop
+Using bad_pixel file /proj/sot/ska/data/starcheck/ACABadPixels
+Using banned_agasc file /proj/sot/ska/data/starcheck/agasc.bad
+Using config file /proj/sot/ska/data/starcheck/characteristics.yaml
+Using dither file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/History/DITHER.txt
+Using fidsel file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/History/FIDSEL.txt
+Using gui_star_rdb file /proj/sot/ska/data/starcheck/bad_gui_stars.rdb
+Using guide summary file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/mps/mg011_1533.sum
+Using manerr file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/output/JAN1215B_ManErr.txt
+Using maneuver file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/mps/mm011_1533.sum
+Using mech check file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/output/TEST_mechcheck.txt
+Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
+Using processing summary file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/mps/ms011_1533.sum
+Using radmon file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/History/RADMON.txt
+Using simfocus file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/History/SIMFOCUS.txt
+Using simtrans file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/History/SIMTRANS.txt
+Using ACABadPixel file from 2015014 Dark Cal 
+
+------------  DARK CURRENT CALIBRATION CHECKS  -----------------
+
+Comm Summary: JAN1215B
+
+VERBOSE SUPERVERBOSE
+Using tlr file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/CR011_1508.tlr 
+Using DOT file /data/mpcrit1/mplogs/2015/JAN1215/oflsb//mps/md011_1533.dot 
+Using Backstop file /data/mpcrit1/mplogs/2015/JAN1215/oflsb/CR011_1508.backstop 
+Using template file /proj/sot/ska/data/starcheck/A.tlr 
+Using template file /proj/sot/ska/data/starcheck/B.tlr 
+
+[ok]	First ACA command is the template-independent init command
+[ok]	Checking IU/transponder state before replica 0
+[ok]	Dither disable before Dark Cal replica 0
+[ok]	Strict Timing Checks: Timing and Hex Commanding for replica 0 transponder B
+[ok]	Checking IU/transponder state before replica 1
+[ok]	Dither disable before Dark Cal replica 1
+[ok]	Strict Timing Checks: Timing and Hex Commanding for replica 1 transponder B
+[ok]	Checking IU/transponder state before replica 2
+[ok]	Dither disable before Dark Cal replica 2
+[ok]	Strict Timing Checks: Timing and Hex Commanding for replica 2 transponder B
+[ok]	Checking IU/transponder state before replica 3
+[ok]	Dither disable before Dark Cal replica 3
+[ok]	Strict Timing Checks: Timing and Hex Commanding for replica 3 transponder B
+[ok]	Checking IU/transponder state before replica 4
+[ok]	Dither disable before Dark Cal replica 4
+[ok]	Strict Timing Checks: Timing and Hex Commanding for replica 4 transponder B
+[ok]	Maneuver Timing
+[ok]	Dwell Timing
+[ok]	Maneuver Pointing
+[ok]	Check for Momentum Unloads
+[ok]	Dither enabled after Dark Cal
+[ok]	Dither param set to default at end
+
+
+ACA Dark Cal Checker Report:
+[ok]	transponder correctly selected before each replica
+[ok]	ACA Calibration Commanding (hex, sequence, and timing of ACA/OBC commands).
+[ok]	Maneuver and Dwell timing.
+[ok]	Maneuver targets.
+[ok]	Dither enable/disable and parameter commands
+
+For dark current operations, transponder should be set to:
+Transponder B	before 2015:014:06:06:18.564
+		(Commanding already included in Loads)
+
+------------  CCD TEMPERATURE PREDICTION -----------------
+
+
+------------  SUMMARY OF OBSIDS -----------------
+
+         ------  2015:011:15:27:45.257   OBC Load Segment Begins     CL011:1508 
+OBSID = 52191 at 2015:011:15:30:51.257   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 52190 at 2015:011:17:59:41.493   5 clean ACQ | 7 clean GUI | WARNINGS [ 3]
+OBSID = 52189 at 2015:011:19:24:31.518   5 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 4]
+OBSID = 52188 at 2015:011:20:53:38.312   4 clean ACQ | 7 clean GUI | WARNINGS [ 6]
+OBSID = 52187 at 2015:011:22:06:28.074   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 52186 at 2015:011:23:35:57.388   0 clean ACQ | 0 clean GUI | 
+OBSID = 15703 at 2015:012:01:43:56.521   8 clean ACQ | 5 clean GUI | 
+OBSID = 16222 at 2015:012:16:37:28.388   8 clean ACQ | 5 clean GUI | 
+         ------  2015:013:03:26:48.450   OBC Load Segment Begins     CL013:0308 
+OBSID = 17442 at 2015:013:05:19:52.988   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID = 17460 at 2015:013:14:11:52.011   6 clean ACQ | 5 clean GUI | WARNINGS [ 4]
+OBSID = 17497 at 2015:013:21:44:58.571   8 clean ACQ | 5 clean GUI | 
+OBSID = 52185 at 2015:014:04:32:44.554   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 52184 at 2015:014:04:44:40.264   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 52183 at 2015:014:05:35:38.830   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 52182 at 2015:014:06:00:18.564   0 clean ACQ | 0 clean GUI | 
+OBSID = 52181 at 2015:014:06:19:24.564   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 52180 at 2015:014:06:43:18.564   0 clean ACQ | 0 clean GUI | 
+OBSID = 52179 at 2015:014:07:02:24.564   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 52178 at 2015:014:07:26:18.564   0 clean ACQ | 0 clean GUI | 
+OBSID = 52177 at 2015:014:07:45:24.564   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 52176 at 2015:014:08:09:18.564   0 clean ACQ | 0 clean GUI | 
+OBSID = 52175 at 2015:014:08:28:24.564   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 52174 at 2015:014:08:52:18.564   0 clean ACQ | 0 clean GUI | 
+OBSID = 52173 at 2015:014:09:11:24.564   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 52172 at 2015:014:09:35:24.564   8 clean ACQ | 8 clean GUI | 
+OBSID = 52171 at 2015:014:10:04:39.597   8 clean ACQ | 8 clean GUI | 
+         ------  2015:014:11:24:13.758   OBC Load Segment Begins     CL014:1108 
+OBSID = 52170 at 2015:014:11:27:19.758   8 clean ACQ | 8 clean GUI | 
+OBSID = 52169 at 2015:014:12:37:06.701   8 clean ACQ | 8 clean GUI | 
+OBSID = 52168 at 2015:014:13:49:31.298   8 clean ACQ | 8 clean GUI | 
+OBSID = 52167 at 2015:014:14:45:17.176   8 clean ACQ | 8 clean GUI | 
+OBSID = 16148 at 2015:014:17:51:30.264   8 clean ACQ | 5 clean GUI | 
+OBSID = 16659 at 2015:014:19:49:30.264   8 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
+         ------  2015:015:22:30:01.285   OBC Load Segment Begins     CL015:2208 
+OBSID = 15739 at 2015:016:11:24:23.645   8 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
+OBSID = 17578 at 2015:016:13:25:16.111   8 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
+OBSID = 16991 at 2015:016:16:45:39.289   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 16147 at 2015:016:17:29:36.289   3 clean ACQ | 2 clean GUI | WARNINGS [ 5] WARNINGS [ 2]
+OBSID = 52166 at 2015:016:19:21:16.216   3 clean ACQ | 3 clean GUI | WARNINGS [ 6] WARNINGS [ 2]
+OBSID = 52165 at 2015:016:19:33:11.926   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 52164 at 2015:016:22:09:01.255   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 52163 at 2015:016:23:49:34.854   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 52162 at 2015:017:02:12:19.265   5 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 4]
+OBSID = 52161 at 2015:017:03:25:03.781   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
+OBSID = 52160 at 2015:017:07:13:15.926   0 clean ACQ | 0 clean GUI | 
+         ------  2015:017:07:13:15.926   OBC Load Segment Begins     CL017:0708 
+OBSID = 52159 at 2015:017:07:40:19.551   5 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 4]
+OBSID = 17585 at 2015:017:09:36:35.831   8 clean ACQ | 5 clean GUI | 
+OBSID = 16239 at 2015:017:17:05:02.926   6 clean ACQ | 5 clean GUI | WARNINGS [ 4]
+OBSID = 15702 at 2015:018:08:06:04.157   8 clean ACQ | 5 clean GUI | 
+OBSID = 16360 at 2015:018:13:01:41.157   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+         ------  2015:018:16:40:40.307   OBC Load Segment Begins     CL018:1608 
+OBSID = 16601 at 2015:018:16:43:46.307   5 clean ACQ | 4 clean GUI | WARNINGS [ 5]
+OBSID = 52158 at 2015:019:11:35:10.219   5 clean ACQ | 5 clean GUI | WARNINGS [ 4]
+OBSID = 52157 at 2015:019:11:46:43.513   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
+OBSID = 52156 at 2015:019:12:11:40.918   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 52155 at 2015:019:13:18:51.286   8 clean ACQ | 8 clean GUI | 
+OBSID = 52154 at 2015:019:15:41:56.560   7 clean ACQ | 7 clean GUI | WARNINGS [ 3]
+OBSID = 52153 at 2015:019:18:55:47.633   8 clean ACQ | 8 clean GUI | 
+OBSID = 52152 at 2015:019:21:58:19.513   0 clean ACQ | 0 clean GUI | 
+OBSID = 16023 at 2015:020:00:11:44.053   8 clean ACQ | 5 clean GUI | 
+         ------  2015:020:03:36:40.513   OBC Load Segment Begins     CL020:0308 
+OBSID = 16272 at 2015:020:03:39:46.513   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
+OBSID = 17490 at 2015:020:06:49:45.047   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+         ------  2015:021:13:40:01.285   OBC Load Segment Begins     CL021:1308 
+OBSID = 17582 at 2015:021:16:37:45.047   4 clean ACQ | 3 clean GUI | WARNINGS [ 2] WARNINGS [ 4]
+OBSID = 17193 at 2015:021:20:13:33.411   7 clean ACQ | 5 clean GUI | WARNINGS [ 2] 
+OBSID = 52151 at 2015:022:03:00:16.542   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] 
+OBSID = 52150 at 2015:022:03:12:12.252   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
+OBSID = 52149 at 2015:022:04:38:32.898   8 clean ACQ | 8 clean GUI | 
+OBSID = 52148 at 2015:022:07:20:47.048   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
+OBSID = 52147 at 2015:022:09:01:50.022   8 clean ACQ | 8 clean GUI | 
+OBSID = 52146 at 2015:022:10:29:20.963   8 clean ACQ | 8 clean GUI | 
+OBSID = 52145 at 2015:022:11:23:00.843   8 clean ACQ | 8 clean GUI | 
+OBSID = 52144 at 2015:022:12:48:13.323   8 clean ACQ | 8 clean GUI | 
+OBSID = 52143 at 2015:022:13:42:16.252   0 clean ACQ | 0 clean GUI | 
+OBSID = 52142 at 2015:022:14:30:25.673   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 16771 at 2015:022:16:01:05.026   3 clean ACQ | 3 clean GUI | WARNINGS [ 8]
+         ------  2015:023:03:10:00.000   OBC Load Segment Begins     CL023:0308 
+OBSID = 17583 at 2015:023:04:00:00.252   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 17579 at 2015:023:13:30:14.947   4 clean ACQ | 3 clean GUI | WARNINGS [ 5]
+OBSID = 17496 at 2015:023:23:50:29.642   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+         ------  2015:024:09:17:38.419   OBC Load Segment Begins     CL024:0908 
+OBSID = 17580 at 2015:024:09:20:44.419   4 clean ACQ | 3 clean GUI | WARNINGS [ 5]
+OBSID = 52141 at 2015:024:18:28:49.860   5 clean ACQ | 5 clean GUI | WARNINGS [ 4]
+OBSID = 52140 at 2015:024:18:40:41.250   6 clean ACQ | 7 clean GUI | WARNINGS [ 2]
+OBSID = 52139 at 2015:024:19:18:39.261   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 52138 at 2015:024:20:19:43.705   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 52137 at 2015:024:22:55:05.721   8 clean ACQ | 8 clean GUI | 
+OBSID = 52136 at 2015:024:23:39:29.103   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
+OBSID = 52135 at 2015:025:00:22:36.415   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 52134 at 2015:025:01:09:44.407   7 clean ACQ | 7 clean GUI | WARNINGS [ 3]
+OBSID = 52133 at 2015:025:02:19:22.197   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
+OBSID = 52132 at 2015:025:03:12:57.957   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 52131 at 2015:025:04:09:52.110   8 clean ACQ | 8 clean GUI | 
+OBSID = 52130 at 2015:025:05:06:07.571   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 52129 at 2015:025:06:04:40.678   8 clean ACQ | 8 clean GUI | 
+OBSID = 17581 at 2015:025:08:03:39.830   3 clean ACQ | 3 clean GUI | WARNINGS [ 9]
+         ------  2015:025:20:55:00.000   OBC Load Segment Begins     CL025:2008 
+OBSID = 17584 at 2015:025:21:12:11.250   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+==================================================================================== 
+OBSID: 52191  
+RA, Dec, Roll (deg):   111.000000    46.000000   183.585250
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:011:15:30:49.614 (VCDU count = 3637776)
+  Q1,Q2,Q3,Q4: -0.51105132  -0.76516401  -0.19747325  0.33816402
+  MANVR: Angle=  10.87 deg  Duration= 653 sec  Slew err= 23.2 arcsec
+
+MP_STARCAT at 2015:011:15:30:51.257 (VCDU count = 3637782)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   444729432   BOT  8x8   0.976   9.299  10.797   1056   -562  20   1  120          
+[ 2]  1   444734224   BOT  8x8   0.985   8.965  10.469    832  -1244  20   1  120          
+[ 3]  2   444737224   BOT  8x8   0.985   7.327   8.922   -149    932  20   1  120  a2g2    
+[ 4]  3   444737720   BOT  8x8   0.985   9.055  10.562   -634   -315  20   1  120          
+[ 5]  4   444739112   BOT  8x8   0.985   8.677  10.188   1110   1118  20   1  120          
+[ 6]  5   444742960   BOT  8x8   0.985   7.754   9.250  -2002   1264  20   1  120          
+[ 7]  6   444739600   GUI  8x8     ---   8.071   9.578   1319   -900   1   1   25          
+[ 8]  7   444729272   GUI  8x8     ---  10.282  11.781  -2296  -1968   1   1   25    g3    
+[ 9]  6   444728128   ACQ  8x8   0.860   9.790  11.297  -1191  -1443  20   1  120    a2    
+[10]  7   444738888   ACQ  8x8   0.818   9.874  11.375    404    -12  20   1  120    a2    
+
+>> WARNING: CCD temperature exceeds -14 C
+>> WARNING: [ 8] Magnitude.  10.282
+>> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2015:011:17:00:00.000
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.553	-5.615	-3.914	
+Acquisition Stars Expected  : 7.57
+Predicted Max CCD temperature: -14.0 C 	 N100 Warm Pix Frac 0.180
+Dynamic Mag Limits: Yellow 9.98 	 Red 10.28
+==================================================================================== 
+OBSID: 52190  
+RA, Dec, Roll (deg):   106.800000    -1.900000   346.582586
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:011:17:59:39.850 (VCDU count = 3672625)
+  Q1,Q2,Q3,Q4: -0.08286188  -0.08395594  0.79836573  0.59050611
+  MANVR: Angle= 162.91 deg  Duration= 2832 sec  Slew err= 49.0 arcsec
+
+MP_STARCAT at 2015:011:17:59:41.493 (VCDU count = 3672632)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   630991440   BOT  8x8   0.985   9.153  10.656   -528   1162  20   1  120          
+[ 2]  1   630992048   BOT  8x8   0.985   9.120  10.625   -912   -121  20   1  120          
+[ 3]  2   631008312   BOT  8x8   0.985   7.636   9.141  -1952   2106  20   1  120  a2g2    
+[ 4]  3   631516664   BOT  8x8   0.983   8.841  10.344  -1350  -1332  20   1  120    a2    
+[ 5]  4   631642768   BOT  8x8   0.985   8.543  10.109   2121  -1859  20   1  120          
+[ 6]  5   630996256   GUI  8x8     ---   9.086  10.594   -837    706   1   1   25          
+[ 7]  6   631142048   GUI  8x8     ---   9.255  10.766    521   2394   1   1   25          
+[ 8]  7   631531440   GUI  8x8     ---   9.135  10.641    137  -2304   1   1   25          
+[ 9]  5   631533032   ACQ  8x8   0.942   9.541  11.047    215  -1687  20   1  120    a2    
+[10]  6   631664504   ACQ  8x8   0.829   9.864  11.375   1608    154  20   1  120    a2    
+[11]  7   631640832   ACQ  8x8   0.821   9.878  11.375   1270  -2284  20   1  120    a2    
+
+>> WARNING: [ 4] Search spoiler.  631511312: Y,Z,Radial,Mag seps: 123  98 157 -0.5
+>> WARNING: [ 9] Search spoiler.  631534000: Y,Z,Radial,Mag seps:  25  59  64 -1.0
+>> WARNING: [10] Search spoiler.  631663376: Y,Z,Radial,Mag seps: 158 139 211 -0.8
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.119	-5.238	-3.606	
+Acquisition Stars Expected  : 7.51
+Predicted Max CCD temperature: -14.1 C 	 N100 Warm Pix Frac 0.178
+Dynamic Mag Limits: Yellow 9.99 	 Red 10.29
+==================================================================================== 
+OBSID: 52189  
+RA, Dec, Roll (deg):   319.500000   -67.100000   213.979948
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:011:19:24:29.875 (VCDU count = 3692489)
+  Q1,Q2,Q3,Q4: -0.69187251  0.42737535  0.41158745  0.41141041
+  MANVR: Angle= 107.26 deg  Duration= 2090 sec  Slew err= 75.6 arcsec
+
+MP_STARCAT at 2015:011:19:24:31.518 (VCDU count = 3692495)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0  1194595488   BOT  8x8   0.985   8.915  10.422  -1749  -1969  20   1  120    a2    
+[ 2]  1  1194597224   BOT  8x8   0.985   8.709  10.219   1154  -1497  20   1  120    a3    
+[ 3]  2  1194598528   BOT  8x8   0.985   8.513  10.016   -352    922  20   1  120          
+[ 4]  3  1194599552   BOT  8x8   0.985   9.118  10.625  -1862   -208  20   1  120          
+[ 5]  4  1194599720   BOT  8x8   0.816   9.896  11.406   1316    733  20   1  120  a2g3    
+[ 6]  5  1194597440   GUI  8x8     ---   8.230   9.734  -1733   -469   1   1   25          
+[ 7]  6  1221854728   GUI  8x8     ---  10.053  11.562    499   2060   1   1   25    g3   C
+[ 8]  7  1221856048   GUI  8x8     ---  10.423  11.922   -724   2277   1   1   25    g3    
+[ 9]  5  1194599168   ACQ  8x8   0.587  10.204  11.703   1398   -839  20   1  120    a2    
+[10]  6  1194593904   ACQ  8x8   0.577  10.215  11.719  -2090    300  20   1  120    a2    
+[11]  7  1221853680   ACQ  8x8   0.904   9.693  11.203     17   1758  20   1  120    a3    
+
+>> WARNING: [ 8] Magnitude.  10.423
+>> WARNING: [11] Search spoiler. 1221855632: Y,Z,Radial,Mag seps: 146  13 146 -0.2
+>> WARNING: [ 7] Marginal star. B-V = 1.500, Mag_Err = 0.27, Pos_Err = 0.06
+>> WARNING: [ 7] Magnitude.  10.053
+>> WARNING: [ 9] Magnitude.  10.204
+>> WARNING: [10] Magnitude.  10.215
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.319	-3.597	-2.190	
+Acquisition Stars Expected  : 6.82
+Predicted Max CCD temperature: -14.2 C 	 N100 Warm Pix Frac 0.176
+Dynamic Mag Limits: Yellow 10.00 	 Red 10.30
+==================================================================================== 
+OBSID: 52188  
+RA, Dec, Roll (deg):   106.800000    -1.800000   346.278734
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:011:20:53:36.669 (VCDU count = 3713354)
+  Q1,Q2,Q3,Q4: -0.08373290  -0.08659046  0.79808939  0.59037633
+  MANVR: Angle= 107.36 deg  Duration= 2091 sec  Slew err= 75.5 arcsec
+
+MP_STARCAT at 2015:011:20:53:38.312 (VCDU count = 3713361)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   630991440   BOT  8x8   0.985   9.153  10.656   -449    809  20   1  120          
+[ 2]  1   630992048   BOT  8x8   0.985   9.120  10.625   -826   -475  20   1  120          
+[ 3]  2   631008312   BOT  8x8   0.985   7.636   9.141  -1877   1745  20   1  120  a2g2    
+[ 4]  3   631516664   BOT  8x8   0.983   8.841  10.344  -1257  -1689  20   1  120    a2    
+[ 5]  4   631642768   BOT  8x8   0.985   8.543  10.109   2216  -2197  20   1  120    a3    
+[ 6]  5   630996256   GUI  8x8     ---   9.086  10.594   -755    352   1   1   25          
+[ 7]  6   631142048   GUI  8x8     ---   9.255  10.766    593   2047   1   1   25          
+[ 8]  7   631139368   GUI  8x8     ---   8.980  10.484    680   2297   1   1   25          
+[ 9]  5   631514360   ACQ  8x8   0.797   9.938  11.438  -2194  -1992  20   1  120    a2    
+[10]  6   631533032   ACQ  8x8   0.945   9.541  11.047    309  -2036  20   1  120    a2    
+[11]  7   631664504   ACQ  8x8   0.837   9.864  11.375   1692   -187  20   1  120    a2    
+
+>> WARNING: [ 4] Search spoiler.  631511312: Y,Z,Radial,Mag seps: 123  97 157 -0.5
+>> WARNING: [ 9] Search spoiler.  631519592: Y,Z,Radial,Mag seps:  55  73  92 -0.6
+>> WARNING: [10] Search spoiler.  631534000: Y,Z,Radial,Mag seps:  25  59  64 -1.0
+>> WARNING: [11] Search spoiler.  631663376: Y,Z,Radial,Mag seps: 159 138 211 -0.8
+>> WARNING: [11] Search spoiler.  631669808: Y,Z,Radial,Mag seps: 104 172 202 -0.5
+>> WARNING: [11] Search spoiler.  631669920: Y,Z,Radial,Mag seps:  11 175 175 -0.5
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.110	-5.226	-3.591	
+Acquisition Stars Expected  : 7.50
+Predicted Max CCD temperature: -14.3 C 	 N100 Warm Pix Frac 0.174
+Dynamic Mag Limits: Yellow 10.01 	 Red 10.31
+==================================================================================== 
+OBSID: 52187  
+RA, Dec, Roll (deg):   111.000000    46.000000   184.288652
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:011:22:06:26.431 (VCDU count = 3730407)
+  Q1,Q2,Q3,Q4: -0.50896594  -0.76636174  -0.19277273  0.34129463
+  MANVR: Angle= 161.98 deg  Duration= 2820 sec  Slew err= 48.9 arcsec
+
+MP_STARCAT at 2015:011:22:06:28.074 (VCDU count = 3730414)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   444729432   BOT  8x8   0.978   9.299  10.797   1049   -575  20   1  120          
+[ 2]  1   444734224   BOT  8x8   0.985   8.965  10.469    817  -1254  20   1  120          
+[ 3]  2   444737224   BOT  8x8   0.985   7.327   8.922   -138    934  20   1  120  a2g2    
+[ 4]  3   444737720   BOT  8x8   0.985   9.055  10.562   -638   -307  20   1  120          
+[ 5]  4   444739112   BOT  8x8   0.985   8.677  10.188   1124   1104  20   1  120          
+[ 6]  5   444742960   BOT  8x8   0.985   7.754   9.250  -1986   1289  20   1  120          
+[ 7]  6   444739600   GUI  8x8     ---   8.071   9.578   1308   -916   1   1   25          
+[ 8]  7   444734568   GUI  8x8     ---  10.330  11.828   1760  -2269   1   1   25    g3    
+[ 9]  6   444728128   ACQ  8x8   0.874   9.790  11.297  -1209  -1428  20   1  120    a2    
+[10]  7   444738888   ACQ  8x8   0.836   9.874  11.375    403    -17  20   1  120    a2    
+
+>> WARNING: [ 8] Magnitude.  10.330
+>> INFO   : Next obsid has no manvr; using next obs start date for checks (dither, momentum)
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.660	-5.716	-4.006	
+Acquisition Stars Expected  : 7.61
+Predicted Max CCD temperature: -14.5 C 	 N100 Warm Pix Frac 0.172
+Dynamic Mag Limits: Yellow 10.02 	 Red 10.32
+==================================================================================== 
+OBSID: 52186  
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+                                                                                             
+
+>> INFO   : No Guide Star Summary for obsid 52186 (RDX32). OK for 'RDX' ER. 
+>> INFO   : CCD temperature exceeds -15 C
+>> INFO   : No target/maneuver for obsid 52186 (RDX32). OK for 'RDX' ER. 
+>> INFO   : No star catalog for obsid 52186 (RDX32). OK for 'RDX' ER.
+==================================================================================== 
+OBSID: 15703  2MASS J06593158-0405   ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   104.857331    -4.095727   343.108506
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:012:01:43:54.878 (VCDU count = 3781328)
+  Q1,Q2,Q3,Q4: -0.11751405  -0.09478363  0.78669890  0.59859114
+  MANVR: Angle= 158.67 deg  Duration= 2776 sec  Slew err= 50.3 arcsec
+
+MP_STARCAT at 2015:012:01:43:56.521 (VCDU count = 3781334)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    922  -1737   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   629801640   BOT  6x6   0.985   8.904  10.406  -2077    867  20   1  120          
+[ 5]  4   632039320   BOT  6x6   0.985   7.930   9.438   1238  -1559  20   1  120          
+[ 6]  5   632055248   BOT  6x6   0.985   8.672  10.172   2190    950  20   1  120          
+[ 7]  6   629813072   GUI  6x6     ---   9.035  10.547  -1140   1942   1   1   25          
+[ 8]  7   630344488   GUI  6x6     ---   8.983  10.484    878  -2381   1   1   25          
+[ 9]  6   629802048   ACQ  6x6   0.985   9.013  10.516   -208   1592  16   1  100          
+[10]  7   630341896   ACQ  6x6   0.985   9.177  10.688    -41  -1101  20   1  120          
+[11]  0   630342888   ACQ  6x6   0.985   8.786  10.297   1173  -2225  20   1  120          
+[12]  1   631504920   ACQ  6x6   0.985   9.184  10.688    690   1703  20   1  120          
+[13]  2   630346192   ACQ  6x6   0.985   9.092  10.594   -459  -1012  20   1  120    a2    
+
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
+Acquisition Stars Expected  : 7.88
+Predicted Max CCD temperature: -14.9 C 	 N100 Warm Pix Frac 0.165
+Dynamic Mag Limits: Yellow 10.05 	 Red 10.35
+==================================================================================== 
+OBSID: 16222  3C 120                 ACIS-S SIM Z offset:-1193 (-3.00mm) Grating: HETG 
+RA, Dec, Roll (deg):    68.276734     5.365666   299.001826
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:012:16:37:26.745 (VCDU count = 3990545)
+  Q1,Q2,Q3,Q4: -0.39697660  -0.31788846  0.46335281  0.72571391
+  MANVR: Angle=  57.74 deg  Duration= 1430 sec  Slew err= 37.4 arcsec
+
+MP_STARCAT at 2015:012:16:37:28.388 (VCDU count = 3990551)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1803   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    105   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826     98   1   1   25          
+[ 4]  3    11798168   BOT  6x6   0.985   8.780  10.281   1948    750  20   1  120          
+[ 5]  4    11801400   BOT  6x6   0.985   7.883   9.391    260    605  20   1  120          
+[ 6]  5    11805784   BOT  6x6   0.985   8.857  10.359   1271   -644  20   1  120          
+[ 7]  6    12324304   BOT  6x6   0.985   8.950  10.453   -493   2239  20   1  120          
+[ 8]  7    12327088   GUI  6x6     ---   8.832  10.328  -2294   -583   1   1   25          
+[ 9]  7    11798712   ACQ  6x6   0.985   9.032  10.531   1211    -77  20   1  120          
+[10]  0    12323392   ACQ  6x6   0.985   8.904  10.406  -1247   -320  20   1  120          
+[11]  1    11801616   ACQ  6x6   0.985   6.070   7.578   -191   1161  20   1  120    a2    
+[12]  2    11796744   ACQ  6x6   0.985   6.526   8.031   -585   -725  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
+Acquisition Stars Expected  : 7.88
+Predicted Max CCD temperature: -16.3 C 	 N100 Warm Pix Frac 0.143
+Dynamic Mag Limits: Yellow 10.17 	 Red 10.48
+==================================================================================== 
+OBSID: 17442  tau CMa                ACIS-S SIM Z offset:0     (0.00mm) Grating: HETG 
+RA, Dec, Roll (deg):   109.656398   -24.966017     2.971269
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:013:05:19:51.345 (VCDU count = 4169061)
+  Q1,Q2,Q3,Q4: -0.16204655  0.14515900  0.79460828  0.56680461
+  MANVR: Angle=  74.18 deg  Duration= 1649 sec  Slew err= 40.1 arcsec
+
+MP_STARCAT at 2015:013:05:19:52.988 (VCDU count = 4169067)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    922  -1737   1   1   25          
+[ 2]  1           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   856819512   BOT  6x6   0.985   8.353   9.859  -1076   2267  20   1  120          
+[ 5]  4   857351648   BOT  6x6   0.981   9.302  10.812  -1538   1599  20   1  120          
+[ 6]  5   857362176   BOT  6x6   0.985   7.373   8.875  -1490   -620  20   1  120          
+[ 7]  6   857355920   GUI  6x6     ---   8.527  10.031  -1408   1059   1   1   25          
+[ 8]  7   857375848   GUI  6x6     ---   8.925  10.422    185   1111   1   1   25          
+[ 9]  6   857365600   ACQ  6x6   0.985   9.040  10.547   -813    -80  14   1   90          
+[10]  7   857371208   ACQ  6x6   0.985   9.195  10.703   1380    419  20   1  120    a2    
+[11]  0   857355848   ACQ  6x6   0.908   9.282  10.781  -1948   1606  20   1  120    a2    
+[12]  1   857371816   ACQ  6x6   0.810   9.526  11.109  -1017   -617  20   1  120    a2    
+[13]  2   857370184   ACQ  6x6   0.904   9.798  11.297   -293    151  20   1  120    a2    
+
+>> WARNING: [13] Search spoiler.  857369968: Y,Z,Radial,Mag seps: 120  56 133 -0.8
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.113	-5.245	-3.626	
+Acquisition Stars Expected  : 7.54
+Predicted Max CCD temperature: -15.8 C 	 N100 Warm Pix Frac 0.150
+Dynamic Mag Limits: Yellow 10.13 	 Red 10.44
+==================================================================================== 
+OBSID: 17460  RCW103                 ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   244.432427   -51.042092   113.024244
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:013:14:11:50.368 (VCDU count = 4293623)
+  Q1,Q2,Q3,Q4: -0.60235986  0.51002059  0.61282569  0.03855226
+  MANVR: Angle=  94.24 deg  Duration= 1917 sec  Slew err= 56.8 arcsec
+
+MP_STARCAT at 2015:013:14:11:52.011 (VCDU count = 4293629)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25    f2    
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25    f2    
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
+[ 4]  3  1090921440   BOT  6x6   0.985   8.961  10.469   1956   1989  20   1  120    a2    
+[ 5]  4  1091059112   BOT  6x6   0.985   9.076  10.578    337  -1994  20   1  120          
+[ 6]  5  1090924384   GUI  6x6     ---   8.040   9.547   1318   2156   1   1   25          
+[ 7]  6  1090922592   GUI  6x6     ---   8.682  10.188   1628   1511   1   1   25          
+[ 8]  7  1091057912   GUI  6x6     ---   9.112  10.609  -1322  -2409   1   1   25          
+[ 9]  5  1090921280   ACQ  6x6   0.985   8.986  10.484   1397   -426  20   1  120          
+[10]  6  1090924096   ACQ  6x6   0.985   7.980   9.484    595   1181  20   1  120    a2    
+[11]  7  1090521824   ACQ  6x6   0.985   9.121  10.625   1644  -1392  20   1  120    a2    
+[12]  0  1090397136   ACQ  6x6   0.985   9.193  10.703   1908    332  20   1  120    a2    
+[13]  1  1091061088   ACQ  6x6   0.853   9.419  10.922  -1466    -80  20   1  120    a2    
+[14]  2  1090522320   ACQ  6x6   0.969   9.440  10.938   2236  -1679  20   1  120    a2    
+
+>> WARNING: [ 2] Fid spoiler.  1090919328: Y,Z,Radial,Mag seps:   8  27  29 -4.6
+>> WARNING: [12] Search spoiler. 1090400552: Y,Z,Radial,Mag seps: 131  23 133 -0.7
+>> WARNING: [13] Search spoiler. 1090926896: Y,Z,Radial,Mag seps:  62 146 158 -0.9
+>> WARNING: [13] Search spoiler. 1090926640: Y,Z,Radial,Mag seps: 158 162 226 -0.9
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.379	-6.367	-4.576	
+Acquisition Stars Expected  : 7.73
+Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.153
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.42
+==================================================================================== 
+OBSID: 17497  Abell 3411             ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   130.487631   -17.509852    19.998156
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:013:21:44:56.928 (VCDU count = 4399716)
+  Q1,Q2,Q3,Q4: -0.06425792  0.21860829  0.87281736  0.43159146
+  MANVR: Angle=  90.87 deg  Duration= 1872 sec  Slew err= 69.0 arcsec
+
+MP_STARCAT at 2015:013:21:44:58.571 (VCDU count = 4399723)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   788403264   BOT  6x6   0.980   9.312  10.812  -1850    -81  20   1  120          
+[ 5]  4   788416008   BOT  6x6   0.985   8.667  10.172  -2105   1558  20   1  120          
+[ 6]  5   788546808   BOT  6x6   0.983   8.877  10.375   1897   -159  20   1  120          
+[ 7]  6   788548808   BOT  6x6   0.985   8.530  10.031   1597    488  20   1  120          
+[ 8]  7   788552320   BOT  6x6   0.985   8.426   9.938   2123   1097  20   1  120          
+[ 9]  0   788543784   ACQ  6x6   0.969   9.436  10.938   1564  -1249  20   1  120    a2    
+[10]  1   788535776   ACQ  6x6   0.834   9.459  10.969  -1707  -2145  20   1  120    a2    
+[11]  2   788537720   ACQ  6x6   0.947   9.596  11.094    301   -962  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.761	-5.844	-4.153	
+Acquisition Stars Expected  : 7.66
+Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.154
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.42
+==================================================================================== 
+OBSID: 52185  
+RA, Dec, Roll (deg):   130.487631   -17.509852    19.998156
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:04:32:42.911 (VCDU count = 4495193)
+  Q1,Q2,Q3,Q4: -0.06425792  0.21860829  0.87281736  0.43159146
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2015:014:04:32:44.554 (VCDU count = 4495200)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   788403264   BOT  8x8   0.980   9.312  10.812  -1850    -81  20   1  120          
+[ 2]  1   788416008   BOT  8x8   0.985   8.667  10.172  -2105   1558  20   1  120          
+[ 3]  2   788535776   BOT  8x8   0.834   9.459  10.969  -1707  -2145  20   1  120  a2g2    
+[ 4]  3   788543784   BOT  8x8   0.969   9.436  10.938   1564  -1249  20   1  120  a2g2    
+[ 5]  4   788546808   BOT  8x8   0.983   8.877  10.375   1897   -159  20   1  120          
+[ 6]  5   788548808   BOT  8x8   0.985   8.530  10.031   1597    488  20   1  120          
+[ 7]  6   788552320   BOT  8x8   0.985   8.426   9.938   2123   1097  20   1  120          
+[ 8]  7   788418168   GUI  8x8     ---   6.316   7.812  -1408   1300   1   1   25    g2    
+[ 9]  7   788551984   ACQ  8x8   0.947   9.595  11.094  -1245   1419  20   1  120    a2    
+
+>> WARNING: [ 8] Bad AGASC ID.  788418168
+>> INFO   : Special Case ER
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.763	-5.845	-4.154	
+Acquisition Stars Expected  : 7.66
+Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.154
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.42
+==================================================================================== 
+OBSID: 52184  
+RA, Dec, Roll (deg):   146.117242    18.340196    78.750025
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:04:44:38.621 (VCDU count = 4497986)
+  Q1,Q2,Q3,Q4: 0.30034079  0.56320978  0.75947368  0.12565779
+  MANVR: Angle=  69.64 deg  Duration= 1589 sec  Slew err= 41.0 arcsec
+
+MP_STARCAT at 2015:014:04:44:40.264 (VCDU count = 4497993)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   185205008   BOT  8x8   0.985   9.107  10.609  -2088   2160  20   1  120    a2    
+[ 2]  1   185205104   BOT  8x8   0.985   8.794  10.297  -1328   1420  20   1  120          
+[ 3]  2   185206520   BOT  8x8   0.985   8.118   9.625  -1332  -1617  20   1  120          
+[ 4]  3   185207416   BOT  8x8   0.985   8.914  10.422  -2238    671  18   1  110          
+[ 5]  4   185209200   BOT  8x8   0.985   8.827  10.328   1607  -1469  20   1  120          
+[ 6]  5   185210664   BOT  8x8   0.985   9.205  10.703   1781    558  20   1  120          
+[ 7]  6   185339360   BOT  8x8   0.985   8.591  10.094   -403  -2099  20   1  120          
+[ 8]  7   185206736   GUI  8x8     ---   8.757  10.266   2359    364   1   1   25          
+[ 9]  7   185210920   ACQ  8x8   0.985   6.371   7.875   1445   -926  20   1  120    a2    
+
+>> WARNING: [ 1] Search spoiler.  185210328: Y,Z,Radial,Mag seps:  79 122 146 -0.9
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
+Acquisition Stars Expected  : 7.88
+Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.154
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.42
+==================================================================================== 
+OBSID: 52183  
+RA, Dec, Roll (deg):   145.056159    18.997004    79.954620
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:05:35:37.187 (VCDU count = 4509922)
+  Q1,Q2,Q3,Q4: 0.31087564  0.56647360  0.75275625  0.12578562
+  MANVR: Angle=   1.48 deg  Duration= 286 sec  Slew err= 20.7 arcsec
+
+MP_STARCAT at 2015:014:05:35:38.830 (VCDU count = 4509929)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   185204848   BOT  8x8   0.896   9.804  11.312   -469  -1942  20   1  120  a2g2    
+[ 2]  1   185205184   BOT  8x8   0.972   9.406  10.906   1407   1459  20   1  120  a2g2    
+[ 3]  2   185205288   BOT  8x8   0.904   9.781  11.281   1234   1625  20   1  120  a2g2    
+[ 4]  3   185207592   BOT  8x8   0.955   9.550  11.047  -2065   -829  20   1  120  a2g2    
+[ 5]  4   185208256   BOT  8x8   0.886   9.834  11.344  -1189    686  20   1  120  a2g2    
+[ 6]  5   185208992   BOT  8x8   0.874   9.867  11.375   -173  -1750  20   1  120  a2g2    
+[ 7]  6   185209368   BOT  8x8   0.974   9.385  10.891  -1570   1552  20   1  120          
+[ 8]  7   185205096   GUI  8x8     ---  10.014  11.516   2246  -1048   1   1   25    g3    
+[ 9]  7   185210104   ACQ  8x8   0.985   9.021  10.531     35  -1176  20   1  120          
+
+>> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 2] Search spoiler.  185205080: Y,Z,Radial,Mag seps: 131  41 137 -0.8
+>> WARNING: [ 3] Search spoiler.  185205080: Y,Z,Radial,Mag seps:  41 124 131 -0.5
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.981	-4.382	-3.027	
+Acquisition Stars Expected  : 7.44
+Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.154
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.42
+==================================================================================== 
+OBSID: 52182  
+RA, Dec, Roll (deg):   145.056159    18.997004    79.963990
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:06:00:22.921 (VCDU count = 4515720)
+  Q1,Q2,Q3,Q4: 0.31088593  0.56653514  0.75270993  0.12576020
+  MANVR: Angle=   0.01 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+                                                                                             
+
+>> INFO   : No Guide Star Summary for obsid 52182 (DC_T0). OK for 'DC_T' ER. 
+>> INFO   : No star catalog for obsid 52182 (DC_T0). OK for 'DC_T' ER.
+==================================================================================== 
+OBSID: 52181  
+RA, Dec, Roll (deg):   145.056159    18.997004    79.971219
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:06:19:22.921 (VCDU count = 4520169)
+  Q1,Q2,Q3,Q4: 0.31089386  0.56658263  0.75267419  0.12574059
+  MANVR: Angle=   0.01 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2015:014:06:19:24.564 (VCDU count = 4520175)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   185204848   BOT  8x8   0.897   9.804  11.312   -470  -1942  20   1  120  a2g2    
+[ 2]  1   185205184   BOT  8x8   0.972   9.406  10.906   1407   1458  20   1  120  a2g2    
+[ 3]  2   185205288   BOT  8x8   0.904   9.781  11.281   1234   1624  20   1  120  a2g2    
+[ 4]  3   185207592   BOT  8x8   0.955   9.550  11.047  -2065   -829  20   1  120  a2g2    
+[ 5]  4   185208256   BOT  8x8   0.887   9.834  11.344  -1188    686  20   1  120  a2g2    
+[ 6]  5   185208992   BOT  8x8   0.875   9.867  11.375   -173  -1750  20   1  120  a2g2    
+[ 7]  6   185209368   BOT  8x8   0.974   9.385  10.891  -1570   1553  20   1  120          
+[ 8]  7   185206376   GUI  8x8     ---   9.939  11.438   2165    234   1   1   25    g3    
+[ 9]  7   185210104   ACQ  8x8   0.985   9.021  10.531     35  -1176  20   1  120          
+
+>> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 2] Search spoiler.  185205080: Y,Z,Radial,Mag seps: 131  41 137 -0.8
+>> WARNING: [ 3] Search spoiler.  185205080: Y,Z,Radial,Mag seps:  41 124 131 -0.5
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.987	-4.387	-3.031	
+Acquisition Stars Expected  : 7.44
+Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.154
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.42
+==================================================================================== 
+OBSID: 52180  
+RA, Dec, Roll (deg):   145.068171    18.965665    79.921923
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:06:43:22.921 (VCDU count = 4525789)
+  Q1,Q2,Q3,Q4: 0.31059186  0.56638105  0.75291202  0.12597102
+  MANVR: Angle=   0.06 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+                                                                                             
+
+>> INFO   : No Guide Star Summary for obsid 52180 (DC_T1). OK for 'DC_T' ER. 
+>> INFO   : No star catalog for obsid 52180 (DC_T1). OK for 'DC_T' ER.
+==================================================================================== 
+OBSID: 52179  
+RA, Dec, Roll (deg):   145.056159    18.997004    79.987698
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:07:02:22.921 (VCDU count = 4530237)
+  Q1,Q2,Q3,Q4: 0.31091194  0.56669086  0.75259270  0.12569588
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2015:014:07:02:24.564 (VCDU count = 4530244)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   185204848   BOT  8x8   0.897   9.804  11.312   -470  -1942  20   1  120  a2g2    
+[ 2]  1   185205184   BOT  8x8   0.972   9.406  10.906   1408   1458  20   1  120  a2g2    
+[ 3]  2   185205288   BOT  8x8   0.904   9.781  11.281   1235   1624  20   1  120  a2g2    
+[ 4]  3   185207592   BOT  8x8   0.955   9.550  11.047  -2065   -828  20   1  120  a2g2    
+[ 5]  4   185208256   BOT  8x8   0.887   9.834  11.344  -1188    686  20   1  120  a2g2    
+[ 6]  5   185208992   BOT  8x8   0.875   9.867  11.375   -174  -1750  20   1  120  a2g2    
+[ 7]  6   185209368   BOT  8x8   0.974   9.385  10.891  -1569   1553  20   1  120          
+[ 8]  7   185206376   GUI  8x8     ---   9.939  11.438   2165    233   1   1   25    g3    
+[ 9]  7   185210104   ACQ  8x8   0.985   9.021  10.531     34  -1176  20   1  120          
+
+>> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 2] Search spoiler.  185205080: Y,Z,Radial,Mag seps: 130  41 137 -0.8
+>> WARNING: [ 3] Search spoiler.  185205080: Y,Z,Radial,Mag seps:  41 124 131 -0.5
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.997	-4.396	-3.038	
+Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.153
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.42
+==================================================================================== 
+OBSID: 52178  
+RA, Dec, Roll (deg):   145.023027    18.985619    79.976187
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:07:26:22.921 (VCDU count = 4535857)
+  Q1,Q2,Q3,Q4: 0.31099468  0.56655795  0.75260629  0.12600855
+  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+                                                                                             
+
+>> INFO   : No Guide Star Summary for obsid 52178 (DC_T2). OK for 'DC_T' ER. 
+>> INFO   : No star catalog for obsid 52178 (DC_T2). OK for 'DC_T' ER.
+==================================================================================== 
+OBSID: 52177  
+RA, Dec, Roll (deg):   145.056159    18.997004    80.004307
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:07:45:22.921 (VCDU count = 4540306)
+  Q1,Q2,Q3,Q4: 0.31093015  0.56679994  0.75251056  0.12565081
+  MANVR: Angle=   0.05 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2015:014:07:45:24.564 (VCDU count = 4540312)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   185204848   BOT  8x8   0.898   9.804  11.312   -471  -1942  20   1  120  a2g2    
+[ 2]  1   185205184   BOT  8x8   0.972   9.406  10.906   1408   1458  20   1  120  a2g2    
+[ 3]  2   185205288   BOT  8x8   0.905   9.781  11.281   1235   1624  20   1  120  a2g2    
+[ 4]  3   185207592   BOT  8x8   0.955   9.550  11.047  -2065   -827  20   1  120  a2g2    
+[ 5]  4   185208256   BOT  8x8   0.888   9.834  11.344  -1188    687  20   1  120  a2g2    
+[ 6]  5   185208992   BOT  8x8   0.876   9.867  11.375   -174  -1750  20   1  120  a2g2    
+[ 7]  6   185209368   BOT  8x8   0.974   9.385  10.891  -1569   1554  20   1  120          
+[ 8]  7   185206376   GUI  8x8     ---   9.939  11.438   2165    233   1   1   25    g3    
+[ 9]  7   185210104   ACQ  8x8   0.985   9.021  10.531     34  -1176  20   1  120          
+
+>> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 2] Search spoiler.  185205080: Y,Z,Radial,Mag seps: 130  41 137 -0.8
+>> WARNING: [ 3] Search spoiler.  185205080: Y,Z,Radial,Mag seps:  41 124 131 -0.5
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.012	-4.408	-3.048	
+Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -15.7 C 	 N100 Warm Pix Frac 0.153
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.43
+==================================================================================== 
+OBSID: 52176  
+RA, Dec, Roll (deg):   145.044060    19.028313    80.072260
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:08:09:22.921 (VCDU count = 4545925)
+  Q1,Q2,Q3,Q4: 0.31125258  0.56712359  0.75218017  0.12537011
+  MANVR: Angle=   0.07 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+                                                                                             
+
+>> INFO   : No Guide Star Summary for obsid 52176 (DC_T3). OK for 'DC_T' ER. 
+>> INFO   : No star catalog for obsid 52176 (DC_T3). OK for 'DC_T' ER.
+==================================================================================== 
+OBSID: 52175  
+RA, Dec, Roll (deg):   145.056159    18.997004    80.020954
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:08:28:22.921 (VCDU count = 4550374)
+  Q1,Q2,Q3,Q4: 0.31094840  0.56690925  0.75242821  0.12560564
+  MANVR: Angle=   0.06 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2015:014:08:28:24.564 (VCDU count = 4550380)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   185204848   BOT  8x8   0.899   9.804  11.312   -472  -1942  20   1  120  a2g2    
+[ 2]  1   185205184   BOT  8x8   0.972   9.406  10.906   1408   1457  20   1  120  a2g2    
+[ 3]  2   185205288   BOT  8x8   0.906   9.781  11.281   1236   1623  20   1  120  a2g2    
+[ 4]  3   185207592   BOT  8x8   0.955   9.550  11.047  -2065   -827  20   1  120  a2g2    
+[ 5]  4   185208256   BOT  8x8   0.889   9.834  11.344  -1188    687  20   1  120  a2g2    
+[ 6]  5   185208992   BOT  8x8   0.877   9.867  11.375   -175  -1750  20   1  120  a2g2    
+[ 7]  6   185209368   BOT  8x8   0.974   9.385  10.891  -1568   1554  20   1  120          
+[ 8]  7   185205096   GUI  8x8     ---  10.014  11.516   2245  -1050   1   1   25    g3    
+[ 9]  7   185210104   ACQ  8x8   0.985   9.021  10.531     34  -1176  20   1  120          
+
+>> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 2] Search spoiler.  185205080: Y,Z,Radial,Mag seps: 130  41 137 -0.8
+>> WARNING: [ 3] Search spoiler.  185205080: Y,Z,Radial,Mag seps:  41 124 131 -0.5
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.029	-4.423	-3.059	
+Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -15.7 C 	 N100 Warm Pix Frac 0.152
+Dynamic Mag Limits: Yellow 10.12 	 Red 10.43
+==================================================================================== 
+OBSID: 52174  
+RA, Dec, Roll (deg):   145.089276    19.008435    80.051030
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:08:52:22.921 (VCDU count = 4555993)
+  Q1,Q2,Q3,Q4: 0.31088615  0.56716386  0.75232259  0.12524247
+  MANVR: Angle=   0.05 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+                                                                                             
+
+>> INFO   : No Guide Star Summary for obsid 52174 (DC_T4). OK for 'DC_T' ER. 
+>> INFO   : No star catalog for obsid 52174 (DC_T4). OK for 'DC_T' ER.
+==================================================================================== 
+OBSID: 52173  
+RA, Dec, Roll (deg):   145.056159    18.997004    80.037419
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:09:11:22.921 (VCDU count = 4560442)
+  Q1,Q2,Q3,Q4: 0.31096645  0.56701736  0.75234675  0.12556096
+  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2015:014:09:11:24.564 (VCDU count = 4560449)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   185204848   BOT  8x8   0.900   9.804  11.312   -472  -1941  20   1  120  a2g2    
+[ 2]  1   185205184   BOT  8x8   0.973   9.406  10.906   1409   1457  20   1  120  a2g2    
+[ 3]  2   185205288   BOT  8x8   0.907   9.781  11.281   1236   1623  20   1  120  a2g2    
+[ 4]  3   185207592   BOT  8x8   0.956   9.550  11.047  -2066   -826  20   1  120  a2g2    
+[ 5]  4   185208256   BOT  8x8   0.890   9.834  11.344  -1188    687  20   1  120  a2g2    
+[ 6]  5   185208992   BOT  8x8   0.878   9.867  11.375   -175  -1750  20   1  120  a2g2    
+[ 7]  6   185209368   BOT  8x8   0.974   9.385  10.891  -1568   1555  20   1  120          
+[ 8]  7   185205096   GUI  8x8     ---  10.014  11.516   2245  -1051   1   1   25    g3    
+[ 9]  7   185210104   ACQ  8x8   0.985   9.021  10.531     33  -1176  20   1  120          
+
+>> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 2] Search spoiler.  185205080: Y,Z,Radial,Mag seps: 130  41 137 -0.8
+>> WARNING: [ 3] Search spoiler.  185205080: Y,Z,Radial,Mag seps:  41 124 131 -0.5
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.049	-4.439	-3.073	
+Acquisition Stars Expected  : 7.46
+Predicted Max CCD temperature: -15.7 C 	 N100 Warm Pix Frac 0.151
+Dynamic Mag Limits: Yellow 10.12 	 Red 10.43
+==================================================================================== 
+OBSID: 52172  
+RA, Dec, Roll (deg):   146.117242    18.340196    78.849817
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:09:35:22.921 (VCDU count = 4566062)
+  Q1,Q2,Q3,Q4: 0.30045010  0.56387096  0.75898292  0.12539619
+  MANVR: Angle=   1.47 deg  Duration= 285 sec  Slew err= 20.7 arcsec
+
+MP_STARCAT at 2015:014:09:35:24.564 (VCDU count = 4566068)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   185205008   BOT  8x8   0.985   9.107  10.609  -2084   2164  14   1   90          
+[ 2]  1   185205104   BOT  8x8   0.985   8.794  10.297  -1326   1422  20   1  120          
+[ 3]  2   185206520   BOT  8x8   0.985   8.118   9.625  -1335  -1615  20   1  120          
+[ 4]  3   185206736   BOT  8x8   0.985   8.757  10.266   2359    360  12   1   80          
+[ 5]  4   185207416   BOT  8x8   0.985   8.914  10.422  -2237    675  20   1  120          
+[ 6]  5   185209200   BOT  8x8   0.985   8.827  10.328   1605  -1472  20   1  120          
+[ 7]  6   185210664   BOT  8x8   0.985   9.205  10.703   1782    555  20   1  120          
+[ 8]  7   185339360   BOT  8x8   0.985   8.591  10.094   -407  -2098  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
+Acquisition Stars Expected  : 7.88
+Predicted Max CCD temperature: -15.8 C 	 N100 Warm Pix Frac 0.151
+Dynamic Mag Limits: Yellow 10.12 	 Red 10.43
+==================================================================================== 
+OBSID: 52171  
+RA, Dec, Roll (deg):   141.180000    19.200000    80.461230
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:10:04:37.954 (VCDU count = 4572911)
+  Q1,Q2,Q3,Q4: 0.33171554  0.55831546  0.74577122  0.14857296
+  MANVR: Angle=   4.75 deg  Duration= 455 sec  Slew err= 22.5 arcsec
+
+MP_STARCAT at 2015:014:10:04:39.597 (VCDU count = 4572917)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   184156640   BOT  8x8   0.985   6.436   7.938   2085    321  20   1  120  a2g2    
+[ 2]  1   184156736   BOT  8x8   0.985   8.801  10.297    890    670  20   1  120          
+[ 3]  2   184156872   BOT  8x8   0.920   9.735  11.234  -1319   -462  20   1  120  a2g2    
+[ 4]  3   184157176   BOT  8x8   0.983   9.264  10.766   2333    831  17   1  105          
+[ 5]  4   184157496   BOT  8x8   0.901   9.804  11.312  -1094   1140  20   1  120  a2g2    
+[ 6]  5   184157632   BOT  8x8   0.909   9.777  11.281   -904    486  20   1  120  a2g3    
+[ 7]  6   184158464   BOT  8x8   0.919   9.738  11.250   2244   1350  20   1  120  a2g2    
+[ 8]  7   184289104   BOT  8x8   0.985   7.767   9.266   -233  -1638  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.921	-5.123	-3.578	
+Acquisition Stars Expected  : 7.58
+Predicted Max CCD temperature: -15.8 C 	 N100 Warm Pix Frac 0.151
+Dynamic Mag Limits: Yellow 10.13 	 Red 10.44
+==================================================================================== 
+OBSID: 52170  
+RA, Dec, Roll (deg):    89.500000    24.000000   268.947576
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:11:27:18.115 (VCDU count = 4592267)
+  Q1,Q2,Q3,Q4: -0.39314728  -0.59483180  0.37707968  0.59111865
+  MANVR: Angle= 169.27 deg  Duration= 2917 sec  Slew err= 42.7 arcsec
+
+MP_STARCAT at 2015:014:11:27:19.758 (VCDU count = 4592274)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   244187160   BOT  8x8   0.985   9.150  10.656   -959   1362  20   1  120          
+[ 2]  1   244197192   BOT  8x8   0.985   7.086   8.594   1192    546  20   1  120          
+[ 3]  2   244197776   BOT  8x8   0.985   8.339   9.844   1596   -269  20   1  120          
+[ 4]  3   244197912   BOT  8x8   0.935   9.189  10.734   2188   1596  20   1  120  a2g2    
+[ 5]  4   244207256   BOT  8x8   0.985   6.237   7.734   -883   -889  20   1  120  a2g2    
+[ 6]  5   244320152   BOT  8x8   0.985   9.209  10.719   -950   1887  20   1  120          
+[ 7]  6   244723968   BOT  8x8   0.985   7.666   9.172  -2200   -355  20   1  120          
+[ 8]  7   244198984   GUI  8x8     ---   9.483  10.984   1556    325   1   1   25    g2    
+[ 9]  7   244189808   ACQ  8x8   0.985   8.660  10.656    859   1229  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.967	-6.903	-5.050	
+Acquisition Stars Expected  : 7.83
+Predicted Max CCD temperature: -15.9 C 	 N100 Warm Pix Frac 0.148
+Dynamic Mag Limits: Yellow 10.14 	 Red 10.45
+==================================================================================== 
+OBSID: 52169  
+RA, Dec, Roll (deg):   340.000000     4.000000   302.194790
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:12:37:05.058 (VCDU count = 4608607)
+  Q1,Q2,Q3,Q4: -0.48099487  0.05378855  -0.16853784  0.85868838
+  MANVR: Angle= 106.10 deg  Duration= 2075 sec  Slew err= 57.1 arcsec
+
+MP_STARCAT at 2015:014:12:37:06.701 (VCDU count = 4608613)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0    74715008   BOT  8x8   0.985   7.873   9.375   2225  -1584  20   1  120          
+[ 2]  1    74720088   BOT  8x8   0.985   7.120   8.625  -2172    132  20   1  120          
+[ 3]  2    74723224   BOT  8x8   0.985   8.724  10.234    521  -2049  20   1  120          
+[ 4]  3    74727584   BOT  8x8   0.985   8.184   9.688    932  -2142  20   1  120          
+[ 5]  4    74854024   BOT  8x8   0.985   8.599  10.109  -1877   1726  20   1  120          
+[ 6]  5    74854992   BOT  8x8   0.985   8.127   9.625   1863    282  20   1  120          
+[ 7]  6    74855392   BOT  8x8   0.985   6.623   8.125  -1532   1447  20   1  120          
+[ 8]  7    74714192   GUI  8x8     ---   8.551  10.062   1282  -2405   1   1   25          
+[ 9]  7    74719664   ACQ  8x8   0.985   8.405   9.906   -427    109  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
+Acquisition Stars Expected  : 7.88
+Predicted Max CCD temperature: -16.0 C 	 N100 Warm Pix Frac 0.147
+Dynamic Mag Limits: Yellow 10.15 	 Red 10.46
+==================================================================================== 
+OBSID: 52168  
+RA, Dec, Roll (deg):    89.600000    24.000000   268.934591
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:13:49:29.655 (VCDU count = 4625561)
+  Q1,Q2,Q3,Q4: -0.39269498  -0.59521744  0.37752794  0.59074487
+  MANVR: Angle= 106.19 deg  Duration= 2076 sec  Slew err= 57.8 arcsec
+
+MP_STARCAT at 2015:014:13:49:31.298 (VCDU count = 4625568)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   244187160   BOT  8x8   0.985   9.150  10.656   -952   1033  20   1  120          
+[ 2]  1   244189808   BOT  8x8   0.985   8.660  10.656    866    899  20   1  120  a2g2    
+[ 3]  2   244197192   BOT  8x8   0.985   7.086   8.594   1198    217  20   1  120          
+[ 4]  3   244197776   BOT  8x8   0.985   8.339   9.844   1602   -598  20   1  120          
+[ 5]  4   244197912   BOT  8x8   0.937   9.189  10.734   2195   1266  20   1  120  a2g2    
+[ 6]  5   244207256   BOT  8x8   0.985   6.237   7.734   -877  -1218  20   1  120  a2g2    
+[ 7]  6   244320152   BOT  8x8   0.985   9.209  10.719   -943   1558  20   1  120          
+[ 8]  7   244723968   BOT  8x8   0.985   7.666   9.172  -2194   -682  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.977	-6.913	-5.060	
+Acquisition Stars Expected  : 7.83
+Predicted Max CCD temperature: -16.1 C 	 N100 Warm Pix Frac 0.146
+Dynamic Mag Limits: Yellow 10.15 	 Red 10.47
+==================================================================================== 
+OBSID: 52167  
+RA, Dec, Roll (deg):   127.000000    43.700000   153.825740
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:14:45:15.533 (VCDU count = 4638618)
+  Q1,Q2,Q3,Q4: -0.47880595  -0.77146658  -0.34983647  0.23064826
+  MANVR: Angle=  98.71 deg  Duration= 1976 sec  Slew err= 36.3 arcsec
+
+MP_STARCAT at 2015:014:14:45:17.176 (VCDU count = 4638625)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   390600096   BOT  8x8   0.985   8.722  10.219   1541   1372  20   1  120          
+[ 2]  1   390602544   BOT  8x8   0.929   9.721  11.219   1329   -482  20   1  120  a2g2    
+[ 3]  2   390725760   BOT  8x8   0.985   8.246   9.750    811   -235  20   1  120          
+[ 4]  3   390725856   BOT  8x8   0.985   8.879  10.375   1084  -1264  20   1  120          
+[ 5]  4   390726232   BOT  8x8   0.959   9.550  11.047    648    552  20   1  120  a2g2    
+[ 6]  5   390730600   BOT  8x8   0.985   8.867  10.375   -698   2073  20   1  120          
+[ 7]  6   390735744   BOT  8x8   0.985   8.729  10.234    -56   -724  20   1  120          
+[ 8]  7   390606968   GUI  8x8     ---   9.775  11.281   1471    349   1   1   25    g2    
+[ 9]  7   390605312   ACQ  8x8   0.985   9.136  10.641   1938    -59  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.578	-6.565	-4.769	
+Acquisition Stars Expected  : 7.79
+Predicted Max CCD temperature: -16.1 C 	 N100 Warm Pix Frac 0.145
+Dynamic Mag Limits: Yellow 10.16 	 Red 10.47
+==================================================================================== 
+OBSID: 16148  A667                   ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   127.033293    44.794999   155.018796
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:17:51:28.621 (VCDU count = 4682221)
+  Q1,Q2,Q3,Q4: -0.47630027  -0.77120674  -0.34487454  0.24380272
+  MANVR: Angle=   1.64 deg  Duration= 297 sec  Slew err= 20.6 arcsec
+
+MP_STARCAT at 2015:014:17:51:30.264 (VCDU count = 4682227)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   390611864   BOT  6x6   0.985   8.482   9.984   2238   1235  20   1  120          
+[ 5]  4   390725856   BOT  6x6   0.985   8.879  10.375   -528   2322  15   1   95          
+[ 6]  5   390736968   BOT  6x6   0.985   8.816  10.312  -2331  -1839   5   1   45          
+[ 7]  6   447628832   BOT  6x6   0.985   8.921  10.422   1571   -828  20   1  120          
+[ 8]  7   447744512   BOT  6x6   0.983   9.277  10.781   -868  -1680  20   1  120          
+[ 9]  0   390607232   ACQ  6x6   0.985   8.297   9.797   1588   1345  20   1  120          
+[10]  1   390738960   ACQ  6x6   0.985   8.640  10.141   -910   -330  20   1  120          
+[11]  2   447630960   ACQ  6x6   0.985   9.116  10.625    706  -1593  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.471	-7.357	-5.447	
+Acquisition Stars Expected  : 7.87
+Predicted Max CCD temperature: -16.3 C 	 N100 Warm Pix Frac 0.142
+Dynamic Mag Limits: Yellow 10.17 	 Red 10.49
+==================================================================================== 
+OBSID: 16659  HIP 101364             ACIS-S SIM Z offset:0     (0.00mm) Grating: HETG 
+RA, Dec, Roll (deg):   308.142640    41.235273   347.350171
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:014:19:49:28.621 (VCDU count = 4709850)
+  Q1,Q2,Q3,Q4: -0.24576354  -0.26967116  -0.44164350  0.81965161
+  MANVR: Angle=  94.75 deg  Duration= 1923 sec  Slew err= 68.9 arcsec
+
+MP_STARCAT at 2015:014:19:49:30.264 (VCDU count = 4709856)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    922  -1737   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   413796456   BOT  6x6   0.985   8.670  10.172    942  -2083  20   1  120          
+[ 5]  4   413805792   BOT  6x6   0.985   7.286   8.781   -669  -1539  20   1  120          
+[ 6]  5   414326136   BOT  6x6   0.985   7.331   8.828    111    905  20   1  120          
+[ 7]  6   414328464   BOT  6x6   0.941   9.064  10.562   1599    728  20   1  120          
+[ 8]  7   413676272   GUI  6x6     ---   8.817  10.328  -2356  -2054   1   1   25          
+[ 9]  7   413795864   ACQ  6x6   0.985   9.086  10.594    631   -613  14   1   90          
+[10]  0   413667232   ACQ  6x6   0.982   9.213  10.719  -1865  -2028  20   1  120          
+[11]  1   413799128   ACQ  6x6   0.985   8.697  10.203   -416   -552  20   1  120          
+[12]  2   414324712   ACQ  6x6   0.963   9.399  10.906   -995   1937  20   1  120          
+
+>> WARNING: CCD temperature exceeds -14 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.640	-6.628	-4.832	
+Acquisition Stars Expected  : 7.81
+Predicted Max CCD temperature: -13.6 C 	 N100 Warm Pix Frac 0.187
+Dynamic Mag Limits: Yellow 9.95 	 Red 10.24
+==================================================================================== 
+OBSID: 15739  T Aur                  ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):    82.986804    30.469127   261.491966
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:016:11:24:22.002 (VCDU count = 5265922)
+  Q1,Q2,Q3,Q4: -0.43389973  -0.61277193  0.26812741  0.60361352
+  MANVR: Angle=  99.18 deg  Duration= 1982 sec  Slew err= 68.8 arcsec
+
+MP_STARCAT at 2015:016:11:24:23.645 (VCDU count = 5265928)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    922  -1737   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    388    803   1   1   25          
+[ 4]  3   314968536   BOT  6x6   0.985   8.964  10.469   -738  -1947  20   1  120          
+[ 5]  4   314974264   BOT  6x6   0.985   8.067   9.562  -1625   -277  20   1  120          
+[ 6]  5   315099312   BOT  6x6   0.973   9.312  10.812   -827   1908  20   1  120          
+[ 7]  6   314972600   GUI  6x6     ---   9.211  10.719  -2274   -488   1   1   25          
+[ 8]  7   315103056   GUI  6x6     ---   8.511  10.016  -2326   1781   1   1   25          
+[ 9]  6   314974544   ACQ  6x6   0.898   9.191  10.688   1592    -33  20   1  120          
+[10]  7   314970896   ACQ  6x6   0.962   8.969  10.797  -1458  -1464  20   1  120    a2    
+[11]  0   314966840   ACQ  6x6   0.965   9.381  10.891  -1768    103  20   1  120    a2    
+[12]  1   314972616   ACQ  6x6   0.924   9.585  11.094    262  -1383  20   1  120    a2    
+[13]  2   243799512   ACQ  6x6   0.794   9.880  11.391   1929   -879  20   1  120    a2    
+
+>> WARNING: CCD temperature exceeds -14 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.505	-4.786	-3.311	
+Acquisition Stars Expected  : 7.48
+Predicted Max CCD temperature: -13.5 C 	 N100 Warm Pix Frac 0.189
+Dynamic Mag Limits: Yellow 9.95 	 Red 10.23
+==================================================================================== 
+OBSID: 17578  M82                    ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   148.895821    69.711459   141.067215
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:016:13:25:14.468 (VCDU count = 5294224)
+  Q1,Q2,Q3,Q4: -0.39092172  -0.69429464  -0.40792512  0.44579397
+  MANVR: Angle=  81.99 deg  Duration= 1753 sec  Slew err= 46.4 arcsec
+
+MP_STARCAT at 2015:016:13:25:16.111 (VCDU count = 5294230)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   574491184   BOT  6x6   0.976   8.882  10.391    433     84  20   1  120          
+[ 5]  4   574491280   BOT  6x6   0.978   9.266  10.766   -311    958  20   1  120          
+[ 6]  5   574491872   BOT  6x6   0.980   9.244  10.750   1772   1151  20   1  120          
+[ 7]  6   574886496   BOT  6x6   0.985   8.480   9.984    698   -961  20   1  120          
+[ 8]  7   574489568   GUI  6x6     ---   9.788  11.297   1044   2071   1   1   25    g2    
+[ 9]  7   574490960   ACQ  6x6   0.904   9.646  11.156    574    702  20   1  120    a2    
+[10]  0   574886464   ACQ  6x6   0.810   9.849  11.359    169  -2155  20   1  120    a2    
+[11]  1   574496080   ACQ  6x6   0.800   9.866  11.375   -220   -597  20   1  120    a2    
+[12]  2   574491712   ACQ  6x6   0.792   9.879  11.391   1295   1662  20   1  120    a2    
+
+>> WARNING: CCD temperature exceeds -14 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.621	-3.983	-2.625	
+Acquisition Stars Expected  : 7.22
+Predicted Max CCD temperature: -13.4 C 	 N100 Warm Pix Frac 0.190
+Dynamic Mag Limits: Yellow 9.94 	 Red 10.23
+==================================================================================== 
+OBSID: 16991  NGC4144                ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   182.511119    46.438429    93.042337
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:016:16:45:37.646 (VCDU count = 5341144)
+  Q1,Q2,Q3,Q4: -0.25660101  -0.67263914  -0.62593335  0.29986656
+  MANVR: Angle=  33.99 deg  Duration= 1105 sec  Slew err= 34.4 arcsec
+
+MP_STARCAT at 2015:016:16:45:39.289 (VCDU count = 5341150)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   452862368   BOT  6x6   0.900   9.656  11.156    869  -2361  16   1  100  a2g2    
+[ 5]  4   452863088   BOT  6x6   0.985   8.447   9.953    522  -1266  20   1  120          
+[ 6]  5   452864680   BOT  6x6   0.972   9.322  10.828   -191    409  17   1  105          
+[ 7]  6   452865352   BOT  6x6   0.985   6.966   8.469   -418   2339   9   1   65          
+[ 8]  7   452866720   BOT  6x6   0.854   9.765  11.266  -2081    450  20   1  120  a2g2    
+[ 9]  0   452864328   ACQ  6x6   0.694  10.014  11.516    102   2047  20   1  120    a2    
+[10]  1   452857416   ACQ  6x6   0.779   9.898  11.406   1814    341  20   1  120    a2    
+[11]  2   452855280   ACQ  6x6   0.926   9.573  11.078   1512   1165  20   1  120    a3    
+
+>> WARNING: CCD temperature exceeds -14 C
+>> WARNING: [ 9] Magnitude.  10.014
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.160	-3.613	-2.360	
+Acquisition Stars Expected  : 7.09
+Predicted Max CCD temperature: -13.4 C 	 N100 Warm Pix Frac 0.190
+Dynamic Mag Limits: Yellow 9.94 	 Red 10.23
+==================================================================================== 
+OBSID: 16147  A961                   ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   154.121908    33.651838   102.366121
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:016:17:29:34.646 (VCDU count = 5351434)
+  Q1,Q2,Q3,Q4: -0.34383376  -0.68623100  -0.63526495  0.08546235
+  MANVR: Angle=  26.65 deg  Duration= 985 sec  Slew err= 31.8 arcsec
+
+MP_STARCAT at 2015:016:17:29:36.289 (VCDU count = 5351441)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   329387592   BOT  6x6   0.469  10.256  11.766   2152    564  20   1  120  a3g3    
+[ 5]  4   329388560   BOT  6x6   0.721   9.978  11.484   2098   1987  20   1  120  a2g3    
+[ 6]  5   329389024   BOT  6x6   0.965   9.376  10.875    575   1114  20   1  120          
+[ 7]  6   329392240   BOT  6x6   0.985   9.069  10.578    552    131  20   1  120          
+[ 8]  7   329390024   BOT  6x6   0.231  10.509  12.016   1364  -1892  20   1  120  a3gX    
+[ 9]  0   329389616   ACQ  6x6   0.770   9.910  11.406    989   1261  20   1  120    a2    
+[10]  1   329391288   ACQ  6x6   0.595  10.126  11.625   1236    571  20   1  120    a2    
+[11]  2   329387328   ACQ  6x6   0.367  10.359  11.859   2224   1471  20   1  120    a3    
+
+>> WARNING: CCD temperature exceeds -14 C
+>> WARNING: [ 4] Magnitude.  10.256
+>> WARNING: [ 8] Magnitude.  10.509
+>> WARNING: [11] Magnitude.  10.359
+>> WARNING: Probability of 2 or fewer stars > 0.008
+>> WARNING: [ 5] Magnitude.   9.978
+>> WARNING: [10] Magnitude.  10.126
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-2.006	-1.103	-0.529	
+Acquisition Stars Expected  : 5.10
+Predicted Max CCD temperature: -13.4 C 	 N100 Warm Pix Frac 0.191
+Dynamic Mag Limits: Yellow 9.94 	 Red 10.22
+==================================================================================== 
+OBSID: 52166  
+RA, Dec, Roll (deg):   154.121908    33.651838   102.366121
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:016:19:21:14.573 (VCDU count = 5377580)
+  Q1,Q2,Q3,Q4: -0.34383376  -0.68623100  -0.63526495  0.08546235
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2015:016:19:21:16.216 (VCDU count = 5377587)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   329387592   BOT  8x8   0.469  10.256  11.766   2152    564  20   1  120  a3g3    
+[ 2]  1   329388560   BOT  8x8   0.721   9.978  11.484   2098   1987  20   1  120  a2g3    
+[ 3]  2   329389024   BOT  8x8   0.965   9.376  10.875    575   1114  20   1  120          
+[ 4]  3   329389616   BOT  8x8   0.770   9.910  11.406    989   1261  20   1  120  a2g3    
+[ 5]  4   329391288   BOT  8x8   0.595  10.126  11.625   1236    571  20   1  120  a2g3    
+[ 6]  5   329392240   BOT  8x8   0.985   9.069  10.578    552    131  20   1  120          
+[ 7]  6   329390024   BOT  8x8   0.231  10.509  12.016   1364  -1892  20   1  120  a3gX    
+[ 8]  7   329390080   GUI  8x8     ---  10.520  12.031  -1736  -1085   1   1   25    g4    
+[ 9]  7   329387328   ACQ  8x8   0.367  10.359  11.859   2224   1471  20   1  120    a3    
+
+>> WARNING: CCD temperature exceeds -14 C
+>> WARNING: [ 1] Magnitude.  10.256
+>> WARNING: [ 7] Magnitude.  10.509
+>> WARNING: [ 8] Magnitude.  10.520
+>> WARNING: [ 9] Magnitude.  10.359
+>> WARNING: Probability of 2 or fewer stars > 0.008
+>> WARNING: [ 2] Magnitude.   9.978
+>> WARNING: [ 5] Magnitude.  10.126
+>> INFO   : Special Case ER
+>> INFO   : Only 0 star(s) brighter than 9 mag. Acceptable for Special Case ER
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-2.007	-1.104	-0.529	
+Acquisition Stars Expected  : 5.10
+Predicted Max CCD temperature: -13.4 C 	 N100 Warm Pix Frac 0.191
+Dynamic Mag Limits: Yellow 9.94 	 Red 10.22
+==================================================================================== 
+OBSID: 52165  
+RA, Dec, Roll (deg):   115.500000    -3.100000   353.970906
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:016:19:33:10.283 (VCDU count = 5380373)
+  Q1,Q2,Q3,Q4: -0.05089694  -0.03004620  0.84500757  0.53147807
+  MANVR: Angle= 126.09 deg  Duration= 2341 sec  Slew err= 47.4 arcsec
+
+MP_STARCAT at 2015:016:19:33:11.926 (VCDU count = 5380380)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   633733768   BOT  8x8   0.985   8.431   9.938  -1968   1791  20   1  120          
+[ 2]  1   633737488   BOT  8x8   0.985   7.072   8.578  -1606  -1975  20   1  120          
+[ 3]  2   633738464   BOT  8x8   0.985   8.289   9.797  -1513  -2171  20   1  120          
+[ 4]  3   633739664   BOT  8x8   0.964   9.383  10.891    582    219  20   1  120    a2    
+[ 5]  4   633746264   BOT  8x8   0.938   9.067  10.578   1606    687  20   1  120          
+[ 6]  5   633747184   BOT  8x8   0.965   9.377  10.875    760   1182  12   1   80          
+[ 7]  6   633749720   BOT  8x8   0.985   8.897  10.406    435  -2079  20   1  120          
+[ 8]  7   633749752   BOT  8x8   0.985   9.106  10.609   2120    502  20   1  120          
+
+>> WARNING: CCD temperature exceeds -14 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.401	-6.424	-4.666	
+Acquisition Stars Expected  : 7.79
+Predicted Max CCD temperature: -13.4 C 	 N100 Warm Pix Frac 0.190
+Dynamic Mag Limits: Yellow 9.94 	 Red 10.23
+==================================================================================== 
+OBSID: 52164  
+RA, Dec, Roll (deg):   122.000000   -60.000000     3.520537
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:016:22:08:59.612 (VCDU count = 5416859)
+  Q1,Q2,Q3,Q4: -0.42420646  0.26555728  0.74963934  0.43309245
+  MANVR: Angle=  57.38 deg  Duration= 1425 sec  Slew err= 54.1 arcsec
+
+MP_STARCAT at 2015:016:22:09:01.255 (VCDU count = 5416865)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0  1124348296   BOT  8x8   0.985   8.135   9.641   -144   2035  20   1  120          
+[ 2]  1  1124348552   BOT  8x8   0.985   7.114   8.625    788   1603  20   1  120          
+[ 3]  2  1169688424   BOT  8x8   0.985   7.908   9.406   -327  -1029  20   1  120          
+[ 4]  3  1169699240   BOT  8x8   0.985   6.877   8.375   1631   -384  20   1  120          
+[ 5]  4  1169704688   BOT  8x8   0.985   7.758   9.266    188  -2269   9   1   65          
+[ 6]  5  1169705520   BOT  8x8   0.985   8.090   9.594   -340  -1237  20   1  120          
+[ 7]  6  1169697264   GUI  8x8     ---   9.372  10.875  -2108  -1782   1   1   25          
+[ 8]  7  1169702696   GUI  8x8     ---   9.019  10.516  -1985  -1855   1   1   25          
+[ 9]  6  1169698696   ACQ  8x8   0.983   9.195  10.703      9  -1783  11   1   75          
+[10]  7  1124347976   ACQ  8x8   0.846   9.312  10.922  -1691   1630  20   1  120    a2    
+
+>> WARNING: CCD temperature exceeds -14 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.578	-6.534	-4.706	
+Acquisition Stars Expected  : 7.73
+Predicted Max CCD temperature: -13.5 C 	 N100 Warm Pix Frac 0.188
+Dynamic Mag Limits: Yellow 9.95 	 Red 10.24
+==================================================================================== 
+OBSID: 52163  
+RA, Dec, Roll (deg):   115.500000    -3.100000   353.469439
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:016:23:49:33.211 (VCDU count = 5440404)
+  Q1,Q2,Q3,Q4: -0.05322226  -0.03374376  0.84486799  0.53125025
+  MANVR: Angle=  57.42 deg  Duration= 1426 sec  Slew err= 54.4 arcsec
+
+MP_STARCAT at 2015:016:23:49:34.854 (VCDU count = 5440411)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   633733768   BOT  8x8   0.985   8.431   9.938  -1984   1773  20   1  120          
+[ 2]  1   633737488   BOT  8x8   0.985   7.072   8.578  -1589  -1989  20   1  120          
+[ 3]  2   633738464   BOT  8x8   0.985   8.289   9.797  -1494  -2184  19   1  115          
+[ 4]  3   633739664   BOT  8x8   0.965   9.383  10.891    580    224  20   1  120    a2    
+[ 5]  4   633746264   BOT  8x8   0.941   9.067  10.578   1600    701  20   1  120          
+[ 6]  5   633747184   BOT  8x8   0.966   9.377  10.875    750   1189  11   1   75          
+[ 7]  6   633749720   BOT  8x8   0.985   8.897  10.406    453  -2075  20   1  120          
+[ 8]  7   633749752   BOT  8x8   0.985   9.106  10.609   2115    521  20   1  120          
+
+>> WARNING: CCD temperature exceeds -14 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.443	-6.463	-4.699	
+Acquisition Stars Expected  : 7.79
+Predicted Max CCD temperature: -13.6 C 	 N100 Warm Pix Frac 0.186
+Dynamic Mag Limits: Yellow 9.96 	 Red 10.25
+==================================================================================== 
+OBSID: 52162  
+RA, Dec, Roll (deg):   319.300000   -67.100000   206.520437
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:017:02:12:17.622 (VCDU count = 5473826)
+  Q1,Q2,Q3,Q4: -0.71647088  0.40094725  0.43787805  0.36629714
+  MANVR: Angle= 107.81 deg  Duration= 2097 sec  Slew err= 75.8 arcsec
+
+MP_STARCAT at 2015:017:02:12:19.265 (VCDU count = 5473833)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0  1194595488   BOT  8x8   0.985   8.915  10.422  -1736  -2050  20   1  120    a2    
+[ 2]  1  1194597224   BOT  8x8   0.985   8.709  10.219   1084  -1214  20   1  120          
+[ 3]  2  1194598528   BOT  8x8   0.985   8.513  10.016   -717    996  20   1  120          
+[ 4]  3  1194599552   BOT  8x8   0.985   9.118  10.625  -2071   -317  20   1  120          
+[ 5]  4  1194599720   BOT  8x8   0.799   9.896  11.406    962   1019  20   1  120  a2g3    
+[ 6]  5  1221853680   BOT  8x8   0.895   9.693  11.203   -455   1871  20   1  120  a3g2    
+[ 7]  6  1221854728   BOT  8x8   0.383  10.053  11.562    -16   2232  20   1  120  a3g3   C
+[ 8]  7  1194597440   GUI  8x8     ---   8.230   9.734  -1910   -559   1   1   25          
+[ 9]  7  1194599168   ACQ  8x8   0.555  10.204  11.703   1242   -530  20   1  120    a2    
+
+>> WARNING: CCD temperature exceeds -14 C
+>> WARNING: [ 6] Search spoiler. 1221855632: Y,Z,Radial,Mag seps: 143  32 146 -0.2
+>> WARNING: [ 7] Marginal star. B-V = 1.500, Mag_Err = 0.27, Pos_Err = 0.06
+>> WARNING: [ 7] Magnitude.  10.053
+>> WARNING: [ 7] Search spoiler. 1221854176: Y,Z,Radial,Mag seps:  78 185 201 -0.5
+>> WARNING: [ 9] Magnitude.  10.204
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.056	-3.342	-1.953	
+Acquisition Stars Expected  : 6.57
+Predicted Max CCD temperature: -13.8 C 	 N100 Warm Pix Frac 0.183
+Dynamic Mag Limits: Yellow 9.97 	 Red 10.26
+==================================================================================== 
+OBSID: 52161  
+RA, Dec, Roll (deg):   289.000000    26.000000    12.061511
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:017:03:25:02.138 (VCDU count = 5490859)
+  Q1,Q2,Q3,Q4: -0.04656615  -0.24156890  -0.54344743  0.80258392
+  MANVR: Angle= 179.14 deg  Duration= 3049 sec  Slew err= 72.8 arcsec
+
+MP_STARCAT at 2015:017:03:25:03.781 (VCDU count = 5490865)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   278798440   BOT  8x8   0.985   7.401   8.906  -1853   -488  20   1  120          
+[ 2]  1   278932288   BOT  8x8   0.948   9.053  10.562    701    177  20   1  120          
+[ 3]  2   278939656   BOT  8x8   0.985   8.365   9.875   1918    251  20   1  120    a2    
+[ 4]  3   278942064   BOT  8x8   0.985   8.777  10.281   1261   -815  20   1  120          
+[ 5]  4   279464584   BOT  8x8   0.981   9.235  10.734   -213   1420  20   1  120          
+[ 6]  5   279464600   BOT  8x8   0.985   8.805  10.312    815   1635  20   1  120          
+[ 7]  6   278796016   GUI  8x8     ---   9.115  10.625  -1097   -514   1   1   25          
+[ 8]  7   278934056   GUI  8x8     ---   9.369  10.875   -569   -784   1   1   25          
+[ 9]  6   278938072   ACQ  8x8   0.985   8.924  10.422    205     -7  20   1  120          
+[10]  7   278940880   ACQ  8x8   0.948   9.051  10.766   -326    790  20   1  120    a2    
+
+>> WARNING: CCD temperature exceeds -14 C
+>> INFO   : Next obsid has no manvr; using next obs start date for checks (dither, momentum)
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.539	-6.539	-4.756	
+Acquisition Stars Expected  : 7.80
+Predicted Max CCD temperature: -13.9 C 	 N100 Warm Pix Frac 0.181
+Dynamic Mag Limits: Yellow 9.98 	 Red 10.27
+==================================================================================== 
+OBSID: 52160  
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+                                                                                             
+
+>> INFO   : No Guide Star Summary for obsid 52160 (RDX34). OK for 'RDX' ER. 
+>> INFO   : CCD temperature exceeds -15 C
+>> INFO   : No target/maneuver for obsid 52160 (RDX34). OK for 'RDX' ER. 
+>> INFO   : No star catalog for obsid 52160 (RDX34). OK for 'RDX' ER.
+==================================================================================== 
+OBSID: 52159  
+RA, Dec, Roll (deg):   319.300000   -67.100000   206.212838
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:017:07:40:17.908 (VCDU count = 5550628)
+  Q1,Q2,Q3,Q4: -0.71745155  0.39977041  0.43895274  0.36437259
+  MANVR: Angle= 178.94 deg  Duration= 3046 sec  Slew err= 72.8 arcsec
+
+MP_STARCAT at 2015:017:07:40:19.551 (VCDU count = 5550634)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0  1194595488   BOT  8x8   0.985   8.915  10.422  -1725  -2059  20   1  120    a2    
+[ 2]  1  1194597224   BOT  8x8   0.985   8.709  10.219   1091  -1208  20   1  120          
+[ 3]  2  1194598528   BOT  8x8   0.985   8.513  10.016   -722    992  20   1  120          
+[ 4]  3  1194599552   BOT  8x8   0.985   9.118  10.625  -2070   -328  20   1  120          
+[ 5]  4  1194599720   BOT  8x8   0.817   9.896  11.406    957   1024  20   1  120  a2g3    
+[ 6]  5  1221853680   BOT  8x8   0.904   9.693  11.203   -465   1869  20   1  120  a3g2    
+[ 7]  6  1221854728   BOT  8x8   0.408  10.053  11.562    -28   2232  20   1  120  a3g3   C
+[ 8]  7  1194597440   GUI  8x8     ---   8.230   9.734  -1907   -570   1   1   25          
+[ 9]  7  1194599168   ACQ  8x8   0.590  10.204  11.703   1245   -523  20   1  120    a2    
+
+>> WARNING: [ 6] Search spoiler. 1221855632: Y,Z,Radial,Mag seps: 143  32 146 -0.2
+>> WARNING: [ 7] Marginal star. B-V = 1.500, Mag_Err = 0.27, Pos_Err = 0.06
+>> WARNING: [ 7] Magnitude.  10.053
+>> WARNING: [ 7] Search spoiler. 1221854176: Y,Z,Radial,Mag seps:  77 185 201 -0.5
+>> WARNING: [ 9] Magnitude.  10.204
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.184	-3.463	-2.062	
+Acquisition Stars Expected  : 6.65
+Predicted Max CCD temperature: -14.3 C 	 N100 Warm Pix Frac 0.175
+Dynamic Mag Limits: Yellow 10.00 	 Red 10.30
+==================================================================================== 
+OBSID: 17585  Abell 3411             ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   130.487631   -17.509852    19.998156
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:017:09:36:34.188 (VCDU count = 5577852)
+  Q1,Q2,Q3,Q4: -0.06425792  0.21860829  0.87281736  0.43159146
+  MANVR: Angle=  95.27 deg  Duration= 1930 sec  Slew err= 64.4 arcsec
+
+MP_STARCAT at 2015:017:09:36:35.831 (VCDU count = 5577858)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   788403264   BOT  6x6   0.976   9.312  10.812  -1850    -81  20   1  120          
+[ 5]  4   788416008   BOT  6x6   0.985   8.667  10.172  -2105   1558  20   1  120          
+[ 6]  5   788546808   BOT  6x6   0.980   8.877  10.375   1897   -159  20   1  120          
+[ 7]  6   788548808   BOT  6x6   0.985   8.530  10.031   1597    488  20   1  120          
+[ 8]  7   788552320   BOT  6x6   0.985   8.426   9.938   2123   1097  20   1  120          
+[ 9]  0   788543784   ACQ  6x6   0.962   9.436  10.938   1564  -1249  20   1  120    a2    
+[10]  1   788535776   ACQ  6x6   0.795   9.459  10.969  -1707  -2145  20   1  120    a2    
+[11]  2   788537720   ACQ  6x6   0.933   9.596  11.094    301   -962  20   1  120    a2    
+
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.415	-5.540	-3.897	
+Acquisition Stars Expected  : 7.60
+Predicted Max CCD temperature: -14.4 C 	 N100 Warm Pix Frac 0.174
+Dynamic Mag Limits: Yellow 10.01 	 Red 10.31
+==================================================================================== 
+OBSID: 16239  MACSJ1149.5+2223       ACIS-I SIM Z offset:-3082 (-7.75mm) Grating: NONE 
+RA, Dec, Roll (deg):   177.414277    22.433308    79.968981
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:017:17:05:01.283 (VCDU count = 5682855)
+  Q1,Q2,Q3,Q4: -0.16322791  -0.62678277  -0.75421150  0.10800475
+  MANVR: Angle=  84.84 deg  Duration= 1791 sec  Slew err= 52.1 arcsec
+
+MP_STARCAT at 2015:017:17:05:02.926 (VCDU count = 5682862)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919  -1003   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828    894   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1538   1   1   25          
+[ 4]  3   189143696   BOT  6x6   0.925   9.634  11.141    450  -2038  20   1  120  a2g2    
+[ 5]  4   189148592   BOT  6x6   0.967   9.402  10.906  -1210   -281  20   1  120          
+[ 6]  5   260189672   BOT  6x6   0.985   9.097  10.594   1409  -2186  20   1  120          
+[ 7]  6   189148400   GUI  6x6     ---   9.624  11.125   -369   2382   1   1   25    g2    
+[ 8]  7   260186640   GUI  6x6     ---   9.804  11.312   1661   2030   1   1   25    g2    
+[ 9]  6   189142952   ACQ  6x6   0.893   9.739  11.250    196    191  20   1  120    a2    
+[10]  7   189148240   ACQ  6x6   0.653  10.149  11.656  -1111   -502  20   1  120    a2    
+[11]  0   189147384   ACQ  6x6   0.836   9.875  11.375   -851  -1760  20   1  120    a2    
+[12]  1   260187360   ACQ  6x6   0.742  10.032  11.531   1220   1602  20   1  120    a2    
+[13]  2   260186264   ACQ  6x6   0.758  10.009  11.516   1954   -660  20   1  120    a2    
+
+>> WARNING: [10] Bad Acquisition Star. 189148240 has  2 failed out of  4 attempts
+>> WARNING: [10] Magnitude.  10.149
+>> WARNING: [10] Search spoiler.  189142728: Y,Z,Radial,Mag seps:  62 160 172 -0.5
+>> WARNING: [12] Magnitude.  10.032
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.099	-2.794	-1.767	
+Acquisition Stars Expected  : 6.75
+Predicted Max CCD temperature: -14.5 C 	 N100 Warm Pix Frac 0.172
+Dynamic Mag Limits: Yellow 10.02 	 Red 10.32
+==================================================================================== 
+OBSID: 15702  SDSS J101548.90+0946   ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   153.956096     9.755932    67.598131
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:018:08:06:02.514 (VCDU count = 5893826)
+  Q1,Q2,Q3,Q4: 0.19373524  0.52409162  0.81734961  0.14047859
+  MANVR: Angle=  31.94 deg  Duration= 1073 sec  Slew err= 35.4 arcsec
+
+MP_STARCAT at 2015:018:08:06:04.157 (VCDU count = 5893832)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   109709776   BOT  6x6   0.873   9.789  11.297   1062  -2283  20   1  120  a2g2    
+[ 5]  4   109712112   BOT  6x6   0.979   9.275  10.781  -1559   1540  20   1  120          
+[ 6]  5   110107200   BOT  6x6   0.972   9.362  10.859   2209  -1829  19   1  115          
+[ 7]  6   109710800   GUI  6x6     ---   9.403  10.906   -946   2299   1   1   25    g2    
+[ 8]  7   110102976   GUI  6x6     ---   9.569  11.078   1957   2356   1   1   25    g2    
+[ 9]  6   109712360   ACQ  6x6   0.985   8.067   9.578  -2106    -36  20   1  120          
+[10]  7   110107040   ACQ  6x6   0.908   9.692  11.203   2218   1348  20   1  120    a2    
+[11]  0   109708408   ACQ  6x6   0.889   9.748  11.250  -1877    885  20   1  120    a2    
+[12]  1   110102160   ACQ  6x6   0.859   9.822  11.328    778   1941  20   1  120    a2    
+[13]  2   109707584   ACQ  6x6   0.791   9.952  11.453   -813    657  20   1  120    a2    
+
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.363	-3.832	-2.574	
+Acquisition Stars Expected  : 7.25
+Predicted Max CCD temperature: -14.4 C 	 N100 Warm Pix Frac 0.173
+Dynamic Mag Limits: Yellow 10.02 	 Red 10.31
+==================================================================================== 
+OBSID: 16360  Crab                   ACIS-S SIM Z offset:1472  (3.70mm) Grating: NONE 
+RA, Dec, Roll (deg):    83.614766    22.033666   270.006340
+Dither: ON  Y_amp= 1.0  Z_amp= 1.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:018:13:01:39.514 (VCDU count = 5963044)
+  Q1,Q2,Q3,Q4: -0.42724444  -0.56339231  0.36199997  0.60745972
+  MANVR: Angle= 179.64 deg  Duration= 3055 sec  Slew err= 47.9 arcsec
+
+MP_STARCAT at 2015:018:13:01:41.157 (VCDU count = 5963050)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1665   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    242   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    388    879   1   1   25          
+[ 4]  3   171585880   BOT  6x6   0.985   8.580  10.078   -513    205  20   1  120          
+[ 5]  4   171586032   BOT  6x6   0.985   9.003  10.500   -179   1119  20   1  120          
+[ 6]  5   171721904   BOT  6x6   0.982   9.234  10.734   -304   2194  20   1  120          
+[ 7]  6   243941560   BOT  6x6   0.985   8.333   9.844  -1925    394  20   1  120          
+[ 8]  7   171597832   GUI  6x6     ---   9.329  10.828   2399  -1447   1   1   25    g2    
+[ 9]  7   171594024   ACQ  6x6   0.798   9.943  11.453    914  -2082  20   1  120    a2    
+[10]  0   171584504   ACQ  6x6   0.779   9.494  11.000    797    271  20   1  120    a2    
+[11]  1   171586976   ACQ  6x6   0.985   8.424   9.922  -1455    809  20   1  120    a2    
+[12]  2   171721440   ACQ  6x6   0.841   9.376  10.875     21   1295  20   1  120    a2    
+
+>> WARNING: Non-standard dither
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.545	-4.699	-3.119	
+Acquisition Stars Expected  : 7.34
+Predicted Max CCD temperature: -14.5 C 	 N100 Warm Pix Frac 0.172
+Dynamic Mag Limits: Yellow 10.02 	 Red 10.32
+==================================================================================== 
+OBSID: 16601  GRB 130427A            ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   173.147275    27.675139    86.181511
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:018:16:43:44.664 (VCDU count = 6015044)
+  Q1,Q2,Q3,Q4: -0.21399151  -0.65170479  -0.71757591  0.12071993
+  MANVR: Angle= 148.41 deg  Duration= 2639 sec  Slew err= 53.5 arcsec
+
+MP_STARCAT at 2015:018:16:43:46.307 (VCDU count = 6015051)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   260050336   BOT  6x6   0.918   9.667  11.172  -1559  -1939  20   1  120  a2g2    
+[ 5]  4   260054584   BOT  6x6   0.949   9.532  11.031    410  -1882  20   1  120  a2g2    
+[ 6]  5   260055088   BOT  6x6   0.985   8.279   9.781  -1414  -1209  20   1  120          
+[ 7]  6   260055768   BOT  6x6   0.985   9.023  10.531   -570   1069  20   1  120          
+[ 8]  7   260053392   GUI  6x6     ---  10.299  11.797   2325   2138   1   1   25    g3    
+[ 9]  7   260052040   ACQ  6x6   0.774   9.993  11.500    192   1548  20   1  120    a2    
+[10]  0   260060760   ACQ  6x6   0.593  10.228  11.734   2267   1460  20   1  120    a2    
+[11]  1   260058880   ACQ  6x6   0.674  10.133  11.641    192   2259  20   1  120    a3    
+[12]  2   260060672   ACQ  6x6   0.599  10.221  11.719   1193   2074  20   1  120    a3    
+
+>> WARNING: [ 8] Magnitude.  10.299
+>> WARNING: [10] Magnitude.  10.228
+>> WARNING: [11] Magnitude.  10.133
+>> WARNING: [12] Magnitude.  10.221
+>> WARNING: [12] Search spoiler.  260059992: Y,Z,Radial,Mag seps: 167  42 172 -0.3
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.947	-2.564	-1.519	
+Acquisition Stars Expected  : 6.47
+Predicted Max CCD temperature: -14.6 C 	 N100 Warm Pix Frac 0.170
+Dynamic Mag Limits: Yellow 10.03 	 Red 10.33
+==================================================================================== 
+OBSID: 52158  
+RA, Dec, Roll (deg):   173.147275    27.675139    86.181511
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:019:11:35:08.576 (VCDU count = 6279957)
+  Q1,Q2,Q3,Q4: -0.21399151  -0.65170479  -0.71757591  0.12071993
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2015:019:11:35:10.219 (VCDU count = 6279963)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   260050336   BOT  8x8   0.918   9.667  11.172  -1559  -1939  20   1  120  a2g2    
+[ 2]  1   260052040   BOT  8x8   0.774   9.993  11.500    192   1548  20   1  120  a2g3    
+[ 3]  2   260054584   BOT  8x8   0.949   9.532  11.031    410  -1882  20   1  120  a2g2    
+[ 4]  3   260055088   BOT  8x8   0.985   8.279   9.781  -1414  -1209  20   1  120          
+[ 5]  4   260055768   BOT  8x8   0.985   9.023  10.531   -570   1069  20   1  120          
+[ 6]  5   260060672   BOT  8x8   0.599  10.221  11.719   1193   2074  20   1  120  a3g3    
+[ 7]  6   260060760   BOT  8x8   0.593  10.228  11.734   2267   1460  20   1  120  a2g3    
+[ 8]  7   260053392   GUI  8x8     ---  10.299  11.797   2325   2138   1   1   25    g3    
+[ 9]  7   260058880   ACQ  8x8   0.673  10.133  11.641    192   2259  20   1  120    a3    
+
+>> WARNING: [ 6] Magnitude.  10.221
+>> WARNING: [ 7] Magnitude.  10.228
+>> WARNING: [ 8] Magnitude.  10.299
+>> WARNING: [ 9] Magnitude.  10.133
+>> INFO   : CCD temperature exceeds -15 C
+>> INFO   : Special Case ER
+>> INFO   : Only 1 star(s) brighter than 9 mag. Acceptable for Special Case ER
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.945	-2.563	-1.518	
+Acquisition Stars Expected  : 6.47
+Predicted Max CCD temperature: -14.6 C 	 N100 Warm Pix Frac 0.170
+Dynamic Mag Limits: Yellow 10.03 	 Red 10.33
+==================================================================================== 
+OBSID: 52157  
+RA, Dec, Roll (deg):   147.000000    19.000000    82.343241
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:019:11:46:41.870 (VCDU count = 6282662)
+  Q1,Q2,Q3,Q4: 0.30352979  0.58726488  0.74270402  0.10667880
+  MANVR: Angle=  29.18 deg  Duration= 1028 sec  Slew err= 32.4 arcsec
+
+MP_STARCAT at 2015:019:11:46:43.513 (VCDU count = 6282669)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   185209200   BOT  8x8   0.985   8.827  10.328  -1244   1099  11   1   75          
+[ 2]  1   185336088   BOT  8x8   0.985   8.759  10.266   -640   -471  20   1  120          
+[ 3]  2   185336200   BOT  8x8   0.985   9.145  10.656   1188   -313  20   1  120          
+[ 4]  3   185337184   BOT  8x8   0.985   8.598  10.094   1485  -2272  20   1  120          
+[ 5]  4   185337192   BOT  8x8   0.985   8.303   9.812  -1070  -1461  20   1  120          
+[ 6]  5   185340864   BOT  8x8   0.985   8.706  10.203  -1064  -1233  20   1  120          
+[ 7]  6   185339376   GUI  8x8     ---   8.593  10.094   2388  -1380   1   1   25          
+[ 8]  7   185210920   GUI  8x8     ---   6.371   7.875  -1368   1651   1   1   25    g2    
+[ 9]  6   185208224   ACQ  8x8   0.686  10.116  11.625   -929   1300  20   1  120    a2    
+[10]  7   185342544   ACQ  8x8   0.796   9.955  11.453   -743   -172  20   1  120    a2    
+
+>> WARNING: [ 9] Magnitude.  10.116
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.308	-5.350	-3.632	
+Acquisition Stars Expected  : 7.39
+Predicted Max CCD temperature: -14.6 C 	 N100 Warm Pix Frac 0.170
+Dynamic Mag Limits: Yellow 10.03 	 Red 10.33
+==================================================================================== 
+OBSID: 52156  
+RA, Dec, Roll (deg):   116.000000    -4.000000   348.707062
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:019:12:11:39.275 (VCDU count = 6288506)
+  Q1,Q2,Q3,Q4: -0.08155986  -0.06498447  0.84523882  0.52411482
+  MANVR: Angle= 103.26 deg  Duration= 2037 sec  Slew err= 38.6 arcsec
+
+MP_STARCAT at 2015:019:12:11:40.918 (VCDU count = 6288512)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   633742560   BOT  8x8   0.947   9.543  11.047  -1218   2181  20   1  120  a2g2    
+[ 2]  1   633749720   BOT  8x8   0.985   8.897  10.406  -1771    794  20   1  120          
+[ 3]  2   634262896   BOT  8x8   0.985   8.292   9.797    580  -1758  20   1  120          
+[ 4]  3   634268528   BOT  8x8   0.985   7.379   8.875   -576   -596  20   1  120          
+[ 5]  4   634261840   GUI  8x8     ---   8.802  10.312  -1602  -2452   1   1   25          
+[ 6]  5   634272728   GUI  8x8     ---   9.808  11.312    822  -2372   1   1   25    g2    
+[ 7]  6   634405528   GUI  8x8     ---   9.833  11.344   2154   -646   1   1   25    g2    
+[ 8]  7   634392248   GUI  8x8     ---   9.853  11.359   2064    131   1   1   25    g2    
+[ 9]  4   634258656   ACQ  8x8   0.971   9.369  10.875   -686  -2245  20   1  120    a2    
+[10]  5   634268480   ACQ  8x8   0.841   9.381  10.891  -2194  -2244  20   1  120    a2    
+[11]  6   634259408   ACQ  8x8   0.781   9.498  11.000   -480  -2265  20   1  120    a2    
+[12]  7   634269792   ACQ  8x8   0.887   9.764  11.266  -2172  -1348  20   1  120    a2    
+
+>> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  29,  19,  35
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.243	-4.512	-3.050	
+Acquisition Stars Expected  : 7.38
+Predicted Max CCD temperature: -14.6 C 	 N100 Warm Pix Frac 0.170
+Dynamic Mag Limits: Yellow 10.03 	 Red 10.33
+==================================================================================== 
+OBSID: 52155  
+RA, Dec, Roll (deg):   140.900000   -60.600000    18.691767
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:019:13:18:49.643 (VCDU count = 6304234)
+  Q1,Q2,Q3,Q4: -0.42221202  0.29871586  0.77540369  0.36229127
+  MANVR: Angle=  61.30 deg  Duration= 1477 sec  Slew err= 53.9 arcsec
+
+MP_STARCAT at 2015:019:13:18:51.286 (VCDU count = 6304241)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0  1171797864   BOT  8x8   0.985   8.745  10.250  -1341    632  15   1   95          
+[ 2]  1  1171797984   BOT  8x8   0.985   8.647  10.156   -939    474  20   1  120          
+[ 3]  2  1171801160   BOT  8x8   0.984   9.212  10.719    793    985  20   1  120          
+[ 4]  3  1171801752   BOT  8x8   0.985   8.198   9.703  -1301    862  20   1  120          
+[ 5]  4  1171802616   BOT  8x8   0.985   9.043  10.547  -1384   -508  19   1  115          
+[ 6]  5  1171804240   BOT  8x8   0.985   7.698   9.203   -981   1146  20   1  120          
+[ 7]  6  1171924912   BOT  8x8   0.985   8.517  10.016   2226   -935  20   1  120          
+[ 8]  7  1171917904   GUI  8x8     ---   8.830  10.328    967  -1101   1   1   25          
+[ 9]  7  1171801512   ACQ  8x8   0.985   8.741  10.250      6   1238  20   1  120          
+
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.485	-7.369	-5.457	
+Acquisition Stars Expected  : 7.87
+Predicted Max CCD temperature: -14.6 C 	 N100 Warm Pix Frac 0.170
+Dynamic Mag Limits: Yellow 10.03 	 Red 10.33
+==================================================================================== 
+OBSID: 52154  
+RA, Dec, Roll (deg):   319.100000   -67.100000   202.778655
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:019:15:41:54.917 (VCDU count = 6337738)
+  Q1,Q2,Q3,Q4: -0.72737203  0.38770803  0.45013569  0.34349712
+  MANVR: Angle=  52.62 deg  Duration= 1362 sec  Slew err= 50.0 arcsec
+
+MP_STARCAT at 2015:019:15:41:56.560 (VCDU count = 6337744)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0  1194595488   BOT  8x8   0.985   8.915  10.422  -1864  -2045  20   1  120    a2    
+[ 2]  1  1194597224   BOT  8x8   0.985   8.709  10.219    899  -1035  20   1  120          
+[ 3]  2  1194597440   BOT  8x8   0.985   8.230   9.734  -2129   -568  15   1   95          
+[ 4]  3  1194598528   BOT  8x8   0.985   8.513  10.016  -1036   1058  20   1  120          
+[ 5]  4  1221724608   BOT  8x8   0.880   9.291  10.797   2297   1528  19   1  115  a2g2    
+[ 6]  5  1221853680   BOT  8x8   0.910   9.693  11.203   -828   1948  12   1   80  a2g2    
+[ 7]  6  1194599552   GUI  8x8     ---   9.118  10.625  -2306   -336   1   1   25          
+[ 8]  7  1221854728   GUI  8x8     ---  10.053  11.562   -413   2336   1   1   25    g3   C
+[ 9]  6  1194599168   ACQ  8x8   0.609  10.204  11.703   1015   -343  20   1  120    a2    
+[10]  7  1194599720   ACQ  8x8   0.827   9.896  11.406    639   1186  20   1  120    a2    
+
+>> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.27, Pos_Err = 0.06
+>> WARNING: [ 8] Magnitude.  10.053
+>> WARNING: [ 9] Magnitude.  10.204
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.915	-4.166	-2.709	
+Acquisition Stars Expected  : 7.16
+Predicted Max CCD temperature: -14.5 C 	 N100 Warm Pix Frac 0.171
+Dynamic Mag Limits: Yellow 10.02 	 Red 10.32
+==================================================================================== 
+OBSID: 52153  
+RA, Dec, Roll (deg):   289.000000    26.000000    15.697782
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:019:18:55:45.990 (VCDU count = 6383127)
+  Q1,Q2,Q3,Q4: -0.02107903  -0.25868932  -0.53550955  0.80365729
+  MANVR: Angle= 174.27 deg  Duration= 2984 sec  Slew err= 72.7 arcsec
+
+MP_STARCAT at 2015:019:18:55:47.633 (VCDU count = 6383134)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   278798440   BOT  8x8   0.985   7.401   8.906  -1880   -369  20   1  120          
+[ 2]  1   278932288   BOT  8x8   0.953   9.053  10.562    711    132  20   1  120          
+[ 3]  2   278939656   BOT  8x8   0.985   8.365   9.875   1930    129  20   1  120    a2    
+[ 4]  3   278942064   BOT  8x8   0.985   8.777  10.281   1207   -893  20   1  120          
+[ 5]  4   279464584   BOT  8x8   0.982   9.235  10.734   -122   1430  20   1  120          
+[ 6]  5   279464600   BOT  8x8   0.985   8.805  10.312    917   1580  20   1  120          
+[ 7]  6   278796016   GUI  8x8     ---   9.115  10.625  -1127   -444   1   1   25          
+[ 8]  7   278934056   GUI  8x8     ---   9.369  10.875   -618   -746   1   1   25          
+[ 9]  6   278938072   ACQ  8x8   0.985   8.924  10.422    204    -20  20   1  120          
+[10]  7   278940880   ACQ  8x8   0.953   9.051  10.766   -275    809  20   1  120    a2    
+
+>> INFO   : Next obsid has no manvr; using next obs start date for checks (dither, momentum)
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.635	-6.625	-4.830	
+Acquisition Stars Expected  : 7.81
+Predicted Max CCD temperature: -14.5 C 	 N100 Warm Pix Frac 0.171
+Dynamic Mag Limits: Yellow 10.02 	 Red 10.32
+==================================================================================== 
+OBSID: 52152  
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+                                                                                             
+
+>> INFO   : No Guide Star Summary for obsid 52152 (RDX35). OK for 'RDX' ER. 
+>> INFO   : CCD temperature exceeds -15 C
+>> INFO   : No target/maneuver for obsid 52152 (RDX35). OK for 'RDX' ER. 
+>> INFO   : No star catalog for obsid 52152 (RDX35). OK for 'RDX' ER.
+==================================================================================== 
+OBSID: 16023  M82                    ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   148.994316    69.687452   140.974850
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:020:00:11:42.410 (VCDU count = 6457104)
+  Q1,Q2,Q3,Q4: -0.39065911  -0.69442576  -0.40809677  0.44566282
+  MANVR: Angle=  80.26 deg  Duration= 1730 sec  Slew err= 66.7 arcsec
+
+MP_STARCAT at 2015:020:00:11:44.053 (VCDU count = 6457110)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
+[ 4]  3   574491184   BOT  6x6   0.980   8.882  10.391    583     94  20   1  120          
+[ 5]  4   574491280   BOT  6x6   0.981   9.266  10.766   -161    968  20   1  120          
+[ 6]  5   574491872   BOT  6x6   0.982   9.244  10.750   1922   1161  20   1  120          
+[ 7]  6   574886496   BOT  6x6   0.985   8.480   9.984    848   -951  20   1  120          
+[ 8]  7   574489568   GUI  6x6     ---   9.788  11.297   1194   2081   1   1   25    g2    
+[ 9]  7   574490960   ACQ  6x6   0.924   9.646  11.156    724    712  20   1  120    a2    
+[10]  0   574496080   ACQ  6x6   0.845   9.866  11.375    -70   -587  20   1  120    a2    
+[11]  1   574886464   ACQ  6x6   0.853   9.849  11.359    319  -2145  20   1  120    a2    
+[12]  2   574886288   ACQ  6x6   0.820   9.914  11.422    119  -2009  20   1  120    a2    
+
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.090	-4.389	-2.958	
+Acquisition Stars Expected  : 7.36
+Predicted Max CCD temperature: -14.6 C 	 N100 Warm Pix Frac 0.170
+Dynamic Mag Limits: Yellow 10.03 	 Red 10.33
+==================================================================================== 
+OBSID: 16272  J235535.83-011444.1    ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   358.881204    -1.237477   299.999613
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:020:03:39:44.870 (VCDU count = 6505816)
+  Q1,Q2,Q3,Q4: -0.49985864  0.01423292  -0.00305548  0.86598466
+  MANVR: Angle= 110.14 deg  Duration= 2129 sec  Slew err= 66.6 arcsec
+
+MP_STARCAT at 2015:020:03:39:46.513 (VCDU count = 6505822)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -774   -850   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140   1055   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
+[ 4]  3   688524616   BOT  6x6   0.980   8.881  10.391    941   -783  20   1  120          
+[ 5]  4   688526336   BOT  6x6   0.942   9.567  11.078  -1944  -1768  20   1  120  a3g2    
+[ 6]  5   688526568   BOT  6x6   0.985   8.715  10.219   -529   1280  20   1  120          
+[ 7]  6   688530528   BOT  6x6   0.985   6.816   8.312   1814  -1961  20   1  120          
+[ 8]  7   688522368   GUI  6x6     ---   9.695  11.203  -1679   2331   1   1   25    g2    
+[ 9]  7   688528336   ACQ  6x6   0.734  10.051  11.562   -619  -1406  20   1  120    a2    
+[10]  0   688522200   ACQ  6x6   0.795   9.956  11.453  -1962   1480  20   1  120    a2    
+[11]  1   688523168   ACQ  6x6   0.868   9.811  11.312   -560    167  20   1  120    a3    
+[12]  2   688524992   ACQ  6x6   0.515  10.311  11.812    862   2026  20   1  120    a3    
+
+>> WARNING: [ 9] Magnitude.  10.051
+>> WARNING: [12] Magnitude.  10.311
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.813	-3.252	-2.017	
+Acquisition Stars Expected  : 6.80
+Predicted Max CCD temperature: -14.6 C 	 N100 Warm Pix Frac 0.170
+Dynamic Mag Limits: Yellow 10.03 	 Red 10.33
+==================================================================================== 
+OBSID: 17490  ZwCl 2341.1+0000       ACIS-I SIM Z offset:-1591 (-4.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   355.902966     0.300141   294.680507
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:020:06:49:43.404 (VCDU count = 6550298)
+  Q1,Q2,Q3,Q4: -0.53938107  0.01708640  -0.03150644  0.84129867
+  MANVR: Angle=   6.27 deg  Duration= 512 sec  Slew err= 22.1 arcsec
+
+MP_STARCAT at 2015:020:06:49:45.047 (VCDU count = 6550304)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -926   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828    971   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1615   1   1   25          
+[ 4]  3    76813936   BOT  6x6   0.985   7.143   8.641  -1484  -2232  20   1  120          
+[ 5]  4    76816080   BOT  6x6   0.985   8.404   9.906  -2115    608  20   1  120          
+[ 6]  5    76816336   BOT  6x6   0.985   8.601  10.109    -53   -637  20   1  120          
+[ 7]  6   688397848   BOT  6x6   0.985   8.529  10.031   1372   -942  20   1  120          
+[ 8]  7    76815856   GUI  6x6     ---   9.024  10.531  -1505  -2468   1   1   25          
+[ 9]  7    76816448   ACQ  6x6   0.978   9.280  10.781   -804  -1898  20   1  120          
+[10]  0    76809416   ACQ  6x6   0.708  10.034  11.531  -2107  -1365  20   1  120    a2    
+[11]  1    76816024   ACQ  6x6   0.896   9.695  11.203  -1827    -65  20   1  120    a2    
+[12]  2   688393808   ACQ  6x6   0.783   9.928  11.438   1654   -983  20   1  120    a2    
+
+>> WARNING: CCD temperature exceeds -14 C
+>> WARNING: [10] Magnitude.  10.034
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.503	-4.670	-3.101	
+Acquisition Stars Expected  : 7.30
+Predicted Max CCD temperature: -13.9 C 	 N100 Warm Pix Frac 0.182
+Dynamic Mag Limits: Yellow 9.98 	 Red 10.27
+==================================================================================== 
+OBSID: 17582  CXOU J164043.5-46313   ACIS-I SIM Z offset:-3141 (-7.90mm) Grating: NONE 
+RA, Dec, Roll (deg):   250.194051   -46.512009   101.509287
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:021:16:37:43.404 (VCDU count = 7025146)
+  Q1,Q2,Q3,Q4: 0.61347291  -0.43852981  -0.65137191  0.08400730
+  MANVR: Angle= 151.38 deg  Duration= 2678 sec  Slew err= 54.7 arcsec
+
+MP_STARCAT at 2015:021:16:37:45.047 (VCDU count = 7025153)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -774  -1012   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    893   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1828    891   1   1   25          
+[ 4]  3  1091334688   BOT  6x6   0.985   6.242   7.750   1268  -1713  20   1  120  a2g2    
+[ 5]  4  1091706496   BOT  6x6   0.820   9.382  10.891  -2277   2078   9   1   65  a2g3    
+[ 6]  5  1091838488   BOT  6x6   0.955   9.462  10.969  -1776  -1983  20   1  120  a2g3    
+[ 7]  6  1091193912   GUI  6x6     ---   9.305  10.812   2383   -522   1   1   25          
+[ 8]  7  1091704704   GUI  6x6     ---  10.315  11.812  -1509   2151   1   1   25    g3    
+[ 9]  6  1091194800   ACQ  6x6   0.558  10.206  11.703   -196    413  13   1   85    a2    
+[10]  7  1091194928   ACQ  6x6   0.785   9.922  11.422   1022    111  20   1  120    a2    
+[11]  0  1091332544   ACQ  6x6   0.671  10.079  11.578    995  -1142  20   1  120    a2    
+[12]  1  1091336128   ACQ  6x6   0.809   9.883  11.391    643  -2059  20   1  120    a2    
+[13]  2  1091324080   ACQ  6x6   0.835   9.354  11.406   1919  -2360  12   1   80    a2    
+
+>> WARNING: CCD temperature exceeds -14 C
+>> WARNING: [ 8] Magnitude.  10.315
+>> WARNING: [ 6] Search spoiler. 1091832568: Y,Z,Radial,Mag seps:  38  28  47 -0.7
+>> WARNING: [ 9] Magnitude.  10.206
+>> WARNING: [11] Magnitude.  10.079
+>> WARNING: [12] Search spoiler. 1091335088: Y,Z,Radial,Mag seps: 138  95 168 -0.9
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.381	-2.238	-1.367	
+Acquisition Stars Expected  : 6.41
+Predicted Max CCD temperature: -13.9 C 	 N100 Warm Pix Frac 0.182
+Dynamic Mag Limits: Yellow 9.98 	 Red 10.27
+==================================================================================== 
+OBSID: 17193  Abell 3411             ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   130.480309   -17.515918     7.495953
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:021:20:13:31.768 (VCDU count = 7075677)
+  Q1,Q2,Q3,Q4: -0.11090993  0.12229939  0.89139548  0.42208524
+  MANVR: Angle=  96.35 deg  Duration= 1945 sec  Slew err= 70.0 arcsec
+
+MP_STARCAT at 2015:021:20:13:33.411 (VCDU count = 7075683)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   788403264   BOT  6x6   0.975   9.312  10.812  -1761   -461  17   1  105          
+[ 5]  4   788546808   BOT  6x6   0.978   8.877  10.375   1914    273  20   1  120          
+[ 6]  5   788552496   BOT  6x6   0.985   8.862  10.359   2164   1781  20   1  120          
+[ 7]  6   788416008   GUI  6x6     ---   8.667  10.172  -2365   1084   1   1   25          
+[ 8]  7   788552320   GUI  6x6     ---   8.426   9.938   1863   1549   1   1   25          
+[ 9]  6   788548808   ACQ  6x6   0.985   8.530  10.031   1481    840  20   1  120          
+[10]  7   788418168   ACQ  6x6   0.985   6.316   7.812  -1628    983  20   1  120    a2    
+[11]  0   788543784   ACQ  6x6   0.959   9.436  10.938   1825   -862  20   1  120    a2    
+[12]  1   788537720   ACQ  6x6   0.927   9.596  11.094    530   -855  20   1  120    a2    
+[13]  2   788537912   ACQ  6x6   0.916   9.634  11.141  -1180  -1152  20   1  120    a2    
+
+>> WARNING: CCD temperature exceeds -14 C
+>> WARNING: [10] Bad AGASC ID.  788418168
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.676	-5.799	-4.150	
+Acquisition Stars Expected  : 7.71
+Predicted Max CCD temperature: -13.9 C 	 N100 Warm Pix Frac 0.182
+Dynamic Mag Limits: Yellow 9.98 	 Red 10.27
+==================================================================================== 
+OBSID: 52151  
+RA, Dec, Roll (deg):   130.480309   -17.515918     7.495953
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:022:03:00:14.899 (VCDU count = 7170908)
+  Q1,Q2,Q3,Q4: -0.11090993  0.12229939  0.89139548  0.42208524
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2015:022:03:00:16.542 (VCDU count = 7170915)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   788403264   BOT  8x8   0.975   9.312  10.812  -1761   -461  20   1  120          
+[ 2]  1   788418168   BOT  8x8   0.985   6.316   7.812  -1628    983  20   1  120  a2g2    
+[ 3]  2   788546808   BOT  8x8   0.979   8.877  10.375   1914    273  20   1  120          
+[ 4]  3   788548808   BOT  8x8   0.985   8.530  10.031   1481    840  20   1  120          
+[ 5]  4   788552320   BOT  8x8   0.985   8.426   9.938   1863   1549   3   1   35          
+[ 6]  5   788552496   BOT  8x8   0.985   8.862  10.359   2164   1781  20   1  120          
+[ 7]  6   788416008   GUI  8x8     ---   8.667  10.172  -2365   1084   1   1   25          
+[ 8]  7   788535776   GUI  8x8     ---   9.459  10.969  -1175  -2445   1   1   25    g2    
+[ 9]  6   788543784   ACQ  8x8   0.961   9.436  10.938   1825   -862  20   1  120    a2    
+[10]  7   788537720   ACQ  8x8   0.929   9.596  11.094    530   -855  20   1  120    a2    
+
+>> WARNING: [ 2] Bad AGASC ID.  788418168
+>> WARNING: [ 8] Common Column.  788415296 at Y,Z,Mag: -2417 -2407  4.78
+>> INFO   : CCD temperature exceeds -15 C
+>> INFO   : Special Case ER
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.326	-6.362	-4.615	
+Acquisition Stars Expected  : 7.78
+Predicted Max CCD temperature: -14.1 C 	 N100 Warm Pix Frac 0.179
+Dynamic Mag Limits: Yellow 9.99 	 Red 10.28
+==================================================================================== 
+OBSID: 52150  
+RA, Dec, Roll (deg):   116.300000    -3.300000   342.631895
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:022:03:12:10.609 (VCDU count = 7173701)
+  Q1,Q2,Q3,Q4: -0.10381982  -0.11317867  0.84164056  0.51773854
+  MANVR: Angle=  29.77 deg  Duration= 1038 sec  Slew err= 29.1 arcsec
+
+MP_STARCAT at 2015:022:03:12:12.252 (VCDU count = 7173708)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   633742560   BOT  8x8   0.942   9.543  11.047  -1719   -687  20   1  120  a2g2    
+[ 2]  1   633746264   BOT  8x8   0.946   9.067  10.578  -1520    818  20   1  120          
+[ 3]  2   633749720   BOT  8x8   0.985   8.897  10.406  -2121  -2124  20   1  120          
+[ 4]  3   633749752   BOT  8x8   0.985   9.106  10.609   -979    739  20   1  120          
+[ 5]  4   633871296   BOT  8x8   0.985   8.569  10.078   2290   1051  20   1  120          
+[ 6]  5   633874096   BOT  8x8   0.985   8.371   9.875   2168   1931  20   1  120          
+[ 7]  6   633874208   BOT  8x8   0.968   9.378  10.875   -190   2124  20   1  120  a2g2    
+[ 8]  7   634392248   GUI  8x8     ---   9.853  11.359   1762  -2377   1   1   25    g2    
+[ 9]  7   633868168   ACQ  8x8   0.826   9.868  11.375    -44    698  20   1  120    a2    
+
+>> WARNING: [ 9] Search spoiler.  633872584: Y,Z,Radial,Mag seps: 101  36 107 -0.6
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.390	-5.520	-3.889	
+Acquisition Stars Expected  : 7.62
+Predicted Max CCD temperature: -14.1 C 	 N100 Warm Pix Frac 0.178
+Dynamic Mag Limits: Yellow 9.99 	 Red 10.29
+==================================================================================== 
+OBSID: 52149  
+RA, Dec, Roll (deg):    41.000000   -79.000000   280.856591
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:022:04:38:31.255 (VCDU count = 7193919)
+  Q1,Q2,Q3,Q4: -0.63213811  0.28710944  0.58784818  0.41521572
+  MANVR: Angle=  84.05 deg  Duration= 1781 sec  Slew err= 68.4 arcsec
+
+MP_STARCAT at 2015:022:04:38:32.898 (VCDU count = 7193925)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0  1225926488   BOT  8x8   0.985   8.849  10.359  -1117   -800  20   1  120          
+[ 2]  1  1226442104   BOT  8x8   0.915   9.656  11.156    351   -857  20   1  120  a2g2    
+[ 3]  2  1226444312   BOT  8x8   0.985   7.824   9.328   -182  -1875  20   1  120          
+[ 4]  3  1227624224   BOT  8x8   0.985   8.518  10.016   -877   1345  20   1  120          
+[ 5]  4  1228148912   BOT  8x8   0.830   9.382  10.891   1582   -502  20   1  120  a2g2    
+[ 6]  5  1228151616   BOT  8x8   0.985   8.687  10.188   2152   1912  20   1  120          
+[ 7]  6  1228152048   BOT  8x8   0.960   9.003  10.500    150   -613  20   1  120          
+[ 8]  7  1228151568   GUI  8x8     ---   9.677  11.188   2294   -351   1   1   25    g2    
+[ 9]  7  1226445176   ACQ  8x8   0.561   9.814  11.422     14  -1405  20   1  120    a2    
+
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.320	-4.521	-2.988	
+Acquisition Stars Expected  : 7.20
+Predicted Max CCD temperature: -14.2 C 	 N100 Warm Pix Frac 0.176
+Dynamic Mag Limits: Yellow 10.00 	 Red 10.30
+==================================================================================== 
+OBSID: 52148  
+RA, Dec, Roll (deg):   116.300000    -3.300000   342.128842
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:022:07:20:45.405 (VCDU count = 7231905)
+  Q1,Q2,Q3,Q4: -0.10609167  -0.11687234  0.84113560  0.51727779
+  MANVR: Angle=  84.07 deg  Duration= 1781 sec  Slew err= 68.0 arcsec
+
+MP_STARCAT at 2015:022:07:20:47.048 (VCDU count = 7231912)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   633742560   BOT  8x8   0.944   9.543  11.047  -1713   -702  20   1  120  a2g2    
+[ 2]  1   633746264   BOT  8x8   0.947   9.067  10.578  -1527    805  20   1  120          
+[ 3]  2   633749720   BOT  8x8   0.985   8.897  10.406  -2103  -2143  20   1  120          
+[ 4]  3   633749752   BOT  8x8   0.985   9.106  10.609   -986    730  20   1  120          
+[ 5]  4   633871296   BOT  8x8   0.985   8.569  10.078   2281   1071  19   1  115          
+[ 6]  5   633874096   BOT  8x8   0.985   8.371   9.875   2151   1950  20   1  120          
+[ 7]  6   633874208   BOT  8x8   0.969   9.378  10.875   -208   2122  20   1  120  a2g2    
+[ 8]  7   634392248   GUI  8x8     ---   9.853  11.359   1783  -2361   1   1   25    g2    
+[ 9]  7   633868168   ACQ  8x8   0.833   9.868  11.375    -50    698  20   1  120    a2    
+
+>> WARNING: [ 9] Search spoiler.  633872584: Y,Z,Radial,Mag seps: 101  37 107 -0.6
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.448	-5.573	-3.934	
+Acquisition Stars Expected  : 7.63
+Predicted Max CCD temperature: -14.3 C 	 N100 Warm Pix Frac 0.175
+Dynamic Mag Limits: Yellow 10.01 	 Red 10.30
+==================================================================================== 
+OBSID: 52147  
+RA, Dec, Roll (deg):   150.000000    17.000000    79.591125
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:022:09:01:48.379 (VCDU count = 7255566)
+  Q1,Q2,Q3,Q4: 0.27353475  0.58205690  0.75848657  0.10529310
+  MANVR: Angle= 106.92 deg  Duration= 2086 sec  Slew err= 39.0 arcsec
+
+MP_STARCAT at 2015:022:09:01:50.022 (VCDU count = 7255572)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   185075464   BOT  8x8   0.979   9.284  10.781   1666     92  20   1  120          
+[ 2]  1   185077688   BOT  8x8   0.849   9.841  11.344  -1307    982  20   1  120  a2g2    
+[ 3]  2   185079104   BOT  8x8   0.943   9.553  11.062   1709  -1148  20   1  120  a2g2    
+[ 4]  3   185080824   BOT  8x8   0.945   9.541  11.047  -2267   1578  15   1   95  a2g2    
+[ 5]  4   185082512   BOT  8x8   0.985   8.753  10.250  -1021    -86  20   1  120          
+[ 6]  5   185083592   BOT  8x8   0.985   6.878   8.375  -2292   1719  10   1   70          
+[ 7]  6   185471136   BOT  8x8   0.985   8.155   9.656   2120   -219  20   1  120          
+[ 8]  7   185471712   GUI  8x8     ---   9.620  11.125   2360   -786   1   1   25    g2    
+[ 9]  7   185083152   ACQ  8x8   0.778   9.969  11.469  -2151   1360  20   1  120    a2    
+
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.593	-4.814	-3.292	
+Acquisition Stars Expected  : 7.44
+Predicted Max CCD temperature: -14.4 C 	 N100 Warm Pix Frac 0.174
+Dynamic Mag Limits: Yellow 10.01 	 Red 10.31
+==================================================================================== 
+OBSID: 52146  
+RA, Dec, Roll (deg):   126.000000    44.000000   175.743318
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:022:10:29:19.320 (VCDU count = 7276057)
+  Q1,Q2,Q3,Q4: -0.43303809  -0.81924097  -0.20063123  0.31791406
+  MANVR: Angle=  88.88 deg  Duration= 1845 sec  Slew err= 33.9 arcsec
+
+MP_STARCAT at 2015:022:10:29:20.963 (VCDU count = 7276064)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   390600096   BOT  8x8   0.985   8.722  10.219   -741   1589  20   1  120          
+[ 2]  1   390602440   BOT  8x8   0.983   9.218  10.719   2250    284  15   1   95          
+[ 3]  2   390605312   BOT  8x8   0.985   9.136  10.641   -888    110  20   1  120          
+[ 4]  3   390607232   BOT  8x8   0.985   8.297   9.797   -466  -2345  19   1  115          
+[ 5]  4   390609992   BOT  8x8   0.876   9.297  10.797   2359    422  10   1   70          
+[ 6]  5   390725760   BOT  8x8   0.985   8.246   9.750  -2003    354  20   1  120          
+[ 7]  6   390725856   BOT  8x8   0.985   8.879  10.375  -2121   -703  20   1  120          
+[ 8]  7   390726232   BOT  8x8   0.944   9.550  11.047  -1869   1148  20   1  120  a2g2    
+
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.199	-6.214	-4.452	
+Acquisition Stars Expected  : 7.72
+Predicted Max CCD temperature: -14.5 C 	 N100 Warm Pix Frac 0.172
+Dynamic Mag Limits: Yellow 10.02 	 Red 10.32
+==================================================================================== 
+OBSID: 52145  
+RA, Dec, Roll (deg):   116.000000    -4.000000   341.548675
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:022:11:22:59.200 (VCDU count = 7288623)
+  Q1,Q2,Q3,Q4: -0.11412026  -0.11762436  0.83953330  0.51800088
+  MANVR: Angle= 163.67 deg  Duration= 2842 sec  Slew err= 49.5 arcsec
+
+MP_STARCAT at 2015:022:11:23:00.843 (VCDU count = 7288629)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   633742560   BOT  8x8   0.947   9.543  11.047  -1481   2012  20   1  120  a2g2    
+[ 2]  1   633749720   BOT  8x8   0.985   8.897  10.406  -1856    567  20   1  120          
+[ 3]  2   634262896   BOT  8x8   0.985   8.292   9.797    795  -1672  20   1  120          
+[ 4]  3   634268528   BOT  8x8   0.985   7.379   8.875   -497   -663  20   1  120          
+[ 5]  4   634405528   BOT  8x8   0.859   9.833  11.344   2218   -373  20   1  120  a2g2    
+[ 6]  5   634274008   GUI  8x8     ---   7.631   9.141    380  -2456   1   1   25          
+[ 7]  6   633738160   GUI  8x8     ---   9.523  11.031  -2201   2302   1   1   25    g2    
+[ 8]  7   634392248   GUI  8x8     ---   9.853  11.359   2031    387   1   1   25    g2    
+[ 9]  5   634258656   ACQ  8x8   0.971   9.369  10.875   -401  -2313  20   1  120    a2    
+[10]  6   634259408   ACQ  8x8   0.781   9.498  11.000   -193  -2307  20   1  120    a2    
+[11]  7   634272728   ACQ  8x8   0.870   9.808  11.312   1111  -2251  20   1  120    a2    
+
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.233	-4.504	-3.044	
+Acquisition Stars Expected  : 7.38
+Predicted Max CCD temperature: -14.6 C 	 N100 Warm Pix Frac 0.170
+Dynamic Mag Limits: Yellow 10.03 	 Red 10.33
+==================================================================================== 
+OBSID: 52144  
+RA, Dec, Roll (deg):   127.000000    44.000000   173.718285
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:022:12:48:11.680 (VCDU count = 7308574)
+  Q1,Q2,Q3,Q4: -0.43145450  -0.81936404  -0.21236130  0.31207734
+  MANVR: Angle= 165.18 deg  Duration= 2862 sec  Slew err= 49.6 arcsec
+
+MP_STARCAT at 2015:022:12:48:13.323 (VCDU count = 7308580)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   390600096   BOT  8x8   0.985   8.722  10.219   1797   1839  20   1  120          
+[ 2]  1   390605312   BOT  8x8   0.985   9.136  10.641   1684    357  20   1  120          
+[ 3]  2   390607232   BOT  8x8   0.985   8.297   9.797   2164  -2087  13   1   85          
+[ 4]  3   390725760   BOT  8x8   0.985   8.246   9.750    564    575  20   1  120          
+[ 5]  4   390725856   BOT  8x8   0.985   8.879  10.375    471   -484  20   1  120          
+[ 6]  5   390726232   BOT  8x8   0.947   9.550  11.047    679   1372  20   1  120  a2g2    
+[ 7]  6   390735744   BOT  8x8   0.985   8.729  10.234   -418    411  16   1  100          
+[ 8]  7   390739136   GUI  8x8     ---   9.713  11.219    364  -2360   1   1   25    g2    
+[ 9]  7   390602544   ACQ  8x8   0.905   9.721  11.219    967    167  20   1  120    a2    
+
+>> INFO   : Next obsid has no manvr; using next obs start date for checks (dither, momentum)
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.358	-6.360	-4.584	
+Acquisition Stars Expected  : 7.76
+Predicted Max CCD temperature: -14.8 C 	 N100 Warm Pix Frac 0.168
+Dynamic Mag Limits: Yellow 10.04 	 Red 10.34
+==================================================================================== 
+OBSID: 52143  
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+                                                                                             
+
+>> INFO   : No Guide Star Summary for obsid 52143 (RDX36). OK for 'RDX' ER. 
+>> INFO   : CCD temperature exceeds -15 C
+>> INFO   : No target/maneuver for obsid 52143 (RDX36). OK for 'RDX' ER. 
+>> INFO   : No star catalog for obsid 52143 (RDX36). OK for 'RDX' ER.
+==================================================================================== 
+OBSID: 52142  
+RA, Dec, Roll (deg):   289.000000    26.000000    19.519924
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:022:14:30:24.030 (VCDU count = 7332505)
+  Q1,Q2,Q3,Q4: 0.00573330  -0.27640376  -0.52658485  0.80391324
+  MANVR: Angle= 108.15 deg  Duration= 2102 sec  Slew err= 75.4 arcsec
+
+MP_STARCAT at 2015:022:14:30:25.673 (VCDU count = 7332511)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   278796016   BOT  8x8   0.985   9.115  10.625  -1154   -367  13   1   85          
+[ 2]  1   278798440   BOT  8x8   0.985   7.401   8.906  -1901   -243  20   1  120          
+[ 3]  2   278932288   BOT  8x8   0.955   9.053  10.562    718     85  20   1  120          
+[ 4]  3   278942064   BOT  8x8   0.985   8.777  10.281   1145   -971  20   1  120          
+[ 5]  4   279464584   BOT  8x8   0.983   9.235  10.734    -27   1435  20   1  120          
+[ 6]  5   279464600   BOT  8x8   0.985   8.805  10.312   1020   1515  20   1  120          
+[ 7]  6   278934056   GUI  8x8     ---   9.369  10.875   -666   -703   1   1   25          
+[ 8]  7   279321344   GUI  8x8     ---   9.575  11.078  -2028   2388   1   1   25    g2    
+[ 9]  6   278938072   ACQ  8x8   0.985   8.924  10.422    202    -33  20   1  120          
+[10]  7   278939656   ACQ  8x8   0.985   8.365   9.875   1935      0  20   1  120    a2    
+
+>> WARNING: [ 4] Bad Acquisition Star. 278942064 has  1 failed out of  3 attempts
+>> INFO   : CCD temperature exceeds -15 C
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.076	-7.010	-5.152	
+Acquisition Stars Expected  : 7.84
+Predicted Max CCD temperature: -14.9 C 	 N100 Warm Pix Frac 0.165
+Dynamic Mag Limits: Yellow 10.05 	 Red 10.36
+==================================================================================== 
+OBSID: 16771  CXOU J164043.5-46313   ACIS-I SIM Z offset:-3141 (-7.90mm) Grating: NONE 
+RA, Dec, Roll (deg):   250.194051   -46.512009   101.509287
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:022:16:01:03.383 (VCDU count = 7353732)
+  Q1,Q2,Q3,Q4: 0.61347291  -0.43852981  -0.65137191  0.08400730
+  MANVR: Angle= 115.28 deg  Duration= 2197 sec  Slew err= 59.8 arcsec
+
+MP_STARCAT at 2015:022:16:01:05.026 (VCDU count = 7353738)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -774  -1012   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    893   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1828    891   1   1   25          
+[ 4]  3  1091334688   BOT  6x6   0.985   6.242   7.750   1268  -1713  20   1  120  a2g2    
+[ 5]  4  1091838488   BOT  6x6   0.963   9.462  10.969  -1776  -1983  20   1  120  a2g3    
+[ 6]  5  1091193912   GUI  6x6     ---   9.305  10.812   2383   -522   1   1   25          
+[ 7]  6  1091704704   GUI  6x6     ---  10.315  11.812  -1509   2151   1   1   25    g3    
+[ 8]  7  1091706496   GUI  6x6     ---   9.382  10.891  -2277   2078   1   1   25    g3    
+[ 9]  5  1091194800   ACQ  6x6   0.645  10.206  11.703   -196    413  12   1   80    a2    
+[10]  6  1091194928   ACQ  6x6   0.833   9.922  11.422   1022    111  20   1  120    a2    
+[11]  7  1091332544   ACQ  6x6   0.740  10.079  11.578    995  -1142  20   1  120    a2    
+[12]  0  1091336128   ACQ  6x6   0.851   9.883  11.391    643  -2059  20   1  120    a2    
+[13]  1  1091324080   ACQ  6x6   0.865   9.354  11.406   1919  -2360  11   1   75    a2    
+[14]  2  1091703920   ACQ  6x6   0.779  10.019  11.516  -1242   1094  20   1  120    a3    
+
+>> WARNING: [ 5] Search spoiler. 1091832568: Y,Z,Radial,Mag seps:  38  28  47 -0.7
+>> WARNING: [ 7] Magnitude.  10.315
+>> WARNING: [ 9] Magnitude.  10.206
+>> WARNING: [11] Magnitude.  10.079
+>> WARNING: [12] Search spoiler. 1091335088: Y,Z,Radial,Mag seps: 138  95 168 -0.9
+>> WARNING: [14] Search spoiler. 1091200816: Y,Z,Radial,Mag seps: 123 172 212 -0.3
+>> WARNING: [14] Search spoiler. 1091699808: Y,Z,Radial,Mag seps: 138  95 168 -0.5
+>> WARNING: [14] Search spoiler. 1091200576: Y,Z,Radial,Mag seps: 159  69 174 -0.3
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.777	-2.559	-1.612	
+Acquisition Stars Expected  : 6.66
+Predicted Max CCD temperature: -15.1 C 	 N100 Warm Pix Frac 0.163
+Dynamic Mag Limits: Yellow 10.06 	 Red 10.37
+==================================================================================== 
+OBSID: 17583  Abell 3411             ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   130.480309   -17.515918     7.495953
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:023:03:59:58.609 (VCDU count = 7522064)
+  Q1,Q2,Q3,Q4: -0.11090993  0.12229939  0.89139548  0.42208524
+  MANVR: Angle=  96.35 deg  Duration= 1945 sec  Slew err= 69.8 arcsec
+
+MP_STARCAT at 2015:023:04:00:00.252 (VCDU count = 7522071)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   788403264   BOT  6x6   0.979   9.312  10.812  -1761   -461  17   1  105          
+[ 5]  4   788546808   BOT  6x6   0.983   8.877  10.375   1914    273  20   1  120          
+[ 6]  5   788552496   BOT  6x6   0.985   8.862  10.359   2164   1781  20   1  120          
+[ 7]  6   788416008   GUI  6x6     ---   8.667  10.172  -2365   1084   1   1   25          
+[ 8]  7   788552320   GUI  6x6     ---   8.426   9.938   1863   1549   1   1   25          
+[ 9]  6   788548808   ACQ  6x6   0.985   8.530  10.031   1481    840  20   1  120          
+[10]  7   788418168   ACQ  6x6   0.985   6.316   7.812  -1628    983  20   1  120    a2    
+[11]  0   788543784   ACQ  6x6   0.968   9.436  10.938   1825   -862  20   1  120    a2    
+[12]  1   788537720   ACQ  6x6   0.946   9.596  11.094    530   -855  20   1  120    a2    
+[13]  2   788537912   ACQ  6x6   0.938   9.634  11.141  -1180  -1152  20   1  120    a2    
+
+>> WARNING: [10] Bad AGASC ID.  788418168
+>> WARNING: [10] Bad Acquisition Star. 788418168 has  4 failed out of  4 attempts
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.135	-6.200	-4.486	
+Acquisition Stars Expected  : 7.76
+Predicted Max CCD temperature: -15.5 C 	 N100 Warm Pix Frac 0.156
+Dynamic Mag Limits: Yellow 10.10 	 Red 10.41
+==================================================================================== 
+OBSID: 17579  CXOU J164043.5-46313   ACIS-I SIM Z offset:-3141 (-7.90mm) Grating: NONE 
+RA, Dec, Roll (deg):   250.194051   -46.512009   101.509287
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:023:13:30:13.304 (VCDU count = 7655585)
+  Q1,Q2,Q3,Q4: 0.61347291  -0.43852981  -0.65137191  0.08400730
+  MANVR: Angle=  96.35 deg  Duration= 1945 sec  Slew err= 56.4 arcsec
+
+MP_STARCAT at 2015:023:13:30:14.947 (VCDU count = 7655591)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -774  -1012   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    893   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1828    891   1   1   25          
+[ 4]  3  1091334688   BOT  6x6   0.985   6.242   7.750   1268  -1713  20   1  120  a2g2    
+[ 5]  4  1091706496   BOT  6x6   0.868   9.382  10.891  -2277   2078   9   1   65  a2g3    
+[ 6]  5  1091838488   BOT  6x6   0.967   9.462  10.969  -1776  -1983  20   1  120  a2g3    
+[ 7]  6  1091193912   GUI  6x6     ---   9.305  10.812   2383   -522   1   1   25          
+[ 8]  7  1091704704   GUI  6x6     ---  10.315  11.812  -1509   2151   1   1   25    g3    
+[ 9]  6  1091194800   ACQ  6x6   0.686  10.206  11.703   -196    413  12   1   80    a2    
+[10]  7  1091194928   ACQ  6x6   0.854   9.922  11.422   1022    111  20   1  120    a2    
+[11]  0  1091332544   ACQ  6x6   0.772  10.079  11.578    995  -1142  20   1  120    a2    
+[12]  1  1091336128   ACQ  6x6   0.870   9.883  11.391    643  -2059  20   1  120    a2    
+[13]  2  1091324080   ACQ  6x6   0.879   9.354  11.406   1919  -2360  11   1   75    a2    
+
+>> WARNING: [ 6] Search spoiler. 1091832568: Y,Z,Radial,Mag seps:  38  28  47 -0.7
+>> WARNING: [ 8] Magnitude.  10.315
+>> WARNING: [ 9] Magnitude.  10.206
+>> WARNING: [12] Search spoiler. 1091335088: Y,Z,Radial,Mag seps: 138  95 168 -0.9
+>> WARNING: [13] Bad Acquisition Star. 1091324080 has  2 failed out of  5 attempts
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.227	-2.930	-1.896	
+Acquisition Stars Expected  : 6.88
+Predicted Max CCD temperature: -15.7 C 	 N100 Warm Pix Frac 0.153
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.43
+==================================================================================== 
+OBSID: 17496  Abell 3411             ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   130.492346   -17.500959     7.499573
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:023:23:50:27.999 (VCDU count = 7800813)
+  Q1,Q2,Q3,Q4: -0.11079199  0.12226317  0.89145748  0.42199574
+  MANVR: Angle=  96.36 deg  Duration= 1945 sec  Slew err= 69.7 arcsec
+
+MP_STARCAT at 2015:023:23:50:29.642 (VCDU count = 7800820)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   788403264   BOT  6x6   0.980   9.312  10.812  -1809   -509  17   1  105          
+[ 5]  4   788546808   BOT  6x6   0.983   8.877  10.375   1866    225  20   1  120          
+[ 6]  5   788548808   BOT  6x6   0.985   8.530  10.031   1433    792  20   1  120          
+[ 7]  6   788552496   BOT  6x6   0.985   8.862  10.359   2116   1733  18   1  110          
+[ 8]  7   788552320   GUI  6x6     ---   8.426   9.938   1815   1501   1   1   25          
+[ 9]  7   788418168   ACQ  6x6   0.985   6.316   7.812  -1676    935  20   1  120    a2    
+[10]  0   788543784   ACQ  6x6   0.969   9.436  10.938   1777   -910  20   1  120    a2    
+[11]  1   788537720   ACQ  6x6   0.948   9.596  11.094    482   -903  20   1  120    a2    
+[12]  2   788537912   ACQ  6x6   0.941   9.634  11.141  -1228  -1200  20   1  120    a2    
+
+>> WARNING: [ 9] Bad AGASC ID.  788418168
+>> WARNING: [ 9] Bad Acquisition Star. 788418168 has  4 failed out of  4 attempts
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.197	-6.254	-4.531	
+Acquisition Stars Expected  : 7.77
+Predicted Max CCD temperature: -15.7 C 	 N100 Warm Pix Frac 0.153
+Dynamic Mag Limits: Yellow 10.12 	 Red 10.43
+==================================================================================== 
+OBSID: 17580  CXOU J164043.5-46313   ACIS-I SIM Z offset:-3141 (-7.90mm) Grating: NONE 
+RA, Dec, Roll (deg):   250.194051   -46.512009   101.509287
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:024:09:20:42.776 (VCDU count = 7934334)
+  Q1,Q2,Q3,Q4: 0.61347291  -0.43852981  -0.65137191  0.08400730
+  MANVR: Angle=  96.36 deg  Duration= 1945 sec  Slew err= 56.3 arcsec
+
+MP_STARCAT at 2015:024:09:20:44.419 (VCDU count = 7934341)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -774  -1012   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    893   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1828    891   1   1   25          
+[ 4]  3  1091334688   BOT  6x6   0.985   6.242   7.750   1268  -1713  20   1  120  a2g2    
+[ 5]  4  1091706496   BOT  6x6   0.871   9.382  10.891  -2277   2078   9   1   65  a2g3    
+[ 6]  5  1091838488   BOT  6x6   0.967   9.462  10.969  -1776  -1983  20   1  120  a2g3    
+[ 7]  6  1091193912   GUI  6x6     ---   9.305  10.812   2383   -522   1   1   25          
+[ 8]  7  1091704704   GUI  6x6     ---  10.315  11.812  -1509   2151   1   1   25    g3    
+[ 9]  6  1091194800   ACQ  6x6   0.694  10.206  11.703   -196    413  12   1   80    a2    
+[10]  7  1091194928   ACQ  6x6   0.858   9.922  11.422   1022    111  20   1  120    a2    
+[11]  0  1091332544   ACQ  6x6   0.778  10.079  11.578    995  -1142  20   1  120    a2    
+[12]  1  1091336128   ACQ  6x6   0.873   9.883  11.391    643  -2059  20   1  120    a2    
+[13]  2  1091324080   ACQ  6x6   0.882   9.354  11.406   1919  -2360  11   1   75    a2    
+
+>> WARNING: [ 6] Search spoiler. 1091832568: Y,Z,Radial,Mag seps:  38  28  47 -0.7
+>> WARNING: [ 8] Magnitude.  10.315
+>> WARNING: [ 9] Magnitude.  10.206
+>> WARNING: [12] Search spoiler. 1091335088: Y,Z,Radial,Mag seps: 138  95 168 -0.9
+>> WARNING: [13] Bad Acquisition Star. 1091324080 has  2 failed out of  6 attempts
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.287	-2.980	-1.934	
+Acquisition Stars Expected  : 6.90
+Predicted Max CCD temperature: -15.8 C 	 N100 Warm Pix Frac 0.151
+Dynamic Mag Limits: Yellow 10.12 	 Red 10.44
+==================================================================================== 
+OBSID: 52141  
+RA, Dec, Roll (deg):   250.194051   -46.512009   101.509287
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:024:18:28:48.217 (VCDU count = 8062668)
+  Q1,Q2,Q3,Q4: 0.61347291  -0.43852981  -0.65137191  0.08400730
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+
+MP_STARCAT at 2015:024:18:28:49.860 (VCDU count = 8062674)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0  1091193912   BOT  8x8   0.980   9.305  10.812   2383   -522   8   1   60          
+[ 2]  1  1091194800   BOT  8x8   0.694  10.206  11.703   -196    413  20   1  120  a2g3    
+[ 3]  2  1091324080   BOT  8x8   0.882   9.354  11.406   1919  -2360  19   1  115  a2g3    
+[ 4]  3  1091334688   BOT  8x8   0.985   6.242   7.750   1268  -1713  20   1  120  a2g2    
+[ 5]  4  1091838488   BOT  8x8   0.967   9.462  10.969  -1776  -1983  20   1  120  a2g3    
+[ 6]  5  1091704704   GUI  8x8     ---  10.315  11.812  -1509   2151   1   1   25    g3    
+[ 7]  6  1091706496   GUI  8x8     ---   9.382  10.891  -2277   2078   1   1   25    g3    
+[ 8]  7  1091703920   GUI  8x8     ---  10.019  11.516  -1242   1094   1   1   25    g3    
+[ 9]  5  1091194928   ACQ  8x8   0.858   9.922  11.422   1022    111  20   1  120    a2    
+[10]  6  1091332544   ACQ  8x8   0.778  10.079  11.578    995  -1142  20   1  120    a2    
+[11]  7  1091336128   ACQ  8x8   0.873   9.883  11.391    643  -2059  20   1  120    a2    
+
+>> WARNING: [ 2] Magnitude.  10.206
+>> WARNING: [ 5] Search spoiler. 1091832568: Y,Z,Radial,Mag seps:  38  28  47 -0.7
+>> WARNING: [ 6] Magnitude.  10.315
+>> WARNING: [11] Search spoiler. 1091335088: Y,Z,Radial,Mag seps: 138  95 168 -0.9
+>> INFO   : Special Case ER
+>> INFO   : Only 1 star(s) brighter than 9 mag. Acceptable for Special Case ER
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.816	-3.346	-2.173	
+Acquisition Stars Expected  : 7.01
+Predicted Max CCD temperature: -15.8 C 	 N100 Warm Pix Frac 0.151
+Dynamic Mag Limits: Yellow 10.12 	 Red 10.44
+==================================================================================== 
+OBSID: 52140  
+RA, Dec, Roll (deg):   150.000000     4.500000    55.302563
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:024:18:40:39.607 (VCDU count = 8065444)
+  Q1,Q2,Q3,Q4: 0.15361341  0.43892931  0.85966210  0.21148298
+  MANVR: Angle= 100.35 deg  Duration= 1998 sec  Slew err= 55.9 arcsec
+
+MP_STARCAT at 2015:024:18:40:41.250 (VCDU count = 8065450)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0    31459536   BOT  8x8   0.985   6.471   7.969    307   1507  20   1  120  a2g2    
+[ 2]  1    31459656   BOT  8x8   0.951   9.583  11.094   -176   2203  20   1  120  a2g2    
+[ 3]  2    31459928   BOT  8x8   0.682  10.221  11.719  -1534   2011  20   1  120  a2g3    
+[ 4]  3    31857600   BOT  8x8   0.985   7.824   9.328   1984   1697  20   1  120    a3    
+[ 5]  4    32379488   BOT  8x8   0.985   8.169   9.672   2152  -2072  14   1   90          
+[ 6]  5    32382128   BOT  8x8   0.920   9.734  11.234    192  -1094  20   1  120  a2g3    
+[ 7]  6    32383392   BOT  8x8   0.967   9.461  10.969    145  -1747  20   1  120  a2g2    
+[ 8]  7    31464720   GUI  8x8     ---   9.705  11.203  -1868   1181   1   1   25    g3    
+[ 9]  7    31459608   ACQ  8x8   0.680  10.223  11.734    357   1891  20   1  120    a2    
+
+>> WARNING: [ 3] Magnitude.  10.221
+>> WARNING: [ 9] Magnitude.  10.223
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.917	-4.197	-2.750	
+Acquisition Stars Expected  : 7.15
+Predicted Max CCD temperature: -15.8 C 	 N100 Warm Pix Frac 0.151
+Dynamic Mag Limits: Yellow 10.12 	 Red 10.44
+==================================================================================== 
+OBSID: 52139  
+RA, Dec, Roll (deg):   111.000000    46.000000   210.807125
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:024:19:18:37.618 (VCDU count = 8074334)
+  Q1,Q2,Q3,Q4: -0.41711966  -0.79014613  -0.01186318  0.44893156
+  MANVR: Angle= 141.93 deg  Duration= 2552 sec  Slew err= 47.8 arcsec
+
+MP_STARCAT at 2015:024:19:18:39.261 (VCDU count = 8074340)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   444729096   BOT  8x8   0.985   7.697   9.203  -2268  -2045  13   1   85          
+[ 2]  1   444729432   BOT  8x8   0.981   9.299  10.797    682   -983  20   1  120          
+[ 3]  2   444734224   BOT  8x8   0.985   8.965  10.469    170  -1487  20   1  120          
+[ 4]  3   444737224   BOT  8x8   0.985   7.327   8.922    293    897  20   1  120  a2g2    
+[ 5]  4   444739112   BOT  8x8   0.985   8.677  10.188   1499    486  20   1  120          
+[ 6]  5   444742960   BOT  8x8   0.985   7.754   9.250  -1201   2040  20   1  120          
+[ 7]  6   444743456   BOT  8x8   0.985   7.164   8.672  -2243   1357  18   1  110          
+[ 8]  7   444739600   GUI  8x8     ---   8.071   9.578    761  -1403   1   1   25          
+[ 9]  7   444742880   ACQ  8x8   0.960   9.521  11.031  -1985   1448  20   1  120    a2    
+
+>> WARNING: [ 7] Bad AGASC ID.  444743456
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.075	-7.012	-5.157	
+Acquisition Stars Expected  : 7.85
+Predicted Max CCD temperature: -15.8 C 	 N100 Warm Pix Frac 0.151
+Dynamic Mag Limits: Yellow 10.12 	 Red 10.43
+==================================================================================== 
+OBSID: 52138  
+RA, Dec, Roll (deg):    46.700000    73.000000   266.224192
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:024:20:19:42.062 (VCDU count = 8088634)
+  Q1,Q2,Q3,Q4: -0.37764679  -0.60581319  -0.18092385  0.67649083
+  MANVR: Angle=  39.20 deg  Duration= 1182 sec  Slew err= 43.2 arcsec
+
+MP_STARCAT at 2015:024:20:19:43.705 (VCDU count = 8088640)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   566362440   BOT  8x8   0.985   8.891  10.391    622     92  20   1  120          
+[ 2]  1   566363960   BOT  8x8   0.952   9.575  11.078   1673   -648  20   1  120  a2g2    
+[ 3]  2   566368552   BOT  8x8   0.985   7.515   9.016   1284  -2175  20   1  120          
+[ 4]  3   566371696   BOT  8x8   0.985   8.104   9.609   1583    647  20   1  120          
+[ 5]  4   568070808   BOT  8x8   0.941   9.637  11.141    413   1515  20   1  120  a2g2    
+[ 6]  5   568595272   BOT  8x8   0.985   9.106  10.609  -1979   2159  20   1  120          
+[ 7]  6   566888272   GUI  8x8     ---   9.960  11.469  -1807  -2443   1   1   25    g3    
+[ 8]  7   568597496   GUI  8x8     ---   9.880  11.391  -1813   1421   1   1   25    g3    
+[ 9]  6   566368824   ACQ  8x8   0.985   7.558   9.062     40    152  20   1  120          
+[10]  7   566367640   ACQ  8x8   0.634   9.822  11.328   -205   -423  20   1  120    a2    
+
+>> WARNING: [ 2] Search spoiler.  566371592: Y,Z,Radial,Mag seps:  64  23  69 -0.9
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.349	-5.433	-3.756	
+Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -15.7 C 	 N100 Warm Pix Frac 0.152
+Dynamic Mag Limits: Yellow 10.12 	 Red 10.43
+==================================================================================== 
+OBSID: 52137  
+RA, Dec, Roll (deg):    38.000000    20.000000   287.691790
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:024:22:55:04.078 (VCDU count = 8125012)
+  Q1,Q2,Q3,Q4: -0.50369509  -0.32172438  0.16201691  0.78519755
+  MANVR: Angle=  55.01 deg  Duration= 1393 sec  Slew err= 47.2 arcsec
+
+MP_STARCAT at 2015:024:22:55:05.721 (VCDU count = 8125019)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   159777896   BOT  8x8   0.977   9.344  10.844   2208    929  20   1  120          
+[ 2]  1   159780688   BOT  8x8   0.985   8.118   9.625   1163   -113  20   1  120          
+[ 3]  2   159780704   BOT  8x8   0.985   8.875  10.375   -240  -1842  20   1  120          
+[ 4]  3   159781944   BOT  8x8   0.985   7.626   9.125    663   1911  20   1  120          
+[ 5]  4   160178288   BOT  8x8   0.985   9.180  10.688  -1461   -853  20   1  120          
+[ 6]  5   160180160   BOT  8x8   0.985   8.779  10.281   -607   2213  20   1  120          
+[ 7]  6   159779416   GUI  8x8     ---   8.307   9.812   2361   -999   1   1   25          
+[ 8]  7   160176448   GUI  8x8     ---   7.736   9.234  -1120   1677   1   1   25          
+[ 9]  6   159792656   ACQ  8x8   0.985   6.396   7.906    146  -1253  20   1  120    a2    
+[10]  7   159789064   ACQ  8x8   0.965   9.479  10.984   1134  -2168  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.066	-7.007	-5.156	
+Acquisition Stars Expected  : 7.85
+Predicted Max CCD temperature: -15.7 C 	 N100 Warm Pix Frac 0.153
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.43
+==================================================================================== 
+OBSID: 52136  
+RA, Dec, Roll (deg):    91.000000    23.000000   270.245696
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:024:23:39:27.460 (VCDU count = 8135406)
+  Q1,Q2,Q3,Q4: -0.38386016  -0.59218049  0.39667970  0.58704247
+  MANVR: Angle=  49.24 deg  Duration= 1317 sec  Slew err= 43.7 arcsec
+
+MP_STARCAT at 2015:024:23:39:29.103 (VCDU count = 8135413)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   173685640   BOT  8x8   0.985   6.834   8.344   2144  -1928  19   1  115          
+[ 2]  1   244324240   BOT  8x8   0.985   8.950  10.453  -1194   -947  20   1  120    a2    
+[ 3]  2   244327120   BOT  8x8   0.967   9.453  10.953  -1067   2061  20   1  120  a2g2    
+[ 4]  3   244327520   BOT  8x8   0.985   8.999  10.500   -498  -1839  20   1  120          
+[ 5]  4   244331952   BOT  8x8   0.985   8.031   9.531   -647   1997  20   1  120          
+[ 6]  5   244333528   BOT  8x8   0.978   9.333  10.844   1626  -2336  19   1  115          
+[ 7]  6   173678592   GUI  8x8     ---   8.260   9.766   2284   -763   1   1   25          
+[ 8]  7   173680624   GUI  8x8     ---   7.546   9.047   2363   -679   1   1   25          
+[ 9]  6   244322256   ACQ  8x8   0.872   9.369  10.875    211   -596  20   1  120    a2    
+[10]  7   244322544   ACQ  8x8   0.956   9.540  11.047  -1775  -1722  20   1  120    a2    
+
+>> WARNING: [10] Search spoiler.  244320672: Y,Z,Radial,Mag seps: 137  82 160 -0.8
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.938	-6.007	-4.302	
+Acquisition Stars Expected  : 7.71
+Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.153
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.42
+==================================================================================== 
+OBSID: 52135  
+RA, Dec, Roll (deg):    15.100000    37.600000   298.332859
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:025:00:22:34.772 (VCDU count = 8145503)
+  Q1,Q2,Q3,Q4: -0.44463677  -0.33806886  -0.05694263  0.82750537
+  MANVR: Angle=  66.96 deg  Duration= 1553 sec  Slew err= 56.8 arcsec
+
+MP_STARCAT at 2015:025:00:22:36.415 (VCDU count = 8145509)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   300024816   BOT  8x8   0.962   9.041  10.547   1797   -569  20   1  120          
+[ 2]  1   300028432   BOT  8x8   0.985   8.068   9.578   -355  -2111  20   1  120          
+[ 3]  2   300028840   BOT  8x8   0.938   9.158  10.656    333   -252  20   1  120          
+[ 4]  3   300030248   BOT  8x8   0.985   7.827   9.328   1976  -2062  20   1  120          
+[ 5]  4   300033504   BOT  8x8   0.985   8.922  10.422   1988    551  20   1  120          
+[ 6]  5   300157312   BOT  8x8   0.982   9.271  10.781   1701   2052  17   1  105          
+[ 7]  6   366873344   BOT  8x8   0.961   9.503  11.000  -1647   1539  20   1  120  a2g2    
+[ 8]  7   366880096   BOT  8x8   0.965   9.023  10.531   -194   1924  20   1  120          
+
+>> WARNING: [ 7] Search spoiler.  366878792: Y,Z,Radial,Mag seps:  23 140 142 -0.5
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.016	-6.107	-4.418	
+Acquisition Stars Expected  : 7.76
+Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.154
+Dynamic Mag Limits: Yellow 10.11 	 Red 10.42
+==================================================================================== 
+OBSID: 52134  
+RA, Dec, Roll (deg):   320.000000   -84.000000   193.673722
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:025:01:09:42.764 (VCDU count = 8156539)
+  Q1,Q2,Q3,Q4: -0.66611832  0.32721449  0.59404878  0.31035964
+  MANVR: Angle= 131.77 deg  Duration= 2417 sec  Slew err= 59.1 arcsec
+
+MP_STARCAT at 2015:025:01:09:44.407 (VCDU count = 8156545)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0  1248334560   BOT  8x8   0.985   7.999   9.500    -45   1012  20   1  120          
+[ 2]  1  1248335456   BOT  8x8   0.985   8.679  10.188   1124   -519  20   1  120  a2g2    
+[ 3]  2  1248335536   BOT  8x8   0.925   9.694  11.203   -465  -1417  20   1  120  a2g2    
+[ 4]  3  1248336208   BOT  8x8   0.985   8.446   9.953   2000   -849  20   1  120          
+[ 5]  4  1248871312   BOT  8x8   0.921   9.711  11.219  -1280   2206  20   1  120  a2g2    
+[ 6]  5  1248342440   GUI  8x8     ---   9.442  10.953  -1482    535   1   1   25    g2    
+[ 7]  6  1248344848   GUI  8x8     ---  10.274  11.781  -2300    249   1   1   25    g3    
+[ 8]  7  1248862456   GUI  8x8     ---   9.511  11.016   1391   2354   1   1   25    g3    
+[ 9]  5  1248336472   ACQ  8x8   0.770  10.068  11.578   2256   -953  20   1  120    a2    
+[10]  6  1248340728   ACQ  8x8   0.662  10.221  11.719   1843  -1853  20   1  120    a2    
+[11]  7  1248343536   ACQ  8x8   0.781  10.050  11.547  -1685     -2  20   1  120    a2    
+
+>> WARNING: [ 7] Magnitude.  10.274
+>> WARNING: [10] Magnitude.  10.221
+>> WARNING: [10] Search spoiler. 1248336152: Y,Z,Radial,Mag seps:  47  46  66 -0.9
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.168	-3.563	-2.280	
+Acquisition Stars Expected  : 7.01
+Predicted Max CCD temperature: -15.5 C 	 N100 Warm Pix Frac 0.156
+Dynamic Mag Limits: Yellow 10.10 	 Red 10.41
+==================================================================================== 
+OBSID: 52133  
+RA, Dec, Roll (deg):   106.800000    -1.400000   317.025575
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:025:02:19:20.554 (VCDU count = 8172843)
+  Q1,Q2,Q3,Q4: -0.22750339  -0.28726710  0.74963349  0.55115284
+  MANVR: Angle=  95.26 deg  Duration= 1930 sec  Slew err= 58.4 arcsec
+
+MP_STARCAT at 2015:025:02:19:22.197 (VCDU count = 8172849)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   630991440   BOT  8x8   0.985   9.153  10.656    194   -566  20   1  120          
+[ 2]  1   630992048   BOT  8x8   0.985   9.120  10.625    493  -1872  17   1  105          
+[ 3]  2   631002040   BOT  8x8   0.985   8.551  10.062  -2120   1842  20   1  120          
+[ 4]  3   631010032   BOT  8x8   0.985   7.381   8.891  -1798    187  20   1  120          
+[ 5]  4   631139368   BOT  8x8   0.985   8.980  10.484    452   1282  20   1  120          
+[ 6]  5   631142048   BOT  8x8   0.983   9.255  10.766    499   1023  20   1  120          
+[ 7]  6   630996256   GUI  8x8     ---   9.086  10.594    150  -1115   1   1   25          
+[ 8]  7   631132800   GUI  8x8     ---   8.912  10.422    -60   2106   1   1   25          
+[ 9]  6   631008312   ACQ  8x8   0.985   7.636   9.141  -1509   -448  20   1  120    a2    
+[10]  7   630996672   ACQ  8x8   0.973   9.388  10.891  -1327  -2180  20   1  120    a2    
+
+>> WARNING: [10] Search spoiler.  630991296: Y,Z,Radial,Mag seps:  44 119 128 -0.8
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.258	-7.174	-5.296	
+Acquisition Stars Expected  : 7.86
+Predicted Max CCD temperature: -15.4 C 	 N100 Warm Pix Frac 0.157
+Dynamic Mag Limits: Yellow 10.09 	 Red 10.40
+==================================================================================== 
+OBSID: 52132  
+RA, Dec, Roll (deg):   111.000000    46.000000   211.397023
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:025:03:12:56.314 (VCDU count = 8185392)
+  Q1,Q2,Q3,Q4: -0.41480312  -0.79019673  -0.00779551  0.45107286
+  MANVR: Angle= 111.32 deg  Duration= 2144 sec  Slew err= 45.8 arcsec
+
+MP_STARCAT at 2015:025:03:12:57.957 (VCDU count = 8185398)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   444729096   BOT  8x8   0.985   7.697   9.203  -2289  -2021   9   1   65          
+[ 2]  1   444729432   BOT  8x8   0.980   9.299  10.797    672   -990  20   1  120          
+[ 3]  2   444734224   BOT  8x8   0.985   8.965  10.469    155  -1489  20   1  120          
+[ 4]  3   444739112   BOT  8x8   0.985   8.677  10.188   1504    470  20   1  120          
+[ 5]  4   444742960   BOT  8x8   0.985   7.754   9.250  -1180   2052  20   1  120          
+[ 6]  5   444743456   BOT  8x8   0.985   7.164   8.672  -2229   1380  20   1  120          
+[ 7]  6   444739600   GUI  8x8     ---   8.071   9.578    747  -1411   1   1   25          
+[ 8]  7   444737720   GUI  8x8     ---   9.055  10.562   -708     16   1   1   25          
+[ 9]  6   444737224   ACQ  8x8   0.985   7.327   8.922    302    894  20   1  120    a2    
+[10]  7   444742880   ACQ  8x8   0.957   9.521  11.031  -1970   1469  20   1  120    a2    
+
+>> WARNING: [ 6] Bad AGASC ID.  444743456
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.032	-6.974	-5.124	
+Acquisition Stars Expected  : 7.84
+Predicted Max CCD temperature: -15.4 C 	 N100 Warm Pix Frac 0.158
+Dynamic Mag Limits: Yellow 10.09 	 Red 10.40
+==================================================================================== 
+OBSID: 52131  
+RA, Dec, Roll (deg):   289.000000    26.000000    23.006618
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:025:04:09:50.467 (VCDU count = 8198715)
+  Q1,Q2,Q3,Q4: 0.03018765  -0.29229582  -0.51793223  0.80336671
+  MANVR: Angle= 108.41 deg  Duration= 2106 sec  Slew err= 72.8 arcsec
+
+MP_STARCAT at 2015:025:04:09:52.110 (VCDU count = 8198722)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   278796016   BOT  8x8   0.985   9.115  10.625  -1175   -296  14   1   90          
+[ 2]  1   278798440   BOT  8x8   0.985   7.401   8.906  -1912   -127  20   1  120          
+[ 3]  2   278932288   BOT  8x8   0.959   9.053  10.562    722     41  20   1  120          
+[ 4]  3   278939656   BOT  8x8   0.985   8.365   9.875   1931   -117  20   1  120    a2    
+[ 5]  4   278942064   BOT  8x8   0.985   8.777  10.281   1083  -1039  20   1  120          
+[ 6]  5   279464600   BOT  8x8   0.985   8.805  10.312   1110   1451  20   1  120          
+[ 7]  6   278934056   GUI  8x8     ---   9.369  10.875   -708   -662   1   1   25          
+[ 8]  7   279460216   GUI  8x8     ---   8.625  10.125   1906   2376   1   1   25          
+[ 9]  6   278938072   ACQ  8x8   0.985   8.924  10.422    200    -45  20   1  120          
+[10]  7   279464584   ACQ  8x8   0.984   9.235  10.734     60   1434  20   1  120          
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.117	-7.045	-5.183	
+Acquisition Stars Expected  : 7.85
+Predicted Max CCD temperature: -15.3 C 	 N100 Warm Pix Frac 0.158
+Dynamic Mag Limits: Yellow 10.09 	 Red 10.39
+==================================================================================== 
+OBSID: 52130  
+RA, Dec, Roll (deg):   111.000000    46.000000   211.527835
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:025:05:06:05.928 (VCDU count = 8211888)
+  Q1,Q2,Q3,Q4: -0.41428793  -0.79020512  -0.00689345  0.45154609
+  MANVR: Angle= 108.42 deg  Duration= 2106 sec  Slew err= 62.5 arcsec
+
+MP_STARCAT at 2015:025:05:06:07.571 (VCDU count = 8211894)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   444729432   BOT  8x8   0.980   9.299  10.797    669   -991  20   1  120          
+[ 2]  1   444734224   BOT  8x8   0.985   8.965  10.469    152  -1489  20   1  120          
+[ 3]  2   444739112   BOT  8x8   0.985   8.677  10.188   1505    467  20   1  120          
+[ 4]  3   444742960   BOT  8x8   0.985   7.754   9.250  -1176   2055  20   1  120          
+[ 5]  4   444743456   BOT  8x8   0.985   7.164   8.672  -2226   1385  18   1  110          
+[ 6]  5   444739600   GUI  8x8     ---   8.071   9.578    743  -1413   1   1   25          
+[ 7]  6   444737720   GUI  8x8     ---   9.055  10.562   -708     18   1   1   25          
+[ 8]  7   444729096   GUI  8x8     ---   7.697   9.203  -2293  -2016   1   1   25          
+[ 9]  5   444737224   ACQ  8x8   0.985   7.327   8.922    304    894  20   1  120    a2    
+[10]  6   444742880   ACQ  8x8   0.956   9.521  11.031  -1967   1473  20   1  120    a2    
+[11]  7   444728128   ACQ  8x8   0.894   9.790  11.297  -1728   -716  20   1  120    a2    
+
+>> WARNING: [ 5] Bad AGASC ID.  444743456
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.296	-6.311	-4.548	
+Acquisition Stars Expected  : 7.75
+Predicted Max CCD temperature: -15.3 C 	 N100 Warm Pix Frac 0.159
+Dynamic Mag Limits: Yellow 10.08 	 Red 10.39
+==================================================================================== 
+OBSID: 52129  
+RA, Dec, Roll (deg):   150.500000     9.400000    64.243791
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:025:06:04:39.035 (VCDU count = 8225598)
+  Q1,Q2,Q3,Q4: 0.20203071  0.49480263  0.82734800  0.17276933
+  MANVR: Angle= 132.55 deg  Duration= 2427 sec  Slew err= 44.0 arcsec
+
+MP_STARCAT at 2015:025:06:04:40.678 (VCDU count = 8225604)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0   108659440   BOT  8x8   0.985   9.109  10.609  -2234  -1409  20   1  120          
+[ 2]  1   108661600   BOT  8x8   0.985   8.495  10.000   1920    483  20   1  120          
+[ 3]  2   108662208   BOT  8x8   0.892   9.794  11.297  -1873   1309  20   1  120  a2g2    
+[ 4]  3   108663248   BOT  8x8   0.985   8.135   9.641  -1845     87  20   1  120          
+[ 5]  4   108792296   BOT  8x8   0.985   7.304   8.812   2217   -459  20   1  120          
+[ 6]  5   108794608   BOT  8x8   0.982   8.881  10.391   -121  -2056  20   1  120          
+[ 7]  6   108795224   BOT  8x8   0.985   8.827  10.328  -1219  -1463  20   1  120          
+[ 8]  7   109058672   GUI  8x8     ---   9.863  11.359   2405    819   1   1   25    g2    
+[ 9]  7   108659024   ACQ  8x8   0.935   9.639  11.141     39   1907  20   1  120    a2    
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.167	-6.190	-4.437	
+Acquisition Stars Expected  : 7.73
+Predicted Max CCD temperature: -15.3 C 	 N100 Warm Pix Frac 0.159
+Dynamic Mag Limits: Yellow 10.08 	 Red 10.39
+==================================================================================== 
+OBSID: 17581  CXOU J164043.5-46313   ACIS-I SIM Z offset:-3141 (-7.90mm) Grating: NONE 
+RA, Dec, Roll (deg):   250.194051   -46.512009   101.509287
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:025:08:03:38.187 (VCDU count = 8253458)
+  Q1,Q2,Q3,Q4: 0.61347291  -0.43852981  -0.65137191  0.08400730
+  MANVR: Angle= 103.74 deg  Duration= 2043 sec  Slew err= 64.5 arcsec
+
+MP_STARCAT at 2015:025:08:03:39.830 (VCDU count = 8253464)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           2   FID  8x8     ---   7.000   8.000   -774  -1012   1   1   25          
+[ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    893   1   1   25          
+[ 3]  2           5   FID  8x8     ---   7.000   8.000  -1828    891   1   1   25          
+[ 4]  3  1091334688   BOT  6x6   0.985   6.242   7.750   1268  -1713  20   1  120  a2g2    
+[ 5]  4  1091838488   BOT  6x6   0.964   9.462  10.969  -1776  -1983  20   1  120  a2g3    
+[ 6]  5  1091193912   GUI  6x6     ---   9.305  10.812   2383   -522   1   1   25          
+[ 7]  6  1091704704   GUI  6x6     ---  10.315  11.812  -1509   2151   1   1   25    g3    
+[ 8]  7  1091706496   GUI  6x6     ---   9.382  10.891  -2277   2078   1   1   25    g3    
+[ 9]  5  1091194800   ACQ  6x6   0.659  10.206  11.703   -196    413  11   1   75    a2    
+[10]  6  1091194928   ACQ  6x6   0.840   9.922  11.422   1022    111  20   1  120    a2    
+[11]  7  1091332544   ACQ  6x6   0.752  10.079  11.578    995  -1142  20   1  120    a2    
+[12]  0  1091336128   ACQ  6x6   0.858   9.883  11.391    643  -2059  20   1  120    a2    
+[13]  1  1091703920   ACQ  6x6   0.789  10.019  11.516  -1242   1094  20   1  120    a3    
+[14]  2  1091339024   ACQ  6x6   0.627  10.245  11.750    851  -1444  20   1  120    a3    
+
+>> WARNING: [ 5] Search spoiler. 1091832568: Y,Z,Radial,Mag seps:  38  28  47 -0.7
+>> WARNING: [ 7] Magnitude.  10.315
+>> WARNING: [ 9] Magnitude.  10.206
+>> WARNING: [12] Search spoiler. 1091335088: Y,Z,Radial,Mag seps: 138  95 168 -0.9
+>> WARNING: [13] Search spoiler. 1091200816: Y,Z,Radial,Mag seps: 123 172 212 -0.3
+>> WARNING: [13] Search spoiler. 1091699808: Y,Z,Radial,Mag seps: 138  95 168 -0.5
+>> WARNING: [13] Search spoiler. 1091200576: Y,Z,Radial,Mag seps: 159  69 174 -0.3
+>> WARNING: [14] Magnitude.  10.245
+>> WARNING: [14] Search spoiler. 1091328304: Y,Z,Radial,Mag seps:  58 139 151 -0.8
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-3.481	-2.308	-1.417	
+Acquisition Stars Expected  : 6.47
+Predicted Max CCD temperature: -15.3 C 	 N100 Warm Pix Frac 0.159
+Dynamic Mag Limits: Yellow 10.08 	 Red 10.39
+==================================================================================== 
+OBSID: 17584  Abell 3411             ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
+RA, Dec, Roll (deg):   130.486328   -17.508438     7.497764
+Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
+
+MP_TARGQUAT at 2015:025:21:12:09.607 (VCDU count = 8438088)
+  Q1,Q2,Q3,Q4: -0.11085095  0.12228128  0.89142649  0.42204049
+  MANVR: Angle=  96.36 deg  Duration= 1945 sec  Slew err= 69.5 arcsec
+
+MP_STARCAT at 2015:025:21:12:11.250 (VCDU count = 8438094)
+---------------------------------------------------------------------------------------------
+ IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+---------------------------------------------------------------------------------------------
+[ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
+[ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
+[ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
+[ 4]  3   788403264   BOT  6x6   0.979   9.312  10.812  -1785   -485  17   1  105          
+[ 5]  4   788546808   BOT  6x6   0.982   8.877  10.375   1890    249  20   1  120          
+[ 6]  5   788548808   BOT  6x6   0.985   8.530  10.031   1457    816  20   1  120          
+[ 7]  6   788552496   BOT  6x6   0.985   8.862  10.359   2140   1757  20   1  120          
+[ 8]  7   788552320   GUI  6x6     ---   8.426   9.938   1839   1525   1   1   25          
+[ 9]  7   788418168   ACQ  6x6   0.985   6.316   7.812  -1652    959  20   1  120    a2    
+[10]  0   788543784   ACQ  6x6   0.967   9.436  10.938   1801   -886  20   1  120    a2    
+[11]  1   788537720   ACQ  6x6   0.943   9.596  11.094    506   -879  20   1  120    a2    
+[12]  2   788537912   ACQ  6x6   0.936   9.634  11.141  -1204  -1176  20   1  120    a2    
+
+>> WARNING: [ 9] Bad AGASC ID.  788418168
+>> WARNING: [ 9] Bad Acquisition Star. 788418168 has  6 failed out of  6 attempts
+
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.070	-6.144	-4.438	
+Acquisition Stars Expected  : 7.76
+Predicted Max CCD temperature: -15.2 C 	 N100 Warm Pix Frac 0.160
+Dynamic Mag Limits: Yellow 10.08 	 Red 10.39
+==================================================================================== 

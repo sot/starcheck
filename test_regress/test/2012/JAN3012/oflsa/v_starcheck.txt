@@ -93,16 +93,16 @@ OBSID = 13820 at 2012:031:14:39:01.717   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 54897 at 2012:033:19:14:26.140   8 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 54896 at 2012:033:19:25:59.434   5 clean ACQ | 6 clean GUI | WARNINGS [ 3]
 OBSID = 54895 at 2012:033:20:16:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
-OBSID = DC_T0 at 2012:033:20:40:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 2] 
+OBSID = DC_T0 at 2012:033:20:40:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 1] 
 OBSID = 54893 at 2012:033:20:59:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
-OBSID = DC_T1 at 2012:033:21:23:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 2] 
+OBSID = DC_T1 at 2012:033:21:23:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 1] 
 OBSID = 54891 at 2012:033:21:42:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
-OBSID = DC_T2 at 2012:033:22:06:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 2] 
+OBSID = DC_T2 at 2012:033:22:06:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 1] 
          ------  2012:033:22:13:20.000   OBC Load Segment Begins     CL033:2205 
 OBSID = 54889 at 2012:033:22:25:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
-OBSID = DC_T3 at 2012:033:22:49:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 2] 
+OBSID = DC_T3 at 2012:033:22:49:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 1] 
 OBSID = 54887 at 2012:033:23:08:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
-OBSID = DC_T4 at 2012:033:23:32:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 2] 
+OBSID = DC_T4 at 2012:033:23:32:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 1] 
 OBSID = 54885 at 2012:033:23:51:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
 OBSID = 54884 at 2012:034:00:15:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
 OBSID = 54883 at 2012:034:00:24:16.000   8 clean ACQ | 8 clean GUI | 
@@ -592,7 +592,6 @@ MP_TARGQUAT at 2012:033:20:40:34.357 (VCDU count = 46019)
                                                                                              
 
 >> WARNING: Could not find obsid DC_T0 in processing summary
->> WARNING: Dither status not checked
 >> INFO   : No Guide Star Summary for obsid DC_T0 (DC_T0). OK for 'DC_T' ER. 
 >> INFO   : No star catalog for obsid DC_T0 (DC_T0). OK for 'DC_T' ER.
 ==================================================================================== 
@@ -638,7 +637,6 @@ MP_TARGQUAT at 2012:033:21:23:34.357 (VCDU count = 56088)
                                                                                              
 
 >> WARNING: Could not find obsid DC_T1 in processing summary
->> WARNING: Dither status not checked
 >> INFO   : No Guide Star Summary for obsid DC_T1 (DC_T1). OK for 'DC_T' ER. 
 >> INFO   : No star catalog for obsid DC_T1 (DC_T1). OK for 'DC_T' ER.
 ==================================================================================== 
@@ -684,7 +682,6 @@ MP_TARGQUAT at 2012:033:22:06:34.357 (VCDU count = 66156)
                                                                                              
 
 >> WARNING: Could not find obsid DC_T2 in processing summary
->> WARNING: Dither status not checked
 >> INFO   : No Guide Star Summary for obsid DC_T2 (DC_T2). OK for 'DC_T' ER. 
 >> INFO   : No star catalog for obsid DC_T2 (DC_T2). OK for 'DC_T' ER.
 ==================================================================================== 
@@ -730,7 +727,6 @@ MP_TARGQUAT at 2012:033:22:49:34.357 (VCDU count = 76224)
                                                                                              
 
 >> WARNING: Could not find obsid DC_T3 in processing summary
->> WARNING: Dither status not checked
 >> INFO   : No Guide Star Summary for obsid DC_T3 (DC_T3). OK for 'DC_T' ER. 
 >> INFO   : No star catalog for obsid DC_T3 (DC_T3). OK for 'DC_T' ER.
 ==================================================================================== 
@@ -776,7 +772,6 @@ MP_TARGQUAT at 2012:033:23:32:34.357 (VCDU count = 86293)
                                                                                              
 
 >> WARNING: Could not find obsid DC_T4 in processing summary
->> WARNING: Dither status not checked
 >> INFO   : No Guide Star Summary for obsid DC_T4 (DC_T4). OK for 'DC_T' ER. 
 >> INFO   : No star catalog for obsid DC_T4 (DC_T4). OK for 'DC_T' ER.
 ==================================================================================== 
