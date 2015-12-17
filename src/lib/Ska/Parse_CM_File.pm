@@ -119,23 +119,34 @@ sub dither {
     # Now make an array of hashes as the final output.  Keep track of where the info
     # came from to assist in debugging.
     my @dither;
+    my $bs_start = $bs_arr->[0]->{time};
+    my $r2a = 3600. * 180. / 3.14159265;
+    my $pi = 3.14159265;
+
     my $dither_state;
     my $dither_ampl_p;
     my $dither_ampl_y;
-    my $bs_start = $bs_arr->[0]->{time};
-    my $r2a = 3600. * 180. / 3.14159265;
+    my $dither_period_p;
+    my $dither_period_y;
  
     foreach (0 .. $#state) {
       $dither_state = $state[$_] if defined $state[$_];
       $dither_ampl_p = $params[$_]->{COEFP} * $r2a if defined $params[$_]->{COEFP};
       $dither_ampl_y = $params[$_]->{COEFY} * $r2a if defined $params[$_]->{COEFY};
-      
+      $dither_period_p = 1 / ($params[$_]->{RATEP} / (2 * $pi))
+         if defined $params[$_]->{RATEP};
+      $dither_period_y = 1 / ($params[$_]->{RATEY} / (2 * $pi))
+         if defined $params[$_]->{RATEP};
       push @dither, { time => $time[$_],
 		      state => $dither_state,
 		      source => $time[$_] < $bs_start ? 'history' : 'backstop',
 		      ampl_p => $dither_ampl_p,
-		      ampl_y => $dither_ampl_y};
-    }
+		      ampl_y => $dither_ampl_y,
+                      period_p => $dither_period_p,
+                      period_y => $dither_period_y,
+                      tlmsid => $params[$_]->{TLMSID},
+                  };
+  }
     return ($dither_time_violation, \@dither);
 }
 
