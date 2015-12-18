@@ -40,7 +40,7 @@ OBSID = 56637 at 2009:333:03:15:01.544   8 clean ACQ | 8 clean GUI |
 OBSID = 56636 at 2009:333:03:49:35.918   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 56635 at 2009:333:05:54:52.203   8 clean ACQ | 8 clean GUI | 
 OBSID = 56634 at 2009:333:06:26:08.179   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID = 11014 at 2009:333:08:17:22.346   8 clean ACQ | 5 clean GUI | 
+OBSID = 11014 at 2009:333:08:17:22.346   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID = 56633 at 2009:333:14:40:05.375   8 clean ACQ | 8 clean GUI | 
 OBSID = 12038 at 2009:333:15:00:47.881   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 56632 at 2009:333:18:16:03.911   8 clean ACQ | 8 clean GUI | 
@@ -339,6 +339,7 @@ MP_STARCAT at 2009:333:08:17:22.346 (VCDU count = 8807794)
 [10]  1   411837720   ACQ  6x6   0.985   8.196   9.703   1505   -869  20   1  120          
 [11]  2   411833872   ACQ  6x6   0.985   9.205  10.703   1187   1503  20   1  120          
 
+>> WARNING: [ 8] Quadrant Boundary. 
 >> INFO   : [ 8] Appears to be MON used as GUI/BOT.  Has Magnitude been checked?
 >> INFO   : [ 8] Readout Size. 8x8 Stealth MON?
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	

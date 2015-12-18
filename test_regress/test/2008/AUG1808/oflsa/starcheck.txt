@@ -40,14 +40,14 @@ OBSID =  9841 at 2008:232:01:29:46.221   8 clean ACQ | 5 clean GUI |
          ------  2008:232:05:15:01.285   OBC Load Segment Begins     CL232:0500 
 OBSID =  9484 at 2008:232:06:24:26.221   8 clean ACQ | 5 clean GUI | 
 OBSID =  9383 at 2008:232:22:27:17.221   8 clean ACQ | 5 clean GUI | 
-OBSID =  9077 at 2008:233:01:44:35.779   8 clean ACQ | 5 clean GUI | 
+OBSID =  9077 at 2008:233:01:44:35.779   8 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID =  8958 at 2008:233:05:02:55.861   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID = 57644 at 2008:233:07:52:32.222   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 57643 at 2008:233:10:45:30.972   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
          ------  2008:233:15:02:15.992   OBC Load Segment Begins     CL233:1500 
 OBSID = 57642 at 2008:233:15:05:21.992   7 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 57641 at 2008:233:21:30:19.133   8 clean ACQ | 8 clean GUI | 
-OBSID =  8911 at 2008:234:00:40:52.222   8 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
+OBSID =  8911 at 2008:234:00:40:52.222   7 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  9382 at 2008:234:11:19:02.822   8 clean ACQ | 5 clean GUI | 
          ------  2008:235:03:45:00.000   OBC Load Segment Begins     CL235:0300 
 OBSID =  9449 at 2008:235:15:44:46.735   8 clean ACQ | 5 clean GUI | 
@@ -58,7 +58,7 @@ OBSID = 57639 at 2008:236:02:15:30.306   8 clean ACQ | 8 clean GUI |
 OBSID = 57638 at 2008:236:06:33:11.891   8 clean ACQ | 8 clean GUI | 
          ------  2008:236:12:02:24.797   OBC Load Segment Begins     CL236:1200 
 OBSID = 57637 at 2008:236:12:05:30.797   8 clean ACQ | 8 clean GUI | 
-OBSID =  9909 at 2008:236:15:15:42.344   8 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
+OBSID =  9909 at 2008:236:15:15:42.344   7 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  9535 at 2008:237:01:53:52.944   8 clean ACQ | 5 clean GUI | 
 OBSID =  9540 at 2008:237:09:45:03.544   3 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 6]
 ==================================================================================== 
@@ -302,6 +302,9 @@ MP_STARCAT at 2008:233:01:44:35.779 (VCDU count = 7065955)
 [11]  1  1125791320   ACQ  6x6   0.985   9.222  10.719  -1360   1910  20   1  120          
 [12]  2  1125778712   ACQ  6x6   0.985   7.634   9.141  -1286    -58  20   1  120          
 
+>> WARNING: [ 2] Fid spoiler.  1125778520: Y,Z,Radial,Mag seps:  44  25  51 -4.9
+>> WARNING: [ 3] Fid spoiler.  1125794480: Y,Z,Radial,Mag seps:  41  30  51 -4.9
+
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
 Acquisition Stars Expected  : 7.88
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.054
@@ -487,6 +490,7 @@ MP_STARCAT at 2008:234:00:40:52.222 (VCDU count = 7388204)
 [12]  2   414582624   ACQ  6x6   0.985   8.991  10.500   1351   -200  20   1  120          
 
 >> WARNING: MON requested in OR, but none found in catalog
+>> WARNING: [ 7] Quadrant Boundary. 
 >> INFO   : [ 7] Commanded at intended OR MON position; but not configured for MON
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
@@ -760,6 +764,7 @@ MP_STARCAT at 2008:236:15:15:42.344 (VCDU count = 8267385)
 [12]  2   414582624   ACQ  6x6   0.985   8.991  10.500   1351   -200  20   1  120          
 
 >> WARNING: MON requested in OR, but none found in catalog
+>> WARNING: [ 7] Quadrant Boundary. 
 >> INFO   : [ 7] Commanded at intended OR MON position; but not configured for MON
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	

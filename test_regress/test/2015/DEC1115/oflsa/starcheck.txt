@@ -243,11 +243,11 @@ MP_STARCAT at 2015:344:17:04:02.282 (VCDU count = 10145577)
 >> WARNING: No Guide Star Summary for obsid NONE1 (NONE1). 
 >> WARNING: No CCD temperature prediction for obsid
 >> WARNING: Using -14 (planning limit) for t_ccd for mag limits
+>> WARNING: Dither status not checked
 >> WARNING: [ 5] Magnitude.  10.278
 >> WARNING: [ 6] Magnitude.  10.238
 >> WARNING: [ 7] Magnitude.  10.417
 >> WARNING: [ 8] Magnitude.  10.412
->> WARNING: Dither status not checked
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Perigee bright stars not being checked, no obs tstop available
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2015:344:17:04:00.639
@@ -361,12 +361,12 @@ MP_STARCAT at 2015:345:00:34:35.233 (VCDU count = 10251071)
 >> WARNING: No Guide Star Summary for obsid NONE4 (NONE4). 
 >> WARNING: No CCD temperature prediction for obsid
 >> WARNING: Using -14 (planning limit) for t_ccd for mag limits
+>> WARNING: Dither status not checked
 >> WARNING: [ 3] Search spoiler.  174469576: Y,Z,Radial,Mag seps: 116 174 209 -0.2
 >> WARNING: [ 4] Search Box Size. Search Box smaller than slew error 
 >> WARNING: [ 5] Search spoiler.  174468280: Y,Z,Radial,Mag seps: 116 174 209  0.2
 >> WARNING: [ 6] Search Box Size. Search Box smaller than slew error 
 >> WARNING: [10] Search spoiler.  174461120: Y,Z,Radial,Mag seps: 224  87 240  0.4
->> WARNING: Dither status not checked
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Perigee bright stars not being checked, no obs tstop available
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2015:345:00:34:33.590
@@ -1548,9 +1548,9 @@ MP_STARCAT at 2015:351:09:29:25.842 (VCDU count = 12399327)
 >> WARNING: Dither should be disabled 1 min before obs start for Large Dither
 >> WARNING: Last dither state for Large Dither should start 5 minutes before obs end.
 >> WARNING: Dither parameters not set to standard values before obs end
+>> WARNING: Non-standard dither
 >> WARNING: [ 9] Magnitude.   9.999
 >> WARNING: [10] Magnitude.  10.053
->> WARNING: Non-standard dither
 >> INFO   : CCD temperature exceeds -15 C
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.255	-4.406	-2.831	
@@ -1870,14 +1870,14 @@ MP_STARCAT at 2015:353:07:19:28.672 (VCDU count = 13043241)
 [11]  1   394530784   ACQ  6x6   0.734   9.999  11.500     86   1771  20   1  120    a2    
 [12]  2   394531368   ACQ  6x6   0.721  10.016  11.516   1712   1942  20   1  120    a2    
 
->> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  62,  54,  82
 >> WARNING: Large Dither not enabled 5 min after EOM (2015:353:07:41:11.000)
 >> WARNING: Dither should be disabled 1 min before obs start for Large Dither
 >> WARNING: Last dither state for Large Dither should start 5 minutes before obs end.
 >> WARNING: Dither parameters not set to standard values before obs end
+>> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  62,  54,  82
+>> WARNING: Non-standard dither
 >> WARNING: [11] Magnitude.   9.999
 >> WARNING: [12] Magnitude.  10.016
->> WARNING: Non-standard dither
 >> INFO   : CCD temperature exceeds -15 C
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.257	-4.409	-2.834	
@@ -3128,11 +3128,11 @@ MP_STARCAT at 2015:359:11:14:54.146 (VCDU count = 15121389)
 >> WARNING: Dither should be disabled 1 min before obs start for Large Dither
 >> WARNING: Last dither state for Large Dither should start 5 minutes before obs end.
 >> WARNING: Dither parameters not set to standard values before obs end
+>> WARNING: Non-standard dither
 >> WARNING: [ 4] Magnitude.  10.016
 >> WARNING: [ 6] Magnitude.  10.053
 >> WARNING: [ 8] Quadrant Boundary. 
 >> WARNING: [11] Magnitude.  10.274
->> WARNING: Non-standard dither
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.033	-2.545	-1.511	
 Acquisition Stars Expected  : 6.48
