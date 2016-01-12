@@ -606,9 +606,9 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->check_flick_pix_mon();
     $obs{$obsid}->set_dynamic_mag_limits();
+    $obs{$obsid}->check_dither($dither);
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
-    $obs{$obsid}->check_dither($dither);
 	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->check_for_special_case_er();
     $obs{$obsid}->check_bright_perigee($radmon);
