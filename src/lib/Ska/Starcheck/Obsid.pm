@@ -1282,7 +1282,7 @@ sub check_star_catalog {
 	# FID magnitude limits ACA-011
 	if ($type eq 'FID') {
 	    if ($mag =~ /---/ or $mag < $fid_bright or $mag > $fid_faint) {
-		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i, $mag =~ /---/ ? 0 : $mag;
+		push @warn, sprintf "$alarm [%2d] Fid Magnitude.  %6.3f\n",$i, $mag =~ /---/ ? 0 : $mag;
 	    } 
 	}
 
