@@ -48,7 +48,7 @@ use Ska::AGASC;
 
 use Inline Python => q{
 
-from chandra_aca.star_probs import set_fit_pars as set_acq_model_ms_filter
+from chandra_aca.star_probs import set_acq_model_ms_filter
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
 
