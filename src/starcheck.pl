@@ -331,16 +331,9 @@ Ska::Starcheck::Obsid::set_odb(%odb);
 
 Ska::Starcheck::Obsid::set_config($config_ref);
 
-my $MSF_ENABLED;
 # Set the multple star filter disabled in the model if after this date
-if ($bs[0]->{time} > date2time('2016:102:00:00:00.000')){
-    set_acq_model_ms_filter(0);
-    $MSF_ENABLED = 0;
-}
-else{
-    set_acq_model_ms_filter(1);
-    $MSF_ENABLED = 1;
-}
+my $MSF_ENABLED = $bs[0]->{time} > datetime('2016:102:00:00:00.000');
+set_acq_model_ms_filter($MSF_ENABLED);
 
 # Read Maneuver error file containing more accurate maneuver errors
 my @manerr;
@@ -432,7 +425,6 @@ my %guidesumm = Ska::Parse_CM_File::guide($guide_summ) if (defined $guide_summ);
 
 # After all commands have been added to each obsid, set some global
 # object parameters based on commands
-
 
 foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_obsid(\%guidesumm); # Commanded obsid
@@ -675,14 +667,10 @@ if (%input_files) {
 	$save_hash{run}{badpix} = $ACA_badpix_date;
     }
 
-    if ($MSF_ENABLED){
-        $out .= "Using acquisition model for multiple star filter enabled\n";
-    }
-    else{
-        $out .= "Using acquisition model for multiple star filter disabled\n";
-    }
-    $out .= "\n";
+    $out .= "Using acquisition model for multiple star filter "
+        . ($MSF_ENABLED ? "enabled\n" : "disabled\n");
 
+    $out .= "\n";
 }
 
 if (@global_warn) {
