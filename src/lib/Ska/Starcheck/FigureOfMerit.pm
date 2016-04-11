@@ -21,13 +21,12 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 our @EXPORT = qw();
-our @EXPORT_OK = qw( make_figure_of_merit set_dynamic_mag_limits set_acq_model_ms_filter );
+our @EXPORT_OK = qw( make_figure_of_merit set_dynamic_mag_limits );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 use Inline Python => q{
 
-from chandra_aca.star_probs import (acq_success_prob, prob_n_acq, mag_for_p_acq,
-                                    set_fit_pars as set_acq_model_ms_filter)
+from chandra_aca.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
 
 def _acq_success_prob(date, t_ccd, mag, color, spoiler):
     out = acq_success_prob(date, float(t_ccd), float(mag), float(color), spoiler)

@@ -32,7 +32,6 @@ use PoorTextFormat;
 #use GrabEnv qw( grabenv );
 #use Shell::GetEnv;
 
-use Ska::Starcheck::FigureOfMerit qw( set_acq_model_ms_filter );
 use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
 use Carp;
@@ -49,6 +48,7 @@ use Ska::AGASC;
 
 use Inline Python => q{
 
+from chandra_aca.star_probs import set_fit_pars as set_acq_model_ms_filter
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
 
