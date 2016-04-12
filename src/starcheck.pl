@@ -48,6 +48,7 @@ use Ska::AGASC;
 
 use Inline Python => q{
 
+from chandra_aca.star_probs import set_acq_model_ms_filter
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
 
@@ -61,7 +62,6 @@ def plot_cat_wrapper(kwargs):
         # write errors to starcheck's global warnings and STDERR
         perl.warning("Error with Inline::Python imports {}\n".format(err))
     return make_plots_for_obsid(**kwargs)
-
 };
 
 # cheat to get the OS (major)
@@ -331,8 +331,9 @@ Ska::Starcheck::Obsid::set_odb(%odb);
 
 Ska::Starcheck::Obsid::set_config($config_ref);
 
-
-
+# Set the multple star filter disabled in the model if after this date
+my $MSF_ENABLED = $bs[0]->{date} gt '2016:102:00:00:00.000';
+set_acq_model_ms_filter($MSF_ENABLED);
 
 # Read Maneuver error file containing more accurate maneuver errors
 my @manerr;
@@ -665,6 +666,9 @@ if (%input_files) {
 	$out .= "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
 	$save_hash{run}{badpix} = $ACA_badpix_date;
     }
+
+    $out .= "Using acquisition model for multiple star filter "
+        . ($MSF_ENABLED ? "enabled\n" : "disabled\n");
 
     $out .= "\n";
 }
