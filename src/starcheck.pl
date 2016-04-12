@@ -332,7 +332,7 @@ Ska::Starcheck::Obsid::set_odb(%odb);
 Ska::Starcheck::Obsid::set_config($config_ref);
 
 # Set the multple star filter disabled in the model if after this date
-my $MSF_ENABLED = $bs[0]->{date} gt '2016:102:00:00:00.000';
+my $MSF_ENABLED = $bs[0]->{date} lt '2016:102:00:00:00.000';
 set_acq_model_ms_filter($MSF_ENABLED);
 
 # Read Maneuver error file containing more accurate maneuver errors
