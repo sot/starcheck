@@ -8,7 +8,7 @@
 ##*******************************************************************************
 
 
-my $version = '11.7';
+my $version = '11.8';
 
 # Set defaults and get command line options
 
