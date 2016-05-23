@@ -429,10 +429,7 @@ sub DOT {
     while ( <$DOT> ) {
         chomp;
         next unless (/\S/);
-        if ( /M\d{3}$/ ){
-            $touched_by_sausage = 1;
-        }
-        if ( /MTLB/ ){
+        if ( /MTLB/ or /M\d{3}$/ ){
             $touched_by_sausage = 1;
         }
         my ($cmd, $id) = /(.+) +(\S+)....$/;
