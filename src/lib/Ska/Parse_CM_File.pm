@@ -432,6 +432,9 @@ sub DOT {
         if ( /M\d{3}$/ ){
             $touched_by_sausage = 1;
         }
+        if ( /MTLB/ ){
+            $touched_by_sausage = 1;
+        }
         my ($cmd, $id) = /(.+) +(\S+)....$/;
         $index{$id} = "0001" unless (exists $index{$id});
         $cmd =~ s/\s+$//;
