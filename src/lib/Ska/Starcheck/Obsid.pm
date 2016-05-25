@@ -2566,11 +2566,11 @@ sub set_ccd_temps{
     $self->{n100_warm_frac} = $obsid_temps->{$self->{obsid}}->{n100_warm_frac};
     # add warnings for limit violations
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
-        push @{$self->{warn}}, sprintf("$alarm CCD temperature exceeds %d C\n",
+        push @{$self->{warn}}, sprintf("$alarm CCD temperature exceeds %.1f C\n",
                                        $config{ccd_temp_red_limit});
     }
     elsif ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}){
-        push @{$self->{fyi}}, sprintf("$info CCD temperature exceeds %d C\n",
+        push @{$self->{fyi}}, sprintf("$info CCD temperature exceeds %.1f C\n",
                                               $config{ccd_temp_yellow_limit});
     }
 }
