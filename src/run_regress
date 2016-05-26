@@ -34,8 +34,10 @@ RunRegression()
     cd $test
 
 
-  # Run test version.  Use the 'starcheck' launcher to activate the dev environment
+  # Run test version.  Use the 'sandbox_starcheck' launcher to activate the dev environment
   #
+    echo "Copying python files for local use"
+    cp -Ruva ${home}/starcheck .
     echo "Running: ${home}/sandbox_starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
     echo "******************** (TEST VEHICLE) $load *******************" >> $vlog
     ${home}/sandbox_starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
@@ -71,8 +73,10 @@ RunRegression()
   echo "cd $test"
   cd $test
 
-  # Run test version.  Use the 'starcheck' launcher to activate the dev environment
+  # Run test version.  Use the 'sandbox_starcheck' launcher to activate the dev environment
   #
+  echo "Copying python files for local use"
+  cp -Ruva ${home}/starcheck .
   echo "Running: ${home}/sandbox_starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
   echo "******************** (TEST) $load *******************" >> $log
   ${home}/sandbox_starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
