@@ -82,11 +82,15 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=No
         all_ok = False
 
     # If dynamical offsets file is available then load was planned using
-    # Matlab tools 2016:210 later, which implements the "Cycle 18 aimpoint
+    # Matlab tools 2016_210 later, which implements the "Cycle 18 aimpoint
     # transition plan".  This code injects new OR list attributes for the
     # dynamical offset.
     if dynamic_offsets_file is not None and or_list is not None:
+        # Existing OFLS characteristics file is not relevant for post 2016_210.
+        # Products are planned using the Matlab tools SI align which matches the
+        # baseline mission align matrix from pre-November 2015.
         ofls_characteristics_file = None
+
         lines.append('INFO: using dynamic offsets file {}'.format(dynamic_offsets_file))
         or_map = {or_['obsid']: or_ for or_ in or_list}
 
