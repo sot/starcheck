@@ -571,6 +571,11 @@ eval{
                                           char_file => "$Starcheck_Data/characteristics.yaml",
                                           orlist => $or_file,
                                       });
+    open(my $JSON_OBS_TEMP, "> $STARCHECK/obsid_thermal.json")
+        or die "Couldn't open $STARCHECK/obsid_thermal.json for writing\n";
+    print $JSON_OBS_TEMP $json_obsid_temps;
+    close($JSON_OBS_TEMP);
+
     # convert back from JSON outside
     $obsid_temps = JSON::from_json($json_obsid_temps);
 };
