@@ -569,6 +569,7 @@ eval{
                                           json_obsids => $json_text,
                                           model_spec => "$Starcheck_Data/aca_spec.json",
                                           char_file => "$Starcheck_Data/characteristics.yaml",
+                                          orlist => $or_file,
                                       });
     # convert back from JSON outside
     $obsid_temps = JSON::from_json($json_obsid_temps);
