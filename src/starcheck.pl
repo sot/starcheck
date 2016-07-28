@@ -693,13 +693,16 @@ if (@global_warn) {
 my $CHAR_REQUIRED_AFTER = '2015:315:00:00:00.000';
 if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
     $out .= "------------  VERIFY ATTITUDE (SI_ALIGN CHECK)  -----------------\n\n";
-    if (not defined $char_file){
-        $out .= "Error.  Characteristics file not found. \n";
-    }
     # dynamic aimpoint files are required after 21-Aug-2016
     my $AIMPOINT_REQUIRED_AFTER = '2016:234:00:00:00.000';
     if ((not defined $aimpoint_file) and ($bs[0]->{time} > date2time($AIMPOINT_REQUIRED_AFTER))){
         $out .= "Error.  dynamic aimpoint file not found. \n";
+    }
+    # The attitude checks are not possible without the char file but are possible without the
+    # dynamic aimpoint file, so this is an if/else that controls doing the check only on the
+    # presence of the char_file.
+    if (not defined $char_file){
+        $out .= "Error.  Characteristics file not found. \n";
     }
     else{
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
