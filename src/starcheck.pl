@@ -141,7 +141,6 @@ my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');
 my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
 my $simtrans_file= get_file("$par{dir}/History/SIMTRANS.txt*", 'simtrans');
 my $simfocus_file= get_file("$par{dir}/History/SIMFOCUS.txt*", 'simfocus');
-my $aimpoint_file= get_file("$par{dir}/output/*_dynamical_offsets.txt", 'aimpoint');
 
 # Check for characteristics.  Ignore the get_file required vs not API and just pre-check
 # to see if there is characteristics
@@ -153,7 +152,12 @@ for my $char_glob ("$par{dir}/mps/ode/characteristics/L_*_CHARACTERIS*",
         last;
     }
 }
-
+# Check for a dynamic aimpoint file.  Precheck existence of file to avoid errors about a
+# missing file on historical products that won't have this file
+my $aimpoint_file;
+if (glob("$par{dir}/output/*_dynamical_offsets.txt")){
+    $aimpoint_file = get_file("$par{dir}/output/*_dynamical_offsets.txt", 'aimpoint');
+}
 
 my $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
 
@@ -691,6 +695,11 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
     $out .= "------------  VERIFY ATTITUDE (SI_ALIGN CHECK)  -----------------\n\n";
     if (not defined $char_file){
         $out .= "Error.  Characteristics file not found. \n";
+    }
+    # dynamic aimpoint files are required after 21-Aug-2016
+    my $AIMPOINT_REQUIRED_AFTER = '2016:234:00:00:00.000';
+    if ((not defined $aimpoint_file) and ($bs[0]->{time} > date2time($AIMPOINT_REQUIRED_AFTER))){
+        $out .= "Error.  dynamic aimpoint file not found. \n";
     }
     else{
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
