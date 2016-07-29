@@ -77,7 +77,7 @@ Load Input Files
 
   - Dynamic aimpoint offset file (required after 21-Aug-2016):
 
-      * ./output/*_dynamical_offsets.txt
+      * ./output/\*_dynamical_offsets.txt
 
 Starcheck's Data Files
 ----------------------
