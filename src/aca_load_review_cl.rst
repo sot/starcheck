@@ -75,6 +75,10 @@ Load Input Files
 
       * ./mps/ode/characteristics/CHARACTERIS_DDMMMYY
 
+  - Dynamic aimpoint offset file (required after 21-Aug-2016):
+
+      * ./output/*_dynamical_offsets.txt
+
 Starcheck's Data Files
 ----------------------
 
