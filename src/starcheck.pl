@@ -8,7 +8,7 @@
 ##*******************************************************************************
 
 
-my $version = '11.11';
+my $version = '11.12';
 
 # Set defaults and get command line options
 
@@ -152,7 +152,12 @@ for my $char_glob ("$par{dir}/mps/ode/characteristics/L_*_CHARACTERIS*",
         last;
     }
 }
-
+# Check for a dynamic aimpoint file.  Precheck existence of file to avoid errors about a
+# missing file on historical products that won't have this file
+my $aimpoint_file;
+if (glob("$par{dir}/output/*_dynamical_offsets.txt")){
+    $aimpoint_file = get_file("$par{dir}/output/*_dynamical_offsets.txt", 'aimpoint');
+}
 
 my $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
 
@@ -688,6 +693,14 @@ if (@global_warn) {
 my $CHAR_REQUIRED_AFTER = '2015:315:00:00:00.000';
 if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
     $out .= "------------  VERIFY ATTITUDE (SI_ALIGN CHECK)  -----------------\n\n";
+    # dynamic aimpoint files are required after 21-Aug-2016
+    my $AIMPOINT_REQUIRED_AFTER = '2016:234:00:00:00.000';
+    if ((not defined $aimpoint_file) and ($bs[0]->{time} > date2time($AIMPOINT_REQUIRED_AFTER))){
+        $out .= "Error.  dynamic aimpoint file not found. \n";
+    }
+    # The attitude checks are not possible without the char file but are possible without the
+    # dynamic aimpoint file, so this is an if/else that controls doing the check only on the
+    # presence of the char_file.
     if (not defined $char_file){
         $out .= "Error.  Characteristics file not found. \n";
     }
@@ -695,7 +708,7 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
         my $att_ok = make_pcad_attitude_check_report(
             $backstop, $or_file, $mm_file, $simtrans_file, $simfocus_file,
-            $char_file, $att_report);
+            $char_file, $att_report, $aimpoint_file);
         if ($att_ok){
             $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n";
         }

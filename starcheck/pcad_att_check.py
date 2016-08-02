@@ -1,7 +1,8 @@
 import re
 import hopper
-from parse_cm import read_backstop, read_maneuver_summary
+from parse_cm import read_backstop, read_maneuver_summary, read_or_list
 from Chandra.Time import DateTime
+from astropy.table import Table
 
 
 def check_characteristics_date(ofls_characteristics_file, ref_date=None):
@@ -55,32 +56,65 @@ def recent_sim_history(time, file):
 def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=None,
                                     simtrans_file=None, simfocus_file=None,
                                     ofls_characteristics_file=None, out=None,
+                                    dynamic_offsets_file=None,
                                     ):
     """
     Make a report for checking PCAD attitudes
 
     """
+    all_ok = True
+    lines = []  # output report lines
+
     mm = read_maneuver_summary(mm_file)
     q = [mm[0][key] for key in ['q1_0', 'q2_0', 'q3_0', 'q4_0']]
     bs = read_backstop(backstop_file)
     simfa_time, simfa = recent_sim_history(DateTime(bs[0]['date']).secs,
-                                       simfocus_file)
+                                           simfocus_file)
     simpos_time, simpos = recent_sim_history(DateTime(bs[0]['date']).secs,
-                                       simtrans_file)
+                                             simtrans_file)
     initial_state = {'q_att': q,
                      'simpos': simpos,
                      'simfa_pos': simfa}
+
+    or_list = None if or_list_file is None else read_or_list(or_list_file)
+    if or_list is None:
+        lines.append('ERROR: No OR list provided, cannot check attitudes')
+        all_ok = False
+
+    # If dynamical offsets file is available then load was planned using
+    # Matlab tools 2016_210 later, which implements the "Cycle 18 aimpoint
+    # transition plan".  This code injects new OR list attributes for the
+    # dynamical offset.
+    if dynamic_offsets_file is not None and or_list is not None:
+        # Existing OFLS characteristics file is not relevant for post 2016_210.
+        # Products are planned using the Matlab tools SI align which matches the
+        # baseline mission align matrix from pre-November 2015.
+        ofls_characteristics_file = None
+
+        lines.append('INFO: using dynamic offsets file {}'.format(dynamic_offsets_file))
+        or_map = {or_['obsid']: or_ for or_ in or_list}
+
+        doffs = Table.read(dynamic_offsets_file, format='ascii.basic', guess=False)
+        for doff in doffs:
+            obsid = doff['obsid']
+            if obsid in or_map:
+                or_map[obsid]['aca_offset_y'] = doff['aca_offset_y'] / 3600.
+                or_map[obsid]['aca_offset_z'] = doff['aca_offset_z'] / 3600.
+
+        # Check that obsids in OR list match those in dynamic offsets table
+        obsid_mismatch = set(or_map) ^ set(doffs['obsid'])
+        if obsid_mismatch:
+            all_ok = False
+            lines.append('WARNING: mismatch between OR-list and dynamic offsets table {}'
+                         .format(obsid_mismatch))
 
     # Run the commands and populate attributes in `sc`, the spacecraft state.
     # In particular sc.checks is a dict of checks by obsid.
     # Any state value (e.g. obsid or q_att) has a corresponding plural that
     # gives the history of updates as a dict with a `value` and `date` key.
-    sc = hopper.run_cmds(backstop_file, or_list_file, ofls_characteristics_file,
+    sc = hopper.run_cmds(backstop_file, or_list, ofls_characteristics_file,
                          initial_state=initial_state)
-    all_ok = True
-
     # Iterate through obsids in order
-    lines = []
     obsids = [obj['value'] for obj in sc.obsids]
     for obsid in obsids:
         if obsid not in sc.checks:
@@ -99,7 +133,7 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=No
                 lines.append(line)
 
     if out is not None:
-       report = open(out, 'w')
-       report.writelines("\n".join(lines))
+        with open(out, 'w') as fh:
+            fh.writelines("\n".join(lines))
 
     return all_ok
