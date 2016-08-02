@@ -715,11 +715,15 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
         else{
             $out .= "<A HREF=\"${att_report}\">[${red_font_start}NOT OK${font_stop}] Coordinate mismatch or error.</A>\n";
         }
-        if (check_characteristics_date($char_file, $date[0])){
-            $out .= "[OK] Characteristics file newer than 30 days\n\n";
-        }
-        else{
-            $out .= "[${red_font_start}NOT OK${font_stop}] Characteristics file older than 30 days\n\n";
+        # Only check that characteristics file is less than 30 days old if backstop starts before 01-Aug-2016
+        my $CHAR_DATE_CHECK_BEFORE = '2016:214:00:00:00.000';
+        if ($bs[0]->{time} < date2time($CHAR_DATE_CHECK_BEFORE)){
+            if (check_characteristics_date($char_file, $date[0])){
+                $out .= "[OK] Characteristics file newer than 30 days\n\n";
+            }
+            else{
+                $out .= "[${red_font_start}NOT OK${font_stop}] Characteristics file older than 30 days\n\n";
+            }
         }
     }
 }
