@@ -362,9 +362,6 @@ Checks
 |       |                  | | |magnitude 9.0 or brighter                  |    |Star Hold; NSM  |
 |       |                  | | |                                           |    |safing action   |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
-|ACA-047|Pointing          |X|X|Characteristics file is no more than 30    |n/a |Reduced science |
-|       |                  | | |days old                                   |    |quality         |
-+-------+------------------+-+-+-------------------------------------------+----+----------------+
 |ACA-048|Pointing          |X|X|Confirm that PCAD attitudes match expected |n/a |Reduced science |
 |       |                  | | |values based on target coordinates, target |    |quality         |
 |       |                  | | |offsets, and ODB_SI_ALIGN values           |    |                |

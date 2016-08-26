@@ -690,19 +690,18 @@ if (@global_warn) {
 
 
 # Run independent attitude checker
-my $CHAR_REQUIRED_AFTER = '2015:315:00:00:00.000';
-if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
+my $ATT_CHECK_AFTER = '2015:315:00:00:00.000';
+if ((defined $char_file) or ($bs[0]->{time} > date2time($ATT_CHECK_AFTER))){
     $out .= "------------  VERIFY ATTITUDE (SI_ALIGN CHECK)  -----------------\n\n";
     # dynamic aimpoint files are required after 21-Aug-2016
     my $AIMPOINT_REQUIRED_AFTER = '2016:234:00:00:00.000';
     if ((not defined $aimpoint_file) and ($bs[0]->{time} > date2time($AIMPOINT_REQUIRED_AFTER))){
         $out .= "Error.  dynamic aimpoint file not found. \n";
     }
-    # The attitude checks are not possible without the char file but are possible without the
-    # dynamic aimpoint file, so this is an if/else that controls doing the check only on the
-    # presence of the char_file.
-    if (not defined $char_file){
-        $out .= "Error.  Characteristics file not found. \n";
+    # The attitude checks are possible with either the characteristics file or the dynamic aimpoint file
+    # but not without both
+    if ((not defined $char_file) and (not defined $aimpoint_file)){
+        $out .= "Error.  No dynamic aimpoint or characteristics file. \n";
     }
     else{
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
@@ -715,11 +714,15 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($CHAR_REQUIRED_AFTER))){
         else{
             $out .= "<A HREF=\"${att_report}\">[${red_font_start}NOT OK${font_stop}] Coordinate mismatch or error.</A>\n";
         }
-        if (check_characteristics_date($char_file, $date[0])){
-            $out .= "[OK] Characteristics file newer than 30 days\n\n";
-        }
-        else{
-            $out .= "[${red_font_start}NOT OK${font_stop}] Characteristics file older than 30 days\n\n";
+        # Only check that characteristics file is less than 30 days old if backstop starts before 01-Aug-2016
+        my $CHAR_DATE_CHECK_BEFORE = '2016:214:00:00:00.000';
+        if ($bs[0]->{time} < date2time($CHAR_DATE_CHECK_BEFORE)){
+            if (check_characteristics_date($char_file, $date[0])){
+                $out .= "[OK] Characteristics file newer than 30 days\n\n";
+            }
+            else{
+                $out .= "[${red_font_start}NOT OK${font_stop}] Characteristics file older than 30 days\n\n";
+            }
         }
     }
 }
