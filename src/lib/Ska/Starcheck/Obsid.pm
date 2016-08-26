@@ -1574,7 +1574,7 @@ sub check_monitor_commanding {
 	  push @{$self->{fyi}}, sprintf("$info [%2d] Appears to be MON used as GUI/BOT.  Has Magnitude been checked?\n",
 					$idx);
 	  # if it doesn't match the requested location
-	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is %6.2f arc-seconds off of OR specification\n"
+	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Guide star as MON %6.2f arc-seconds off OR specification\n"
 					 , $idx_hash{idx}, $idx_hash{sep}) 
 	    if $idx_hash{sep} > 2.5;
 	  
