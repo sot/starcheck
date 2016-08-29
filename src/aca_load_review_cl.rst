@@ -67,7 +67,7 @@ Load Input Files
 
       * Vehicle: ./vehicle/VRddd_hhvv.tlr
 
-  - Characteristics file:
+  - Characteristics file (not required if dynamic aimpoint file present):
 
       * ./mps/ode/characteristics/L_*_CHARACTERIS_DDMMMYY
 
