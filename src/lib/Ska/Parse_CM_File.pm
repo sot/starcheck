@@ -651,6 +651,9 @@ sub PS {
             if ($tmp[1] eq 'OBS') {
                 push @ps, $ps_line;
             }
+            if ($tmp[1] eq 'CAL') {
+                push @ps, $ps_line;
+            }
             if (($ps_line =~ /OBSID\s=\s(\d\d\d\d\d)/) && (scalar(@tmp) >= 8)) {
                 push @ps, $ps_line;
             }
