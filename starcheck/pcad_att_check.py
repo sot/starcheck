@@ -94,7 +94,9 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=No
         lines.append('INFO: using dynamic offsets file {}'.format(dynamic_offsets_file))
         or_map = {or_['obsid']: or_ for or_ in or_list}
 
-        doffs = Table.read(dynamic_offsets_file, format='ascii.basic', guess=False)
+        dynamic_file_lines = open(dynamic_offsets_file).readlines()
+        no_end_comment = [l for l in dynamic_file_lines if not l.startswith("!")]
+        doffs = Table.read(no_end_comment, format='ascii.basic', guess=False)
         for doff in doffs:
             obsid = doff['obsid']
             if obsid in or_map:
