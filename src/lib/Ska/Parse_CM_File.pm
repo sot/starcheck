@@ -432,6 +432,7 @@ sub DOT {
     while ( <$DOT> ) {
         chomp;
         next unless (/\S/);
+        next if (/^\!Schedule generated/);
         if ( /MTLB/ or /M\d{3}$/ ){
             $touched_by_sausage = 1;
         }
