@@ -490,7 +490,7 @@ sub guide{
     # And then, let's split that file into chunks by processing request
     # By chunking I can guarantee that an error parsing the ID doesn't cause the
     # script to blindly overwrite the RA and DEC and keep adding to the starcat..
-    my @file_chunk = split /\n\n\n\*\*\*\* PROCESSING REQUEST \*\*\*\*\n/, $whole_guide_file;
+    my @file_chunk = split /\*\*\*\* PROCESSING REQUEST \*\*\*\*\n/, $whole_guide_file;
 	
     # Skip the first block in the file (which has no catalog) by using the index 1-end
 
