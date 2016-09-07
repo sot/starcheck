@@ -438,7 +438,7 @@ sub set_ps_times{
     for my $ps_line (@ps){
 	my @tmp = split ' ', $ps_line;
 	next unless scalar(@tmp) >= 4;
-	if ($tmp[1] eq 'OBS') {
+	if (($tmp[1] eq 'OBS') or ($tmp[1] eq 'CAL')){
 	    my $length = length($obsid);
 	    if (substr($tmp[0], 5-$length, $length) eq $obsid){
 		$or_er_start = $tmp[2];
