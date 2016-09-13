@@ -201,7 +201,7 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
         stop_idx = 1 + np.searchsorted(times, interval['tstop'])
         start_idx = -1 + np.searchsorted(times, interval['tstart'])
         ok_temps = ccd_temp[start_idx:stop_idx]
-        itimes = times[start_idx:stop_idx]
+        ok_times = times[start_idx:stop_idx]
         if len(ok_temps) > 0:
             obs['ccd_temp'] = np.max(ok_temps)
             obs['n100_warm_frac'] = dark_model.get_warm_fracs(
@@ -215,7 +215,7 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
                                            obsreq['chip_id'],
                                            obsreq['chipx'],
                                            obsreq['chipy'],
-                                           time=itimes,
+                                           time=ok_times,
                                            t_ccd=ok_temps)
                 obs['aca_offset_y'] = np.mean(ddy)
                 obs['aca_offset_z'] = np.mean(ddz)
