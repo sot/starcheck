@@ -206,6 +206,8 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
             obs['ccd_temp'] = np.max(ok_temps)
             obs['n100_warm_frac'] = dark_model.get_warm_fracs(
                 100, interval['tstart'], np.max(ok_temps))
+        if obsreqs is None:
+            obsreqs = {}
         if interval['obsid'] in obsreqs and len(ok_temps) > 0:
             obsreq = obsreqs[interval['obsid']]
             if 'chip_id' in obsreq:
