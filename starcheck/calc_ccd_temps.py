@@ -204,23 +204,25 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
         start_idx = -1 + np.searchsorted(times, interval['tstart'])
         ok_temps = ccd_temp[start_idx:stop_idx]
         ok_times = times[start_idx:stop_idx]
-        if len(ok_temps) > 0:
-            obs['ccd_temp'] = np.max(ok_temps)
-            obs['n100_warm_frac'] = dark_model.get_warm_fracs(
-                100, interval['tstart'], np.max(ok_temps))
-        if obsreqs is None:
-            obsreqs = {}
-        if interval['obsid'] in obsreqs and len(ok_temps) > 0:
+        # If there are no good samples, put the times in the output dict and go to the next interval
+        if len(ok_temps) == 0:
+            obstemps[str(interval['obsid'])] = obs
+            continue
+        obs['ccd_temp'] = np.max(ok_temps)
+        obs['n100_warm_frac'] = dark_model.get_warm_fracs(
+            100, interval['tstart'], np.max(ok_temps))
+        # If we have an OR list, the obsid is in that list, and the OR list has zero-offset keys
+        if (obsreqs is not None and interval['obsid'] in obsreqs
+                and 'chip_id' in obsreqs[interval['obsid']]):
             obsreq = obsreqs[interval['obsid']]
-            if 'chip_id' in obsreq:
-                ddy, ddz = get_aca_offsets(obsreq['detector'],
-                                           obsreq['chip_id'],
-                                           obsreq['chipx'],
-                                           obsreq['chipy'],
-                                           time=ok_times,
-                                           t_ccd=ok_temps)
-                obs['aca_offset_y'] = np.mean(ddy)
-                obs['aca_offset_z'] = np.mean(ddz)
+            ddy, ddz = get_aca_offsets(obsreq['detector'],
+                                       obsreq['chip_id'],
+                                       obsreq['chipx'],
+                                       obsreq['chipy'],
+                                       time=ok_times,
+                                       t_ccd=ok_temps)
+            obs['aca_offset_y'] = np.mean(ddy)
+            obs['aca_offset_z'] = np.mean(ddz)
         obstemps[str(interval['obsid'])] = obs
     return obstemps
 
