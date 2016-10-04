@@ -186,9 +186,13 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
     """
     Determine the max temperature and mean offsets over each interval.
 
+    If the OR list is supplied (in the obsreqs dictionary) the ACA offsets will
+    also be calculated for each interval and included in the returned data.
+
     :param intervals: list of dictionaries describing obsid/catalog intervals
     :param times: times of the temperature samples
     :param ccd_temp: ccd temperature values
+    :param obsreqs: optional dictionary of OR list from parse_cm.or_list
 
     :returns: dictionary (keyed by obsid) of intervals with max ccd_temps
     """
