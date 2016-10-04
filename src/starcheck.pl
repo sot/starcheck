@@ -571,11 +571,6 @@ eval{
                                           char_file => "$Starcheck_Data/characteristics.yaml",
                                           orlist => $or_file,
                                       });
-    open(my $JSON_OBS_TEMP, "> $STARCHECK/obsid_thermal.json")
-        or die "Couldn't open $STARCHECK/obsid_thermal.json for writing\n";
-    print $JSON_OBS_TEMP $json_obsid_temps;
-    close($JSON_OBS_TEMP);
-
     # convert back from JSON outside
     $obsid_temps = JSON::from_json($json_obsid_temps);
 };
@@ -586,6 +581,10 @@ if ($@){
 if ($obsid_temps){
     foreach my $obsid (@obsid_id) {
         $obs{$obsid}->set_ccd_temps($obsid_temps);
+        # put all the interval pieces in the main obsid structure
+        if (defined $obsid_temps->{$obs{$obsid}->{obsid}}){
+            $obs{$obsid}->{thermal} = $obsid_temps->{$obs{$obsid}->{obsid}};
+        }
     }
 }
 
