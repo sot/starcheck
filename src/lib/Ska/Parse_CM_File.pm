@@ -363,7 +363,10 @@ sub man_err {
     open (my $MANERR, $man_err)
 	or die "Couldn't open maneuver error file $man_err for reading\n";
     while (<$MANERR>) {
+        chomp;
 	last if (/total number/i);
+        next unless (/\S/);
+        next if (/#Schedule generated/);
 	if ($in_man) {
 	    my @vals = split;
 	    if ($#vals != $#cols) {
@@ -429,6 +432,7 @@ sub DOT {
     while ( <$DOT> ) {
         chomp;
         next unless (/\S/);
+        next if (/^\!Schedule generated/);
         if ( /MTLB/ or /M\d{3}$/ ){
             $touched_by_sausage = 1;
         }
