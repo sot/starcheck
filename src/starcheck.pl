@@ -569,6 +569,7 @@ eval{
                                           json_obsids => $json_text,
                                           model_spec => "$Starcheck_Data/aca_spec.json",
                                           char_file => "$Starcheck_Data/characteristics.yaml",
+                                          orlist => $or_file,
                                       });
     # convert back from JSON outside
     $obsid_temps = JSON::from_json($json_obsid_temps);
@@ -580,6 +581,10 @@ if ($@){
 if ($obsid_temps){
     foreach my $obsid (@obsid_id) {
         $obs{$obsid}->set_ccd_temps($obsid_temps);
+        # put all the interval pieces in the main obsid structure
+        if (defined $obsid_temps->{$obs{$obsid}->{obsid}}){
+            $obs{$obsid}->{thermal} = $obsid_temps->{$obs{$obsid}->{obsid}};
+        }
     }
 }
 

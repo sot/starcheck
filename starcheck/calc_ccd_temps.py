@@ -38,6 +38,8 @@ import Chandra.cmd_states as cmd_states
 from Chandra.cmd_states import get_cmd_states
 import xija
 from mica.archive.aca_dark import dark_model
+from parse_cm import read_or_list
+from chandra_aca.drift import get_aca_offsets
 
 from starcheck.version import version
 
@@ -79,6 +81,8 @@ def get_options():
                         help="xija ACA model specification file")
     parser.add_argument("--char-file",
                         help="starcheck characteristics file")
+    parser.add_argument("--orlist",
+                        help="OR list")
     parser.add_argument("--traceback",
                         default=True,
                         help='Enable tracebacks')
@@ -95,7 +99,7 @@ def get_options():
 
 def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=sys.stdin,
-                  model_spec=None, char_file=None,
+                  model_spec=None, char_file=None, orlist=None,
                   verbose=1, **kwargs):
     """
     Using the cmds and cmd_states sybase databases, available telemetry, and
@@ -169,20 +173,24 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     make_check_plots(outdir, states, times,
                      ccd_temp, tstart, tstop, char=char)
-
     intervals = get_obs_intervals(sc_obsids)
-    obstemps = get_interval_temps(intervals, times, ccd_temp)
+    obsreqs = None if orlist is None else {obs['obsid']: obs for obs in read_or_list(orlist)}
+    obstemps = get_interval_data(intervals, times, ccd_temp, obsreqs)
     return json.dumps(obstemps, sort_keys=True, indent=4,
 	                  cls=NumpyAwareJSONEncoder)
 
 
-def get_interval_temps(intervals, times, ccd_temp):
+def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
     """
-    Determine the max temperature over each interval.
+    Determine the max temperature and mean offsets over each interval.
+
+    If the OR list is supplied (in the obsreqs dictionary) the ACA offsets will
+    also be calculated for each interval and included in the returned data.
 
     :param intervals: list of dictionaries describing obsid/catalog intervals
     :param times: times of the temperature samples
     :param ccd_temp: ccd temperature values
+    :param obsreqs: optional dictionary of OR list from parse_cm.or_list
 
     :returns: dictionary (keyed by obsid) of intervals with max ccd_temps
     """
@@ -195,10 +203,26 @@ def get_interval_temps(intervals, times, ccd_temp):
         stop_idx = 1 + np.searchsorted(times, interval['tstop'])
         start_idx = -1 + np.searchsorted(times, interval['tstart'])
         ok_temps = ccd_temp[start_idx:stop_idx]
-        if len(ok_temps) > 0:
-            obs['ccd_temp'] = np.max(ok_temps)
-            obs['n100_warm_frac'] = dark_model.get_warm_fracs(
-                100, interval['tstart'], np.max(ok_temps))
+        ok_times = times[start_idx:stop_idx]
+        # If there are no good samples, put the times in the output dict and go to the next interval
+        if len(ok_temps) == 0:
+            obstemps[str(interval['obsid'])] = obs
+            continue
+        obs['ccd_temp'] = np.max(ok_temps)
+        obs['n100_warm_frac'] = dark_model.get_warm_fracs(
+            100, interval['tstart'], np.max(ok_temps))
+        # If we have an OR list, the obsid is in that list, and the OR list has zero-offset keys
+        if (obsreqs is not None and interval['obsid'] in obsreqs
+                and 'chip_id' in obsreqs[interval['obsid']]):
+            obsreq = obsreqs[interval['obsid']]
+            ddy, ddz = get_aca_offsets(obsreq['detector'],
+                                       obsreq['chip_id'],
+                                       obsreq['chipx'],
+                                       obsreq['chipy'],
+                                       time=ok_times,
+                                       t_ccd=ok_temps)
+            obs['aca_offset_y'] = np.mean(ddy)
+            obs['aca_offset_z'] = np.mean(ddz)
         obstemps[str(interval['obsid'])] = obs
     return obstemps
 
