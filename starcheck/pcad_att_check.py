@@ -101,12 +101,12 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=No
                 or_map[obsid]['aca_offset_y'] = doff['aca_offset_y'] / 3600.
                 or_map[obsid]['aca_offset_z'] = doff['aca_offset_z'] / 3600.
 
-        # Check that obsids in OR list match those in dynamic offsets table
-        obsid_mismatch = set(or_map) ^ set(doffs['obsid'])
-        if obsid_mismatch:
+        # Check that obsids in dynamic offsets table are all in OR list
+        if not set(doffs['obsid']).issubset(set(or_map)):
             all_ok = False
-            lines.append('WARNING: mismatch between OR-list and dynamic offsets table {}'
-                         .format(obsid_mismatch))
+            obsid_mismatch = set(doffs['obsid']) - set(or_map)
+            lines.append('WARNING: Obsid in dynamic offsets table but missing in OR list {}'
+                         .format(list(obsid_mismatch)))
 
     # Run the commands and populate attributes in `sc`, the spacecraft state.
     # In particular sc.checks is a dict of checks by obsid.
