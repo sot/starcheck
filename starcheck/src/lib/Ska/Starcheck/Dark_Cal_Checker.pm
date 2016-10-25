@@ -14,7 +14,9 @@ use Data::Dumper;
 
 use Ska::Parse_CM_File;
 
-my %oflsid;
+# Add a module-wide hash to store a mapping of Obsid/OFLSIDs to dark cal
+# labels (DFC_?/DC_T?)
+my %dc_oflsid;
 
 sub new{
     my $class = shift;
@@ -178,14 +180,14 @@ sub maneuver_parse{
         # update the final label of the previous maneuver to that same "DFC_?"
         # and update the initial label of the next maneuver to the DC_T? value
         my $replica = $manvrs[$man_idx]->{DC};
-        $oflsid{"DC_T" . $replica} = $manvrs[$man_idx]->{final};
+        $dc_oflsid{"DC_T" . $replica} = $manvrs[$man_idx]->{final};
         $manvrs[$man_idx]->{final} = "DC_T" . $replica;
         # Use the convention of labeling first DFC DFC_I
         my $dfc = ($replica == 0) ? "DFC_I" :
                                     "DFC_" . ($replica - 1);
         $manvrs[$man_idx]->{init} = $dfc;
         if ($man_idx > 0){
-            $oflsid{$dfc} = $manvrs[$man_idx - 1]->{final};
+            $dc_oflsid{$dfc} = $manvrs[$man_idx - 1]->{final};
             $manvrs[$man_idx - 1]->{final} = $dfc;
         }
         if ($man_idx < $#manvrs){
@@ -771,11 +773,11 @@ sub check_manvr {
 			my $t_manvr_min = $manvr->{duration};
                         # Add actual oflsid in parenthesis if label does not match oflsid
                         my ($a, $b) = ($manvr->{init}, $manvr->{final});
-                        if ((defined $oflsid{$manvr->{init}}) and ($oflsid{$manvr->{init}} ne $manvr->{init})){
-                            $a .= " ($oflsid{$manvr->{init}})";
+                        if ((defined $dc_oflsid{$manvr->{init}}) and ($dc_oflsid{$manvr->{init}} ne $manvr->{init})){
+                            $a .= " ($dc_oflsid{$manvr->{init}})";
                         }
-                        if ((defined $oflsid{$manvr->{final}}) and ($oflsid{$manvr->{final}} ne $manvr->{final})){
-                            $b .= " ($oflsid{$manvr->{final}})";
+                        if ((defined $dc_oflsid{$manvr->{final}}) and ($dc_oflsid{$manvr->{final}} ne $manvr->{final})){
+                            $b .= " ($dc_oflsid{$manvr->{final}})";
                         }
 			push @{$output{info}}, { text => "Maneuver from $a to $b: "
                                                      . "time = $t_manvr_min min ; "
