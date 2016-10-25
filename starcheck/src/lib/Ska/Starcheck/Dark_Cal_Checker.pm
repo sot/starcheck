@@ -14,6 +14,8 @@ use Data::Dumper;
 
 use Ska::Parse_CM_File;
 
+my %oflsid;
+
 sub new{
     my $class = shift;
     my $par_ref = shift;
@@ -121,7 +123,20 @@ sub maneuver_parse{
 
 	my $dot = shift;
 
-	my @raw_manvrs;
+       my @raw_manvrs;
+
+    my %is_replica;
+    my $curr_obsid = 'INIT';
+    # Get the obsids/oflsids at the time of the replica commands
+    for my $dot_entry (@{$dot}){
+        if ($dot_entry->{cmd_identifier} eq 'ATS_OBSID'){
+            $curr_obsid = $dot_entry->{ID};
+        }
+        if ($dot_entry->{cmd_identifier} eq 'ATS_A_P1ADC'){
+            $is_replica{$curr_obsid} = 1;
+        }
+    }
+
     for my $dot_entry (@{$dot}){
 		if ($dot_entry->{cmd_identifier} =~ /ATS_MANVR/){
 			push @raw_manvrs, $dot_entry;
@@ -131,6 +146,7 @@ sub maneuver_parse{
 	# mock initial starting attitude
 	my $init = 'dcIAT';
 	my @manvrs;
+        my $n_replica = 0;
 	# for each maneuver, make a hash and push it
 	# saving the new attitude as the initial oflsid for the next maneuver
 	for my $manvr (@raw_manvrs){
@@ -142,12 +158,40 @@ sub maneuver_parse{
 					+ timestring_to_secs($manvr->{DURATION}),
 					duration => timestring_to_mins($manvr->{DURATION}),
 					);
-		
+                # mark each maneuver to a replica
+		if (defined $is_replica{$manvr->{oflsid}}){
+                    $man{DC} = $n_replica;
+                    $n_replica++;
+                }
 		push @manvrs, \%man;
 		$init = $manvr->{oflsid};
 
-	}
-	return \@manvrs;
+    }
+    for my $man_idx (0 .. $#manvrs){
+        if (not defined $manvrs[$man_idx]->{DC}){
+            next;
+        }
+        # For each maneuver to a replica, update the oflsid of the 'final' label to match
+        # the DC_T? convention, update the 'init' label to be "DFC_?",
+        # update the final label of the previous maneuver to that same "DFC_?"
+        # and update the initial label of the next maneuver to the DC_T? value
+        my $replica = $manvrs[$man_idx]->{DC};
+        $oflsid{"DC_T" . $replica} = $manvrs[$man_idx]->{final};
+        $manvrs[$man_idx]->{final} = "DC_T" . $replica;
+        # Use the convention of labeling first DFC DFC_I
+        my $dfc = ($replica == 0) ? "DFC_I" :
+                                    "DFC_" . ($replica - 1);
+        $manvrs[$man_idx]->{init} = $dfc;
+        if ($man_idx > 0){
+            $oflsid{$dfc} = $manvrs[$man_idx - 1]->{final};
+            $manvrs[$man_idx - 1]->{final} = $dfc;
+        }
+        if ($man_idx < $#manvrs){
+            $manvrs[$man_idx + 1]->{init} = "DC_T" . $replica;
+        }
+
+    }
+    return \@manvrs;
 
 }
 
@@ -710,7 +754,7 @@ sub check_manvr {
 				$final{$manvr->{final}} += 1;
 			}
 			# from a replica
-			if (($manvr->{init} =~ /DC_T/) and ($manvr->{final} =~ /DFC/)){
+			if (($manvr->{init} =~ /DC_T/)){
 				$expected_time = $maneuver_times{replica_to_center};
 				$init{$manvr->{init}} += 1;
 			}
@@ -723,10 +767,17 @@ sub check_manvr {
 				next;
 			}
 			my $t_manvr_min = $manvr->{duration};
-			push @{$output{info}}, { text => "Maneuver from $manvr->{init} to $manvr->{final} : "
-										 . "time = $t_manvr_min min ; "
-										 . "expected time = $expected_time",
-										 type => 'info' };
+                        my ($a, $b) = ($manvr->{init}, $manvr->{final});
+                        if (defined $oflsid{$manvr->{init}}){
+                            $a .= " ($oflsid{$manvr->{init}})";
+                        }
+                        if (defined $oflsid{$manvr->{final}}){
+                            $b .= " ($oflsid{$manvr->{final}})";
+                        }
+			push @{$output{info}}, { text => "Maneuver from $a to $b: "
+                                                     . "time = $t_manvr_min min ; "
+                                                         . "expected time = $expected_time",
+                                                 type => 'info' };
 			if ($expected_time != $t_manvr_min){
 				$output{status} = 0;
 				push @{$output{info}}, { text => "Maneuver Time Incorrect",
