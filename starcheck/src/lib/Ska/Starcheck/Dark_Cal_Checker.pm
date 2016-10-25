@@ -158,8 +158,10 @@ sub maneuver_parse{
 					+ timestring_to_secs($manvr->{DURATION}),
 					duration => timestring_to_mins($manvr->{DURATION}),
 					);
-                # mark each maneuver to a replica
-		if (defined $is_replica{$manvr->{oflsid}}){
+                # Mark each maneuver to a replica.  If oflsid already has "DC_T" use that
+                # otherwise use %is_replica hash as defined by the commanded obsid at
+                # the time of the replica commanding in the DOT
+		if (($manvr->{oflsid} =~ /DC_T/) or (defined $is_replica{$manvr->{oflsid}})){
                     $man{DC} = $n_replica;
                     $n_replica++;
                 }
