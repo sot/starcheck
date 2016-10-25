@@ -769,11 +769,12 @@ sub check_manvr {
 				next;
 			}
 			my $t_manvr_min = $manvr->{duration};
+                        # Add actual oflsid in parenthesis if label does not match oflsid
                         my ($a, $b) = ($manvr->{init}, $manvr->{final});
-                        if (defined $oflsid{$manvr->{init}}){
+                        if ((defined $oflsid{$manvr->{init}}) and ($oflsid{$manvr->{init}} ne $manvr->{init})){
                             $a .= " ($oflsid{$manvr->{init}})";
                         }
-                        if (defined $oflsid{$manvr->{final}}){
+                        if ((defined $oflsid{$manvr->{final}}) and ($oflsid{$manvr->{final}} ne $manvr->{final})){
                             $b .= " ($oflsid{$manvr->{final}})";
                         }
 			push @{$output{info}}, { text => "Maneuver from $a to $b: "
