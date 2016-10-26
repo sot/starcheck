@@ -770,7 +770,7 @@ sub check_manvr {
 				$output{status} = 0;
 				next;
 			}
-			my $t_manvr_min = $manvr->{duration};
+			my $t_manvr_min = sprintf("%.1f", $manvr->{duration});
                         # Add actual oflsid in parenthesis if label does not match oflsid
                         my ($a, $b) = ($manvr->{init}, $manvr->{final});
                         if ((defined $dc_oflsid{$manvr->{init}}) and ($dc_oflsid{$manvr->{init}} ne $manvr->{init})){
