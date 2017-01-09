@@ -37,10 +37,6 @@ HOSTNAME = $(shell hostname)
 $(TEST_BACKSTOP):
 	tar -zxvpf $(TEST_DATA_TGZ) 
 
-.PHONY: starcheck_data
-starcheck_data:
-	cd starcheck_data && $(MAKE) install
-
 all: 
 	# Nothing to make; "make install" to install to $(SKA)
 
@@ -70,16 +66,17 @@ endif
 
 
 
-install: starcheck_data
-ifdef BIN
+install_bin:
 	mkdir -p $(INSTALL_BIN)
 	rsync --times --cvs-exclude $(BIN) $(INSTALL_BIN)/
 #	pod2html starcheck.pl > $(INSTALL_DOC)/starcheck.html
-endif
-ifdef LIB
+
+install_lib:
 	mkdir -p $(INSTALL_PERLLIB)
 	rsync --times --cvs-exclude --recursive $(SRC)/lib/* $(INSTALL_PERLLIB)/
-endif
+
+install_data:
+	cd starcheck_data && $(MAKE) install
 
 
 # Make sure install dir is not flight.  (This doesn't resolve links etc)
