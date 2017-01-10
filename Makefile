@@ -69,21 +69,6 @@ ifdef DOC_RST
 endif
 
 
-
-install: starcheck_data
-ifdef BIN
-	mkdir -p $(INSTALL_BIN)
-	rsync --times --cvs-exclude $(BIN) $(INSTALL_BIN)/
-#	pod2html starcheck.pl > $(INSTALL_DOC)/starcheck.html
-endif
-ifdef LIB
-	mkdir -p $(INSTALL_PERLLIB)
-	rsync --times --cvs-exclude --recursive $(SRC)/lib/* $(INSTALL_PERLLIB)/
-endif
-
-
-# Make sure install dir is not flight.  (This doesn't resolve links etc)
-check_install:
-        test "$(INSTALL)" != "$(ROOT_FLIGHT)"
- 
+install:
+	rsync -a ska_bin_starcheck $(INSTALL_BIN)/starcheck
 
