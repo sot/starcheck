@@ -3,7 +3,6 @@
 unset LD_LIBRARY_PATH
 unset SYBASE
 unset PYTHONPATH
-eval `${SKA}/bin/flt_envs -shell sh`
 export PYTHONHOME=$SKA_ARCH_OS
 PERL_INLINE_DIRECTORY=`/bin/mktemp -d -t starcheck_inline.XXXXXX` || exit 1
 export PERL_INLINE_DIRECTORY
