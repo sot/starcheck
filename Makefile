@@ -1,7 +1,7 @@
 TASK = starcheck
 FLIGHT_ENV = SKA
 
-SRC = src
+SRC = starcheck/src
 
 include $(SKA)/include/Makefile.FLIGHT
 
@@ -20,11 +20,11 @@ TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # with "make install_dist" from that project
 TEST_BACKSTOP = AUG0104A/CR214_0300.backstop 
 
-DATA_FILES = starcheck_data/aca_spec.json starcheck_data/ACABadPixels starcheck_data/agasc.bad \
-	starcheck_data/fid_CHARACTERIS_JUL01 starcheck_data/fid_CHARACTERIS_FEB07 \
-	starcheck_data/fid_CHARACTERISTICS starcheck_data/characteristics.yaml \
-	starcheck_data/A.tlr starcheck_data/B.tlr starcheck_data/tlr.cfg \
-	starcheck_data/overlib.js starcheck_data/up.gif starcheck_data/down.gif \
+DATA_FILES = starcheck/data/aca_spec.json starcheck/data/ACABadPixels starcheck/data/agasc.bad \
+	starcheck/data/fid_CHARACTERIS_JUL01 starcheck/data/fid_CHARACTERIS_FEB07 \
+	starcheck/data/fid_CHARACTERISTICS starcheck/data/characteristics.yaml \
+	starcheck/data/A.tlr starcheck/data/B.tlr starcheck/data/tlr.cfg \
+	starcheck/data/overlib.js starcheck/data/up.gif starcheck/data/down.gif \
 
 SHA_FILES = ${SKA_ARCH_OS}/bin/ska_version ${SKA_ARCH_OS}/pkgs.manifest $(BIN) $(LIB) \
 	$(DATA_FILES) $(PYTHON_LIB)
