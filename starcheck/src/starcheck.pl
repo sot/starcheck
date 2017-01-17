@@ -64,6 +64,12 @@ def plot_cat_wrapper(kwargs):
 
 def starcheck_version():
     return version
+
+def get_data_dir():
+    import os
+    import starcheck
+    sc_data = os.path.join(os.path.dirname(starcheck.__file__), 'data')
+    return sc_data if os.path.exists(sc_data) else ""
 };
 
 
@@ -107,7 +113,7 @@ GetOptions( \%par,
     exit( 1 );
 
 
-my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
+my $Starcheck_Data = $par{sc_data} || get_data_dir();
 
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
