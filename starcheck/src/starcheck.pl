@@ -8,8 +8,6 @@
 ##*******************************************************************************
 
 
-my $version = '11.14';
-
 # Set defaults and get command line options
 
 use strict;
@@ -51,6 +49,7 @@ use Inline Python => q{
 from chandra_aca.star_probs import set_acq_model_ms_filter
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
+from starcheck.version import version
 
 def ccd_temp_wrapper(kwargs):
     return get_ccd_temps(**kwargs)
@@ -62,7 +61,13 @@ def plot_cat_wrapper(kwargs):
         # write errors to starcheck's global warnings and STDERR
         perl.warning("Error with Inline::Python imports {}\n".format(err))
     return make_plots_for_obsid(**kwargs)
+
+def starcheck_version():
+    return version
 };
+
+
+my $version = starcheck_version();
 
 # cheat to get the OS (major)
 my $OS = `uname`;
