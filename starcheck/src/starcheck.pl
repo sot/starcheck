@@ -46,7 +46,9 @@ use Ska::AGASC;
 
 use Inline Python => q{
 
+import os
 from chandra_aca.star_probs import set_acq_model_ms_filter
+import starcheck
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.version import version
@@ -66,10 +68,9 @@ def starcheck_version():
     return version
 
 def get_data_dir():
-    import os
-    import starcheck
     sc_data = os.path.join(os.path.dirname(starcheck.__file__), 'data')
     return sc_data if os.path.exists(sc_data) else ""
+
 };
 
 
