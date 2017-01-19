@@ -42,6 +42,8 @@ use Cwd qw( abs_path );
 use HTML::TableExtract;
 
 use Ska::AGASC;
+use Carp 'verbose';
+$SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 
 
 use Inline Python => q{
@@ -574,21 +576,16 @@ sub json_obsids{
 
 my $json_text = json_obsids();
 my $obsid_temps;
-eval{
-    my $json_obsid_temps;
-    $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
-                                          outdir=>$STARCHECK,
-                                          json_obsids => $json_text,
-                                          model_spec => "$Starcheck_Data/aca_spec.json",
-                                          char_file => "$Starcheck_Data/characteristics.yaml",
-                                          orlist => $or_file,
-                                      });
-    # convert back from JSON outside
-    $obsid_temps = JSON::from_json($json_obsid_temps);
-};
-if ($@){
-    push @global_warn, "Error getting temperatures from get_ccd_temps\n";
-}
+my $json_obsid_temps;
+$json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
+                                      outdir=>$STARCHECK,
+                                      json_obsids => $json_text,
+                                      model_spec => "$Starcheck_Data/aca_spec.json",
+                                      char_file => "$Starcheck_Data/characteristics.yaml",
+                                      orlist => $or_file,
+                                  });
+# convert back from JSON outside
+$obsid_temps = JSON::from_json($json_obsid_temps);
 
 if ($obsid_temps){
     foreach my $obsid (@obsid_id) {
@@ -616,12 +613,7 @@ foreach my $obsid (@obsid_id) {
                          catalog=>$cat_as_array,
                          starcat_time=>"$obs{$obsid}->{date}",
                          outdir=>$STARCHECK);
-        eval{
-            plot_cat_wrapper(\%plot_args);
-        };
-        if ($@){
-            push @global_warn, "Error Python plotting catalog\n";
-        }
+        plot_cat_wrapper(\%plot_args);
         $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
         $obs{$obsid}->{plot_field_file} = "$STARCHECK/star_view_$obs{$obsid}->{obsid}.png";
         $obs{$obsid}->{compass_file} = "$STARCHECK/compass$obs{$obsid}->{obsid}.png";
