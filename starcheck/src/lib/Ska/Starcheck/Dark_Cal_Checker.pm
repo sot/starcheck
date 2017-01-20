@@ -105,8 +105,8 @@ sub new{
                                                              "First ACA command is the template-independent init command");
     %feedback = (%feedback, %{replicas($tlr, \%templates, $timelines, \%config)});
     
-    $feedback{check_dither_enable_at_end} = check_dither_enable_at_end($tlr, \%config);
-    $feedback{check_dither_param_at_end} = check_dither_param_at_end($tlr, \%config);
+    $feedback{check_dither_enable_at_end} = check_dither_enable_at_end($tlr, $manvrs, \%config);
+    $feedback{check_dither_param_at_end} = check_dither_param_at_end($tlr, $manvrs, \%config);
     $feedback{check_manvr} = check_manvr( \%config, $manvrs);
     $feedback{check_dwell} = check_dwell(\%config, $manvrs, $dwells);
     $feedback{check_manvr_point} = check_manvr_point( \%config, \@bs, $manvrs);
@@ -503,19 +503,27 @@ sub check_dither_enable_at_end{
 		  comment => ['Dither enabled after Dark Cal'],
 		  );
 
-    my ($tlr, $config) = @_;    
+    my ($tlr, $manvrs, $config) = @_;
     
     my @tlr_arr = @{$tlr->{entries}};
 
     my %cmd_list = map { $_ => $config->{template}{independent}{$_}} (qw( dither_enable dither_disable ));
 
-    my $index_end = $tlr->end_replica(4)->index();
-    my $manvr_away_from_dfc = $tlr->manvr_away_from_dfc();
+    my $manvr_away_from_dfc;
+    for my $man_idx (0 .. $#{$manvrs}){
+        if ($manvrs->[$man_idx]->{tstart} > $tlr->end_replica(4)->time()){
+            # The maneuver to DFC after replica 4 is the first manvr after end_replica(4)->time
+            # The maneuver *from* DFC should be the next one [$man_idx + 1]
+            $manvr_away_from_dfc = $manvrs->[$man_idx + 1];
+            last;
+        }
+    }
+    my $manvr_datestop = time2date($manvr_away_from_dfc->{'tstop'});
 
     push @{$output{criteria}}, sprintf("Steps through the TLR from the last hw command at replica 4");
-    push @{$output{criteria}}, sprintf("to the maneuver from DFC to ADJCT, where");
+    push @{$output{criteria}}, sprintf("to the end of the maneuver from DFC to ADJCT, where");
     push @{$output{criteria}}, sprintf("end replica 4 at " . $tlr->end_replica(4)->datestamp() );
-    push @{$output{criteria}}, sprintf("maneuver away from dfc at  " . $tlr->manvr_away_from_dfc->datestamp() );
+    push @{$output{criteria}}, sprintf("maneuver away from dfc ends at  " . $manvr_datestop);
     push @{$output{criteria}}, sprintf("looks for any dither enable or disable command mnemonics :");
 
     my $string_cmd_list;
@@ -526,13 +534,14 @@ sub check_dither_enable_at_end{
     
 
     # find the first dither command after the end of replica 4
-    # and before the maneuver away from dark field center at the end of the calibration
+    # and before the end of the maneuver away from dark field center at the end of the calibration
 
     my @dith_cmd;
 
-    for my $tlr_entry (@tlr_arr[$index_end .. $manvr_away_from_dfc->index()]){
+    my $index_end = $tlr->end_replica(4)->index();
+    for my $tlr_entry (@tlr_arr[$index_end .. $#tlr_arr]){
 	next unless ( grep { $tlr_entry->comm_mnem() eq $_->{comm_mnem} } (map {@$_} @{cmd_list{'dither_enable','dither_disable'}}) );
-	last if ($tlr_entry->time() > ($manvr_away_from_dfc->time()));
+	last if ($tlr_entry->time() > ($manvr_away_from_dfc->{tstop}));
 	push @dith_cmd, $tlr_entry;
     }
 
@@ -645,7 +654,7 @@ sub check_dither_param_before_replica{
 sub check_dither_param_at_end{
 ##***************************************************************************
 
-    my ($tlr, $config) = @_;    
+    my ($tlr, $manvrs, $config) = @_;
 
     my %output = (
 		  comment => ['Dither param set to default at end'],
@@ -661,12 +670,21 @@ sub check_dither_param_at_end{
 	$cmd_list{$cmd->{comm_mnem}} = 1;
     }
 
+    my $manvr_away_from_dfc;
+    for my $man_idx (0 .. $#{$manvrs}){
+        if ($manvrs->[$man_idx]->{tstart} > $tlr->end_replica(4)->time()){
+            # The maneuver to DFC after replica 4 is the first manvr after end_replica(4)->time
+            # The maneuver *from* DFC should be the next one [$man_idx + 1]
+            $manvr_away_from_dfc = $manvrs->[$man_idx + 1];
+            last;
+        }
+    }
+    my $manvr_datestop = time2date($manvr_away_from_dfc->{'tstop'});
 
-   
     push @{$output{criteria}}, sprintf("Steps through the TLR from the last command at the end of replica 4");
-    push @{$output{criteria}}, sprintf("to the command to maneuver away from DFC to ADJCT");
+    push @{$output{criteria}}, sprintf("to the end of the maneuver away from DFC to ADJCT");
     push @{$output{criteria}}, sprintf( "end of replica 4 at " . $tlr->end_replica(4)->datestamp() );
-    push @{$output{criteria}}, sprintf( "maneuver away from dfc at " . $tlr->manvr_away_from_dfc->datestamp() );
+    push @{$output{criteria}}, sprintf( "end of maneuver away from dfc at " . $manvr_datestop);
     push @{$output{criteria}}, sprintf("looks for any dither parameter command mnemonics :");
 
     my $string_cmd_list;
@@ -676,18 +694,15 @@ sub check_dither_param_at_end{
     push @{$output{criteria}}, $string_cmd_list;
     
 
-    my $index_end = $tlr->end_replica(4)->index();
-
-    my $manvr_away_from_dfc = $tlr->manvr_away_from_dfc();
 
     # find the last dither commanding before that "start time"
     # create an array of those commands (even if just one command)
 
     my @dith_param;
-
-    for my $tlr_entry (@tlr_arr[$index_end .. $manvr_away_from_dfc->index()]){
+    my $index_end = $tlr->end_replica(4)->index();
+    for my $tlr_entry (@tlr_arr[$index_end .. $#tlr_arr]){
 	next unless (defined $cmd_list{$tlr_entry->comm_mnem});
-	last if ($tlr_entry->time() > ($manvr_away_from_dfc->time()));
+	last if ($tlr_entry->time() > $manvr_away_from_dfc->{'tstop'});
 	push @dith_param, $tlr_entry;
     }
 
