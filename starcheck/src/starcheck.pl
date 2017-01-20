@@ -674,9 +674,15 @@ if ($mp_top_link){
 
 if (%input_files) {
     $out .= "------------  PROCESSING FILES  -----------------\n\n";
+    $out .= "DATA = $Starcheck_Data\n";
     for my $name (sort (keys %input_files)) { 
-	$out .= "Using $name file $input_files{$name}\n";
 	push @{$save_hash{files}}, $input_files{$name};
+        if ($input_files{$name} =~ /$Starcheck_Data\/?(.*)/){
+            $out .= "Using $name file DATA/$1\n";
+        }
+        else{
+            $out .= "Using $name file $input_files{$name}\n";
+        }
     };
      
 # Add info about which bad pixel file is being used:
