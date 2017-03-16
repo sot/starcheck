@@ -2532,7 +2532,7 @@ sub check_big_box_stars{
         }
     }
     if ($big_box_count < 3){
-        push @{$self->{warn}}, "Fewer than 3 ACQ stars with boxes >= 160 arcsec\n";
+        push @{$self->{warn}}, "$alarm Fewer than 3 ACQ stars with boxes >= 160 arcsec\n";
     }
 }
 
