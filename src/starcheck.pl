@@ -624,7 +624,10 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_for_special_case_er();
     $obs{$obsid}->check_bright_perigee($radmon);
     $obs{$obsid}->count_good_stars();
-    $obs{$obsid}->check_big_box_stars();
+    # Start check for big boxes at FEB1317 (which gets test products but no regress products)
+    if ($bs[0]->{time} > date2time('2017:043:00:00:00.000')){
+        $obs{$obsid}->check_big_box_stars();
+    }
     $obs{$obsid}->make_figure_of_merit();
 # Make sure there is only one star catalog per obsid
     warning ("More than one star catalog assigned to Obsid $obsid\n")
