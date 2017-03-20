@@ -55,7 +55,7 @@ sub make_figure_of_merit{
 	if ($c->{"TYPE$i"} =~ /BOT|ACQ/) {
 	    my $mag = $c->{"GS_MAG$i"};
             my @warnings = grep {/\[\s{0,1}$i\]/} (@{$self->{warn}}, @{$self->{yellow_warn}});
-            my $spoiler = grep(/Search spoiler/, @warnings) ? 1 : 0;
+            my $spoiler = grep(/Search spoiler/i, @warnings) ? 1 : 0;
             my $color = $c->{"GS_BV$i"};
             my $hw = $c->{"HALFW$i"};
             my $star_prob = _acq_success_prob($date, $t_ccd, $mag, $color, $spoiler, $hw);
