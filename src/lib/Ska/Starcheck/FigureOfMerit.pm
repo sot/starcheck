@@ -28,8 +28,8 @@ use Inline Python => q{
 
 from chandra_aca.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
 
-def _acq_success_prob(date, t_ccd, mag, color, spoiler):
-    out = acq_success_prob(date, float(t_ccd), float(mag), float(color), spoiler)
+def _acq_success_prob(date, t_ccd, mag, color, spoiler, halfwidth):
+    out = acq_success_prob(date, float(t_ccd), float(mag), float(color), spoiler, int(halfwidth))
     return out.tolist()
 
 def _prob_n_acq(acq_probs):
@@ -57,7 +57,8 @@ sub make_figure_of_merit{
             my @warnings = grep {/\[\s{0,1}$i\]/} (@{$self->{warn}}, @{$self->{yellow_warn}});
             my $spoiler = grep(/Search Spoiler/, @warnings) ? 1 : 0;
             my $color = $c->{"GS_BV$i"};
-            my $star_prob = _acq_success_prob($date, $t_ccd, $mag, $color, $spoiler);
+            my $hw = $c->{"HALFW$i"};
+            my $star_prob = _acq_success_prob($date, $t_ccd, $mag, $color, $spoiler, $hw);
 	    push @probs, $star_prob;
             $slot_probs{$c->{"IMNUM$i"}} = $star_prob;
             $c->{"P_ACQ$i"} = $star_prob;

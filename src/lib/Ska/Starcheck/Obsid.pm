@@ -2515,6 +2515,27 @@ sub count_good_stars{
 
 }
 
+###################################################################################
+sub check_big_box_stars{
+###################################################################################
+    my $self = shift;
+    my $c;
+    my $big_box_count = 0;
+    return unless ($c = find_command($self, 'MP_STARCAT'));
+    for my $i (1 .. 16){
+        my $type = $c->{"TYPE$i"};
+        my $hw = $c->{"HALFW$i"};
+        if ($type =~ /ACQ|BOT/){
+            if ($hw >= 160){
+                $big_box_count++;
+            }
+        }
+    }
+    if ($big_box_count < 3){
+        push @{$self->{warn}}, "$alarm Fewer than 3 ACQ stars with boxes >= 160 arcsec\n";
+    }
+}
+
 
 
 ###################################################################################
