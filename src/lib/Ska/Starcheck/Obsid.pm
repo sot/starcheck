@@ -2265,6 +2265,31 @@ sub identify_stars {
     }
 }
 
+use Inline Python => q{
+
+from Chandra.Time import DateTime
+import numpy as np
+from astropy.table import Table
+from mica.stats.acq_stats import get_stats
+
+ACQS = get_stats()
+
+def get_mica_acq_stats(agasc_id, time):
+    stars = ACQS[ACQS['agasc_id'] == int(agasc_id)]
+    time = float(time)
+    acq_5y = stars[(stars['guide_tstart'] >= (time - (5 * 365 * 86400)))
+                 & (stars['guide_tstart'] <= time)]
+    ok_5y = (acq_5y['img_func'] == 'star') & (~acq_5y['ion_rad']) & (~acq_5y['sat_pix'])
+    mag_ok = stars['mag_obs'] != 0
+    return {'acq': len(stars),
+            'acq_noid': int(np.count_nonzero(stars['acqid'] == False)),
+            'acq_5y': len(acq_5y),
+            'acq_5ynoms_noid': int(np.count_nonzero(~ok_5y)),
+            'mags': stars[mag_ok]['mag_obs'].tolist()}
+
+};
+
+
 #############################################################################################
 sub star_dbhist {
 #############################################################################################
@@ -2280,46 +2305,29 @@ sub star_dbhist {
 		   'agasc_id' => $star_id,
 		   'acq' => 0,
 		   'acq_noid' => 0,
+                   'acq_5y' => 0,
+                   'acq_5ynoms_noid' => 0,
 		   'gui' => 0,
 		   'gui_bad' => 0,
 		   'gui_fail' => 0,
 		   'gui_obc_bad' => 0,
 		   'avg_mag' => 13.9375,
 		  );
-    
-
 
     eval{
 	# acq_stats_data
-	my $sql = SQL::Abstract->new();
-	my %acq_where =  ( 'agasc_id' => $star_id,
-                           'type' =>  { '!=' => 'FID'},
-                           'tstart' => { '<' => $obs_tstart_minus_day }
-			   );
-
-	my ($acq_all_stmt, @acq_all_bind ) = $sql->select('acq_stats_data', 
-							  '*',
-							  \%acq_where );
-
-	my @acq_all = sql_fetchall_array_of_hashref( $db_handle, $acq_all_stmt, @acq_all_bind );
+        my $mica_acq_stats = get_mica_acq_stats($star_id, $obs_tstart_minus_day);
 	my @mags;
-
-	if (scalar(@acq_all)){
-	    my $noid = 0;
-	    for my $attempt (@acq_all){
-		if ($attempt->{'obc_id'} =~ 'NOID'){
-		    $noid++;
-		}
-		else{
-		  push @mags, $attempt->{'mag_obs'};
-		}
-	    }
-	    $stats{'acq'} = scalar(@acq_all);
-	    $stats{'acq_noid'} = $noid;
+	if ($mica_acq_stats->{'acq'} > 0){
+            push @mags, @{$mica_acq_stats->{'mags'}};
+	    $stats{'acq'} = $mica_acq_stats->{'acq'};
+	    $stats{'acq_noid'} = $mica_acq_stats->{'acq_noid'};
+            $stats{'acq_5y'} = $mica_acq_stats->{'acq_5y'};
+            $stats{'acq_5ynoms_noid'} = $mica_acq_stats->{'acq_5ynoms_noid'};
 	}
 
 	# guide_stats_view
-	$sql = SQL::Abstract->new();
+	my $sql = SQL::Abstract->new();
 	my %gui_where = ( 'id' => $star_id,
 			  'type' => { '!=' => 'FID' },
 			  'kalman_tstart' => { '<' => $obs_tstart_minus_day });
