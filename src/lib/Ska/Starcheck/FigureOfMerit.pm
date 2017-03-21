@@ -94,51 +94,6 @@ sub set_dynamic_mag_limits{
 }
 
 
-##*****************************************************************************************
-sub star_prob {
-##*****************************************************************************************
-    my ($acq) = @_;
-    my @warnings = @{ $acq->{warnings} };
-    my $mag = $acq->{magnitude};
-    my $warm_frac = $acq->{n100_warm_frac};
-
-    my $p_0p7color = .4294; #probability of acquiring a B-V = 0.700 star
-    my $p_1p5color = 0.9452; #probability of acquiring a B-V = 1.500 star
-    my $p_seaspo = .9241; #probability of acquiring a search spoiled star
-
-    my $mag10 = $mag - 10.0;
-    # Minimum warm fraction seen in fit data
-    my $warm_frac_min = 0.0412;
-    # Co-efficients from 2013 State of the ACA polynomial fit
-    my $scale = 10. ** (0.185 + 0.990 * $mag10 + -0.491 * $mag10 ** 2);
-    my $offset = 10. ** (-1.489 + 0.888 * $mag10 + 0.280 * $mag10 ** 2);
-    my $prob = 1.0 - ($offset + $scale * ($warm_frac - $warm_frac_min));
-    my $max_star_prob = .985;
-    # If the star is brighter than 8.5 or has a calculated probability
-    # higher than the $max_star_prob, clip it at that value
-    if (($mag < 8.5) or ($prob > $max_star_prob)){
-        $prob = $max_star_prob;
-    }
-
-    foreach my $warning (@warnings) {
-	if ($warning =~ /B-V = 0.700/) {
-	    $prob *= $p_0p7color;
-	}
-        if ($warning =~ /B-V = 1.500/) {
-            $prob *= $p_1p5color;
-        }
-	if ($warning =~ /Search Spoiler/) {
-	    $prob *= $p_seaspo;
-	}
-	if ($warning =~ /Bad Acquisition Star/){
-	    my ($failed, $total) = parse_bad_acq_warning($warning);
-	    $prob = ($total - $failed) / $total;
-            last;
-	}
-    }
-    return $prob;
-}
-
 
 ##*****************************************************************************************
 sub parse_bad_acq_warning {
