@@ -59,6 +59,13 @@ sub make_figure_of_merit{
             my $color = $c->{"GS_BV$i"};
             my $hw = $c->{"HALFW$i"};
             my $star_prob = _acq_success_prob($date, $t_ccd, $mag, $color, $spoiler, $hw);
+            if (grep(/Bad Acquisition Star/i, @warnings)){
+                my @w = grep(/Bad Acquisition Star/i, @warnings);
+                my ($failed, $total) = parse_bad_acq_warning($w[0]);
+                if ($star_prob > (($total - $failed) / $total)){
+                    $star_prob = ($total - $failed) / $total;
+                }
+            }
 	    push @probs, $star_prob;
             $slot_probs{$c->{"IMNUM$i"}} = $star_prob;
             $c->{"P_ACQ$i"} = $star_prob;
