@@ -1180,8 +1180,8 @@ sub check_star_catalog {
 	my $n_obs = $bad_acqs{$sid}{n_obs};
 	    my $n_noids = $bad_acqs{$sid}{n_noids};
 	    if (defined $db_stats->{acq}){
-	        $n_obs = $db_stats->{acq};
-	        $n_noids = $db_stats->{acq_noid};
+	        $n_obs = $db_stats->{acq_5y};
+	        $n_noids = $db_stats->{acq_5ynoms_noid};
 	    }
 	    if ($n_noids && $n_obs > $obs_min_cnt && $n_noids/$n_obs > $obs_bad_frac){
 	        push @yellow_warn, sprintf 
@@ -1856,13 +1856,13 @@ sub print_report {
 	    if ($db_stats->{acq} or $db_stats->{gui}){
 	    $table .= sprintf("${idpad}<A HREF=\"%s%s\" STYLE=\"text-decoration: none;\" "
 			      . "ONMOUSEOVER=\"return overlib ('"
-			      . "ACQ total:%d noid:%d <BR />"
+			      . "ACQ total:%d noid:%d last5y:%d 5ynoidnoms:%d<BR />"
 			      . "GUI total:%d bad:%d fail:%d obc_bad:%d <BR />"
 			      . "Avg Mag %4.2f <BR />"
                               . "$acq_prob"
 			      . "', WIDTH, 220);\" ONMOUSEOUT=\"return nd();\">%s</A>", 
 			      $acq_stat_lookup, $c->{"GS_ID${i}"}, 
-			      $db_stats->{acq}, $db_stats->{acq_noid},
+			      $db_stats->{acq}, $db_stats->{acq_noid}, $db_stats->{acq_5y}, $db_stats->{acq_5ynoms_noid},
 			      $db_stats->{gui}, $db_stats->{gui_bad}, $db_stats->{gui_fail}, $db_stats->{gui_obc_bad},
 			      $db_stats->{avg_mag},
 			      $c->{"GS_ID${i}"});
