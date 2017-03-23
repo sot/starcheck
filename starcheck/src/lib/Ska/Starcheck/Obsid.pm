@@ -1832,7 +1832,7 @@ sub print_report {
 	my @star_fields = qw (   TYPE  SIZE P_ACQ GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
 	my @star_format = ( '%6s',   '%5s',  '%8.3f',    '%8s',  '%8.3f',  '%7d',  '%7d',    '%4d',    '%4d',   '%5d',     '%6s',  '%4s');
 
-	$table.= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu})\n";
+	$table.= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu}) NPM starts %s\n", time2date($self->{obs_tstart});
 	$table.= sprintf "---------------------------------------------------------------------------------------------\n";
 	$table.= sprintf " IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES\n";
 #                      [ 4]  3   971113176   GUI  6x6   1.000   7.314   8.844  -2329  -2242   1   1   25  bcmp
