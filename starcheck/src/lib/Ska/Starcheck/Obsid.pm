@@ -761,7 +761,8 @@ sub large_dither_checks {
     my $all_dither = shift;
     my $time_tol = 10;         # Commands must be within $time_tol of expectation
 
-    my $warn_free = 1;
+    # Save the number of warnings when starting this method
+    my $n_warn = scalar(@{$self->{warn}});
 
     # The obs tstart and tstop times are derived from the OFLS maneuver summary file,
     # which for implementation reasons gives the maneuver times offset by 10 seconds
@@ -780,7 +781,6 @@ sub large_dither_checks {
 
     # Is the large dither command enabled 5 minutes after EOM?
     if (abs($dither_state->{time} - $obs_tstart - 300) > $time_tol){
-        $warn_free = 0;
         push @{$self->{warn}},
             sprintf("$alarm Large Dither not enabled 5 min after EOM (%s)\n",
                     time2date($obs_tstart));
@@ -796,7 +796,6 @@ sub large_dither_checks {
     # Is dither disabled at EOM and one minute before?
     if ((abs($obs_tstart - $obs_start_dither->{time} - 60) > $time_tol)
             or ($obs_start_dither->{state} ne 'DISA')){
-        $warn_free = 0;
         push @{$self->{warn}},
             sprintf("$alarm Dither should be disabled 1 min before obs start for Large Dither\n");
     }
@@ -813,18 +812,17 @@ sub large_dither_checks {
     # Check that the dither state at the end of the observation started 5 minutes before
     # the end (within time_tol)
     if ((abs($obs_tstop - $obs_stop_dither->{time} - 300) > $time_tol)){
-        $warn_free = 0;
         push @{$self->{warn}},
             sprintf("$alarm Last dither state for Large Dither should start 5 minutes before obs end.\n");
     }
     # Check that the dither state at the end of the observation is standard
     if (not standard_dither($obs_stop_dither)){
-        $warn_free = 0;
         push @{$self->{warn}},
             sprintf("$alarm Dither parameters not set to standard values before obs end\n");
     }
 
-    if ($warn_free){
+    # If the number of warnings has not changed during this routine, it passed all checks
+    if (scalar(@{$self->{warn}}) == $n_warn){
         push @{$self->{fyi}},
             sprintf("$info Observation passes 'big dither' checks\n");
     }
