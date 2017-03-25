@@ -789,8 +789,8 @@ for my $obs_idx (0 .. $#obsid_id) {
 
         # minumum requirements for acq and guide for ERs and ORs
         # should be set by config...
-        my $min_num_acq = ($obs{$obsid}->{obsid} > 40000 ) ? 5 : 4;
-        my $min_num_gui = ($obs{$obsid}->{obsid} > 40000 ) ? 6 : 4;
+        my $min_num_acq = ($obs{$obsid}->{obsid} > 38000 ) ? 5 : 4;
+        my $min_num_gui = ($obs{$obsid}->{obsid} > 38000 ) ? 6 : 4;
 
         # if there is no star catalog and that's ok
         if (not ($obs{$obsid}->find_command("MP_STARCAT"))
