@@ -825,13 +825,19 @@ for my $obs_idx (0 .. $#obsid_id) {
     }
 
 
+    my $alarm = ">> WARNING:";
+    my $mag_regex = qr/^$alarm \[\s?\d+\] Magnitude. \s+\d+\.\d+\n/;
     if (@{$obs{$obsid}->{warn}}) {
-	my $count_red_warn = $#{$obs{$obsid}->{warn}}+1;
-	$out .= sprintf("${red_font_start}WARNINGS [%2d]${font_stop} ", $count_red_warn);
+        my @non_mag_warn = grep {!/$mag_regex/} @{$obs{$obsid}->{warn}};
+        if (scalar(@non_mag_warn)){
+            $out .= sprintf("${red_font_start}WARNINGS [%2d]${font_stop} ", scalar(@non_mag_warn));
+        }
     } 
     if (@{$obs{$obsid}->{yellow_warn}}) {
-	my $count_yellow_warn = $#{$obs{$obsid}->{yellow_warn}}+1;
-	$out .= sprintf("${yellow_font_start}WARNINGS [%2d]${font_stop}", $count_yellow_warn);
+        my @non_mag_warn = grep {!/$mag_regex/} @{$obs{$obsid}->{yellow_warn}};
+        if (scalar(@non_mag_warn)){
+            $out .= sprintf("${yellow_font_start}WARNINGS [%2d]${font_stop} ", scalar(@non_mag_warn));
+        }
     }
     $out .= "\n";
 }

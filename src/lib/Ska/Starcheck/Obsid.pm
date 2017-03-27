@@ -1283,7 +1283,7 @@ sub check_star_catalog {
 	# FID magnitude limits ACA-011
 	if ($type eq 'FID') {
 	    if ($mag =~ /---/ or $mag < $fid_bright or $mag > $fid_faint) {
-		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i, $mag =~ /---/ ? 0 : $mag;
+		push @warn, sprintf "$alarm [%2d] Fid Magnitude.  %6.3f\n",$i, $mag =~ /---/ ? 0 : $mag;
 	    } 
 	}
 
@@ -1968,21 +1968,42 @@ sub print_report {
     
     $o .= "\n" if (@{$self->{warn}} || @{$self->{yellow_warn}} || @{$self->{fyi}} );
 
+    my $mag_regex = qr/^$alarm \[\s?\d+\] Magnitude. \s+\d+\.\d+\n/;
+    my @mag_red = grep {/$mag_regex/} @{$self->{warn}};
+    my @non_mag_red = grep {!/$mag_regex/} @{$self->{warn}};
+    my @mag_yellow = grep {/$mag_regex/} @{$self->{yellow_warn}};
+    my @non_mag_yellow = grep {!/$mag_regex/} @{$self->{yellow_warn}};
 
-
-    if (@{$self->{warn}}) {
+    if (@mag_red){
 	$o .= "${red_font_start}";
-	foreach (@{$self->{warn}}) {
+	foreach (@mag_red) {
 	    $o .= $_;
 	}
-	$o .= "${font_stop}";
+        $o .= "${font_stop}";
     }
-    if (@{$self->{yellow_warn}}) {
+    if (@mag_yellow){
 	$o .= "${yellow_font_start}";
-	foreach (@{$self->{yellow_warn}}) {
+	foreach (@mag_yellow) {
 	    $o .= $_;
 	}
-	$o .= "${font_stop}";
+        $o .= "${font_stop}";
+    }
+
+    $o .= "\n" if ((@mag_red) || (@mag_yellow));
+
+    if (@non_mag_red){
+	$o .= "${red_font_start}";
+	foreach (@non_mag_red) {
+	    $o .= $_;
+	}
+        $o .= "${font_stop}";
+    }
+    if (@non_mag_yellow){
+	$o .= "${yellow_font_start}";
+	foreach (@non_mag_yellow) {
+	    $o .= $_;
+	}
+        $o .= "${font_stop}";
     }
     if (@{$self->{fyi}}) {
 	$o .= "${blue_font_start}";
