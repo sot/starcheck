@@ -623,7 +623,7 @@ sub check_dither {
     my $manvr;
 
     if ( $self->{obsid} =~ /^\d*$/){
-	return if ($self->{obsid} > $ER_MIN_OBSID); # For eng obs, don't have OR to specify dither
+	return if ($self->{obsid} >= $ER_MIN_OBSID); # For eng obs, don't have OR to specify dither
     }
     # If there's no starcat on purpose, return
     if (defined $self->{ok_no_starcat} and $self->{ok_no_starcat}){
@@ -923,7 +923,7 @@ sub check_for_special_case_er{
     # it is a special case ER
     $self->{special_case_er} = 0;
     if ($self->{obsid} =~ /^\d+$/
-        and $self->{obsid} > $ER_MIN_OBSID
+        and $self->{obsid} >= $ER_MIN_OBSID
         and $self->find_command("MP_STARCAT")
         and $self->{prev}
         and $self->{prev}->{obsid} =~ /^\d+$/
@@ -1435,7 +1435,7 @@ sub check_flick_pix_mon {
     my $self = shift;
 
     # this only applies to ERs (and they should have numeric obsids)
-    return unless ( $self->{obsid} =~ /^\d+$/ and $self->{obsid} > $ER_MIN_OBSID );
+    return unless ( $self->{obsid} =~ /^\d+$/ and $self->{obsid} >= $ER_MIN_OBSID );
 
     my $c;
     # Check for existence of a star catalog
@@ -1484,7 +1484,7 @@ sub check_monitor_commanding {
     if ( $self->{obsid} =~ /^\d*$/ ){
 
 	# Don't worry about monitor commanding for non-science observations
-	return if ($self->{obsid} > $ER_MIN_OBSID);
+	return if ($self->{obsid} >= $ER_MIN_OBSID);
     }
 
     # Check for existence of a star catalog
