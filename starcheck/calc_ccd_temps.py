@@ -37,7 +37,7 @@ from Chandra.Time import DateTime
 import Chandra.cmd_states as cmd_states
 from Chandra.cmd_states import get_cmd_states
 import xija
-from mica.archive.aca_dark import dark_model
+from chandra_aca import dark_model
 from parse_cm import read_or_list
 from chandra_aca.drift import get_aca_offsets
 
