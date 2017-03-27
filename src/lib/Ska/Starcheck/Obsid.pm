@@ -41,7 +41,7 @@ use Carp;
 # Constants
 
 my $VERSION = '$Id$';  # '
-my $ER_MIN = 38000;
+my $ER_MIN_OBSID = 38000;
 my $ACA_MANERR_PAD = 20;		# Maneuver error pad for ACA effects (arcsec)
 my $r2a = 3600. * 180. / 3.14159265;
 my $faint_plot_mag = 11.0;
@@ -623,7 +623,7 @@ sub check_dither {
     my $manvr;
 
     if ( $self->{obsid} =~ /^\d*$/){
-	return if ($self->{obsid} > $ER_MIN); # For eng obs, don't have OR to specify dither
+	return if ($self->{obsid} > $ER_MIN_OBSID); # For eng obs, don't have OR to specify dither
     }
     # If there's no starcat on purpose, return
     if (defined $self->{ok_no_starcat} and $self->{ok_no_starcat}){
@@ -833,7 +833,7 @@ sub check_bright_perigee{
     my $min_n_stars = 3;
 
     # if this is an OR, just return
-    return if (($self->{obsid} =~ /^\d+$/ && $self->{obsid} < $ER_MIN));
+    return if (($self->{obsid} =~ /^\d+$/ && $self->{obsid} < $ER_MIN_OBSID));
 
     # if radmon is undefined, warn and return
     if (not defined $radmon){
@@ -923,11 +923,11 @@ sub check_for_special_case_er{
     # it is a special case ER
     $self->{special_case_er} = 0;
     if ($self->{obsid} =~ /^\d+$/
-        and $self->{obsid} > $ER_MIN
+        and $self->{obsid} > $ER_MIN_OBSID
         and $self->find_command("MP_STARCAT")
         and $self->{prev}
         and $self->{prev}->{obsid} =~ /^\d+$/
-        and $self->{prev}->{obsid} < $ER_MIN
+        and $self->{prev}->{obsid} < $ER_MIN_OBSID
         and $self->{prev}->find_command("MP_STARCAT")
         and abs($self->{ra} - $self->{prev}->{ra}) < 0.001
         and abs($self->{dec} - $self->{prev}->{dec}) < 0.001
@@ -1062,8 +1062,8 @@ sub check_star_catalog {
     my $y0           = 33;	# CCD QB coordinates (arcsec)
     my $z0           = -27;
    
-    my $is_science = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} < $ER_MIN);
-    my $is_er      = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} >= $ER_MIN);
+    my $is_science = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} < $ER_MIN_OBSID);
+    my $is_er      = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} >= $ER_MIN_OBSID);
     my $min_guide    = $is_science ? 5 : 6; # Minimum number of each object type
     my $min_acq      = $is_science ? 4 : 5;
     my $min_fid      = 3;
@@ -1435,7 +1435,7 @@ sub check_flick_pix_mon {
     my $self = shift;
 
     # this only applies to ERs (and they should have numeric obsids)
-    return unless ( $self->{obsid} =~ /^\d+$/ and $self->{obsid} > $ER_MIN );
+    return unless ( $self->{obsid} =~ /^\d+$/ and $self->{obsid} > $ER_MIN_OBSID );
 
     my $c;
     # Check for existence of a star catalog
@@ -1484,7 +1484,7 @@ sub check_monitor_commanding {
     if ( $self->{obsid} =~ /^\d*$/ ){
 
 	# Don't worry about monitor commanding for non-science observations
-	return if ($self->{obsid} > $ER_MIN);
+	return if ($self->{obsid} > $ER_MIN_OBSID);
     }
 
     # Check for existence of a star catalog
@@ -1770,7 +1770,7 @@ sub print_report {
     if ( ( defined $self->{ra} ) and (defined $self->{dec}) and (defined $self->{roll})){
 	$o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     }
-    if ( defined $self->{DITHER_ON} && $self->{obsid} < $ER_MIN ) {
+    if ( defined $self->{DITHER_ON} && $self->{obsid} < $ER_MIN_OBSID ) {
 	$o .= sprintf "Dither: %-3s ",$self->{DITHER_ON};
 	$o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f",
 		       $self->{DITHER_Y_AMP}*3600., $self->{DITHER_Z_AMP}*3600.,
