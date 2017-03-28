@@ -1,7 +1,7 @@
 TASK = starcheck
 FLIGHT_ENV = SKA
 
-SRC = src
+SRC = starcheck/src
 
 include $(SKA)/include/Makefile.FLIGHT
 
@@ -20,11 +20,11 @@ TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
 # with "make install_dist" from that project
 TEST_BACKSTOP = AUG0104A/CR214_0300.backstop 
 
-DATA_FILES = starcheck_data/aca_spec.json starcheck_data/ACABadPixels starcheck_data/agasc.bad \
-	starcheck_data/fid_CHARACTERIS_JUL01 starcheck_data/fid_CHARACTERIS_FEB07 \
-	starcheck_data/fid_CHARACTERISTICS starcheck_data/characteristics.yaml \
-	starcheck_data/A.tlr starcheck_data/B.tlr starcheck_data/tlr.cfg \
-	starcheck_data/overlib.js starcheck_data/up.gif starcheck_data/down.gif \
+DATA_FILES = starcheck/data/aca_spec.json starcheck/data/ACABadPixels starcheck/data/agasc.bad \
+	starcheck/data/fid_CHARACTERIS_JUL01 starcheck/data/fid_CHARACTERIS_FEB07 \
+	starcheck/data/fid_CHARACTERISTICS starcheck/data/characteristics.yaml \
+	starcheck/data/A.tlr starcheck/data/B.tlr starcheck/data/tlr.cfg \
+	starcheck/data/overlib.js starcheck/data/up.gif starcheck/data/down.gif \
 
 SHA_FILES = ${SKA_ARCH_OS}/bin/ska_version ${SKA_ARCH_OS}/pkgs.manifest $(BIN) $(LIB) \
 	$(DATA_FILES) $(PYTHON_LIB)
@@ -37,9 +37,6 @@ HOSTNAME = $(shell hostname)
 $(TEST_BACKSTOP):
 	tar -zxvpf $(TEST_DATA_TGZ) 
 
-.PHONY: starcheck_data
-starcheck_data:
-	cd starcheck_data && $(MAKE) install
 
 all: 
 	# Nothing to make; "make install" to install to $(SKA)
@@ -69,21 +66,6 @@ ifdef DOC_RST
 endif
 
 
-
-install: starcheck_data
-ifdef BIN
-	mkdir -p $(INSTALL_BIN)
-	rsync --times --cvs-exclude $(BIN) $(INSTALL_BIN)/
-#	pod2html starcheck.pl > $(INSTALL_DOC)/starcheck.html
-endif
-ifdef LIB
-	mkdir -p $(INSTALL_PERLLIB)
-	rsync --times --cvs-exclude --recursive $(SRC)/lib/* $(INSTALL_PERLLIB)/
-endif
-
-
-# Make sure install dir is not flight.  (This doesn't resolve links etc)
-check_install:
-        test "$(INSTALL)" != "$(ROOT_FLIGHT)"
- 
+install:
+	rsync -a ska_bin_starcheck $(INSTALL_BIN)/starcheck
 

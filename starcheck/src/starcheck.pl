@@ -8,8 +8,6 @@
 ##*******************************************************************************
 
 
-my $version = '11.14';
-
 # Set defaults and get command line options
 
 use strict;
@@ -44,13 +42,18 @@ use Cwd qw( abs_path );
 use HTML::TableExtract;
 
 use Ska::AGASC;
+use Carp 'verbose';
+$SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 
 
 use Inline Python => q{
 
+import os
 from chandra_aca.star_probs import set_acq_model_ms_filter
+import starcheck
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
+from starcheck.version import version
 
 def ccd_temp_wrapper(kwargs):
     return get_ccd_temps(**kwargs)
@@ -62,7 +65,18 @@ def plot_cat_wrapper(kwargs):
         # write errors to starcheck's global warnings and STDERR
         perl.warning("Error with Inline::Python imports {}\n".format(err))
     return make_plots_for_obsid(**kwargs)
+
+def starcheck_version():
+    return version
+
+def get_data_dir():
+    sc_data = os.path.join(os.path.dirname(starcheck.__file__), 'data')
+    return sc_data if os.path.exists(sc_data) else ""
+
 };
+
+
+my $version = starcheck_version();
 
 # cheat to get the OS (major)
 my $OS = `uname`;
@@ -102,7 +116,7 @@ GetOptions( \%par,
     exit( 1 );
 
 
-my $Starcheck_Data = $par{sc_data} || "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
+my $Starcheck_Data = $par{sc_data} || get_data_dir();
 
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
@@ -562,21 +576,16 @@ sub json_obsids{
 
 my $json_text = json_obsids();
 my $obsid_temps;
-eval{
-    my $json_obsid_temps;
-    $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
-                                          outdir=>$STARCHECK,
-                                          json_obsids => $json_text,
-                                          model_spec => "$Starcheck_Data/aca_spec.json",
-                                          char_file => "$Starcheck_Data/characteristics.yaml",
-                                          orlist => $or_file,
-                                      });
-    # convert back from JSON outside
-    $obsid_temps = JSON::from_json($json_obsid_temps);
-};
-if ($@){
-    push @global_warn, "Error getting temperatures from get_ccd_temps\n";
-}
+my $json_obsid_temps;
+$json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
+                                      outdir=>$STARCHECK,
+                                      json_obsids => $json_text,
+                                      model_spec => "$Starcheck_Data/aca_spec.json",
+                                      char_file => "$Starcheck_Data/characteristics.yaml",
+                                      orlist => $or_file,
+                                  });
+# convert back from JSON outside
+$obsid_temps = JSON::from_json($json_obsid_temps);
 
 if ($obsid_temps){
     foreach my $obsid (@obsid_id) {
@@ -604,12 +613,7 @@ foreach my $obsid (@obsid_id) {
                          catalog=>$cat_as_array,
                          starcat_time=>"$obs{$obsid}->{date}",
                          outdir=>$STARCHECK);
-        eval{
-            plot_cat_wrapper(\%plot_args);
-        };
-        if ($@){
-            push @global_warn, "Error Python plotting catalog\n";
-        }
+        plot_cat_wrapper(\%plot_args);
         $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
         $obs{$obsid}->{plot_field_file} = "$STARCHECK/star_view_$obs{$obsid}->{obsid}.png";
         $obs{$obsid}->{compass_file} = "$STARCHECK/compass$obs{$obsid}->{obsid}.png";

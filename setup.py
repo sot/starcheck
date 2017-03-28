@@ -7,4 +7,6 @@ setup(name='starcheck',
       author='Jean Connelly',
       author_email='jconnelly@cfa.harvard.edu',
       packages=['starcheck'],
+      include_package_data=True,
+      scripts=['starcheck/src/starcheck'],
       )

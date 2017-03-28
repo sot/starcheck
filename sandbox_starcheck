@@ -5,7 +5,7 @@ export PYTHONHOME=$SKA_ARCH_OS
 export PYTHONPATH=$DIR:$PYTHONPATH
 PERL_INLINE_DIRECTORY=`/bin/mktemp -d -t starcheck_inline.XXXXXX` || exit 1
 export PERL_INLINE_DIRECTORY
-perl -I ${DIR}/src/lib ${DIR}/src/starcheck.pl -sc_data ${DIR}/starcheck_data "$@"
+perl -I ${DIR}/starcheck/src/lib ${DIR}/starcheck/src/starcheck.pl "$@"
 SC_STATUS=$?
 if [[ -d $PERL_INLINE_DIRECTORY && $PERL_INLINE_DIRECTORY =~ .*starcheck_inline.* ]];
 then

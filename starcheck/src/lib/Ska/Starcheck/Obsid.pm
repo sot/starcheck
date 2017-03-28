@@ -2128,20 +2128,14 @@ sub get_agasc_stars {
     my $c;
     return unless ($c = find_command($self, "MP_TARGQUAT"));
     
-    my $agasc_region;
 
-    eval{
-		$agasc_region = Ska::AGASC->new({
-			agasc_dir => $AGASC_DIR,
-			ra => $self->{ra},
-			dec => $self->{dec},
-			radius => 1.3,
-			datetime => $self->{date},
-		});
-	};
-    if( $@ ){
-		croak("Could not use AGASC: $@");
-    }
+    my $agasc_region = Ska::AGASC->new({
+        agasc_dir => $AGASC_DIR,
+        ra => $self->{ra},
+        dec => $self->{dec},
+        radius => 1.3,
+        datetime => $self->{date},
+    });
 
     my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
 
