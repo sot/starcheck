@@ -761,6 +761,9 @@ sub large_dither_checks {
     my $all_dither = shift;
     my $time_tol = 10;         # Commands must be within $time_tol of expectation
 
+    # Save the number of warnings when starting this method
+    my $n_warn = scalar(@{$self->{warn}});
+
     # The obs tstart and tstop times are derived from the OFLS maneuver summary file,
     # which for implementation reasons gives the maneuver times offset by 10 seconds
     # from the actual command timing. Fix this here.
@@ -818,6 +821,11 @@ sub large_dither_checks {
             sprintf("$alarm Dither parameters not set to standard values before obs end\n");
     }
 
+    # If the number of warnings has not changed during this routine, it passed all checks
+    if (scalar(@{$self->{warn}}) == $n_warn){
+        push @{$self->{fyi}},
+            sprintf("$info Observation passes 'big dither' checks\n");
+    }
 }
 
 
