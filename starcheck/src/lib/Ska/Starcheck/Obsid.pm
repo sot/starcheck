@@ -1802,10 +1802,9 @@ sub print_report {
 	    $o .= sprintf "MP_TARGQUAT at $c->{date} (VCDU count = $c->{vcdu})\n";
 	    $o .= sprintf("  Q1,Q2,Q3,Q4: %.8f  %.8f  %.8f  %.8f\n", $c->{Q1}, $c->{Q2}, $c->{Q3}, $c->{Q4});
 	    if (exists $c->{man_err} and exists $c->{dur} and exists $c->{angle}){
-		$o .= sprintf("  MANVR: Angle= %6.2f deg  Duration= %.0f sec  Slew err= %.1f\n",
-			      $c->{angle}, $c->{dur}, $c->{man_err});
+		$o .= sprintf("  MANVR: Angle= %6.2f deg  Duration= %.0f sec  Slew err= %.1f  End= %s\n",
+			      $c->{angle}, $c->{dur}, $c->{man_err}, substr(time2date($c->{tstop}), 0, 17));
 		}
-            $o .= sprintf("  MANVR: Ends= %s\n", time2date($c->{tstop}));
 	    $o .= "\n";
 	}
     }
