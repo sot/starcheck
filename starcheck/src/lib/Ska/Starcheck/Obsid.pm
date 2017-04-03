@@ -1281,7 +1281,10 @@ sub check_star_catalog {
 
 	    if ($mag < $mag_bright or $mag > $self->{mag_faint_red}) {
 		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
-	    } 
+	    }
+            elsif (($type eq 'GUI' or $type eq 'BOT') and $mag > 10.3){
+		push @warn, sprintf "$alarm [%2d] Magnitude. Guide star %6.3f\n",$i,$mag;
+            }
 	    elsif ($mag > $self->{mag_faint_yellow}) {
 		push @yellow_warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
 	    }
