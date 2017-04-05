@@ -7,19 +7,19 @@ Using DOT file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/mps/md273_0204.dot
 Using OR file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/mps/or/SEP2908_A.or
 Using SOE file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/mps/soe/ms273_0222.soe
 Using TLR file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/CR273_0202.tlr
-Using acq_star_rdb file /proj/sot/ska/data/starcheck/bad_acq_stars.rdb
+Using acq_star_rdb file /home/jeanconn/git/starcheck/starcheck/data/bad_acq_stars.rdb
 Using backstop file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/CR273_0202.backstop
-Using bad_pixel file /proj/sot/ska/data/starcheck/ACABadPixels
-Using banned_agasc file /proj/sot/ska/data/starcheck/agasc.bad
-Using config file /proj/sot/ska/data/starcheck/characteristics.yaml
+Using bad_pixel file /home/jeanconn/git/starcheck/starcheck/data/ACABadPixels
+Using banned_agasc file /home/jeanconn/git/starcheck/starcheck/data/agasc.bad
+Using config file /home/jeanconn/git/starcheck/starcheck/data/characteristics.yaml
 Using dither file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/History/DITHER.txt
 Using fidsel file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/History/FIDSEL.txt
-Using gui_star_rdb file /proj/sot/ska/data/starcheck/bad_gui_stars.rdb
+Using gui_star_rdb file /home/jeanconn/git/starcheck/starcheck/data/bad_gui_stars.rdb
 Using guide summary file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/mps/mg273_0222.sum
 Using manerr file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/output/SEP2908B_ManErr.txt
 Using maneuver file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/mps/mm273_0222.sum
 Using mech check file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/output/TEST_mechcheck.txt
-Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
+Using odb file /home/jeanconn/git/starcheck/starcheck/data/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/mps/ms273_0222.sum
 Using radmon file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/History/SIMFOCUS.txt
@@ -35,8 +35,8 @@ VERBOSE SUPERVERBOSE
 Using tlr file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/CR273_0202.tlr 
 Using DOT file /data/mpcrit1/mplogs/2008/SEP2908/oflsb//mps/md273_0204.dot 
 Using Backstop file /data/mpcrit1/mplogs/2008/SEP2908/oflsb/CR273_0202.backstop 
-Using template file /proj/sot/ska/data/starcheck/A.tlr 
-Using template file /proj/sot/ska/data/starcheck/B.tlr 
+Using template file /home/jeanconn/git/starcheck/starcheck/data/A.tlr 
+Using template file /home/jeanconn/git/starcheck/starcheck/data/B.tlr 
 
 [ok]	First ACA command is the template-independent init command
 [ok]	Checking IU/transponder state before replica 0
@@ -80,17 +80,17 @@ Transponder A	before 2008:273:10:51:30.000
 
          ------  2008:273:03:00:00.000   OBC Load Segment Begins     CL273:0302 
 OBSID = 57588 at 2008:273:04:03:36.425   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
-OBSID = 57587 at 2008:273:10:19:28.921   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
+OBSID = 57587 at 2008:273:10:19:28.921   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 57586 at 2008:273:10:45:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57585 at 2008:273:11:04:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
+OBSID = 57585 at 2008:273:11:04:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 57584 at 2008:273:11:28:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57583 at 2008:273:11:47:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
+OBSID = 57583 at 2008:273:11:47:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 57582 at 2008:273:12:11:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57581 at 2008:273:12:30:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
+OBSID = 57581 at 2008:273:12:30:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 57580 at 2008:273:12:54:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57579 at 2008:273:13:13:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
+OBSID = 57579 at 2008:273:13:13:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 57578 at 2008:273:13:37:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57577 at 2008:273:13:56:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
+OBSID = 57577 at 2008:273:13:56:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 57576 at 2008:273:14:58:23.494   7 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 10499 at 2008:273:15:29:02.818   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  9525 at 2008:274:08:27:16.716   8 clean ACQ | 5 clean GUI | 
@@ -164,8 +164,8 @@ MP_STARCAT at 2008:273:10:19:28.921 (VCDU count = 16196601)
 [ 9]  6    83624440   ACQ  8x8   0.921  10.364  11.875   1028    -40  20   1  120    a3    
 [10]  7    83631152   ACQ  8x8   0.913  10.402  11.906  -1472   2126  20   1  120    a3    
 
+>> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
->> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -211,8 +211,8 @@ MP_STARCAT at 2008:273:11:04:36.000 (VCDU count = 16207165)
 [ 9]  6    83624440   ACQ  8x8   0.921  10.364  11.875   1028    -40  20   1  120    a3    
 [10]  7    83631152   ACQ  8x8   0.913  10.402  11.906  -1472   2126  20   1  120    a3    
 
+>> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
->> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -258,8 +258,8 @@ MP_STARCAT at 2008:273:11:47:36.000 (VCDU count = 16217233)
 [ 9]  6    83624440   ACQ  8x8   0.921  10.364  11.875   1028    -40  20   1  120    a3    
 [10]  7    83631152   ACQ  8x8   0.913  10.402  11.906  -1472   2126  20   1  120    a3    
 
+>> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
->> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -305,8 +305,8 @@ MP_STARCAT at 2008:273:12:30:36.000 (VCDU count = 16227302)
 [ 9]  6    83624440   ACQ  8x8   0.921  10.364  11.875   1028    -40  20   1  120    a3    
 [10]  7    83631152   ACQ  8x8   0.913  10.402  11.906  -1472   2126  20   1  120    a3    
 
+>> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
->> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -352,8 +352,8 @@ MP_STARCAT at 2008:273:13:13:36.000 (VCDU count = 16237370)
 [ 9]  6    83624440   ACQ  8x8   0.921  10.364  11.875   1028    -39  20   1  120    a3    
 [10]  7    83631152   ACQ  8x8   0.913  10.402  11.906  -1472   2126  20   1  120    a3    
 
+>> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
->> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -399,8 +399,8 @@ MP_STARCAT at 2008:273:13:56:36.000 (VCDU count = 16247438)
 [ 9]  6    83624440   ACQ  8x8   0.921  10.364  11.875   1028    -39  20   1  120    a3    
 [10]  7    83631152   ACQ  8x8   0.913  10.402  11.906  -1473   2126  20   1  120    a3    
 
+>> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
->> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -553,7 +553,7 @@ MP_STARCAT at 2008:275:15:26:11.698 (VCDU count = 165542)
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
 [ 1]  0   227019488   BOT  8x8   0.985   8.645  10.156   -960   1432  20   1  120          
-[ 2]  1   227019640   BOT  8x8   0.953  10.157  11.656  -1552   -713  20   1  120  a2g3    
+[ 2]  1   227019640   BOT  8x8   0.881  10.157  11.656  -1552   -713  20   1  120  a2g3    
 [ 3]  2   227022040   BOT  8x8   0.806  10.014  11.516   -420   -769  20   1  120  a2g3   C
 [ 4]  3   227023160   BOT  8x8   0.985   9.425  10.922   1089   -622  20   1  120  a2g2    
 [ 5]  4   227033024   BOT  8x8   0.985   7.187   8.688    986   1787  20   1  120          
@@ -570,8 +570,8 @@ MP_STARCAT at 2008:275:15:26:11.698 (VCDU count = 165542)
 >> WARNING: [10] Magnitude.  10.598
 >> INFO   : Obsid contains flickering pixel MON
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.359	-4.641	-3.183	
-Acquisition Stars Expected  : 7.44
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.006	-4.333	-2.937	
+Acquisition Stars Expected  : 7.37
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.055
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -589,7 +589,7 @@ MP_STARCAT at 2008:276:01:48:03.546 (VCDU count = 311149)
 ---------------------------------------------------------------------------------------------
 [ 1]  0   227018608   BOT  8x8   0.870   9.841  11.344  -1932   2389   2   1   30  a2g3    
 [ 2]  1   227019488   BOT  8x8   0.985   8.645  10.156   -964   1430  20   1  120          
-[ 3]  2   227019640   BOT  8x8   0.953  10.157  11.656  -1550   -718  20   1  120  a2g3    
+[ 3]  2   227019640   BOT  8x8   0.881  10.157  11.656  -1550   -718  20   1  120  a2g3    
 [ 4]  3   227022040   BOT  8x8   0.806  10.014  11.516   -418   -770  20   1  120  a2g3   C
 [ 5]  4   227023160   BOT  8x8   0.985   9.425  10.922   1091   -618  20   1  120  a2g2    
 [ 6]  5   227033024   BOT  8x8   0.985   7.187   8.688    981   1790  20   1  120          
@@ -603,8 +603,8 @@ MP_STARCAT at 2008:276:01:48:03.546 (VCDU count = 311149)
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.38, Pos_Err = 0.07
 >> INFO   : Obsid contains flickering pixel MON
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.401	-4.679	-3.218	
-Acquisition Stars Expected  : 7.46
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.047	-4.371	-2.971	
+Acquisition Stars Expected  : 7.38
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.055
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -769,7 +769,7 @@ MP_STARCAT at 2008:278:06:49:24.470 (VCDU count = 1056050)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   227019640   BOT  8x8   0.953  10.157  11.656   -984   1135  20   1  120  a2g3    
+[ 1]  0   227019640   BOT  8x8   0.881  10.157  11.656   -984   1135  20   1  120  a2g3    
 [ 2]  1   227022040   BOT  8x8   0.806  10.014  11.516    135    963  20   1  120  a2g3   C
 [ 3]  2   227023160   BOT  8x8   0.985   9.425  10.922   1652    953  20   1  120  a2g2    
 [ 4]  3   227151160   BOT  8x8   0.985   8.764  10.266  -2199   1815  20   1  120          
@@ -777,7 +777,7 @@ MP_STARCAT at 2008:278:06:49:24.470 (VCDU count = 1056050)
 [ 6]  5   227422464   BOT  8x8   0.985   9.628  11.125    625  -1759  20   1  120  a2g2    
 [ 7]  6   227424368   BOT  8x8   0.985   9.640  11.141  -1955   -287  20   1  120  a2g2    
 [ 8]  7         ---   MON  8x8     ---     ---  13.938   2301  -1289   7   0   20    m1    
-[ 9]  7   227428416   ACQ  8x8   0.922  10.358  11.859  -1988   -932  20   1  120    a3    
+[ 9]  7   227428416   ACQ  8x8   0.852  10.358  11.859  -1988   -932  20   1  120    a3    
 
 >> WARNING: [ 9] Search spoiler.  227420624: Y,Z,Radial,Mag seps: 171 178 247 -0.0
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
@@ -787,8 +787,8 @@ MP_STARCAT at 2008:278:06:49:24.470 (VCDU count = 1056050)
 >> INFO   : Obsid contains flickering pixel MON
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2008:278:15:13:00.000
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.524	-5.610	-3.934	
-Acquisition Stars Expected  : 7.60
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.893	-5.022	-3.410	
+Acquisition Stars Expected  : 7.46
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.055
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -804,7 +804,7 @@ MP_STARCAT at 2008:278:17:44:12.935 (VCDU count = 1209371)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   227019640   BOT  8x8   0.953  10.157  11.656   -961   1155  20   1  120  a2g3    
+[ 1]  0   227019640   BOT  8x8   0.881  10.157  11.656   -961   1155  20   1  120  a2g3    
 [ 2]  1   227022040   BOT  8x8   0.806  10.014  11.516    154    960  20   1  120  a2g3   C
 [ 3]  2   227023160   BOT  8x8   0.985   9.425  10.922   1671    919  20   1  120  a2g2    
 [ 4]  3   227151160   BOT  8x8   0.985   8.764  10.266  -2161   1859  20   1  120          
@@ -820,8 +820,8 @@ MP_STARCAT at 2008:278:17:44:12.935 (VCDU count = 1209371)
 >> WARNING: [ 9] Magnitude.  10.358
 >> INFO   : Obsid contains flickering pixel MON
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.524	-5.610	-3.934	
-Acquisition Stars Expected  : 7.60
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.154	-5.268	-3.632	
+Acquisition Stars Expected  : 7.53
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.055
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 

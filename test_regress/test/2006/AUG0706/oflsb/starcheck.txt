@@ -7,19 +7,19 @@ Using DOT file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/mps/md219_1104.dot
 Using OR file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/mps/or/AUG0706_A.or
 Using SOE file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/mps/soe/ms219_1130.soe
 Using TLR file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/CR219_1103.tlr
-Using acq_star_rdb file /proj/sot/ska/data/starcheck/bad_acq_stars.rdb
+Using acq_star_rdb file /home/jeanconn/git/starcheck/starcheck/data/bad_acq_stars.rdb
 Using backstop file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/CR219_1103.backstop
-Using bad_pixel file /proj/sot/ska/data/starcheck/ACABadPixels
-Using banned_agasc file /proj/sot/ska/data/starcheck/agasc.bad
-Using config file /proj/sot/ska/data/starcheck/characteristics.yaml
+Using bad_pixel file /home/jeanconn/git/starcheck/starcheck/data/ACABadPixels
+Using banned_agasc file /home/jeanconn/git/starcheck/starcheck/data/agasc.bad
+Using config file /home/jeanconn/git/starcheck/starcheck/data/characteristics.yaml
 Using dither file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/History/DITHER.txt
 Using fidsel file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/History/FIDSEL.txt
-Using gui_star_rdb file /proj/sot/ska/data/starcheck/bad_gui_stars.rdb
+Using gui_star_rdb file /home/jeanconn/git/starcheck/starcheck/data/bad_gui_stars.rdb
 Using guide summary file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/mps/mg219_1130.sum
 Using manerr file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/output/AUG0706B_ManErr.txt
 Using maneuver file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/mps/mm219_1130.sum
 Using mech check file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/output/TEST_mechcheck.txt
-Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_JUL01
+Using odb file /home/jeanconn/git/starcheck/starcheck/data/fid_CHARACTERIS_JUL01
 Using processing summary file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/mps/ms219_1130.sum
 Using radmon file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/History/SIMFOCUS.txt
@@ -35,8 +35,8 @@ VERBOSE SUPERVERBOSE
 Using tlr file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/CR219_1103.tlr 
 Using DOT file /data/mpcrit1/mplogs/2006/AUG0706/oflsb//mps/md219_1104.dot 
 Using Backstop file /data/mpcrit1/mplogs/2006/AUG0706/oflsb/CR219_1103.backstop 
-Using template file /proj/sot/ska/data/starcheck/A.tlr 
-Using template file /proj/sot/ska/data/starcheck/B.tlr 
+Using template file /home/jeanconn/git/starcheck/starcheck/data/A.tlr 
+Using template file /home/jeanconn/git/starcheck/starcheck/data/B.tlr 
 
 [ok]	First ACA command is the template-independent init command
 [ok]	Checking IU/transponder state before replica 0
@@ -104,10 +104,10 @@ OBSID = 58832 at 2006:222:21:40:11.595   8 clean ACQ | 8 clean GUI |
 OBSID = 58831 at 2006:223:08:40:26.058   8 clean ACQ | 8 clean GUI | 
 OBSID =  6648 at 2006:223:14:55:21.595   8 clean ACQ | 5 clean GUI | 
 OBSID =  6878 at 2006:224:13:51:55.641   8 clean ACQ | 5 clean GUI | 
-OBSID =  6883 at 2006:224:15:16:27.294   4 clean ACQ | 4 clean GUI | WARNINGS [ 4]
+OBSID =  6883 at 2006:224:15:16:27.294   4 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
          ------  2006:224:15:59:32.294   OBC Load Segment Begins     CL224:1503 
 OBSID =  6901 at 2006:224:16:02:38.294   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID =  6699 at 2006:224:20:45:28.894   4 clean ACQ | 4 clean GUI | WARNINGS [ 7]
+OBSID =  6699 at 2006:224:20:45:28.894   4 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 6]
 OBSID =  6633 at 2006:224:21:36:30.494   8 clean ACQ | 5 clean GUI | 
 OBSID =  7374 at 2006:225:05:06:44.443   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID = 58830 at 2006:225:12:52:49.995   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
@@ -171,15 +171,15 @@ MP_STARCAT at 2006:219:17:58:22.364 (VCDU count = 8097189)
 [ 9]  5    15211576   ACQ  6x6   0.894   9.667  11.609   2054    477  20   1  120    a2    
 [10]  6   624951608   ACQ  6x6   0.972   9.798  11.297    512    660  20   1  120    a2    
 [11]  7   624952472   ACQ  6x6   0.943   9.447  11.516     20   -964  20   1  120    a2    
-[12]  0   624820744   ACQ  6x6   0.945  10.069  11.578   -321   1750  20   1  120    a3    
+[12]  0   624820744   ACQ  6x6   0.873  10.069  11.578   -321   1750  20   1  120    a3    
 [13]  1   624827368   ACQ  6x6   0.934  10.137  11.641  -1114   2188  20   1  120    a3    
 [14]  2   624953600   ACQ  6x6   0.919  10.216  11.719  -1217    531  20   1  120    a3    
 
 >> WARNING: [12] Search spoiler.  624827992: Y,Z,Radial,Mag seps:   1  67  67 -0.1
 >> WARNING: [ 9] Bad Acquisition Star. 15211576 has  1 failed out of  3 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.606	-4.912	-3.456	
-Acquisition Stars Expected  : 7.57
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.290	-4.632	-3.222	
+Acquisition Stars Expected  : 7.50
 Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.072
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -200,7 +200,7 @@ MP_STARCAT at 2006:220:00:34:40.484 (VCDU count = 8189981)
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2157   1070   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1810   1068   1   1   25          
 [ 4]  3  1056047176   BOT  6x6   0.958   9.960  11.469    989   1350  20   1  120  a2g3    
-[ 5]  4  1056048360   BOT  6x6   0.985   9.374  10.875   2065   -967  20   1  120  a2g2    
+[ 5]  4  1056048360   BOT  6x6   0.913   9.374  10.875   2065   -967  20   1  120  a2g2    
 [ 6]  5  1112942768   BOT  6x6   0.976   9.724  11.234  -1461    649  16   1  100  a2g2    
 [ 7]  6  1112943360   BOT  6x6   0.978   9.697  11.203  -1520   1139  20   1  120  a2g2    
 [ 8]  7  1113063824   BOT  6x6   0.985   9.510  11.016   -935  -2089  20   1  120  a2g2    
@@ -210,8 +210,8 @@ MP_STARCAT at 2006:220:00:34:40.484 (VCDU count = 8189981)
 
 >> WARNING: [ 5] Search spoiler. 1056972464: Y,Z,Radial,Mag seps:  94 126 157 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.364	-5.554	-3.970	
-Acquisition Stars Expected  : 7.68
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.793	-5.085	-3.603	
+Acquisition Stars Expected  : 7.61
 Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.072
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -503,7 +503,7 @@ MP_STARCAT at 2006:220:10:16:37.847 (VCDU count = 8326244)
 [ 2]  1  1049891800   BOT  8x8   0.933  10.146  11.656   -235   1354  15   1   95  a2g3    
 [ 3]  2  1050019840   BOT  8x8   0.985   8.755  10.266   1728   -999  20   1  120          
 [ 4]  3  1050021104   BOT  8x8   0.985   9.439  10.938   1473  -1567  20   1  120  a2g2    
-[ 5]  4  1050022056   BOT  8x8   0.985   8.536  10.047   2049     66  20   1  120    a3    
+[ 5]  4  1050022056   BOT  8x8   0.922   8.536  10.047   2049     66  20   1  120    a3    
 [ 6]  5  1050023624   BOT  8x8   0.983   9.581  11.078   1061    741  20   1  120  a2g2    
 [ 7]  6  1050023920   BOT  8x8   0.973   9.774  11.281   1247    206  20   1  120  a2g2    
 [ 8]  7  1049890512   GUI  8x8     ---   9.148  10.656  -2291   1512   1   1   25          
@@ -513,8 +513,8 @@ MP_STARCAT at 2006:220:10:16:37.847 (VCDU count = 8326244)
 >> WARNING: [ 5] Search spoiler. 1050021552: Y,Z,Radial,Mag seps:  40  86  95 -0.1
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.219	-6.277	-4.552	
-Acquisition Stars Expected  : 7.77
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.648	-5.787	-4.151	
+Acquisition Stars Expected  : 7.71
 Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.072
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -719,7 +719,7 @@ MP_STARCAT at 2006:224:15:16:27.294 (VCDU count = 9745130)
 [10]  1   401215520   ACQ  6x6   0.803  10.565  12.062    852   -642  20   1  120    a3    
 [11]  2   401217608   ACQ  6x6   0.797  10.579  12.078  -1307  -1136  20   1  120    a3    
 
->> WARNING: [ 7] Magnitude.  10.488
+>> WARNING: [ 7] Magnitude. Guide star 10.488
 >> WARNING: [ 9] Magnitude.  10.473
 >> WARNING: [10] Magnitude.  10.565
 >> WARNING: [11] Magnitude.  10.579
@@ -786,11 +786,11 @@ MP_STARCAT at 2006:224:20:45:28.894 (VCDU count = 9822170)
 [ 8]  7   400302624   GUI  6x6     ---  10.381  11.891   2356   -877   1   1   25    g3    
 [ 9]  6   400299928   ACQ  6x6   0.919  10.216  11.719   2309    473  18   1  110    a2    
 [10]  7   400310624   ACQ  6x6   0.795  10.582  12.094   -180  -1913  20   1  120    a3    
-[11]  0   400307984   ACQ  6x6   0.885  10.350  11.859  -1198  -1923  20   1  120    a3    
+[11]  0   400307984   ACQ  6x6   0.818  10.350  11.859  -1198  -1923  20   1  120    a3    
 [12]  1   400310128   ACQ  6x6   0.593  10.316  11.812  -1679  -1798  20   1  120    a3   C
 [13]  2   400298456   ACQ  6x6   0.796  10.581  12.078    495   -614  20   1  120    a3    
 
->> WARNING: [ 8] Magnitude.  10.381
+>> WARNING: [ 8] Magnitude. Guide star 10.381
 >> WARNING: [10] Magnitude.  10.582
 >> WARNING: [11] Magnitude.  10.350
 >> WARNING: [11] Search spoiler.  400309264: Y,Z,Radial,Mag seps: 100 116 154 -0.8
@@ -798,8 +798,8 @@ MP_STARCAT at 2006:224:20:45:28.894 (VCDU count = 9822170)
 >> WARNING: [12] Magnitude.  10.316
 >> WARNING: [13] Magnitude.  10.581
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.204	-2.853	-1.801	
-Acquisition Stars Expected  : 6.76
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.028	-2.710	-1.698	
+Acquisition Stars Expected  : 6.69
 Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.072
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -852,7 +852,7 @@ MP_STARCAT at 2006:225:05:06:44.443 (VCDU count = 9939538)
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2157   1070   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1810   1068   1   1   25          
 [ 4]  3  1056047176   BOT  6x6   0.958   9.960  11.469    989   1350  20   1  120  a2g3    
-[ 5]  4  1056048360   BOT  6x6   0.985   9.374  10.875   2065   -967  20   1  120  a2g2    
+[ 5]  4  1056048360   BOT  6x6   0.913   9.374  10.875   2065   -967  20   1  120  a2g2    
 [ 6]  5  1112942768   BOT  6x6   0.976   9.724  11.234  -1461    649  19   1  115  a2g2    
 [ 7]  6  1112943360   BOT  6x6   0.978   9.697  11.203  -1520   1139  20   1  120  a2g2    
 [ 8]  7  1113063824   BOT  6x6   0.985   9.510  11.016   -935  -2089  20   1  120  a2g2    
@@ -862,8 +862,8 @@ MP_STARCAT at 2006:225:05:06:44.443 (VCDU count = 9939538)
 
 >> WARNING: [ 5] Search spoiler. 1056972464: Y,Z,Radial,Mag seps:  94 126 157 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.357	-5.548	-3.965	
-Acquisition Stars Expected  : 7.68
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.787	-5.079	-3.599	
+Acquisition Stars Expected  : 7.61
 Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.072
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -888,7 +888,7 @@ MP_STARCAT at 2006:225:12:52:49.995 (VCDU count = 10048672)
 [ 7]  6  1049240120   GUI  8x8     ---   9.134  10.641  -2306   -156   1   1   25          
 [ 8]  7  1049240440   GUI  8x8     ---   9.692  11.203    202  -2401   1   1   25    g2    
 [ 9]  5  1049234864   ACQ  8x8   0.917  10.224  11.734  -1677  -1551  20   1  120    a2    
-[10]  6   984483976   ACQ  8x8   0.911  10.254  11.766  -1096    828  20   1  120    a3    
+[10]  6   984483976   ACQ  8x8   0.842  10.254  11.766  -1096    828  20   1  120    a3    
 [11]  7  1049233912   ACQ  8x8   0.895  10.317  11.828  -1385  -1944  20   1  120    a3    
 
 >> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  41,   3,  42
@@ -896,8 +896,8 @@ MP_STARCAT at 2006:225:12:52:49.995 (VCDU count = 10048672)
 >> WARNING: [10] Search spoiler.  984484288: Y,Z,Radial,Mag seps:   1  54  54 -0.4
 >> WARNING: [11] Magnitude.  10.317
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.886	-5.116	-3.591	
-Acquisition Stars Expected  : 7.59
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.656	-4.901	-3.399	
+Acquisition Stars Expected  : 7.52
 Predicted Max CCD temperature: -15.6 C 	 N100 Warm Pix Frac 0.072
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 

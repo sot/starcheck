@@ -7,19 +7,19 @@ Using DOT file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/mps/md030_0630.dot
 Using OR file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/mps/or/JAN3012_A.or
 Using SOE file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/mps/soe/ms030_0640.soe
 Using TLR file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/vehicle/VR030_0605.tlr
-Using acq_star_rdb file /proj/sot/ska/data/starcheck/bad_acq_stars.rdb
+Using acq_star_rdb file /home/jeanconn/git/starcheck/starcheck/data/bad_acq_stars.rdb
 Using backstop file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/vehicle/VR030_0605.backstop
-Using bad_pixel file /proj/sot/ska/data/starcheck/ACABadPixels
-Using banned_agasc file /proj/sot/ska/data/starcheck/agasc.bad
-Using config file /proj/sot/ska/data/starcheck/characteristics.yaml
+Using bad_pixel file /home/jeanconn/git/starcheck/starcheck/data/ACABadPixels
+Using banned_agasc file /home/jeanconn/git/starcheck/starcheck/data/agasc.bad
+Using config file /home/jeanconn/git/starcheck/starcheck/data/characteristics.yaml
 Using dither file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/History/DITHER.txt
 Using fidsel file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/History/FIDSEL.txt
-Using gui_star_rdb file /proj/sot/ska/data/starcheck/bad_gui_stars.rdb
+Using gui_star_rdb file /home/jeanconn/git/starcheck/starcheck/data/bad_gui_stars.rdb
 Using guide summary file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/mps/mg030_0640.sum
 Using manerr file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/output/JAN3012A_ManErr.txt
 Using maneuver file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/mps/mm030_0640.sum
 Using mech check file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/vehicle/output/V_TEST_mechcheck.txt
-Using odb file /proj/sot/ska/data/starcheck/fid_CHARACTERIS_FEB07
+Using odb file /home/jeanconn/git/starcheck/starcheck/data/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/mps/ms030_0640.sum
 Using radmon file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/History/SIMFOCUS.txt
@@ -35,8 +35,8 @@ VERBOSE SUPERVERBOSE
 Using tlr file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/CR030_0605.tlr 
 Using DOT file /data/mpcrit1/mplogs/2012/JAN3012/oflsa//mps/md030_0630.dot 
 Using Backstop file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/CR030_0605.backstop 
-Using template file /proj/sot/ska/data/starcheck/A.tlr 
-Using template file /proj/sot/ska/data/starcheck/B.tlr 
+Using template file /home/jeanconn/git/starcheck/starcheck/data/A.tlr 
+Using template file /home/jeanconn/git/starcheck/starcheck/data/B.tlr 
 
 [ok]	First ACA command is the template-independent init command
 [ok]	Checking IU/transponder state before replica 0
@@ -84,31 +84,31 @@ OBSID = 12367 at 2012:030:15:15:06.705   8 clean ACQ | 5 clean GUI |
 OBSID = 14364 at 2012:031:00:06:53.305   8 clean ACQ | 5 clean GUI | 
 OBSID = 13321 at 2012:031:02:39:53.305   8 clean ACQ | 5 clean GUI | 
 OBSID = 13340 at 2012:031:03:42:21.031   8 clean ACQ | 5 clean GUI | 
-OBSID = 54904 at 2012:031:04:29:14.884   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 54904 at 2012:031:04:29:14.884   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 54903 at 2012:031:05:10:34.614   8 clean ACQ | 8 clean GUI | 
-OBSID = 54902 at 2012:031:08:21:57.981   5 clean ACQ | 5 clean GUI | WARNINGS [ 5]
+OBSID = 54902 at 2012:031:08:21:57.981   5 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
 OBSID = 54901 at 2012:031:09:24:39.131   8 clean ACQ | 8 clean GUI | 
-OBSID = 54900 at 2012:031:10:27:21.136   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
+OBSID = 54900 at 2012:031:10:27:21.136   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 54898 at 2012:031:13:19:07.452   8 clean ACQ | 8 clean GUI | 
 OBSID = 13820 at 2012:031:14:39:01.717   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
-OBSID = 54897 at 2012:033:19:14:26.140   8 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID = 54896 at 2012:033:19:25:59.434   5 clean ACQ | 6 clean GUI | WARNINGS [ 3]
-OBSID = 54895 at 2012:033:20:16:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 54897 at 2012:033:19:14:26.140   8 clean ACQ | 6 clean GUI | WARNINGS [ 2] 
+OBSID = 54896 at 2012:033:19:25:59.434   5 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
+OBSID = 54895 at 2012:033:20:16:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = DC_T0 at 2012:033:20:40:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 1] 
-OBSID = 54893 at 2012:033:20:59:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 54893 at 2012:033:20:59:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = DC_T1 at 2012:033:21:23:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 1] 
-OBSID = 54891 at 2012:033:21:42:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 54891 at 2012:033:21:42:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = DC_T2 at 2012:033:22:06:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 1] 
          ------  2012:033:22:13:20.000   OBC Load Segment Begins     CL033:2205 
-OBSID = 54889 at 2012:033:22:25:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 54889 at 2012:033:22:25:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = DC_T3 at 2012:033:22:49:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 1] 
-OBSID = 54887 at 2012:033:23:08:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 54887 at 2012:033:23:08:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = DC_T4 at 2012:033:23:32:34.357   Undefined Obsid; ER? OR?  | WARNINGS [ 1] 
-OBSID = 54885 at 2012:033:23:51:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
-OBSID = 54884 at 2012:034:00:15:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 3]
+OBSID = 54885 at 2012:033:23:51:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
+OBSID = 54884 at 2012:034:00:15:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 54883 at 2012:034:00:24:16.000   8 clean ACQ | 8 clean GUI | 
 OBSID = 54882 at 2012:034:00:57:16.232   8 clean ACQ | 8 clean GUI | 
-OBSID = 54881 at 2012:034:01:36:02.163   7 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 54881 at 2012:034:01:36:02.163   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] 
 OBSID = 54879 at 2012:034:05:16:03.209   7 clean ACQ | 6 clean GUI | WARNINGS [ 3]
 OBSID = 13590 at 2012:034:06:46:44.434   8 clean ACQ | 5 clean GUI | 
 OBSID = 13577 at 2012:034:07:45:01.434   8 clean ACQ | 5 clean GUI | 
@@ -116,7 +116,7 @@ OBSID = 13575 at 2012:034:08:32:47.263   8 clean ACQ | 5 clean GUI |
 OBSID = 13821 at 2012:034:09:17:37.263   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
          ------  2012:035:04:10:01.285   OBC Load Segment Begins     CL035:0405 
 OBSID = 12856 at 2012:036:06:27:31.427   6 clean ACQ | 4 clean GUI | WARNINGS [ 3]
-OBSID = 54878 at 2012:036:11:23:05.028   6 clean ACQ | 6 clean GUI | WARNINGS [ 4]
+OBSID = 54878 at 2012:036:11:23:05.028   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
 OBSID = 54877 at 2012:036:12:09:57.366   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 ==================================================================================== 
 OBSID: 13717  4U 1630-47             ACIS-S SIM Z offset:-2442 (-6.14mm) Grating: HETG 
@@ -143,12 +143,12 @@ MP_STARCAT at 2012:030:06:04:43.775 (VCDU count = 15606648)
 [ 9]  7  1091700008   ACQ  6x6   0.906  10.180  11.688   -909    881  19   1  115    a2    
 [10]  0  1091706208   ACQ  6x6   0.955   9.904  11.406    517   -884  20   1  120    a2    
 [11]  1  1091704824   ACQ  6x6   0.985   9.078  10.578     74  -1596  20   1  120    a2    
-[12]  2  1091709408   ACQ  6x6   0.985   9.151  10.656    118  -1925  20   1  120    a2    
+[12]  2  1091709408   ACQ  6x6   0.916   9.151  10.656    118  -1925  20   1  120    a2    
 
 >> WARNING: [12] Search spoiler. 1091702776: Y,Z,Radial,Mag seps:  43 127 134 -0.5
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.417	-6.415	-4.633	
-Acquisition Stars Expected  : 7.77
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.796	-5.872	-4.181	
+Acquisition Stars Expected  : 7.70
 Predicted Max CCD temperature: -18.0 C 	 N100 Warm Pix Frac 0.084
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -297,7 +297,7 @@ MP_STARCAT at 2012:031:04:29:14.884 (VCDU count = 15921462)
 [ 8]  7   259659480   GUI  8x8     ---  10.505  12.016  -2087   -733   1   1   25    g4    
 [ 9]  7   259659960   ACQ  8x8   0.985   8.320   9.828     78   -912  20   1  120          
 
->> WARNING: [ 8] Magnitude.  10.505
+>> WARNING: [ 8] Magnitude. Guide star 10.505
 >> INFO   : Same attitude as last obsid but too long (34.4 min) for Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.376	-6.400	-4.640	
@@ -353,16 +353,16 @@ MP_STARCAT at 2012:031:08:21:57.981 (VCDU count = 15975952)
 [ 6]  5   402132776   BOT  8x8   0.985   8.465   9.969   1460  -2186  20   1  120          
 [ 7]  6   402142880   BOT  8x8   0.865  10.380  11.891   -941   2077  20   1  120  a3g3    
 [ 8]  7   402136800   GUI  8x8     ---  10.453  11.953   1153   2312   1   1   25    g4    
-[ 9]  7   402131400   ACQ  8x8   0.865  10.380  11.891   -678  -1961  20   1  120    a3    
+[ 9]  7   402131400   ACQ  8x8   0.800  10.380  11.891   -678  -1961  20   1  120    a3    
 
->> WARNING: [ 3] Magnitude.  10.349
->> WARNING: [ 7] Magnitude.  10.380
->> WARNING: [ 8] Magnitude.  10.453
+>> WARNING: [ 3] Magnitude. Guide star 10.349
+>> WARNING: [ 7] Magnitude. Guide star 10.380
+>> WARNING: [ 8] Magnitude. Guide star 10.453
 >> WARNING: [ 9] Magnitude.  10.380
 >> WARNING: [ 9] Search spoiler.  402135488: Y,Z,Radial,Mag seps:  98  88 132 -1.0
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.358	-4.642	-3.190	
-Acquisition Stars Expected  : 7.46
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.196	-4.489	-3.052	
+Acquisition Stars Expected  : 7.40
 Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.076
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -418,7 +418,7 @@ MP_STARCAT at 2012:031:10:27:21.136 (VCDU count = 16005311)
 [ 8]  7   690765656   GUI  8x8     ---  10.332  11.844  -2028  -2022   1   1   25    g3    
 [ 9]  7   690755384   ACQ  8x8   0.903  10.251  11.750   1275  -2188  20   1  120    a3    
 
->> WARNING: [ 8] Magnitude.  10.332
+>> WARNING: [ 8] Magnitude. Guide star 10.332
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.688	-6.652	-4.831	
 Acquisition Stars Expected  : 7.79
@@ -511,8 +511,8 @@ MP_STARCAT at 2012:033:19:14:26.140 (VCDU count = 25851)
 [10]  6   643433160   ACQ  8x8   0.946   9.999  11.500   2010    469  20   1  120    a2    
 [11]  7   717751144   ACQ  8x8   0.913  10.182  11.688   -632   1350  20   1  120    a2    
 
+>> WARNING: [ 7] Magnitude. Guide star 10.323
 >> WARNING: [ 8] Magnitude.   5.977
->> WARNING: [ 7] Magnitude.  10.323
 >> INFO   : Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.950	-6.029	-4.333	
@@ -542,8 +542,8 @@ MP_STARCAT at 2012:033:19:25:59.434 (VCDU count = 28556)
 [ 8]  7   450111336   GUI  8x8     ---  10.036  11.547  -2330    998   1   1   25    g3    
 [ 9]  7   450108656   ACQ  8x8   0.803  10.503  12.000  -1331    193  20   1  120    a3    
 
->> WARNING: [ 3] Magnitude.  10.549
->> WARNING: [ 4] Magnitude.  10.415
+>> WARNING: [ 3] Magnitude. Guide star 10.549
+>> WARNING: [ 4] Magnitude. Guide star 10.415
 >> WARNING: [ 9] Magnitude.  10.503
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.159	-3.602	-2.362	
@@ -573,8 +573,8 @@ MP_STARCAT at 2012:033:20:16:36.000 (VCDU count = 40406)
 [ 8]  7   450110624   GUI  8x8     ---  10.415  11.922  -2283   1881   1   1   25    g4    
 [ 9]  7   450108656   ACQ  8x8   0.803  10.503  12.000  -1355    120  20   1  120    a3    
 
->> WARNING: [ 3] Magnitude.  10.549
->> WARNING: [ 8] Magnitude.  10.415
+>> WARNING: [ 3] Magnitude. Guide star 10.549
+>> WARNING: [ 8] Magnitude. Guide star 10.415
 >> WARNING: [ 9] Magnitude.  10.503
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.533	-3.924	-2.606	
@@ -618,8 +618,8 @@ MP_STARCAT at 2012:033:20:59:36.000 (VCDU count = 50475)
 [ 8]  7   450110624   GUI  8x8     ---  10.415  11.922  -2281   1883   1   1   25    g4    
 [ 9]  7   450108656   ACQ  8x8   0.803  10.503  12.000  -1355    121  20   1  120    a3    
 
->> WARNING: [ 3] Magnitude.  10.549
->> WARNING: [ 8] Magnitude.  10.415
+>> WARNING: [ 3] Magnitude. Guide star 10.549
+>> WARNING: [ 8] Magnitude. Guide star 10.415
 >> WARNING: [ 9] Magnitude.  10.503
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.532	-3.923	-2.605	
@@ -663,8 +663,8 @@ MP_STARCAT at 2012:033:21:42:36.000 (VCDU count = 60543)
 [ 8]  7   450110624   GUI  8x8     ---  10.415  11.922  -2279   1886   1   1   25    g4    
 [ 9]  7   450108656   ACQ  8x8   0.803  10.503  12.000  -1355    123  20   1  120    a3    
 
->> WARNING: [ 3] Magnitude.  10.549
->> WARNING: [ 8] Magnitude.  10.415
+>> WARNING: [ 3] Magnitude. Guide star 10.549
+>> WARNING: [ 8] Magnitude. Guide star 10.415
 >> WARNING: [ 9] Magnitude.  10.503
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.529	-3.921	-2.604	
@@ -708,8 +708,8 @@ MP_STARCAT at 2012:033:22:25:36.000 (VCDU count = 70611)
 [ 8]  7   450110624   GUI  8x8     ---  10.415  11.922  -2277   1888   1   1   25    g4    
 [ 9]  7   450108656   ACQ  8x8   0.802  10.503  12.000  -1355    124  20   1  120    a3    
 
->> WARNING: [ 3] Magnitude.  10.549
->> WARNING: [ 8] Magnitude.  10.415
+>> WARNING: [ 3] Magnitude. Guide star 10.549
+>> WARNING: [ 8] Magnitude. Guide star 10.415
 >> WARNING: [ 9] Magnitude.  10.503
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.527	-3.919	-2.602	
@@ -753,8 +753,8 @@ MP_STARCAT at 2012:033:23:08:36.000 (VCDU count = 80680)
 [ 8]  7   450110624   GUI  8x8     ---  10.415  11.922  -2276   1890   1   1   25    g4    
 [ 9]  7   450108656   ACQ  8x8   0.802  10.503  12.000  -1354    125  20   1  120    a3    
 
->> WARNING: [ 3] Magnitude.  10.549
->> WARNING: [ 8] Magnitude.  10.415
+>> WARNING: [ 3] Magnitude. Guide star 10.549
+>> WARNING: [ 8] Magnitude. Guide star 10.415
 >> WARNING: [ 9] Magnitude.  10.503
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.523	-3.916	-2.599	
@@ -798,8 +798,8 @@ MP_STARCAT at 2012:033:23:51:36.000 (VCDU count = 90748)
 [ 8]  7   450110624   GUI  8x8     ---  10.415  11.922  -2274   1892   1   1   25    g4    
 [ 9]  7   450108656   ACQ  8x8   0.802  10.503  12.000  -1354    127  20   1  120    a3    
 
->> WARNING: [ 3] Magnitude.  10.549
->> WARNING: [ 8] Magnitude.  10.415
+>> WARNING: [ 3] Magnitude. Guide star 10.549
+>> WARNING: [ 8] Magnitude. Guide star 10.415
 >> WARNING: [ 9] Magnitude.  10.503
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.520	-3.913	-2.597	
@@ -829,8 +829,8 @@ MP_STARCAT at 2012:034:00:15:36.000 (VCDU count = 96367)
 [ 8]  7   450108568   GUI  8x8     ---  10.549  12.047   2164   -683   1   1   25    g4    
 [ 9]  7   450108656   ACQ  8x8   0.802  10.503  12.000  -1329    202  20   1  120    a3    
 
->> WARNING: [ 3] Magnitude.  10.415
->> WARNING: [ 8] Magnitude.  10.549
+>> WARNING: [ 3] Magnitude. Guide star 10.415
+>> WARNING: [ 8] Magnitude. Guide star 10.549
 >> WARNING: [ 9] Magnitude.  10.503
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.653	-4.037	-2.706	
@@ -919,7 +919,7 @@ MP_STARCAT at 2012:034:01:36:02.163 (VCDU count = 115201)
 [ 9]  7   690755384   ACQ  8x8   0.895  10.251  11.750   1306  -2170  20   1  120    a3    
 
 >> WARNING: [ 5] Nearby ACA bad pixel. Y,Z,Radial seps:   2,  41,  41
->> WARNING: [ 8] Magnitude.  10.332
+>> WARNING: [ 8] Magnitude. Guide star 10.332
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.624	-6.596	-4.782	
 Acquisition Stars Expected  : 7.78
@@ -938,7 +938,7 @@ MP_STARCAT at 2012:034:05:16:03.209 (VCDU count = 166717)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   818807632   BOT  8x8   0.984   9.483  10.984   1689    509  20   1  120  a2g2    
+[ 1]  0   818807632   BOT  8x8   0.910   9.483  10.984   1689    509  20   1  120  a2g2    
 [ 2]  1   818808256   BOT  8x8   0.985   8.825  10.328    660   -811  20   1  120          
 [ 3]  2   818809040   BOT  8x8   0.985   8.907  10.547    639  -2292  20   1  120  a2g2    
 [ 4]  3   818809792   BOT  8x8   0.985   6.986   8.484   -529  -1352  20   1  120          
@@ -952,8 +952,8 @@ MP_STARCAT at 2012:034:05:16:03.209 (VCDU count = 166717)
 >> WARNING: [ 1] Search spoiler.  818807001: Y,Z,Radial,Mag seps: 155  53 164 -1.0
 >> WARNING: [ 8] Bad Guide Star. 818807896 has bad data  2 of  6 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.489	-7.372	-5.459	
-Acquisition Stars Expected  : 7.87
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.827	-6.770	-4.927	
+Acquisition Stars Expected  : 7.80
 Predicted Max CCD temperature: -18.3 C 	 N100 Warm Pix Frac 0.080
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -1101,21 +1101,21 @@ MP_STARCAT at 2012:036:06:27:31.427 (VCDU count = 857793)
 [ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
-[ 4]  3   392562624   BOT  6x6   0.970   9.792  11.297   1870   1982  20   1  120  a2g2    
+[ 4]  3   392562624   BOT  6x6   0.897   9.792  11.297   1870   1982  20   1  120  a2g2    
 [ 5]  4   392564728   BOT  6x6   0.985   7.941   9.438    126  -2150  20   1  120          
 [ 6]  5   392566232   BOT  6x6   0.985   8.989  10.500   2235   -173  20   1  120  a2g2    
 [ 7]  6   392567456   BOT  6x6   0.913  10.216  11.719  -1523   1944  20   1  120  a3g3    
 [ 8]  7   392572072   BOT  6x6   0.935  10.102  11.609   1460   1928  20   1  120  a3g3    
 [ 9]  0   392564464   ACQ  6x6   0.931  10.128  11.625   -348    979  20   1  120    a2    
 [10]  1   392566552   ACQ  6x6   0.919  10.187  11.688  -1520   -812  20   1  120    a2    
-[11]  2   392568920   ACQ  6x6   0.647  10.207  12.172   1147  -1924  20   1  120    a3   C
+[11]  2   392568920   ACQ  6x6   0.598  10.207  12.172   1147  -1924  20   1  120    a3   C
 
 >> WARNING: [ 4] Search spoiler.  392566544: Y,Z,Radial,Mag seps: 129  16 131 -0.8
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.60, Pos_Err = 0.12
 >> WARNING: [11] Search spoiler.  392566056: Y,Z,Radial,Mag seps: 132  87 158 -0.6
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.862	-4.233	-2.862	
-Acquisition Stars Expected  : 7.28
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.385	-3.846	-2.567	
+Acquisition Stars Expected  : 7.16
 Predicted Max CCD temperature: -18.7 C 	 N100 Warm Pix Frac 0.076
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -1131,7 +1131,7 @@ MP_STARCAT at 2012:036:11:23:05.028 (VCDU count = 926998)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   392562624   BOT  8x8   0.971   9.792  11.297   1870   1982  20   1  120  a2g2    
+[ 1]  0   392562624   BOT  8x8   0.897   9.792  11.297   1870   1982  20   1  120  a2g2    
 [ 2]  1   392564464   BOT  8x8   0.931  10.128  11.625   -348    979  20   1  120  a2g3    
 [ 3]  2   392564728   BOT  8x8   0.985   7.941   9.438    126  -2150  20   1  120          
 [ 4]  3   392566232   BOT  8x8   0.985   8.989  10.500   2235   -173  20   1  120  a2g2    
@@ -1139,16 +1139,16 @@ MP_STARCAT at 2012:036:11:23:05.028 (VCDU count = 926998)
 [ 6]  5   392567456   BOT  8x8   0.913  10.216  11.719  -1523   1944  20   1  120  a3g3    
 [ 7]  6   392572072   BOT  8x8   0.936  10.102  11.609   1460   1928   3   1   35  a2g3    
 [ 8]  7   392569448   GUI  8x8     ---  10.390  11.891   1514    387   1   1   25    g3    
-[ 9]  7   392568920   ACQ  8x8   0.648  10.207  12.172   1147  -1924  20   1  120    a3   C
+[ 9]  7   392568920   ACQ  8x8   0.599  10.207  12.172   1147  -1924  20   1  120    a3   C
 
+>> WARNING: [ 8] Magnitude. Guide star 10.390
 >> WARNING: [ 1] Search spoiler.  392566544: Y,Z,Radial,Mag seps: 129  16 131 -0.8
->> WARNING: [ 8] Magnitude.  10.390
 >> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.60, Pos_Err = 0.12
 >> WARNING: [ 9] Search spoiler.  392566056: Y,Z,Radial,Mag seps: 132  87 158 -0.6
 >> INFO   : Same attitude as last obsid but too long (40.0 min) for Special Case ER
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.879	-4.247	-2.873	
-Acquisition Stars Expected  : 7.28
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.400	-3.858	-2.577	
+Acquisition Stars Expected  : 7.16
 Predicted Max CCD temperature: -18.8 C 	 N100 Warm Pix Frac 0.076
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -1175,7 +1175,7 @@ MP_STARCAT at 2012:036:12:09:57.366 (VCDU count = 937973)
 [ 9]  6   543687296   ACQ  8x8   0.940  10.077  11.578    298  -1145  20   1  120    a2    
 [10]  7   543692472   ACQ  8x8   0.942  10.061  11.562  -1031   -535  12   1   80    a2    
 
->> WARNING: [ 8] Magnitude.  10.363
+>> WARNING: [ 8] Magnitude. Guide star 10.363
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.882	-5.982	-4.308	
 Acquisition Stars Expected  : 7.74
