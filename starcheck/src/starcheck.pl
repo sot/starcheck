@@ -678,7 +678,7 @@ if (%input_files) {
     for my $name (sort (keys %input_files)) { 
 	push @{$save_hash{files}}, $input_files{$name};
         if ($input_files{$name} =~ /$Starcheck_Data\/?(.*)/){
-            $out .= "Using $name file DATA/$1\n";
+            $out .= "Using $name file \$\{DATA\}/$1\n";
         }
         else{
             $out .= "Using $name file $input_files{$name}\n";
