@@ -3,28 +3,29 @@ Short Term Schedule: JUL0708B
 
 ------------  PROCESSING FILES  -----------------
 
+DATA = /home/jeanconn/git/starcheck/starcheck/data
 Using DOT file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/mps/md188_1108.dot
 Using OR file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/mps/or/JUL0708_A.or
 Using SOE file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/mps/soe/ms188_1108.soe
 Using TLR file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/CR188_1104.tlr
-Using acq_star_rdb file /home/jeanconn/git/starcheck/starcheck/data/bad_acq_stars.rdb
+Using acq_star_rdb file ${DATA}/bad_acq_stars.rdb
 Using backstop file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/CR188_1104.backstop
-Using bad_pixel file /home/jeanconn/git/starcheck/starcheck/data/ACABadPixels
-Using banned_agasc file /home/jeanconn/git/starcheck/starcheck/data/agasc.bad
-Using config file /home/jeanconn/git/starcheck/starcheck/data/characteristics.yaml
+Using bad_pixel file ${DATA}/ACABadPixels
+Using banned_agasc file ${DATA}/agasc.bad
+Using config file ${DATA}/characteristics.yaml
 Using dither file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/History/DITHER.txt
 Using fidsel file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/History/FIDSEL.txt
-Using gui_star_rdb file /home/jeanconn/git/starcheck/starcheck/data/bad_gui_stars.rdb
+Using gui_star_rdb file ${DATA}/bad_gui_stars.rdb
 Using guide summary file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/mps/mg188_1108.sum
 Using manerr file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/output/JUL0708B_ManErr.txt
 Using maneuver file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/mps/mm188_1108.sum
 Using mech check file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/output/TEST_mechcheck.txt
-Using odb file /home/jeanconn/git/starcheck/starcheck/data/fid_CHARACTERIS_FEB07
+Using odb file ${DATA}/fid_CHARACTERIS_FEB07
 Using processing summary file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/mps/ms188_1108.sum
 Using radmon file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2008/JUL0708/oflsb/History/SIMTRANS.txt
-Using ACABadPixel file from 2015014 Dark Cal 
+Using ACABadPixel file from 2017092 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -132,7 +133,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:19:09:25.642 (VCDU count = 8915132)
   Q1,Q2,Q3,Q4: 0.63805549  -0.23642064  0.54335438  0.49168739
-  MANVR: Angle= 158.15 deg  Duration= 2769 sec  Slew err= 67.6 arcsec
+  MANVR: Angle= 158.15 deg  Duration= 2769 sec  Slew err= 67.6 arcsec  End= 2008:188:19:55:30
 
 MP_STARCAT at 2008:188:19:09:27.285 (VCDU count = 8915138)
 ---------------------------------------------------------------------------------------------
@@ -160,7 +161,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:20:20:09.534 (VCDU count = 8931693)
   Q1,Q2,Q3,Q4: 0.63161097  -0.22278039  0.55222711  0.49646924
-  MANVR: Angle=   2.08 deg  Duration= 325 sec  Slew err= 21.1 arcsec
+  MANVR: Angle=   2.08 deg  Duration= 325 sec  Slew err= 21.1 arcsec  End= 2008:188:20:25:30
 
 MP_STARCAT at 2008:188:20:20:11.177 (VCDU count = 8931700)
 ---------------------------------------------------------------------------------------------
@@ -188,7 +189,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:20:45:34.357 (VCDU count = 8937644)
   Q1,Q2,Q3,Q4: 0.63165331  -0.22273328  0.55224611  0.49641536
-  MANVR: Angle=   0.01 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.01 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:188:20:49:30
 
                                                                                              
 
@@ -201,7 +202,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:21:04:34.357 (VCDU count = 8942093)
   Q1,Q2,Q3,Q4: 0.63170498  -0.22267580  0.55226929  0.49634961
-  MANVR: Angle=   0.01 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.01 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:188:21:08:30
 
 MP_STARCAT at 2008:188:21:04:36.000 (VCDU count = 8942099)
 ---------------------------------------------------------------------------------------------
@@ -229,7 +230,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:21:28:34.357 (VCDU count = 8947712)
   Q1,Q2,Q3,Q4: 0.63182054  -0.22228879  0.55229891  0.49634304
-  MANVR: Angle=   0.05 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.05 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:188:21:32:30
 
                                                                                              
 
@@ -242,7 +243,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:21:47:34.357 (VCDU count = 8952161)
   Q1,Q2,Q3,Q4: 0.63182117  -0.22254649  0.55232141  0.49620170
-  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:188:21:51:30
 
 MP_STARCAT at 2008:188:21:47:36.000 (VCDU count = 8952167)
 ---------------------------------------------------------------------------------------------
@@ -270,7 +271,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:22:11:34.357 (VCDU count = 8957781)
   Q1,Q2,Q3,Q4: 0.63210037  -0.22245961  0.55213835  0.49608879
-  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:188:22:15:30
 
                                                                                              
 
@@ -283,7 +284,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:22:30:34.357 (VCDU count = 8962229)
   Q1,Q2,Q3,Q4: 0.63193670  -0.22241787  0.55237322  0.49605456
-  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:188:22:34:30
 
 MP_STARCAT at 2008:188:22:30:36.000 (VCDU count = 8962236)
 ---------------------------------------------------------------------------------------------
@@ -311,7 +312,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:22:54:34.357 (VCDU count = 8967849)
   Q1,Q2,Q3,Q4: 0.63195053  -0.22266084  0.55240157  0.49589635
-  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:188:22:58:30
 
                                                                                              
 
@@ -324,7 +325,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:23:13:34.357 (VCDU count = 8972298)
   Q1,Q2,Q3,Q4: 0.63205185  -0.22228963  0.55242484  0.49590783
-  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:188:23:17:30
 
 MP_STARCAT at 2008:188:23:13:36.000 (VCDU count = 8972304)
 ---------------------------------------------------------------------------------------------
@@ -352,7 +353,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:23:37:34.357 (VCDU count = 8977917)
   Q1,Q2,Q3,Q4: 0.63190135  -0.22223320  0.55266560  0.49585666
-  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.03 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:188:23:41:30
 
                                                                                              
 
@@ -365,7 +366,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:188:23:56:34.357 (VCDU count = 8982366)
   Q1,Q2,Q3,Q4: 0.63216679  -0.22216156  0.55247636  0.49576130
-  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.04 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:189:00:00:30
 
 MP_STARCAT at 2008:188:23:56:36.000 (VCDU count = 8982372)
 ---------------------------------------------------------------------------------------------
@@ -393,7 +394,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:189:00:20:34.357 (VCDU count = 8987985)
   Q1,Q2,Q3,Q4: 0.63874358  -0.23565933  0.54368500  0.49079318
-  MANVR: Angle=   2.07 deg  Duration= 324 sec  Slew err= 21.2 arcsec
+  MANVR: Angle=   2.07 deg  Duration= 324 sec  Slew err= 21.2 arcsec  End= 2008:189:00:25:54
 
 MP_STARCAT at 2008:189:00:20:36.000 (VCDU count = 8987992)
 ---------------------------------------------------------------------------------------------
@@ -422,7 +423,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:189:01:34:18.265 (VCDU count = 9005249)
   Q1,Q2,Q3,Q4: 0.40880927  -0.48176994  0.64438672  0.43074176
-  MANVR: Angle=  41.09 deg  Duration= 1208 sec  Slew err= 37.5 arcsec
+  MANVR: Angle=  41.09 deg  Duration= 1208 sec  Slew err= 37.5 arcsec  End= 2008:189:01:54:22
 
 MP_STARCAT at 2008:189:01:34:19.908 (VCDU count = 9005256)
 ---------------------------------------------------------------------------------------------
@@ -452,7 +453,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:189:09:05:48.865 (VCDU count = 9110969)
   Q1,Q2,Q3,Q4: 0.04669864  -0.81184517  0.57270433  0.10361666
-  MANVR: Angle=  69.05 deg  Duration= 1581 sec  Slew err= 46.5 arcsec
+  MANVR: Angle=  69.05 deg  Duration= 1581 sec  Slew err= 46.5 arcsec  End= 2008:189:09:32:05
 
 MP_STARCAT at 2008:189:09:05:50.508 (VCDU count = 9110975)
 ---------------------------------------------------------------------------------------------
@@ -483,7 +484,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:189:14:58:19.506 (VCDU count = 9193508)
   Q1,Q2,Q3,Q4: 0.03224400  0.81751960  -0.57165533  0.06190489
-  MANVR: Angle=  21.05 deg  Duration= 883 sec  Slew err= 32.6 arcsec
+  MANVR: Angle=  21.05 deg  Duration= 883 sec  Slew err= 32.6 arcsec  End= 2008:189:15:12:58
 
 MP_STARCAT at 2008:189:14:58:21.149 (VCDU count = 9193514)
 ---------------------------------------------------------------------------------------------
@@ -518,7 +519,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:189:15:56:36.506 (VCDU count = 9207155)
   Q1,Q2,Q3,Q4: -0.13268635  0.52966070  -0.49028963  0.67931580
-  MANVR: Angle=  82.64 deg  Duration= 1762 sec  Slew err= 59.0 arcsec
+  MANVR: Angle=  82.64 deg  Duration= 1762 sec  Slew err= 59.0 arcsec  End= 2008:189:16:25:53
 
 MP_STARCAT at 2008:189:15:56:38.149 (VCDU count = 9207161)
 ---------------------------------------------------------------------------------------------
@@ -550,7 +551,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:190:01:07:08.314 (VCDU count = 9336059)
   Q1,Q2,Q3,Q4: -0.05052307  0.58706544  -0.51212081  0.62492708
-  MANVR: Angle=  13.31 deg  Duration= 715 sec  Slew err= 27.1 arcsec
+  MANVR: Angle=  13.31 deg  Duration= 715 sec  Slew err= 27.1 arcsec  End= 2008:190:01:18:59
 
 MP_STARCAT at 2008:190:01:07:09.957 (VCDU count = 9336066)
 ---------------------------------------------------------------------------------------------
@@ -578,7 +579,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:190:01:23:43.749 (VCDU count = 9339944)
   Q1,Q2,Q3,Q4: 0.81919030  -0.54930161  0.12690047  0.10531506
-  MANVR: Angle= 137.43 deg  Duration= 2492 sec  Slew err= 57.5 arcsec
+  MANVR: Angle= 137.43 deg  Duration= 2492 sec  Slew err= 57.5 arcsec  End= 2008:190:02:05:11
 
 MP_STARCAT at 2008:190:01:23:45.392 (VCDU count = 9339950)
 ---------------------------------------------------------------------------------------------
@@ -610,11 +611,11 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:190:20:29:46.099 (VCDU count = 9608285)
   Q1,Q2,Q3,Q4: 0.81643543  -0.47524845  0.27179748  0.18357077
-  MANVR: Angle=  20.72 deg  Duration= 877 sec  Slew err= 30.6 arcsec
+  MANVR: Angle=  20.72 deg  Duration= 877 sec  Slew err= 30.6 arcsec  End= 2008:190:20:44:18
 
 MP_TARGQUAT at 2008:190:20:44:42.611 (VCDU count = 9611783)
   Q1,Q2,Q3,Q4: 0.72468479  0.28449566  -0.18630435  0.59932034
-  MANVR: Angle= 117.89 deg  Duration= 2232 sec  Slew err= 67.2 arcsec
+  MANVR: Angle= 117.89 deg  Duration= 2232 sec  Slew err= 67.2 arcsec  End= 2008:190:21:21:50
 
 MP_STARCAT at 2008:190:20:44:44.254 (VCDU count = 9611790)
 ---------------------------------------------------------------------------------------------
@@ -646,7 +647,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:191:00:29:02.601 (VCDU count = 9664310)
   Q1,Q2,Q3,Q4: 0.68709811  -0.07635257  -0.39742258  0.60342503
-  MANVR: Angle=  48.46 deg  Duration= 1307 sec  Slew err= 40.1 arcsec
+  MANVR: Angle=  48.46 deg  Duration= 1307 sec  Slew err= 40.1 arcsec  End= 2008:191:00:50:45
 
 MP_STARCAT at 2008:191:00:29:04.244 (VCDU count = 9664317)
 ---------------------------------------------------------------------------------------------
@@ -675,7 +676,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:191:02:40:39.365 (VCDU count = 9695127)
   Q1,Q2,Q3,Q4: -0.79802839  0.60025613  -0.04424773  0.02975596
-  MANVR: Angle= 112.08 deg  Duration= 2154 sec  Slew err= 41.3 arcsec
+  MANVR: Angle= 112.08 deg  Duration= 2154 sec  Slew err= 41.3 arcsec  End= 2008:191:03:16:29
 
 MP_STARCAT at 2008:191:02:40:41.008 (VCDU count = 9695133)
 ---------------------------------------------------------------------------------------------
@@ -702,7 +703,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:191:07:03:05.766 (VCDU count = 9756576)
   Q1,Q2,Q3,Q4: 0.84421427  -0.40493809  -0.16846935  0.30813225
-  MANVR: Angle=  51.64 deg  Duration= 1349 sec  Slew err= 30.2 arcsec
+  MANVR: Angle=  51.64 deg  Duration= 1349 sec  Slew err= 30.2 arcsec  End= 2008:191:07:25:30
 
 MP_STARCAT at 2008:191:07:03:07.409 (VCDU count = 9756583)
 ---------------------------------------------------------------------------------------------
@@ -728,7 +729,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:191:10:16:20.288 (VCDU count = 9801823)
   Q1,Q2,Q3,Q4: -0.76303263  0.62723307  -0.10577670  0.11476575
-  MANVR: Angle=  64.66 deg  Duration= 1522 sec  Slew err= 32.6 arcsec
+  MANVR: Angle=  64.66 deg  Duration= 1522 sec  Slew err= 32.6 arcsec  End= 2008:191:10:41:38
 
 MP_STARCAT at 2008:191:10:16:21.931 (VCDU count = 9801830)
 ---------------------------------------------------------------------------------------------
@@ -760,7 +761,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:191:16:32:52.454 (VCDU count = 9889988)
   Q1,Q2,Q3,Q4: 0.44418161  -0.67359902  0.54252618  0.23373577
-  MANVR: Angle=  75.26 deg  Duration= 1663 sec  Slew err= 59.7 arcsec
+  MANVR: Angle=  75.26 deg  Duration= 1663 sec  Slew err= 59.7 arcsec  End= 2008:191:17:00:31
 
 MP_STARCAT at 2008:191:16:32:54.097 (VCDU count = 9889994)
 ---------------------------------------------------------------------------------------------
@@ -796,7 +797,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:192:06:34:41.870 (VCDU count = 10087098)
   Q1,Q2,Q3,Q4: 0.81919030  -0.54930161  0.12690047  0.10531506
-  MANVR: Angle=  68.35 deg  Duration= 1571 sec  Slew err= 51.4 arcsec
+  MANVR: Angle=  68.35 deg  Duration= 1571 sec  Slew err= 51.4 arcsec  End= 2008:192:07:00:48
 
 MP_STARCAT at 2008:192:06:34:43.513 (VCDU count = 10087104)
 ---------------------------------------------------------------------------------------------
@@ -827,7 +828,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:192:16:48:43.162 (VCDU count = 10230868)
   Q1,Q2,Q3,Q4: 0.78848627  -0.13381141  -0.25659498  0.54271809
-  MANVR: Angle=  83.85 deg  Duration= 1778 sec  Slew err= 40.4 arcsec
+  MANVR: Angle=  83.85 deg  Duration= 1778 sec  Slew err= 40.4 arcsec  End= 2008:192:17:18:16
 
 MP_STARCAT at 2008:192:16:48:44.805 (VCDU count = 10230875)
 ---------------------------------------------------------------------------------------------
@@ -857,7 +858,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:192:20:09:31.167 (VCDU count = 10277885)
   Q1,Q2,Q3,Q4: 0.82067174  -0.24945701  -0.22741649  0.46103235
-  MANVR: Angle=  16.99 deg  Duration= 800 sec  Slew err= 26.1 arcsec
+  MANVR: Angle=  16.99 deg  Duration= 800 sec  Slew err= 26.1 arcsec  End= 2008:192:20:22:46
 
 MP_STARCAT at 2008:192:20:09:32.810 (VCDU count = 10277892)
 ---------------------------------------------------------------------------------------------
@@ -889,7 +890,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:193:07:34:00.878 (VCDU count = 10438157)
   Q1,Q2,Q3,Q4: 0.81287144  -0.33386835  0.28257385  0.38460884
-  MANVR: Angle=  60.59 deg  Duration= 1468 sec  Slew err= 53.1 arcsec
+  MANVR: Angle=  60.59 deg  Duration= 1468 sec  Slew err= 53.1 arcsec  End= 2008:193:07:58:24
 
 MP_STARCAT at 2008:193:07:34:02.521 (VCDU count = 10438164)
 ---------------------------------------------------------------------------------------------
@@ -919,7 +920,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:193:08:52:58.739 (VCDU count = 10456646)
   Q1,Q2,Q3,Q4: 0.81287144  -0.33386835  0.28257385  0.38460884
-  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:193:08:56:54
 
 MP_STARCAT at 2008:193:08:53:00.382 (VCDU count = 10456653)
 ---------------------------------------------------------------------------------------------
@@ -949,7 +950,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:193:09:51:28.739 (VCDU count = 10470344)
   Q1,Q2,Q3,Q4: 0.81287144  -0.33386835  0.28257385  0.38460884
-  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:193:09:56:17
 
 MP_STARCAT at 2008:193:09:51:30.382 (VCDU count = 10470350)
 ---------------------------------------------------------------------------------------------
@@ -981,7 +982,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:193:10:50:51.656 (VCDU count = 10484248)
   Q1,Q2,Q3,Q4: 0.81287144  -0.33386835  0.28257385  0.38460884
-  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:193:10:54:47
 
 MP_STARCAT at 2008:193:10:50:53.299 (VCDU count = 10484254)
 ---------------------------------------------------------------------------------------------
@@ -1011,7 +1012,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:193:11:49:21.656 (VCDU count = 10497946)
   Q1,Q2,Q3,Q4: 0.81287144  -0.33386835  0.28257385  0.38460884
-  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:193:11:55:53
 
 MP_STARCAT at 2008:193:11:49:23.299 (VCDU count = 10497952)
 ---------------------------------------------------------------------------------------------
@@ -1041,7 +1042,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:193:12:53:12.656 (VCDU count = 10512896)
   Q1,Q2,Q3,Q4: 0.81287144  -0.33386835  0.28257385  0.38460884
-  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:193:12:57:08
 
 MP_STARCAT at 2008:193:12:53:14.299 (VCDU count = 10512902)
 ---------------------------------------------------------------------------------------------
@@ -1071,7 +1072,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:193:13:58:30.656 (VCDU count = 10528186)
   Q1,Q2,Q3,Q4: 0.81287144  -0.33386835  0.28257385  0.38460884
-  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:193:14:02:26
 
 MP_STARCAT at 2008:193:13:58:32.299 (VCDU count = 10528192)
 ---------------------------------------------------------------------------------------------
@@ -1101,7 +1102,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:193:15:03:48.656 (VCDU count = 10543475)
   Q1,Q2,Q3,Q4: 0.81287144  -0.33386835  0.28257385  0.38460884
-  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec
+  MANVR: Angle=   0.00 deg  Duration= 240 sec  Slew err= 20.3 arcsec  End= 2008:193:15:07:44
 
 MP_STARCAT at 2008:193:15:03:50.299 (VCDU count = 10543482)
 ---------------------------------------------------------------------------------------------
@@ -1130,7 +1131,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:193:16:17:19.594 (VCDU count = 10560689)
   Q1,Q2,Q3,Q4: 0.68293791  -0.01433813  0.53361033  0.49864841
-  MANVR: Angle=  51.02 deg  Duration= 1340 sec  Slew err= 42.0 arcsec
+  MANVR: Angle=  51.02 deg  Duration= 1340 sec  Slew err= 42.0 arcsec  End= 2008:193:16:39:35
 
 MP_STARCAT at 2008:193:16:17:21.237 (VCDU count = 10560695)
 ---------------------------------------------------------------------------------------------
@@ -1159,7 +1160,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:193:23:29:39.847 (VCDU count = 10661919)
   Q1,Q2,Q3,Q4: 0.74686639  0.43655244  0.18040656  0.46804490
-  MANVR: Angle=  67.09 deg  Duration= 1555 sec  Slew err= 46.8 arcsec
+  MANVR: Angle=  67.09 deg  Duration= 1555 sec  Slew err= 46.8 arcsec  End= 2008:193:23:55:30
 
 MP_STARCAT at 2008:193:23:29:41.490 (VCDU count = 10661925)
 ---------------------------------------------------------------------------------------------
@@ -1190,7 +1191,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:194:02:34:27.512 (VCDU count = 10705188)
   Q1,Q2,Q3,Q4: 0.68445817  -0.01270781  0.53365165  0.49655961
-  MANVR: Angle=  66.91 deg  Duration= 1552 sec  Slew err= 46.1 arcsec
+  MANVR: Angle=  66.91 deg  Duration= 1552 sec  Slew err= 46.1 arcsec  End= 2008:194:03:00:15
 
 MP_STARCAT at 2008:194:02:34:29.155 (VCDU count = 10705194)
 ---------------------------------------------------------------------------------------------
@@ -1220,7 +1221,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:194:08:51:29.594 (VCDU count = 10793469)
   Q1,Q2,Q3,Q4: 0.81919030  -0.54930161  0.12690047  0.10531506
-  MANVR: Angle=  93.10 deg  Duration= 1901 sec  Slew err= 66.7 arcsec
+  MANVR: Angle=  93.10 deg  Duration= 1901 sec  Slew err= 66.7 arcsec  End= 2008:194:09:23:06
 
 MP_STARCAT at 2008:194:08:51:31.237 (VCDU count = 10793476)
 ---------------------------------------------------------------------------------------------
@@ -1251,7 +1252,7 @@ BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR
 
 MP_TARGQUAT at 2008:196:07:19:29.810 (VCDU count = 11446270)
   Q1,Q2,Q3,Q4: 0.69047533  -0.00618530  0.53376709  0.48815802
-  MANVR: Angle=  93.03 deg  Duration= 1900 sec  Slew err= 56.0 arcsec
+  MANVR: Angle=  93.03 deg  Duration= 1900 sec  Slew err= 56.0 arcsec  End= 2008:196:07:51:05
 
 MP_STARCAT at 2008:196:07:19:31.453 (VCDU count = 11446276)
 ---------------------------------------------------------------------------------------------
