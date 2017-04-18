@@ -195,6 +195,28 @@ sub maneuver_parse{
         }
 
     }
+    # Do another pass through the maneuvers and relabel anything after a replica a DFC
+    # if it isn't a "DFC_?" already.  The idea here is to make it easier to check that all attitudes
+    # after replicas are also at the DFC attitude.  Relabeling any such atts as them as "DFC_P?"
+    # (which will be true for at least one attitude in a split dark cal),
+    # just means that the attitudes will be explicitly checked against the DFC_I attitude
+    # in check_manvr_point.
+    for my $man_idx (0 .. $#manvrs){
+        if (not defined $manvrs[$man_idx]->{DC}){
+            next;
+        }
+        my $replica = $manvrs[$man_idx]->{DC};
+        my $dfc_p = ($replica == 0) ? "DFC_PI" :
+                                      "DFC_P" . $replica;
+        if ($man_idx < $#manvrs){
+            if (not $manvrs[$man_idx + 1]->{final} =~ /DFC/){
+                $dc_oflsid{$dfc_p} = $manvrs[$man_idx + 1]->{final};
+                $manvrs[$man_idx + 1]->{final} = $dfc_p;
+            }
+        }
+    }
+
+
     return \@manvrs;
 
 }
