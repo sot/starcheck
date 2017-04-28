@@ -1092,6 +1092,7 @@ sub check_star_catalog {
 
     my @warn = ();
     my @yellow_warn = ();
+    my @fyi = ();
 
     my $oflsid = $self->{dot_obsid};
     my $obsid = $self->{obsid};
@@ -1399,7 +1400,7 @@ sub check_star_catalog {
                 }
                 # BOT stars will get two warnings if within dither
                 if ($type eq 'BOT' or $type eq 'ACQ'){
-                    push @yellow_warn, sprintf("$alarm [%2d] Bad pixel in ACQ search box. " .
+                    push @fyi, sprintf("$alarm [%2d] Bad pixel in ACQ search box. " .
                                                    "Y,Z,Radial seps: " . $close_pixels[$closest],
                                                $i); #Only warn for the closest pixel
                 }
@@ -1462,6 +1463,7 @@ sub check_star_catalog {
     # Collect warnings
     push @{$self->{warn}}, @warn;
     push @{$self->{yellow_warn}}, @yellow_warn;
+    push @{$self->{fyi}}, @fyi;
 }
 
 #############################################################################################
