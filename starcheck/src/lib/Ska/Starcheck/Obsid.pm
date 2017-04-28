@@ -1374,22 +1374,37 @@ sub check_star_catalog {
 	# Bad Pixels ACA-025
         my @close_pixels;
         my @dr;
-	if ($type ne 'ACQ' and $c->{"GS_PASS$i"} =~ /^1|\s+|g[1-2]/) {
+        my @dz;
+        my @dy;
+	if ($type ne 'MON' and $type ne 'FID'){
 	    foreach my $pixel (@bad_pixels) {
 		my $dy = abs($yag-$pixel->{yag});
 		my $dz = abs($zag-$pixel->{zag});
 		my $dr = sqrt($dy**2 + $dz**2);
-		next unless ( $dz < $dither+25 and $dy < $dither+25 );
+		next unless ( $dz < $c->{"HALFW$i"} and $dy < $c->{"HALFW$i"});
 		push @close_pixels, sprintf("%3d, %3d, %3d\n", $dy, $dz, $dr);
+                push @dy, $dy;
+                push @dz, $dz;
 		push @dr, $dr;
-	    }   
+	    }
 	    if ( @close_pixels > 0 ) {
 		my ($closest) = sort { $dr[$a] <=> $dr[$b] } (0 .. $#dr);
-		my $warn = sprintf("$alarm [%2d] Nearby ACA bad pixel. " .
-				   "Y,Z,Radial seps: " . $close_pixels[$closest],
-				   $i); #Only warn for the closest pixel
-		push @warn, $warn;
-	    }
+                if ($type eq 'BOT' or $type eq 'GUI'){
+                    if ($dy[$closest] < $dither + 25 and $dz[$closest] < $dither + 25){
+                        push @warn, sprintf("$alarm [%2d] Nearby ACA bad pixel. " .
+                                                "Y,Z,Radial seps: " . $close_pixels[$closest],
+                                            $i); #Only warn for the closest pixel
+                    }
+
+                }
+                # BOT stars will get two warnings if within dither
+                if ($type eq 'BOT' or $type eq 'ACQ'){
+                    push @yellow_warn, sprintf("$alarm [%2d] Bad pixel in ACQ search box. " .
+                                                   "Y,Z,Radial seps: " . $close_pixels[$closest],
+                                               $i); #Only warn for the closest pixel
+                }
+
+            }
 	}
 	
 	# Spoiler star (for search) and common column
