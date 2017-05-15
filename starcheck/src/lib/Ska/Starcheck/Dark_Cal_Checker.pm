@@ -14,6 +14,10 @@ use Data::Dumper;
 
 use Ska::Parse_CM_File;
 
+# Add a module-wide hash to store a mapping of Obsid/OFLSIDs to dark cal
+# labels (DFC_?/DC_T?)
+my %dc_oflsid;
+
 sub new{
     my $class = shift;
     my $par_ref = shift;
@@ -101,8 +105,8 @@ sub new{
                                                              "First ACA command is the template-independent init command");
     %feedback = (%feedback, %{replicas($tlr, \%templates, $timelines, \%config)});
     
-    $feedback{check_dither_enable_at_end} = check_dither_enable_at_end($tlr, \%config);
-    $feedback{check_dither_param_at_end} = check_dither_param_at_end($tlr, \%config);
+    $feedback{check_dither_enable_at_end} = check_dither_enable_at_end($tlr, $manvrs, \%config);
+    $feedback{check_dither_param_at_end} = check_dither_param_at_end($tlr, $manvrs, \%config);
     $feedback{check_manvr} = check_manvr( \%config, $manvrs);
     $feedback{check_dwell} = check_dwell(\%config, $manvrs, $dwells);
     $feedback{check_manvr_point} = check_manvr_point( \%config, \@bs, $manvrs);
@@ -121,7 +125,20 @@ sub maneuver_parse{
 
 	my $dot = shift;
 
-	my @raw_manvrs;
+       my @raw_manvrs;
+
+    my %is_replica;
+    my $curr_obsid = 'INIT';
+    # Get the obsids/oflsids at the time of the replica commands
+    for my $dot_entry (@{$dot}){
+        if ($dot_entry->{cmd_identifier} eq 'ATS_OBSID'){
+            $curr_obsid = $dot_entry->{ID};
+        }
+        if ($dot_entry->{cmd_identifier} eq 'ATS_A_P1ADC'){
+            $is_replica{$curr_obsid} = 1;
+        }
+    }
+
     for my $dot_entry (@{$dot}){
 		if ($dot_entry->{cmd_identifier} =~ /ATS_MANVR/){
 			push @raw_manvrs, $dot_entry;
@@ -131,6 +148,7 @@ sub maneuver_parse{
 	# mock initial starting attitude
 	my $init = 'dcIAT';
 	my @manvrs;
+        my $n_replica = 0;
 	# for each maneuver, make a hash and push it
 	# saving the new attitude as the initial oflsid for the next maneuver
 	for my $manvr (@raw_manvrs){
@@ -142,12 +160,64 @@ sub maneuver_parse{
 					+ timestring_to_secs($manvr->{DURATION}),
 					duration => timestring_to_mins($manvr->{DURATION}),
 					);
-		
+                # Mark each maneuver to a replica.  If oflsid already has "DC_T" use that
+                # otherwise use %is_replica hash as defined by the commanded obsid at
+                # the time of the replica commanding in the DOT
+		if (($manvr->{oflsid} =~ /DC_T/) or (defined $is_replica{$manvr->{oflsid}})){
+                    $man{DC} = $n_replica;
+                    $n_replica++;
+                }
 		push @manvrs, \%man;
 		$init = $manvr->{oflsid};
 
-	}
-	return \@manvrs;
+    }
+    for my $man_idx (0 .. $#manvrs){
+        if (not defined $manvrs[$man_idx]->{DC}){
+            next;
+        }
+        # For each maneuver to a replica, update the oflsid of the 'final' label to match
+        # the DC_T? convention, update the 'init' label to be "DFC_?",
+        # update the final label of the previous maneuver to that same "DFC_?"
+        # and update the initial label of the next maneuver to the DC_T? value
+        my $replica = $manvrs[$man_idx]->{DC};
+        $dc_oflsid{"DC_T" . $replica} = $manvrs[$man_idx]->{final};
+        $manvrs[$man_idx]->{final} = "DC_T" . $replica;
+        # Use the convention of labeling first DFC DFC_I
+        my $dfc = ($replica == 0) ? "DFC_I" :
+                                    "DFC_" . ($replica - 1);
+        $manvrs[$man_idx]->{init} = $dfc;
+        if ($man_idx > 0){
+            $dc_oflsid{$dfc} = $manvrs[$man_idx - 1]->{final};
+            $manvrs[$man_idx - 1]->{final} = $dfc;
+        }
+        if ($man_idx < $#manvrs){
+            $manvrs[$man_idx + 1]->{init} = "DC_T" . $replica;
+        }
+
+    }
+    # Do another pass through the maneuvers and relabel anything after a replica a DFC
+    # if it isn't a "DFC_?" already.  The idea here is to make it easier to check that all attitudes
+    # after replicas are also at the DFC attitude.  Relabeling any such atts as them as "DFC_P?"
+    # (which will be true for at least one attitude in a split dark cal),
+    # just means that the attitudes will be explicitly checked against the DFC_I attitude
+    # in check_manvr_point.
+    for my $man_idx (0 .. $#manvrs){
+        if (not defined $manvrs[$man_idx]->{DC}){
+            next;
+        }
+        my $replica = $manvrs[$man_idx]->{DC};
+        my $dfc_p = ($replica == 0) ? "DFC_PI" :
+                                      "DFC_P" . $replica;
+        if ($man_idx < $#manvrs){
+            if (not $manvrs[$man_idx + 1]->{final} =~ /DFC/){
+                $dc_oflsid{$dfc_p} = $manvrs[$man_idx + 1]->{final};
+                $manvrs[$man_idx + 1]->{final} = $dfc_p;
+            }
+        }
+    }
+
+
+    return \@manvrs;
 
 }
 
@@ -455,19 +525,27 @@ sub check_dither_enable_at_end{
 		  comment => ['Dither enabled after Dark Cal'],
 		  );
 
-    my ($tlr, $config) = @_;    
+    my ($tlr, $manvrs, $config) = @_;
     
     my @tlr_arr = @{$tlr->{entries}};
 
     my %cmd_list = map { $_ => $config->{template}{independent}{$_}} (qw( dither_enable dither_disable ));
 
-    my $index_end = $tlr->end_replica(4)->index();
-    my $manvr_away_from_dfc = $tlr->manvr_away_from_dfc();
+    my $manvr_away_from_dfc;
+    for my $man_idx (0 .. $#{$manvrs}){
+        if ($manvrs->[$man_idx]->{tstart} > $tlr->end_replica(4)->time()){
+            # The maneuver to DFC after replica 4 is the first manvr after end_replica(4)->time
+            # The maneuver *from* DFC should be the next one [$man_idx + 1]
+            $manvr_away_from_dfc = $manvrs->[$man_idx + 1];
+            last;
+        }
+    }
+    my $manvr_datestop = time2date($manvr_away_from_dfc->{'tstop'});
 
     push @{$output{criteria}}, sprintf("Steps through the TLR from the last hw command at replica 4");
-    push @{$output{criteria}}, sprintf("to the maneuver from DFC to ADJCT, where");
+    push @{$output{criteria}}, sprintf("to the end of the maneuver from DFC to ADJCT, where");
     push @{$output{criteria}}, sprintf("end replica 4 at " . $tlr->end_replica(4)->datestamp() );
-    push @{$output{criteria}}, sprintf("maneuver away from dfc at  " . $tlr->manvr_away_from_dfc->datestamp() );
+    push @{$output{criteria}}, sprintf("maneuver away from dfc ends at  " . $manvr_datestop);
     push @{$output{criteria}}, sprintf("looks for any dither enable or disable command mnemonics :");
 
     my $string_cmd_list;
@@ -478,13 +556,14 @@ sub check_dither_enable_at_end{
     
 
     # find the first dither command after the end of replica 4
-    # and before the maneuver away from dark field center at the end of the calibration
+    # and before the end of the maneuver away from dark field center at the end of the calibration
 
     my @dith_cmd;
 
-    for my $tlr_entry (@tlr_arr[$index_end .. $manvr_away_from_dfc->index()]){
+    my $index_end = $tlr->end_replica(4)->index();
+    for my $tlr_entry (@tlr_arr[$index_end .. $#tlr_arr]){
 	next unless ( grep { $tlr_entry->comm_mnem() eq $_->{comm_mnem} } (map {@$_} @{cmd_list{'dither_enable','dither_disable'}}) );
-	last if ($tlr_entry->time() > ($manvr_away_from_dfc->time()));
+	last if ($tlr_entry->time() > ($manvr_away_from_dfc->{tstop}));
 	push @dith_cmd, $tlr_entry;
     }
 
@@ -597,7 +676,7 @@ sub check_dither_param_before_replica{
 sub check_dither_param_at_end{
 ##***************************************************************************
 
-    my ($tlr, $config) = @_;    
+    my ($tlr, $manvrs, $config) = @_;
 
     my %output = (
 		  comment => ['Dither param set to default at end'],
@@ -613,12 +692,21 @@ sub check_dither_param_at_end{
 	$cmd_list{$cmd->{comm_mnem}} = 1;
     }
 
+    my $manvr_away_from_dfc;
+    for my $man_idx (0 .. $#{$manvrs}){
+        if ($manvrs->[$man_idx]->{tstart} > $tlr->end_replica(4)->time()){
+            # The maneuver to DFC after replica 4 is the first manvr after end_replica(4)->time
+            # The maneuver *from* DFC should be the next one [$man_idx + 1]
+            $manvr_away_from_dfc = $manvrs->[$man_idx + 1];
+            last;
+        }
+    }
+    my $manvr_datestop = time2date($manvr_away_from_dfc->{'tstop'});
 
-   
     push @{$output{criteria}}, sprintf("Steps through the TLR from the last command at the end of replica 4");
-    push @{$output{criteria}}, sprintf("to the command to maneuver away from DFC to ADJCT");
+    push @{$output{criteria}}, sprintf("to the end of the maneuver away from DFC to ADJCT");
     push @{$output{criteria}}, sprintf( "end of replica 4 at " . $tlr->end_replica(4)->datestamp() );
-    push @{$output{criteria}}, sprintf( "maneuver away from dfc at " . $tlr->manvr_away_from_dfc->datestamp() );
+    push @{$output{criteria}}, sprintf( "end of maneuver away from dfc at " . $manvr_datestop);
     push @{$output{criteria}}, sprintf("looks for any dither parameter command mnemonics :");
 
     my $string_cmd_list;
@@ -628,18 +716,15 @@ sub check_dither_param_at_end{
     push @{$output{criteria}}, $string_cmd_list;
     
 
-    my $index_end = $tlr->end_replica(4)->index();
-
-    my $manvr_away_from_dfc = $tlr->manvr_away_from_dfc();
 
     # find the last dither commanding before that "start time"
     # create an array of those commands (even if just one command)
 
     my @dith_param;
-
-    for my $tlr_entry (@tlr_arr[$index_end .. $manvr_away_from_dfc->index()]){
+    my $index_end = $tlr->end_replica(4)->index();
+    for my $tlr_entry (@tlr_arr[$index_end .. $#tlr_arr]){
 	next unless (defined $cmd_list{$tlr_entry->comm_mnem});
-	last if ($tlr_entry->time() > ($manvr_away_from_dfc->time()));
+	last if ($tlr_entry->time() > $manvr_away_from_dfc->{'tstop'});
 	push @dith_param, $tlr_entry;
     }
 
@@ -710,7 +795,7 @@ sub check_manvr {
 				$final{$manvr->{final}} += 1;
 			}
 			# from a replica
-			if (($manvr->{init} =~ /DC_T/) and ($manvr->{final} =~ /DFC/)){
+			if (($manvr->{init} =~ /DC_T/)){
 				$expected_time = $maneuver_times{replica_to_center};
 				$init{$manvr->{init}} += 1;
 			}
@@ -722,11 +807,19 @@ sub check_manvr {
 				$output{status} = 0;
 				next;
 			}
-			my $t_manvr_min = $manvr->{duration};
-			push @{$output{info}}, { text => "Maneuver from $manvr->{init} to $manvr->{final} : "
-										 . "time = $t_manvr_min min ; "
-										 . "expected time = $expected_time",
-										 type => 'info' };
+			my $t_manvr_min = sprintf("%.1f", $manvr->{duration});
+                        # Add actual oflsid in parenthesis if label does not match oflsid
+                        my ($a, $b) = ($manvr->{init}, $manvr->{final});
+                        if ((defined $dc_oflsid{$manvr->{init}}) and ($dc_oflsid{$manvr->{init}} ne $manvr->{init})){
+                            $a .= " ($dc_oflsid{$manvr->{init}})";
+                        }
+                        if ((defined $dc_oflsid{$manvr->{final}}) and ($dc_oflsid{$manvr->{final}} ne $manvr->{final})){
+                            $b .= " ($dc_oflsid{$manvr->{final}})";
+                        }
+			push @{$output{info}}, { text => "Maneuver from $a to $b: "
+                                                     . "time = $t_manvr_min min ; "
+                                                         . "expected time = $expected_time",
+                                                 type => 'info' };
 			if ($expected_time != $t_manvr_min){
 				$output{status} = 0;
 				push @{$output{info}}, { text => "Maneuver Time Incorrect",

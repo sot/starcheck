@@ -52,6 +52,11 @@ test: $(TEST_BACKSTOP) $(DATA_FILES)
 
 check: test
 
+# Comprehensive regression test
+.PHONY: dark_regress
+dark_regress: $(TEST_BACKSTOP) $(DATA_FILES)
+	$(SRC)/dark_regress "$(HOSTNAME)_$(SHA)"
+
 
 # Comprehensive regression test
 .PHONY: regress
