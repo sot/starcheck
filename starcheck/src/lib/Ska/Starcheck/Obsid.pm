@@ -1286,7 +1286,13 @@ sub check_star_catalog {
 		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
 	    }
 	    elsif ($mag > $self->{mag_faint_yellow}) {
-		push @yellow_warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
+                # Upgrade yellow mag limit violation on guide stars to red warning
+                if ($type eq 'GUI' or $type eq 'BOT'){
+                    push @warn, sprintf "$alarm [%2d] Magnitude. Guide Star %6.3f\n",$i,$mag;
+                }
+                else{
+                    push @yellow_warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
+                }
 	    }
 	
 	}
