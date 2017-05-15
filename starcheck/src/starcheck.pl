@@ -751,8 +751,7 @@ if ($dark_cal_checker->{dark_cal_present}){
     $out .= "------------  DARK CURRENT CALIBRATION CHECKS  -----------------\n\n";
     # Add a link to the comm summary if we've figured out a mission planning week name for these products
     if ($mp_top_link){
-        my $url = sprintf("http://occweb.cfa.harvard.edu/occweb/web/fot_web/ops/load_reviews/%s_CommSum.php",
-                          $mp_top_link->{week});
+        my $url = sprintf("https://occweb.cfa.harvard.edu/occweb/FOT/mission_planning/Backstop/%s/output/%s_CommSum.html", $mp_top_link->{week}, $mp_top_link->{week});
         $out .= sprintf("<A HREF=\"%s\">Comm Summary: %s</A>\n\n", $url, $mp_top_link->{week});
     }
     $out .= dark_cal_print($dark_cal_checker, $STARCHECK);
