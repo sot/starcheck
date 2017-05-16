@@ -95,24 +95,24 @@ OBSID = 12850 at 2010:299:02:38:25.494   8 clean ACQ | 5 clean GUI |
 OBSID = 13000 at 2010:299:04:49:41.093   8 clean ACQ | 5 clean GUI | 
 OBSID = 11100 at 2010:299:06:41:01.093   8 clean ACQ | 5 clean GUI | 
          ------  2010:299:11:55:00.000   OBC Load Segment Begins     CL299:1107 
-OBSID = 12722 at 2010:300:11:18:54.212   5 clean ACQ | 4 clean GUI | WARNINGS [ 3] 
+OBSID = 12722 at 2010:300:11:18:54.212   5 clean ACQ | 4 clean GUI | WARNINGS [ 4] 
 OBSID = 13160 at 2010:300:14:11:56.282   8 clean ACQ | 5 clean GUI | 
          ------  2010:300:23:30:00.000   OBC Load Segment Begins     CL300:2307 
 OBSID = 55938 at 2010:301:00:40:44.261   8 clean ACQ | 8 clean GUI | 
-OBSID = 55937 at 2010:301:00:52:39.971   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
-OBSID = 55936 at 2010:301:01:30:04.204   3 clean ACQ | 3 clean GUI | WARNINGS [ 7] WARNINGS [ 4]
-OBSID = 55935 at 2010:301:03:45:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 6] WARNINGS [ 3]
+OBSID = 55937 at 2010:301:00:52:39.971   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
+OBSID = 55936 at 2010:301:01:30:04.204   3 clean ACQ | 3 clean GUI | WARNINGS [ 9] WARNINGS [ 7]
+OBSID = 55935 at 2010:301:03:45:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 7] WARNINGS [ 7]
 OBSID = 55934 at 2010:301:04:09:00.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 55933 at 2010:301:04:28:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 6] WARNINGS [ 3]
+OBSID = 55933 at 2010:301:04:28:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 7] WARNINGS [ 7]
 OBSID = 55932 at 2010:301:04:52:00.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 55931 at 2010:301:05:11:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 6] WARNINGS [ 3]
+OBSID = 55931 at 2010:301:05:11:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 7] WARNINGS [ 7]
 OBSID = 55930 at 2010:301:05:35:00.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 55929 at 2010:301:05:54:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 6] WARNINGS [ 3]
+OBSID = 55929 at 2010:301:05:54:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 7] WARNINGS [ 7]
 OBSID = 55928 at 2010:301:08:04:00.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 55927 at 2010:301:08:23:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 6] WARNINGS [ 3]
+OBSID = 55927 at 2010:301:08:23:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 7] WARNINGS [ 7]
 OBSID = 55926 at 2010:301:08:47:00.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 55925 at 2010:301:09:06:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 6] WARNINGS [ 3]
-OBSID = 55924 at 2010:301:09:30:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 7] WARNINGS [ 3]
+OBSID = 55925 at 2010:301:09:06:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 7] WARNINGS [ 7]
+OBSID = 55924 at 2010:301:09:30:06.000   3 clean ACQ | 3 clean GUI | WARNINGS [ 9] WARNINGS [ 6]
 OBSID = 55923 at 2010:301:09:38:46.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 13155 at 2010:301:12:11:35.303   8 clean ACQ | 5 clean GUI | 
 OBSID = 13146 at 2010:301:17:23:05.971   8 clean ACQ | 5 clean GUI | 
@@ -123,7 +123,7 @@ OBSID = 13002 at 2010:303:01:15:03.567   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 12458 at 2010:303:03:16:57.021   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID = 13157 at 2010:303:05:47:47.561   8 clean ACQ | 5 clean GUI | 
 OBSID = 55922 at 2010:303:16:20:28.868   8 clean ACQ | 8 clean GUI | 
-OBSID = 55921 at 2010:303:16:32:24.578   4 clean ACQ | 5 clean GUI | WARNINGS [ 5] WARNINGS [ 5]
+OBSID = 55921 at 2010:303:16:32:24.578   4 clean ACQ | 5 clean GUI | WARNINGS [ 5] WARNINGS [ 8]
 ==================================================================================== 
 OBSID: 13006  J135541.1+402706       ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   208.895922    40.440071     0.294882
@@ -481,6 +481,7 @@ MP_STARCAT at 2010:300:11:18:54.212 (VCDU count = 3350464)
 [10]  1   614732504   ACQ  6x6   0.749  10.673  12.172  -2150   2210  20   1  120    a4    
 [11]  2   614735040   ACQ  6x6   0.702  10.750  12.250  -1917  -1104  20   1  120    a4    
 
+>> WARNING: [ 8] Magnitude. Guide star 10.777
 >> WARNING: [ 8] Magnitude.  10.777
 >> WARNING: [10] Magnitude.  10.673
 >> WARNING: [11] Magnitude.  10.750
@@ -578,6 +579,7 @@ MP_STARCAT at 2010:301:00:52:39.971 (VCDU count = 3541003)
 
 >> WARNING: [ 8] Magnitude. Guide star 10.307
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 8] Magnitude.  10.307
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.661	-5.805	-4.168	
 Acquisition Stars Expected  : 7.71
@@ -607,13 +609,18 @@ MP_STARCAT at 2010:301:01:30:04.204 (VCDU count = 3549761)
 [ 9]  7      399552   ACQ  8x8   0.366  10.455  12.234  -1069   -914  20   1  120    a4   c
 
 >> WARNING: [ 1] Magnitude. Guide star 10.320
+>> WARNING: [ 4] Magnitude. Guide star 10.640
 >> WARNING: [ 4] Magnitude.  10.640
 >> WARNING: [ 5] Magnitude. Guide star 10.519
 >> WARNING: [ 6] Magnitude. Guide star 10.449
 >> WARNING: [ 8] Marginal star. B-V = 0.700, Mag_Err = 0.53, Pos_Err = 0.20
+>> WARNING: [ 8] Magnitude. Guide star 10.725
 >> WARNING: [ 8] Magnitude.  10.725
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.320
 >> WARNING: [ 5] Marginal star. B-V = 1.500, Mag_Err = 0.66, Pos_Err = 0.12
+>> WARNING: [ 5] Magnitude.  10.519
+>> WARNING: [ 6] Magnitude.  10.449
 >> WARNING: [ 6] Search spoiler.    1316656: Y,Z,Radial,Mag seps: 153  37 157 -0.6
 >> WARNING: [ 9] Marginal star. B-V = 0.700, Mag_Err = 0.53, Pos_Err = 0.30
 >> WARNING: [ 9] Magnitude.  10.455
@@ -649,9 +656,14 @@ MP_STARCAT at 2010:301:03:45:06.000 (VCDU count = 3581378)
 >> WARNING: [ 4] Magnitude. Guide star 10.519
 >> WARNING: [ 5] Magnitude. Guide star 10.449
 >> WARNING: [ 7] Magnitude. Guide star 10.463
+>> WARNING: [ 8] Magnitude. Guide star 10.640
 >> WARNING: [ 8] Magnitude.  10.640
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.320
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.66, Pos_Err = 0.12
+>> WARNING: [ 4] Magnitude.  10.519
+>> WARNING: [ 5] Magnitude.  10.449
+>> WARNING: [ 7] Magnitude.  10.463
 >> WARNING: [ 9] Marginal star. B-V = 0.700, Mag_Err = 0.53, Pos_Err = 0.30
 >> WARNING: [ 9] Magnitude.  10.455
 
@@ -699,9 +711,14 @@ MP_STARCAT at 2010:301:04:28:06.000 (VCDU count = 3591446)
 >> WARNING: [ 4] Magnitude. Guide star 10.519
 >> WARNING: [ 5] Magnitude. Guide star 10.449
 >> WARNING: [ 7] Magnitude. Guide star 10.463
+>> WARNING: [ 8] Magnitude. Guide star 10.640
 >> WARNING: [ 8] Magnitude.  10.640
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.320
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.66, Pos_Err = 0.12
+>> WARNING: [ 4] Magnitude.  10.519
+>> WARNING: [ 5] Magnitude.  10.449
+>> WARNING: [ 7] Magnitude.  10.463
 >> WARNING: [ 9] Marginal star. B-V = 0.700, Mag_Err = 0.53, Pos_Err = 0.30
 >> WARNING: [ 9] Magnitude.  10.455
 
@@ -749,9 +766,14 @@ MP_STARCAT at 2010:301:05:11:06.000 (VCDU count = 3601515)
 >> WARNING: [ 4] Magnitude. Guide star 10.519
 >> WARNING: [ 5] Magnitude. Guide star 10.449
 >> WARNING: [ 7] Magnitude. Guide star 10.463
+>> WARNING: [ 8] Magnitude. Guide star 10.640
 >> WARNING: [ 8] Magnitude.  10.640
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.320
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.66, Pos_Err = 0.12
+>> WARNING: [ 4] Magnitude.  10.519
+>> WARNING: [ 5] Magnitude.  10.449
+>> WARNING: [ 7] Magnitude.  10.463
 >> WARNING: [ 9] Marginal star. B-V = 0.700, Mag_Err = 0.53, Pos_Err = 0.30
 >> WARNING: [ 9] Magnitude.  10.455
 
@@ -799,9 +821,14 @@ MP_STARCAT at 2010:301:05:54:06.000 (VCDU count = 3611583)
 >> WARNING: [ 4] Magnitude. Guide star 10.519
 >> WARNING: [ 5] Magnitude. Guide star 10.449
 >> WARNING: [ 7] Magnitude. Guide star 10.463
+>> WARNING: [ 8] Magnitude. Guide star 10.640
 >> WARNING: [ 8] Magnitude.  10.640
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.320
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.66, Pos_Err = 0.12
+>> WARNING: [ 4] Magnitude.  10.519
+>> WARNING: [ 5] Magnitude.  10.449
+>> WARNING: [ 7] Magnitude.  10.463
 >> WARNING: [ 9] Marginal star. B-V = 0.700, Mag_Err = 0.53, Pos_Err = 0.30
 >> WARNING: [ 9] Magnitude.  10.455
 
@@ -849,9 +876,14 @@ MP_STARCAT at 2010:301:08:23:06.000 (VCDU count = 3646471)
 >> WARNING: [ 4] Magnitude. Guide star 10.519
 >> WARNING: [ 5] Magnitude. Guide star 10.449
 >> WARNING: [ 7] Magnitude. Guide star 10.463
+>> WARNING: [ 8] Magnitude. Guide star 10.640
 >> WARNING: [ 8] Magnitude.  10.640
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.320
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.66, Pos_Err = 0.12
+>> WARNING: [ 4] Magnitude.  10.519
+>> WARNING: [ 5] Magnitude.  10.449
+>> WARNING: [ 7] Magnitude.  10.463
 >> WARNING: [ 9] Marginal star. B-V = 0.700, Mag_Err = 0.53, Pos_Err = 0.30
 >> WARNING: [ 9] Magnitude.  10.455
 
@@ -899,9 +931,14 @@ MP_STARCAT at 2010:301:09:06:06.000 (VCDU count = 3656539)
 >> WARNING: [ 4] Magnitude. Guide star 10.519
 >> WARNING: [ 5] Magnitude. Guide star 10.449
 >> WARNING: [ 7] Magnitude. Guide star 10.463
+>> WARNING: [ 8] Magnitude. Guide star 10.640
 >> WARNING: [ 8] Magnitude.  10.640
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.320
 >> WARNING: [ 4] Marginal star. B-V = 1.500, Mag_Err = 0.66, Pos_Err = 0.12
+>> WARNING: [ 4] Magnitude.  10.519
+>> WARNING: [ 5] Magnitude.  10.449
+>> WARNING: [ 7] Magnitude.  10.463
 >> WARNING: [ 9] Marginal star. B-V = 0.700, Mag_Err = 0.53, Pos_Err = 0.30
 >> WARNING: [ 9] Magnitude.  10.455
 
@@ -933,13 +970,18 @@ MP_STARCAT at 2010:301:09:30:06.000 (VCDU count = 3662159)
 [ 9]  7      399552   ACQ  8x8   0.366  10.455  12.234  -1067   -916  20   1  120    a4   c
 
 >> WARNING: [ 1] Magnitude. Guide star 10.320
+>> WARNING: [ 4] Magnitude. Guide star 10.640
 >> WARNING: [ 4] Magnitude.  10.640
 >> WARNING: [ 5] Magnitude. Guide star 10.519
 >> WARNING: [ 6] Magnitude. Guide star 10.449
 >> WARNING: [ 8] Marginal star. B-V = 0.700, Mag_Err = 0.53, Pos_Err = 0.20
+>> WARNING: [ 8] Magnitude. Guide star 10.725
 >> WARNING: [ 8] Magnitude.  10.725
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.320
 >> WARNING: [ 5] Marginal star. B-V = 1.500, Mag_Err = 0.66, Pos_Err = 0.12
+>> WARNING: [ 5] Magnitude.  10.519
+>> WARNING: [ 6] Magnitude.  10.449
 >> WARNING: [ 9] Marginal star. B-V = 0.700, Mag_Err = 0.53, Pos_Err = 0.30
 >> WARNING: [ 9] Magnitude.  10.455
 
@@ -1268,8 +1310,11 @@ MP_STARCAT at 2010:303:16:32:24.578 (VCDU count = 4435382)
 >> WARNING: [ 8] Marginal star. B-V = 0.700, Mag_Err = 0.55, Pos_Err = 0.50
 >> WARNING: [ 8] Magnitude. Guide star 10.306
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 4] Magnitude.  10.558
+>> WARNING: [ 5] Magnitude.  10.477
 >> WARNING: [ 5] Search spoiler.  616432744: Y,Z,Radial,Mag seps: 108  56 121 -1.0
 >> WARNING: [ 5] Search spoiler.  616432192: Y,Z,Radial,Mag seps: 128  76 149 -0.8
+>> WARNING: [ 8] Magnitude.  10.306
 >> WARNING: [ 9] Search spoiler.  616046768: Y,Z,Radial,Mag seps:  48  50  70 -1.0
 >> WARNING: [10] Marginal star. B-V = 0.700, Mag_Err = 0.05, Pos_Err = 0.00
 >> WARNING: [10] Magnitude.  10.396

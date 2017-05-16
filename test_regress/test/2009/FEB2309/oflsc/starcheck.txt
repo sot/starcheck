@@ -37,13 +37,13 @@ Using acquisition model for multiple star filter enabled
 OBSID = 10268 at 2009:054:00:15:19.501   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID = 10315 at 2009:054:03:38:47.179   8 clean ACQ | 5 clean GUI | 
 OBSID = 10331 at 2009:054:08:54:51.414   5 clean ACQ | 5 clean GUI | WARNINGS [ 3]
-OBSID =  9325 at 2009:054:11:54:48.414   6 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID =  9325 at 2009:054:11:54:48.414   6 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
 OBSID = 10721 at 2009:054:13:12:21.964   8 clean ACQ | 5 clean GUI | 
 OBSID = 57274 at 2009:054:21:11:08.928   8 clean ACQ | 8 clean GUI | 
 OBSID =  9071 at 2009:054:21:54:34.177   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 57273 at 2009:055:03:10:32.926   8 clean ACQ | 8 clean GUI | 
 OBSID = 57272 at 2009:055:03:20:39.360   8 clean ACQ | 8 clean GUI | 
-OBSID = 57271 at 2009:055:04:47:37.350   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] 
+OBSID = 57271 at 2009:055:04:47:37.350   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 1]
          ------  2009:055:13:15:01.542   OBC Load Segment Begins     CL055:1308 
 OBSID = 57270 at 2009:055:14:37:05.202   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 10860 at 2009:055:16:40:19.757   8 clean ACQ | 4 clean GUI | 
@@ -57,9 +57,9 @@ OBSID = 10297 at 2009:057:00:02:50.135   5 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 10684 at 2009:057:03:44:53.201   8 clean ACQ | 5 clean GUI | 
 OBSID = 10502 at 2009:057:09:36:46.816   8 clean ACQ | 5 clean GUI | 
 OBSID =  9545 at 2009:057:10:41:42.187   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
-OBSID = 57269 at 2009:057:18:39:45.657   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID = 57268 at 2009:057:18:49:52.091   6 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
-OBSID = 57267 at 2009:057:19:05:39.771   4 clean ACQ | 4 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
+OBSID = 57269 at 2009:057:18:39:45.657   6 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 57268 at 2009:057:18:49:52.091   6 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 57267 at 2009:057:19:05:39.771   4 clean ACQ | 4 clean GUI | WARNINGS [ 4] WARNINGS [ 4]
 OBSID = 57266 at 2009:058:05:55:48.767   8 clean ACQ | 8 clean GUI | 
 OBSID =  8583 at 2009:058:08:16:37.968   8 clean ACQ | 5 clean GUI | 
          ------  2009:058:12:20:00.000   OBC Load Segment Begins     CL058:1208 
@@ -203,6 +203,7 @@ MP_STARCAT at 2009:054:11:54:48.414 (VCDU count = 15451372)
 [13]  2   395719048   ACQ  6x6   0.921  10.335  11.844  -1767     12  20   1  120    a3    
 
 >> WARNING: [ 8] Magnitude. Guide star 10.386
+>> WARNING: [ 8] Magnitude.  10.386
 >> WARNING: [12] Magnitude.  10.331
 >> WARNING: [13] Magnitude.  10.335
 
@@ -385,6 +386,7 @@ MP_STARCAT at 2009:055:04:47:37.350 (VCDU count = 15688519)
 >> WARNING: [ 6] Magnitude. Guide star 10.357
 >> WARNING: [ 8] Magnitude.   5.970
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 6] Magnitude.  10.357
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2009:055:08:00:00.000
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.130	-5.340	-3.786	
@@ -768,6 +770,7 @@ MP_STARCAT at 2009:057:18:39:45.657 (VCDU count = 16557702)
 
 >> WARNING: [ 6] Magnitude. Guide star 10.454
 >> WARNING: [ 3] Marginal star. B-V = 1.500, Mag_Err = 0.36, Pos_Err = 0.09
+>> WARNING: [ 6] Magnitude.  10.454
 >> INFO   : Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.648	-4.847	-3.300	
@@ -799,6 +802,7 @@ MP_STARCAT at 2009:057:18:49:52.091 (VCDU count = 16560069)
 
 >> WARNING: [ 5] Magnitude. Guide star 10.306
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 5] Magnitude.  10.306
 >> WARNING: [ 9] Magnitude.  10.453
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.220	-5.405	-3.826	
@@ -834,6 +838,7 @@ MP_STARCAT at 2009:057:19:05:39.771 (VCDU count = 16563767)
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 7] Search spoiler.  260320584: Y,Z,Radial,Mag seps:  70  61  93 -0.6
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.49, Pos_Err = 0.09
+>> WARNING: [ 8] Magnitude.  10.385
 >> WARNING: [ 9] Magnitude.  10.342
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2009:057:21:00:00.000
 

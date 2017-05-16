@@ -84,8 +84,8 @@ OBSID =  7896 at 2007:246:01:16:04.537   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID =  9583 at 2007:246:11:09:58.302   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID = 58240 at 2007:246:14:33:48.253   8 clean ACQ | 8 clean GUI | 
 OBSID = 58239 at 2007:246:15:08:17.547   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
-OBSID = 58238 at 2007:247:02:13:47.956   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
-OBSID = 58237 at 2007:247:04:55:39.136   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 58238 at 2007:247:02:13:47.956   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 58237 at 2007:247:04:55:39.136   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID =  9581 at 2007:247:08:24:08.253   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2007:247:21:30:43.853   OBC Load Segment Begins     CL247:2101 
 OBSID =  7805 at 2007:247:21:33:49.853   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
@@ -99,10 +99,10 @@ OBSID = 58235 at 2007:249:05:58:05.045   8 clean ACQ | 8 clean GUI |
 OBSID = 58234 at 2007:249:06:33:14.171   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
          ------  2007:249:20:17:29.929   OBC Load Segment Begins     CL249:2001 
 OBSID = 58233 at 2007:249:20:20:35.929   4 clean ACQ | 4 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
-OBSID =  7906 at 2007:249:23:56:25.045   5 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 5]
+OBSID =  7906 at 2007:249:23:56:25.045   5 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 6]
 OBSID =  9580 at 2007:250:06:07:40.150   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID = 58232 at 2007:250:16:25:21.750   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID =  7823 at 2007:250:16:52:40.891   6 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 58232 at 2007:250:16:25:21.750   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID =  7823 at 2007:250:16:52:40.891   6 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
          ------  2007:251:11:33:14.877   OBC Load Segment Begins     CL251:1101 
 OBSID =  7895 at 2007:251:11:36:20.877   8 clean ACQ | 5 clean GUI | 
 OBSID = 58231 at 2007:251:22:03:58.732   4 clean ACQ | 7 clean GUI | WARNINGS [ 4]
@@ -120,7 +120,7 @@ OBSID = 58220 at 2007:252:02:29:03.373   8 clean ACQ | 8 clean GUI |
 OBSID = 58219 at 2007:252:02:57:33.373   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 58218 at 2007:252:04:13:14.737   8 clean ACQ | 8 clean GUI | 
 OBSID = 58217 at 2007:252:09:15:38.343   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
-OBSID = 58216 at 2007:252:11:01:00.487   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 58216 at 2007:252:11:01:00.487   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  7620 at 2007:252:14:30:18.732   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2007:253:00:42:25.549   OBC Load Segment Begins     CL253:0001 
 OBSID =  7817 at 2007:253:00:45:31.549   8 clean ACQ | 5 clean GUI |
@@ -283,6 +283,7 @@ MP_STARCAT at 2007:247:02:13:47.956 (VCDU count = 6166383)
 >> WARNING: [ 8] Magnitude. Guide star 10.349
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 1] Search spoiler.  684203312: Y,Z,Radial,Mag seps: 106 165 197 -0.9
+>> WARNING: [ 8] Magnitude.  10.349
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.965	-6.041	-4.341	
 Acquisition Stars Expected  : 7.73
@@ -312,6 +313,7 @@ MP_STARCAT at 2007:247:04:55:39.136 (VCDU count = 6204281)
 
 >> WARNING: [ 6] Magnitude. Guide star 10.438
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 6] Magnitude.  10.438
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.683	-5.830	-4.197	
 Acquisition Stars Expected  : 7.72
@@ -704,6 +706,7 @@ MP_STARCAT at 2007:249:23:56:25.045 (VCDU count = 7145728)
 [11]  2   840959696   ACQ  6x6   0.836  10.523  12.031    295  -1228  20   1  120    a3    
 
 >> WARNING: [ 6] Magnitude. Guide star 10.333
+>> WARNING: [ 6] Magnitude.  10.333
 >> WARNING: [ 6] Search spoiler.  841352448: Y,Z,Radial,Mag seps:  97 177 202 -0.8
 >> WARNING: [10] Magnitude.  10.443
 >> WARNING: [10] Search spoiler.  840959448: Y,Z,Radial,Mag seps: 107 103 149 -1.0
@@ -772,6 +775,7 @@ MP_STARCAT at 2007:250:16:25:21.750 (VCDU count = 7377286)
 [ 9]  7   986057576   ACQ  8x8   0.931  10.391  11.891    933   -845  20   1  120    a3    
 
 >> WARNING: [ 8] Magnitude. Guide star 10.464
+>> WARNING: [ 8] Magnitude.  10.464
 >> WARNING: [ 9] Magnitude.  10.391
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.559	-6.559	-4.775	
@@ -805,6 +809,7 @@ MP_STARCAT at 2007:250:16:52:40.891 (VCDU count = 7383683)
 [11]  2   613684312   ACQ  6x6   0.893  10.564  12.062  -2002  -1024  20   1  120    a3    
 
 >> WARNING: [ 5] Magnitude. Guide star 10.325
+>> WARNING: [ 5] Magnitude.  10.325
 >> WARNING: [11] Magnitude.  10.564
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.953	-6.022	-4.317	
@@ -1213,6 +1218,7 @@ MP_STARCAT at 2007:252:11:01:00.487 (VCDU count = 7975681)
 [11]  7   838995568   ACQ  8x8   0.906   9.761  11.266   -665  -1402  20   1  120    a2    
 
 >> WARNING: [ 8] Magnitude. Guide star 10.360
+>> WARNING: [ 8] Magnitude.  10.360
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.382	-6.382	-4.604	
 Acquisition Stars Expected  : 7.76

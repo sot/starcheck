@@ -35,7 +35,7 @@ Using acquisition model for multiple star filter enabled
 
          ------  2004:152:00:24:47.154   OBC Load Segment Begins     CL152:0004 
 OBSID = 60214 at 2004:152:00:27:53.154   8 clean ACQ | 8 clean GUI | 
-OBSID =  4965 at 2004:152:01:12:06.253   3 clean ACQ | 4 clean GUI | WARNINGS [ 2] WARNINGS [ 4]
+OBSID =  4965 at 2004:152:01:12:06.253   3 clean ACQ | 4 clean GUI | WARNINGS [ 2] WARNINGS [ 5]
 OBSID = 60213 at 2004:152:17:42:23.200   7 clean ACQ | 7 clean GUI | WARNINGS [ 2]
 OBSID = 60212 at 2004:153:04:18:37.801   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
          ------  2004:153:10:10:41.801   OBC Load Segment Begins     CL153:1004 
@@ -54,8 +54,8 @@ OBSID =  4893 at 2004:156:03:56:24.805   5 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID =  4559 at 2004:156:06:10:01.705   8 clean ACQ | 5 clean GUI | 
 OBSID =  4505 at 2004:157:03:34:17.115   8 clean ACQ | 5 clean GUI | 
          ------  2004:157:11:00:00.000   OBC Load Segment Begins     CL157:1104 
-OBSID =  4867 at 2004:157:11:03:47.715   5 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
-OBSID =  5178 at 2004:157:22:09:48.780   3 clean ACQ | 3 clean GUI | WARNINGS [ 2] WARNINGS [ 5]
+OBSID =  4867 at 2004:157:11:03:47.715   5 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
+OBSID =  5178 at 2004:157:22:09:48.780   3 clean ACQ | 3 clean GUI | WARNINGS [ 2] WARNINGS [ 6]
 OBSID = 60208 at 2004:157:23:42:12.745   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 ==================================================================================== 
 OBSID: 60214  
@@ -114,6 +114,7 @@ MP_STARCAT at 2004:152:01:12:06.253 (VCDU count = 7234795)
 
 >> WARNING: [ 5] Magnitude. Guide star 10.468
 >> WARNING: [13] Magnitude.  10.627
+>> WARNING: [ 5] Magnitude.  10.468
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.87, Pos_Err = 0.07
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.87, Pos_Err = 0.06
 >> WARNING: [12] Marginal star. B-V = 1.500, Mag_Err = 0.87, Pos_Err = 0.07
@@ -550,6 +551,7 @@ MP_STARCAT at 2004:157:11:03:47.715 (VCDU count = 9059191)
 [11]  2   333847264   ACQ  6x6   0.902  10.495  12.000   -971    -19  20   1  120    a3    
 
 >> WARNING: [ 4] Magnitude. Guide star 10.466
+>> WARNING: [ 4] Magnitude.  10.466
 >> WARNING: [10] Magnitude.  10.457
 >> WARNING: [11] Magnitude.  10.495
 
@@ -587,6 +589,7 @@ MP_STARCAT at 2004:157:22:09:48.780 (VCDU count = 9215136)
 >> WARNING: [ 8] Magnitude. Guide star 10.464
 >> WARNING: [ 9] Magnitude.   5.869
 >> WARNING: [ 4] Search spoiler.  658249904: Y,Z,Radial,Mag seps:   9  85  85 -0.5
+>> WARNING: [ 8] Magnitude.  10.464
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.87, Pos_Err = 0.08
 >> WARNING: [11] Magnitude.  10.407
 >> WARNING: [12] Marginal star. B-V = 1.500, Mag_Err = 0.87, Pos_Err = 0.07

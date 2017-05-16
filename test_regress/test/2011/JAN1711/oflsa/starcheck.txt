@@ -80,7 +80,7 @@ Transponder B	before 2011:018:01:42:43.409
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2011:017:10:20:15.565   OBC Load Segment Begins     CL017:1002 
-OBSID = 12872 at 2011:017:10:23:21.565   6 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
+OBSID = 12872 at 2011:017:10:23:21.565   6 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
 OBSID = 12280 at 2011:017:12:48:36.214   8 clean ACQ | 5 clean GUI | 
 OBSID = 12746 at 2011:017:16:02:12.214   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 13013 at 2011:017:18:40:29.214   8 clean ACQ | 5 clean GUI | 
@@ -111,14 +111,14 @@ OBSID = 13132 at 2011:019:12:08:24.273   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 12837 at 2011:019:20:24:35.273   8 clean ACQ | 5 clean GUI | 
 OBSID = 12393 at 2011:019:22:14:39.133   4 clean ACQ | 3 clean GUI | WARNINGS [ 4] 
          ------  2011:020:12:55:00.000   OBC Load Segment Begins     CL020:1202 
-OBSID = 55711 at 2011:020:16:16:53.865   4 clean ACQ | 4 clean GUI | WARNINGS [ 5] 
+OBSID = 55711 at 2011:020:16:16:53.865   4 clean ACQ | 4 clean GUI | WARNINGS [ 6] WARNINGS [ 1]
 OBSID = 55710 at 2011:020:16:28:27.159   8 clean ACQ | 8 clean GUI | 
 OBSID = 55709 at 2011:020:17:57:11.748   8 clean ACQ | 8 clean GUI | 
 OBSID = 55708 at 2011:020:19:47:01.526   8 clean ACQ | 8 clean GUI | 
 OBSID = 55707 at 2011:020:20:58:00.020   8 clean ACQ | 8 clean GUI | 
 OBSID = 55706 at 2011:020:22:13:26.000   8 clean ACQ | 8 clean GUI | 
 OBSID = 55705 at 2011:021:00:17:51.159   0 clean ACQ | 0 clean GUI | 
-OBSID = 11270 at 2011:021:01:26:33.982   4 clean ACQ | 4 clean GUI | WARNINGS [ 3] WARNINGS [ 1]
+OBSID = 11270 at 2011:021:01:26:33.982   4 clean ACQ | 4 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
 OBSID = 12369 at 2011:021:11:56:18.159   8 clean ACQ | 5 clean GUI | 
          ------  2011:021:20:42:43.159   OBC Load Segment Begins     CL021:2002 
 OBSID = 11545 at 2011:021:20:45:49.159   8 clean ACQ | 5 clean GUI | 
@@ -129,15 +129,15 @@ OBSID = 12172 at 2011:022:23:29:38.094   8 clean ACQ | 5 clean GUI |
 OBSID = 12364 at 2011:023:01:41:15.876   8 clean ACQ | 5 clean GUI | 
          ------  2011:023:04:00:00.000   OBC Load Segment Begins     CL023:0402 
 OBSID = 55704 at 2011:023:07:44:08.280   8 clean ACQ | 8 clean GUI | 
-OBSID = 55703 at 2011:023:07:55:41.574   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 55703 at 2011:023:07:55:41.574   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 55702 at 2011:023:09:49:40.845   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
-OBSID = 55701 at 2011:023:12:07:23.790   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 55701 at 2011:023:12:07:23.790   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 55700 at 2011:023:12:41:26.392   0 clean ACQ | 0 clean GUI | WARNINGS [ 2] 
 OBSID = 55699 at 2011:023:13:02:05.115   0 clean ACQ | 0 clean GUI | WARNINGS [ 2] 
 OBSID = 55698 at 2011:023:13:20:06.000   8 clean ACQ | 8 clean GUI | 
 OBSID = 55697 at 2011:023:13:32:38.980   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 55696 at 2011:023:16:28:31.574   0 clean ACQ | 0 clean GUI | 
-OBSID = 13134 at 2011:023:17:36:21.371   4 clean ACQ | 3 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
+OBSID = 13134 at 2011:023:17:36:21.371   4 clean ACQ | 3 clean GUI | WARNINGS [ 1] WARNINGS [ 4]
 OBSID = 12714 at 2011:024:02:05:09.574   8 clean ACQ | 5 clean GUI |
 ==================================================================================== 
 OBSID: 12872  NGC 235A               ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
@@ -166,6 +166,7 @@ MP_STARCAT at 2011:017:10:23:21.565 (VCDU count = 14208241)
 [11]  2   841622552   ACQ  6x6   0.529  10.413  12.609  -1508   1825  20   1  120    a3   C
 
 >> WARNING: [ 7] Magnitude. Guide star 10.322
+>> WARNING: [ 7] Magnitude.  10.322
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.68, Pos_Err = 0.14
 >> WARNING: [11] Magnitude.  10.413
 
@@ -971,8 +972,10 @@ MP_STARCAT at 2011:020:16:16:53.865 (VCDU count = 15302533)
 >> WARNING: [ 1] Nearby ACA bad pixel. Y,Z,Radial seps:   6,  20,  21
 >> WARNING: [ 2] Magnitude. Guide star 10.370
 >> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  13,   8,  15
+>> WARNING: [ 8] Magnitude. Guide star 10.666
 >> WARNING: [ 8] Magnitude.  10.666
 >> WARNING: [ 9] Magnitude.  10.633
+>> WARNING: [ 2] Magnitude.  10.370
 >> INFO   : Special Case ER
 >> INFO   : Only 0 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
@@ -1159,6 +1162,7 @@ MP_STARCAT at 2011:021:01:26:33.982 (VCDU count = 15431236)
 >> WARNING: [ 8] Magnitude. Guide star 10.536
 >> WARNING: [10] Magnitude.  10.750
 >> WARNING: [11] Magnitude.  10.857
+>> WARNING: [ 8] Magnitude.  10.536
 >> WARNING: [ 9] Magnitude.  10.460
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.173	-3.491	-2.133	
@@ -1449,6 +1453,7 @@ MP_STARCAT at 2011:023:07:55:41.574 (VCDU count = 16196690)
 >> WARNING: [ 6] Search spoiler.  389940952: Y,Z,Radial,Mag seps:  66 148 163 -0.0
 >> WARNING: [ 7] Magnitude. Guide star 10.325
 >> WARNING: [ 6] Search spoiler.  389940953: Y,Z,Radial,Mag seps:  66 148 163 -0.3
+>> WARNING: [ 7] Magnitude.  10.325
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.53, Pos_Err = 0.15
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.322	-4.490	-2.927	
@@ -1511,6 +1516,7 @@ MP_STARCAT at 2011:023:12:07:23.790 (VCDU count = 16255625)
 [10]  7   389944080   ACQ  8x8   0.626  10.231  12.000  -2009     87  20   1  120    a3   C
 
 >> WARNING: [ 7] Magnitude. Guide star 10.325
+>> WARNING: [ 7] Magnitude.  10.325
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.53, Pos_Err = 0.15
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.682	-4.827	-3.230	
@@ -1638,6 +1644,7 @@ MP_STARCAT at 2011:023:17:36:21.371 (VCDU count = 16332650)
 
 >> WARNING: [ 8] Magnitude. Guide star 10.347
 >> WARNING: [ 7] Search spoiler.  335028816: Y,Z,Radial,Mag seps:  82  10  82 -1.0
+>> WARNING: [ 8] Magnitude.  10.347
 >> WARNING: [10] Magnitude.  10.399
 >> WARNING: [11] Magnitude.  10.488
 

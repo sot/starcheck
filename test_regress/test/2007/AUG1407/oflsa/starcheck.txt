@@ -82,7 +82,7 @@ OBSID =  7467 at 2007:226:20:18:20.260   8 clean ACQ | 5 clean GUI |
 OBSID =  7722 at 2007:226:20:44:00.311   5 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
          ------  2007:227:23:49:42.008   OBC Load Segment Begins     CL227:2307 
 OBSID =  8292 at 2007:228:00:52:48.008   8 clean ACQ | 5 clean GUI | 
-OBSID = 58263 at 2007:228:02:32:45.963   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 58263 at 2007:228:02:32:45.963   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 58262 at 2007:228:04:55:46.492   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 58261 at 2007:228:12:55:16.961   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID =  7828 at 2007:228:19:25:05.963   8 clean ACQ | 5 clean GUI | 
@@ -90,7 +90,7 @@ OBSID =  8600 at 2007:229:03:43:48.538   5 clean ACQ | 5 clean GUI | WARNINGS [ 
          ------  2007:229:14:23:42.749   OBC Load Segment Begins     CL229:1407 
 OBSID = 58260 at 2007:229:14:26:48.749   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID =  7924 at 2007:229:14:58:33.816   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID = 58259 at 2007:230:17:55:11.292   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 58259 at 2007:230:17:55:11.292   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 58258 at 2007:230:20:17:02.814   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
          ------  2007:231:04:50:22.518   OBC Load Segment Begins     CL231:0407 
 OBSID = 58257 at 2007:231:04:53:28.518   6 clean ACQ | 8 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
@@ -619,6 +619,7 @@ MP_STARCAT at 2007:228:02:32:45.963 (VCDU count = 16541797)
 >> WARNING: [ 8] Magnitude. Guide star 10.315
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 >> WARNING: [ 5] Search spoiler.  839388784: Y,Z,Radial,Mag seps: 128  92 158 -0.9
+>> WARNING: [ 8] Magnitude.  10.315
 >> WARNING: [10] Magnitude.  10.439
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.994	-6.047	-4.328	
@@ -843,6 +844,7 @@ MP_STARCAT at 2007:230:17:55:11.292 (VCDU count = 654904)
 >> WARNING: [ 8] Magnitude. Guide star 10.315
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 >> WARNING: [ 6] Search spoiler.  839388784: Y,Z,Radial,Mag seps: 132  87 158 -0.9
+>> WARNING: [ 8] Magnitude.  10.315
 >> WARNING: [ 9] Magnitude.  10.439
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.992	-6.046	-4.327	

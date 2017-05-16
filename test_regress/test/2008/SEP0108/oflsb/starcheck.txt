@@ -75,7 +75,7 @@ OBSID = 57623 at 2008:249:04:45:02.508   8 clean ACQ | 7 clean GUI |
 OBSID = 57622 at 2008:249:06:56:25.473   7 clean ACQ | 7 clean GUI | WARNINGS [ 1]
 OBSID = 57621 at 2008:249:10:40:27.764   8 clean ACQ | 7 clean GUI | 
 OBSID = 57620 at 2008:249:12:55:40.113   8 clean ACQ | 7 clean GUI | 
-OBSID = 57619 at 2008:249:14:54:39.206   8 clean ACQ | 6 clean GUI | WARNINGS [ 1] 
+OBSID = 57619 at 2008:249:14:54:39.206   8 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  9488 at 2008:249:21:07:22.508   6 clean ACQ | 5 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
          ------  2008:250:14:20:26.265   OBC Load Segment Begins     CL250:1408 
 OBSID =  9016 at 2008:250:14:23:32.265   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
@@ -1309,6 +1309,7 @@ MP_STARCAT at 2008:249:14:54:39.206 (VCDU count = 8168934)
 [10]  7   912262824   ACQ  8x8   0.938  10.273  11.781  -2142    -36  20   1  120    a3    
 
 >> WARNING: [ 7] Magnitude. Guide star 10.316
+>> WARNING: [ 7] Magnitude.  10.316
 >> INFO   : Obsid contains flickering pixel MON
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.146	-6.195	-4.469	

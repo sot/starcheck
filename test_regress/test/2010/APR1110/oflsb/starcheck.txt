@@ -85,10 +85,10 @@ OBSID = 56339 at 2010:101:23:03:45.255   6 clean ACQ | 7 clean GUI | WARNINGS [ 
 OBSID = 11978 at 2010:101:23:53:44.239   6 clean ACQ | 4 clean GUI | WARNINGS [ 2]
 OBSID = 11955 at 2010:102:09:18:20.627   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID = 12047 at 2010:102:12:56:40.492   5 clean ACQ | 5 clean GUI | WARNINGS [ 3]
-OBSID = 56338 at 2010:102:16:37:11.937   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] 
+OBSID = 56338 at 2010:102:16:37:11.937   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 56337 at 2010:102:16:47:42.147   8 clean ACQ | 8 clean GUI | 
 OBSID = 56336 at 2010:102:18:32:01.206   8 clean ACQ | 8 clean GUI | 
-OBSID = 56335 at 2010:103:01:51:29.475   5 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 56335 at 2010:103:01:51:29.475   5 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 11720 at 2010:103:05:18:07.016   8 clean ACQ | 5 clean GUI | 
          ------  2010:103:12:35:01.285   OBC Load Segment Begins     CL103:1218 
 OBSID = 12082 at 2010:103:12:47:25.147   8 clean ACQ | 5 clean GUI | 
@@ -100,7 +100,7 @@ OBSID = 11848 at 2010:104:09:36:42.475   8 clean ACQ | 5 clean GUI |
 OBSID = 11097 at 2010:104:23:15:46.679   8 clean ACQ | 5 clean GUI | 
          ------  2010:105:04:20:01.285   OBC Load Segment Begins     CL105:0418 
 OBSID = 56334 at 2010:105:08:04:34.648   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
-OBSID = 56333 at 2010:105:08:14:41.082   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 56333 at 2010:105:08:14:41.082   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 56332 at 2010:105:09:51:05.028   8 clean ACQ | 8 clean GUI | 
 OBSID = 56331 at 2010:105:16:59:40.042   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 11514 at 2010:105:20:18:21.304   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
@@ -117,7 +117,7 @@ OBSID = 11542 at 2010:107:11:14:40.332   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 11386 at 2010:107:19:24:30.686   6 clean ACQ | 5 clean GUI | WARNINGS [ 3]
 OBSID = 11515 at 2010:107:21:30:01.227   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID = 56330 at 2010:107:23:30:47.046   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
-OBSID = 56329 at 2010:107:23:40:53.480   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 56329 at 2010:107:23:40:53.480   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 56328 at 2010:108:00:09:52.451   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 56327 at 2010:108:00:34:03.486   0 clean ACQ | 0 clean GUI | 
 OBSID = 56326 at 2010:108:00:53:09.486   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
@@ -129,9 +129,9 @@ OBSID = 56321 at 2010:108:02:43:03.486   0 clean ACQ | 0 clean GUI |
 OBSID = 56320 at 2010:108:03:02:09.486   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 56319 at 2010:108:03:26:03.486   0 clean ACQ | 0 clean GUI | 
 OBSID = 56318 at 2010:108:03:45:09.486   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
-OBSID = 56317 at 2010:108:04:09:09.486   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 56317 at 2010:108:04:09:09.486   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
          ------  2010:108:09:35:29.887   OBC Load Segment Begins     CL108:0918 
-OBSID = 56316 at 2010:108:09:38:35.887   6 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 1]
+OBSID = 56316 at 2010:108:09:38:35.887   6 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
 OBSID = 12138 at 2010:108:12:21:35.040   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 ==================================================================================== 
 OBSID: 11512  M87                    ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
@@ -323,6 +323,8 @@ MP_STARCAT at 2010:102:16:37:11.937 (VCDU count = 3774054)
 
 >> WARNING: [ 6] Magnitude. Guide star 10.417
 >> WARNING: [ 7] Magnitude. Guide star 10.412
+>> WARNING: [ 6] Magnitude.  10.417
+>> WARNING: [ 7] Magnitude.  10.412
 >> INFO   : Special Case ER
 >> INFO   : Only 1 star(s) brighter than 9 mag. Acceptable for Special Case ER
 
@@ -412,6 +414,8 @@ MP_STARCAT at 2010:103:01:51:29.475 (VCDU count = 3903840)
 >> WARNING: [ 2] Magnitude. Guide star 10.326
 >> WARNING: [ 5] Magnitude. Guide star 10.311
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 2] Magnitude.  10.326
+>> WARNING: [ 5] Magnitude.  10.311
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.44, Pos_Err = 0.11
 >> WARNING: [10] Magnitude.  10.504
 
@@ -726,6 +730,7 @@ MP_STARCAT at 2010:105:08:14:41.082 (VCDU count = 4667904)
 [10]  7   953288560   ACQ  8x8   0.959   9.996  11.500   -392    335  20   1  120    a2    
 
 >> WARNING: [ 7] Magnitude. Guide star 10.346
+>> WARNING: [ 7] Magnitude.  10.346
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.682	-6.676	-4.883	
 Acquisition Stars Expected  : 7.82
@@ -1235,6 +1240,8 @@ MP_STARCAT at 2010:107:23:40:53.480 (VCDU count = 5559114)
 >> WARNING: [ 1] Magnitude. Guide star 10.316
 >> WARNING: [ 8] Magnitude. Guide star 10.483
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.316
+>> WARNING: [ 8] Magnitude.  10.483
 >> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.63, Pos_Err = 0.12
 >> WARNING: [ 9] Magnitude.  10.444
 
@@ -1501,6 +1508,8 @@ MP_STARCAT at 2010:108:04:09:09.486 (VCDU count = 5621927)
 >> WARNING: [ 1] Magnitude. Guide star 10.316
 >> WARNING: [ 8] Magnitude. Guide star 10.483
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.316
+>> WARNING: [ 8] Magnitude.  10.483
 >> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.63, Pos_Err = 0.12
 >> WARNING: [ 9] Magnitude.  10.444
 
@@ -1535,6 +1544,7 @@ MP_STARCAT at 2010:108:09:38:35.887 (VCDU count = 5699064)
 >> WARNING: [ 8] Magnitude. Guide star 10.345
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 2] Search spoiler.  876874760: Y,Z,Radial,Mag seps:  86 108 138 -1.0
+>> WARNING: [ 8] Magnitude.  10.345
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.821	-5.897	-4.201	
 Acquisition Stars Expected  : 7.68

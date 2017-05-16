@@ -53,7 +53,7 @@ OBSID = 53513 at 2013:212:17:13:38.549   8 clean ACQ | 7 clean GUI | WARNINGS [ 
 OBSID = 53512 at 2013:212:20:26:40.069   8 clean ACQ | 8 clean GUI | 
          ------  2013:212:22:16:08.008   OBC Load Segment Begins     CL212:2217 
 OBSID = 53511 at 2013:212:22:19:14.008   8 clean ACQ | 8 clean GUI | 
-OBSID = 53510 at 2013:212:23:20:14.029   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] 
+OBSID = 53510 at 2013:212:23:20:14.029   5 clean ACQ | 5 clean GUI | WARNINGS [ 5] WARNINGS [ 1]
 OBSID = 14663 at 2013:213:01:19:25.355   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID = 15180 at 2013:213:14:15:50.255   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2013:214:12:20:00.000   OBC Load Segment Begins     CL214:1217 
@@ -63,7 +63,7 @@ OBSID = 53507 at 2013:215:07:30:26.958   8 clean ACQ | 8 clean GUI |
 OBSID = 53506 at 2013:215:08:34:22.768   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 53505 at 2013:215:11:53:11.299   6 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 53504 at 2013:215:13:48:45.359   8 clean ACQ | 8 clean GUI | 
-OBSID = 53503 at 2013:215:15:02:40.749   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 1]
+OBSID = 53503 at 2013:215:15:02:40.749   6 clean ACQ | 6 clean GUI | WARNINGS [ 4] WARNINGS [ 2]
 OBSID = 14572 at 2013:215:16:44:11.055   6 clean ACQ | 5 clean GUI | WARNINGS [ 3]
          ------  2013:215:18:26:59.272   OBC Load Segment Begins     CL215:1817 
 OBSID = 14653 at 2013:216:07:17:58.272   8 clean ACQ | 5 clean GUI | 
@@ -594,8 +594,10 @@ MP_STARCAT at 2013:212:23:20:14.029 (VCDU count = 9933754)
 
 >> WARNING: [ 2] Nearby ACA bad pixel. Y,Z,Radial seps:   1,  29,  29
 >> WARNING: [ 3] Magnitude. Guide star 10.341
+>> WARNING: [ 8] Magnitude. Guide star 10.688
 >> WARNING: [ 8] Magnitude.  10.688
 >> WARNING: [ 9] Magnitude.  10.639
+>> WARNING: [ 3] Magnitude.  10.341
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.573	-4.722	-3.118	
 Acquisition Stars Expected  : 7.14
@@ -863,9 +865,11 @@ MP_STARCAT at 2013:215:15:02:40.749 (VCDU count = 10828766)
 [ 7]  6   611326072   BOT  8x8   0.985   7.020   8.516  -1612   1168  20   1  120          
 [ 8]  7   611328304   BOT  8x8   0.224  10.596  12.406  -2133  -1578  20   1  120  a4g5  cp
 
+>> WARNING: [ 3] Magnitude. Guide star 10.777
 >> WARNING: [ 3] Magnitude.  10.777
 >> WARNING: [ 8] Marginal star. B-V = 0.700, Mag_Err = 0.54, Pos_Err = 0.40
 >> WARNING: [ 8] Magnitude. Guide star 10.596
+>> WARNING: [ 8] Magnitude.  10.596
 >> WARNING: [ 8] Search spoiler.  611327848: Y,Z,Radial,Mag seps: 138  77 158 -0.8
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.320	-2.764	-1.575	

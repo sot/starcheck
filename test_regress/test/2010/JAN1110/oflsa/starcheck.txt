@@ -84,9 +84,9 @@ OBSID = 11480 at 2010:011:03:01:51.385   8 clean ACQ | 5 clean GUI |
 OBSID = 11378 at 2010:011:04:21:53.752   6 clean ACQ | 4 clean GUI | WARNINGS [ 2]
 OBSID = 11852 at 2010:011:06:14:01.923   8 clean ACQ | 5 clean GUI | 
 OBSID = 11854 at 2010:011:07:57:59.022   8 clean ACQ | 5 clean GUI | 
-OBSID = 11702 at 2010:011:10:19:15.692   4 clean ACQ | 3 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 11702 at 2010:011:10:19:15.692   4 clean ACQ | 3 clean GUI | WARNINGS [ 2] WARNINGS [ 4]
 OBSID = 11447 at 2010:011:12:36:06.692   6 clean ACQ | 4 clean GUI | WARNINGS [ 2]
-OBSID = 10992 at 2010:011:13:43:35.085   7 clean ACQ | 3 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
+OBSID = 10992 at 2010:011:13:43:35.085   7 clean ACQ | 3 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 11557 at 2010:012:06:16:24.004   8 clean ACQ | 5 clean GUI | 
 OBSID = 12009 at 2010:012:08:11:34.343   6 clean ACQ | 5 clean GUI | WARNINGS [ 3]
          ------  2010:012:15:26:49.626   OBC Load Segment Begins     CL012:1503 
@@ -285,6 +285,8 @@ MP_STARCAT at 2010:011:10:19:15.692 (VCDU count = 6557458)
 
 >> WARNING: [ 5] Magnitude. Guide star 10.387
 >> WARNING: [ 7] Magnitude. Guide star 10.330
+>> WARNING: [ 5] Magnitude.  10.387
+>> WARNING: [ 7] Magnitude.  10.330
 >> WARNING: [10] Magnitude.  10.301
 >> WARNING: [11] Magnitude.  10.447
 
@@ -356,6 +358,8 @@ MP_STARCAT at 2010:011:13:43:35.085 (VCDU count = 6605300)
 
 >> WARNING: [ 7] Magnitude. Guide star 10.363
 >> WARNING: [ 8] Magnitude. Guide star 10.558
+>> WARNING: [ 7] Magnitude.  10.363
+>> WARNING: [ 8] Magnitude.  10.558
 >> WARNING: [13] Marginal star. B-V = 1.500, Mag_Err = 0.67, Pos_Err = 0.15
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.288	-4.522	-3.029	

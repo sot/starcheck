@@ -83,9 +83,9 @@ Transponder B	before 2010:288:02:41:30.000
 OBSID = 12470 at 2010:284:02:53:40.456   6 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID = 11087 at 2010:284:10:35:21.961   8 clean ACQ | 5 clean GUI | 
 OBSID = 55980 at 2010:285:02:59:30.276   8 clean ACQ | 8 clean GUI | 
-OBSID = 55979 at 2010:285:03:11:03.570   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 2]
-OBSID = 55978 at 2010:285:03:49:31.385   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 2]
-OBSID = 55977 at 2010:285:09:16:38.511   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 55979 at 2010:285:03:11:03.570   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 5]
+OBSID = 55978 at 2010:285:03:49:31.385   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 5]
+OBSID = 55977 at 2010:285:09:16:38.511   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
          ------  2010:285:12:51:55.380   OBC Load Segment Begins     CL285:1204 
 OBSID = 55976 at 2010:285:12:55:01.380   8 clean ACQ | 8 clean GUI | 
 OBSID = 12560 at 2010:285:14:18:36.935   8 clean ACQ | 5 clean GUI | 
@@ -114,10 +114,10 @@ OBSID = 12252 at 2010:288:06:27:57.790   8 clean ACQ | 5 clean GUI |
          ------  2010:288:11:00:00.000   OBC Load Segment Begins     CL288:1104 
 OBSID = 12329 at 2010:288:12:34:32.086   8 clean ACQ | 5 clean GUI | 
          ------  2010:289:18:55:00.000   OBC Load Segment Begins     CL289:1804 
-OBSID = 12997 at 2010:290:06:13:30.297   2 clean ACQ | 2 clean GUI | WARNINGS [ 4] WARNINGS [ 7]
+OBSID = 12997 at 2010:290:06:13:30.297   2 clean ACQ | 2 clean GUI | WARNINGS [ 4] WARNINGS [ 9]
 OBSID = 12998 at 2010:290:08:12:35.610   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 55959 at 2010:290:10:14:40.345   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
-OBSID = 55958 at 2010:290:10:26:13.639   5 clean ACQ | 5 clean GUI | WARNINGS [ 5]
+OBSID = 55958 at 2010:290:10:26:13.639   5 clean ACQ | 5 clean GUI | WARNINGS [ 5] WARNINGS [ 2]
 ==================================================================================== 
 OBSID: 12470  4U 1608-522            ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   243.180309   -52.400572   237.480062
@@ -244,6 +244,9 @@ MP_STARCAT at 2010:285:03:11:03.570 (VCDU count = 14955892)
 >> WARNING: [ 6] Magnitude. Guide star 10.337
 >> WARNING: [ 8] Magnitude. Guide star 10.531
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 5] Magnitude.  10.353
+>> WARNING: [ 6] Magnitude.  10.337
+>> WARNING: [ 8] Magnitude.  10.531
 >> WARNING: [10] Magnitude.  10.401
 >> WARNING: [10] Search spoiler.  612761840: Y,Z,Radial,Mag seps: 132 112 173 -0.2
 
@@ -279,6 +282,9 @@ MP_STARCAT at 2010:285:03:49:31.385 (VCDU count = 14964898)
 >> WARNING: [ 6] Magnitude. Guide star 10.337
 >> WARNING: [ 8] Magnitude. Guide star 10.531
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 5] Magnitude.  10.353
+>> WARNING: [ 6] Magnitude.  10.337
+>> WARNING: [ 8] Magnitude.  10.531
 >> WARNING: [10] Magnitude.  10.401
 >> WARNING: [10] Search spoiler.  612761840: Y,Z,Radial,Mag seps: 132 112 173 -0.2
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2010:285:09:00:02.000
@@ -311,6 +317,7 @@ MP_STARCAT at 2010:285:09:16:38.511 (VCDU count = 15041492)
 [ 9]  7   765467688   ACQ  8x8   0.870  10.307  11.812  -1974  -1006  20   1  120    a3    
 
 >> WARNING: [ 8] Magnitude. Guide star 10.338
+>> WARNING: [ 8] Magnitude.  10.338
 >> WARNING: [ 9] Magnitude.  10.307
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.650	-5.750	-4.083	
@@ -996,8 +1003,10 @@ MP_STARCAT at 2010:290:06:13:30.297 (VCDU count = 16684465)
 >> WARNING: [ 5] Magnitude. Guide star 10.458
 >> WARNING: [ 8] Search spoiler.  768363752: Y,Z,Radial,Mag seps:  19 147 148  0.3
 >> WARNING: [11] Magnitude.  10.728
+>> WARNING: [ 4] Magnitude.  10.534
 >> WARNING: [ 4] Search spoiler.  768213016: Y,Z,Radial,Mag seps: 122 154 197 -0.5
 >> WARNING: [ 4] Search spoiler.  767953856: Y,Z,Radial,Mag seps: 123  83 149 -0.4
+>> WARNING: [ 5] Magnitude.  10.458
 >> WARNING: [ 9] Marginal star. B-V = 0.700, Mag_Err = 0.50, Pos_Err = 2.50
 >> WARNING: [ 9] Magnitude.  10.406
 >> WARNING: [10] Marginal star. B-V = 0.700, Mag_Err = 0.50, Pos_Err = 2.50
@@ -1100,6 +1109,8 @@ MP_STARCAT at 2010:290:10:26:13.639 (VCDU count = 16743639)
 >> WARNING: [ 8] Magnitude. Guide star 10.439
 >> WARNING: [ 9] Magnitude.  10.657
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 1] Magnitude.  10.566
+>> WARNING: [ 8] Magnitude.  10.439
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.676	-4.855	-3.283	
 Acquisition Stars Expected  : 7.36

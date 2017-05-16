@@ -81,17 +81,17 @@ Transponder A	before 2008:273:10:51:30.000
 
          ------  2008:273:03:00:00.000   OBC Load Segment Begins     CL273:0302 
 OBSID = 57588 at 2008:273:04:03:36.425   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] 
-OBSID = 57587 at 2008:273:10:19:28.921   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 57587 at 2008:273:10:19:28.921   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 57586 at 2008:273:10:45:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57585 at 2008:273:11:04:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 57585 at 2008:273:11:04:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 57584 at 2008:273:11:28:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57583 at 2008:273:11:47:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 57583 at 2008:273:11:47:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 57582 at 2008:273:12:11:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57581 at 2008:273:12:30:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 57581 at 2008:273:12:30:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 57580 at 2008:273:12:54:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57579 at 2008:273:13:13:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 57579 at 2008:273:13:13:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 57578 at 2008:273:13:37:30.000   0 clean ACQ | 0 clean GUI | 
-OBSID = 57577 at 2008:273:13:56:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 57577 at 2008:273:13:56:36.000   6 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 57576 at 2008:273:14:58:23.494   6 clean ACQ | 5 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 10499 at 2008:273:15:29:02.818   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  9525 at 2008:274:08:27:16.716   8 clean ACQ | 5 clean GUI | 
@@ -168,6 +168,7 @@ MP_STARCAT at 2008:273:10:19:28.921 (VCDU count = 16196601)
 
 >> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -215,6 +216,7 @@ MP_STARCAT at 2008:273:11:04:36.000 (VCDU count = 16207165)
 
 >> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -262,6 +264,7 @@ MP_STARCAT at 2008:273:11:47:36.000 (VCDU count = 16217233)
 
 >> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -309,6 +312,7 @@ MP_STARCAT at 2008:273:12:30:36.000 (VCDU count = 16227302)
 
 >> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -356,6 +360,7 @@ MP_STARCAT at 2008:273:13:13:36.000 (VCDU count = 16237370)
 
 >> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON
@@ -403,6 +408,7 @@ MP_STARCAT at 2008:273:13:56:36.000 (VCDU count = 16247438)
 
 >> WARNING: [ 7] Magnitude. Guide star 10.388
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 7] Magnitude.  10.388
 >> WARNING: [ 9] Magnitude.  10.364
 >> WARNING: [10] Magnitude.  10.402
 >> INFO   : Obsid contains flickering pixel MON

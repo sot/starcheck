@@ -80,9 +80,9 @@ Transponder B	before 2007:220:04:47:20.898
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2007:217:17:41:24.095   OBC Load Segment Begins     CL217:1704 
-OBSID = 58290 at 2007:217:17:44:30.095   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
-OBSID = 58289 at 2007:217:21:26:28.686   7 clean ACQ | 5 clean GUI | WARNINGS [ 3] 
-OBSID = 58288 at 2007:217:23:23:36.485   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 58290 at 2007:217:17:44:30.095   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 58289 at 2007:217:21:26:28.686   7 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
+OBSID = 58288 at 2007:217:23:23:36.485   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  8568 at 2007:218:06:36:47.921   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  7490 at 2007:218:17:16:31.838   8 clean ACQ | 5 clean GUI | 
 OBSID =  7742 at 2007:218:19:17:26.000   8 clean ACQ | 5 clean GUI | 
@@ -99,9 +99,9 @@ OBSID = 58279 at 2007:220:07:09:26.898   7 clean ACQ | 7 clean GUI | WARNINGS [ 
 OBSID = 58278 at 2007:220:07:33:20.898   0 clean ACQ | 0 clean GUI | 
 OBSID = 58277 at 2007:220:07:52:26.898   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 58276 at 2007:220:08:16:26.898   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID = 58275 at 2007:220:08:55:52.587   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 58275 at 2007:220:08:55:52.587   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 58274 at 2007:220:09:20:25.210   6 clean ACQ | 7 clean GUI | WARNINGS [ 2]
-OBSID = 58273 at 2007:220:11:50:14.005   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
+OBSID = 58273 at 2007:220:11:50:14.005   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
          ------  2007:220:18:26:41.091   OBC Load Segment Begins     CL220:1804 
 OBSID =  8589 at 2007:220:21:13:27.091   8 clean ACQ | 5 clean GUI | 
 OBSID =  8590 at 2007:221:12:29:18.937   8 clean ACQ | 5 clean GUI | 
@@ -143,6 +143,7 @@ MP_STARCAT at 2007:217:17:44:30.095 (VCDU count = 13046398)
 [ 9]  7   914100536   ACQ  8x8   0.962  10.164  11.672  -1336    575   8   1   60    a2    
 
 >> WARNING: [ 8] Magnitude. Guide star 10.336
+>> WARNING: [ 8] Magnitude.  10.336
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.501	-6.525	-4.763	
 Acquisition Stars Expected  : 7.81
@@ -175,6 +176,9 @@ MP_STARCAT at 2007:217:21:26:28.686 (VCDU count = 13098373)
 >> WARNING: [ 1] Magnitude. Guide star 10.450
 >> WARNING: [ 7] Magnitude. Guide star 10.576
 >> WARNING: [ 8] Magnitude. Guide star 10.484
+>> WARNING: [ 1] Magnitude.  10.450
+>> WARNING: [ 7] Magnitude.  10.576
+>> WARNING: [ 8] Magnitude.  10.484
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.697	-6.667	-4.853	
 Acquisition Stars Expected  : 7.80
@@ -204,6 +208,7 @@ MP_STARCAT at 2007:217:23:23:36.485 (VCDU count = 13125799)
 [ 9]  7   914100536   ACQ  8x8   0.962  10.164  11.672  -1339    567  20   1  120    a3    
 
 >> WARNING: [ 8] Magnitude. Guide star 10.336
+>> WARNING: [ 8] Magnitude.  10.336
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.501	-6.525	-4.763	
 Acquisition Stars Expected  : 7.81
@@ -612,6 +617,7 @@ MP_STARCAT at 2007:220:08:55:52.587 (VCDU count = 13934135)
 [ 8]  7   843333064   BOT  8x8   0.985   8.630  10.141  -1685    407  20   1  120          
 
 >> WARNING: [ 2] Magnitude. Guide star 10.450
+>> WARNING: [ 2] Magnitude.  10.450
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.696	-6.667	-4.852	
 Acquisition Stars Expected  : 7.80
@@ -678,6 +684,7 @@ MP_STARCAT at 2007:220:11:50:14.005 (VCDU count = 13974960)
 
 >> WARNING: [ 7] Magnitude. Guide star 10.312
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 7] Magnitude.  10.312
 >> WARNING: [10] Search spoiler.  914231336: Y,Z,Radial,Mag seps:   8  48  49 -1.0
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.351	-6.373	-4.613	

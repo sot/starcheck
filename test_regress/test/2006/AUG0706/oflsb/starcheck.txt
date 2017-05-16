@@ -105,10 +105,10 @@ OBSID = 58832 at 2006:222:21:40:11.595   8 clean ACQ | 8 clean GUI |
 OBSID = 58831 at 2006:223:08:40:26.058   8 clean ACQ | 8 clean GUI | 
 OBSID =  6648 at 2006:223:14:55:21.595   8 clean ACQ | 5 clean GUI | 
 OBSID =  6878 at 2006:224:13:51:55.641   8 clean ACQ | 5 clean GUI | 
-OBSID =  6883 at 2006:224:15:16:27.294   4 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
+OBSID =  6883 at 2006:224:15:16:27.294   4 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 4]
          ------  2006:224:15:59:32.294   OBC Load Segment Begins     CL224:1503 
 OBSID =  6901 at 2006:224:16:02:38.294   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID =  6699 at 2006:224:20:45:28.894   4 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 6]
+OBSID =  6699 at 2006:224:20:45:28.894   4 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 7]
 OBSID =  6633 at 2006:224:21:36:30.494   8 clean ACQ | 5 clean GUI | 
 OBSID =  7374 at 2006:225:05:06:44.443   6 clean ACQ | 3 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 58830 at 2006:225:12:52:49.995   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 3]
@@ -722,6 +722,7 @@ MP_STARCAT at 2006:224:15:16:27.294 (VCDU count = 9745130)
 [11]  2   401217608   ACQ  6x6   0.797  10.579  12.078  -1307  -1136  20   1  120    a3    
 
 >> WARNING: [ 7] Magnitude. Guide star 10.488
+>> WARNING: [ 7] Magnitude.  10.488
 >> WARNING: [ 9] Magnitude.  10.473
 >> WARNING: [10] Magnitude.  10.565
 >> WARNING: [11] Magnitude.  10.579
@@ -793,6 +794,7 @@ MP_STARCAT at 2006:224:20:45:28.894 (VCDU count = 9822170)
 [13]  2   400298456   ACQ  6x6   0.796  10.581  12.078    495   -614  20   1  120    a3    
 
 >> WARNING: [ 8] Magnitude. Guide star 10.381
+>> WARNING: [ 8] Magnitude.  10.381
 >> WARNING: [10] Magnitude.  10.582
 >> WARNING: [11] Magnitude.  10.350
 >> WARNING: [11] Search spoiler.  400309264: Y,Z,Radial,Mag seps: 100 116 154 -0.8

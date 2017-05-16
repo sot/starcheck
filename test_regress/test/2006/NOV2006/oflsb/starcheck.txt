@@ -93,7 +93,7 @@ OBSID = 58690 at 2006:326:12:30:09.420   8 clean ACQ | 8 clean GUI |
 OBSID =  7156 at 2006:326:18:34:55.830   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
 OBSID =  6676 at 2006:327:05:57:00.273   6 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  8481 at 2006:327:15:28:34.301   7 clean ACQ | 4 clean GUI | WARNINGS [ 1]
-OBSID =  8172 at 2006:327:20:33:28.329   3 clean ACQ | 3 clean GUI | WARNINGS [ 5] 
+OBSID =  8172 at 2006:327:20:33:28.329   3 clean ACQ | 3 clean GUI | WARNINGS [ 5] WARNINGS [ 1]
          ------  2006:328:05:52:42.797   OBC Load Segment Begins     CL328:0507 
 OBSID =  7477 at 2006:328:05:55:48.797   6 clean ACQ | 4 clean GUI | WARNINGS [ 3]
 OBSID = 58689 at 2006:328:09:34:11.402   8 clean ACQ | 8 clean GUI | 
@@ -101,17 +101,17 @@ OBSID =  8478 at 2006:328:10:05:44.517   8 clean ACQ | 5 clean GUI |
 OBSID = 58688 at 2006:328:15:53:13.886   8 clean ACQ | 8 clean GUI | 
 OBSID = 58687 at 2006:328:18:07:52.988   8 clean ACQ | 8 clean GUI | 
 OBSID = 58686 at 2006:329:02:52:47.156   8 clean ACQ | 8 clean GUI | 
-OBSID = 58685 at 2006:329:03:50:06.000   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 58685 at 2006:329:03:50:06.000   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 58684 at 2006:329:04:15:58.009   0 clean ACQ | 0 clean GUI | 
-OBSID = 58683 at 2006:329:04:35:04.009   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 58683 at 2006:329:04:35:04.009   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 58682 at 2006:329:04:58:58.009   0 clean ACQ | 0 clean GUI | 
-OBSID = 58681 at 2006:329:05:18:04.009   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 58681 at 2006:329:05:18:04.009   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 58680 at 2006:329:05:41:58.009   0 clean ACQ | 0 clean GUI | 
-OBSID = 58679 at 2006:329:06:01:04.009   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 58679 at 2006:329:06:01:04.009   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 58678 at 2006:329:06:24:58.009   0 clean ACQ | 0 clean GUI | 
-OBSID = 58677 at 2006:329:06:44:04.009   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 58677 at 2006:329:06:44:04.009   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 58676 at 2006:329:07:07:58.009   0 clean ACQ | 0 clean GUI | 
-OBSID = 58675 at 2006:329:07:27:04.009   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 58675 at 2006:329:07:27:04.009   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 58674 at 2006:329:07:51:04.009   8 clean ACQ | 8 clean GUI | 
 OBSID = 58673 at 2006:329:08:21:31.312   8 clean ACQ | 8 clean GUI | 
 OBSID =  7999 at 2006:329:09:11:57.770   8 clean ACQ | 5 clean GUI | 
@@ -486,6 +486,7 @@ MP_STARCAT at 2006:327:20:33:28.329 (VCDU count = 10993510)
 >> WARNING: [ 9] Magnitude.  10.780
 >> WARNING: [10] Magnitude.  10.710
 >> WARNING: [11] Magnitude.  10.679
+>> WARNING: [ 8] Magnitude.  10.557
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.174	-2.816	-1.751	
 Acquisition Stars Expected  : 6.71
@@ -693,6 +694,7 @@ MP_STARCAT at 2006:329:03:50:06.000 (VCDU count = 11432915)
 
 >> WARNING: [ 8] Magnitude. Guide star 10.391
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 8] Magnitude.  10.391
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.947	-4.317	-2.942	
 Acquisition Stars Expected  : 7.37
@@ -737,6 +739,7 @@ MP_STARCAT at 2006:329:04:35:04.009 (VCDU count = 11443444)
 
 >> WARNING: [ 8] Magnitude. Guide star 10.391
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 8] Magnitude.  10.391
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.947	-4.317	-2.942	
 Acquisition Stars Expected  : 7.37
@@ -781,6 +784,7 @@ MP_STARCAT at 2006:329:05:18:04.009 (VCDU count = 11453512)
 
 >> WARNING: [ 8] Magnitude. Guide star 10.391
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 8] Magnitude.  10.391
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.947	-4.317	-2.942	
 Acquisition Stars Expected  : 7.37
@@ -825,6 +829,7 @@ MP_STARCAT at 2006:329:06:01:04.009 (VCDU count = 11463581)
 
 >> WARNING: [ 8] Magnitude. Guide star 10.391
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 8] Magnitude.  10.391
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.947	-4.317	-2.942	
 Acquisition Stars Expected  : 7.37
@@ -869,6 +874,7 @@ MP_STARCAT at 2006:329:06:44:04.009 (VCDU count = 11473649)
 
 >> WARNING: [ 8] Magnitude. Guide star 10.391
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 8] Magnitude.  10.391
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.947	-4.317	-2.942	
 Acquisition Stars Expected  : 7.37
@@ -913,6 +919,7 @@ MP_STARCAT at 2006:329:07:27:04.009 (VCDU count = 11483717)
 
 >> WARNING: [ 8] Magnitude. Guide star 10.391
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 8] Magnitude.  10.391
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.947	-4.317	-2.942	
 Acquisition Stars Expected  : 7.37

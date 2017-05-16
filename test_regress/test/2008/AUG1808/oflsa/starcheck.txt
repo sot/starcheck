@@ -47,7 +47,7 @@ OBSID =  8958 at 2008:233:05:02:55.861   7 clean ACQ | 4 clean GUI | WARNINGS [ 
 OBSID = 57644 at 2008:233:07:52:32.222   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 57643 at 2008:233:10:45:30.972   8 clean ACQ | 7 clean GUI | WARNINGS [ 1]
          ------  2008:233:15:02:15.992   OBC Load Segment Begins     CL233:1500 
-OBSID = 57642 at 2008:233:15:05:21.992   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
+OBSID = 57642 at 2008:233:15:05:21.992   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 57641 at 2008:233:21:30:19.133   8 clean ACQ | 8 clean GUI | 
 OBSID =  8911 at 2008:234:00:40:52.222   7 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  9382 at 2008:234:11:19:02.822   8 clean ACQ | 5 clean GUI | 
@@ -62,7 +62,7 @@ OBSID = 57638 at 2008:236:06:33:11.891   8 clean ACQ | 8 clean GUI |
 OBSID = 57637 at 2008:236:12:05:30.797   8 clean ACQ | 8 clean GUI | 
 OBSID =  9909 at 2008:236:15:15:42.344   7 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID =  9535 at 2008:237:01:53:52.944   8 clean ACQ | 5 clean GUI | 
-OBSID =  9540 at 2008:237:09:45:03.544   3 clean ACQ | 4 clean GUI | WARNINGS [ 2] WARNINGS [ 5]
+OBSID =  9540 at 2008:237:09:45:03.544   3 clean ACQ | 4 clean GUI | WARNINGS [ 2] WARNINGS [ 6]
 ==================================================================================== 
 OBSID: 57647  
 RA, Dec, Roll (deg):   327.000000   -37.500000   359.025298
@@ -431,6 +431,7 @@ MP_STARCAT at 2008:233:15:05:21.992 (VCDU count = 7253452)
 >> WARNING: [ 8] Magnitude. Guide star 10.373
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 3] Search spoiler.  150996008: Y,Z,Radial,Mag seps:  73  98 123 -0.8
+>> WARNING: [ 8] Magnitude.  10.373
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.372	-6.391	-4.628	
 Acquisition Stars Expected  : 7.77
@@ -832,6 +833,7 @@ MP_STARCAT at 2008:237:09:45:03.544 (VCDU count = 8527136)
 
 >> WARNING: [ 7] Magnitude. Guide star 10.391
 >> WARNING: [12] Magnitude.  10.625
+>> WARNING: [ 7] Magnitude.  10.391
 >> WARNING: [ 9] Magnitude.  10.545
 >> WARNING: [10] Magnitude.  10.449
 >> WARNING: [10] Search spoiler.  574494840: Y,Z,Radial,Mag seps: 108 137 174 -0.8

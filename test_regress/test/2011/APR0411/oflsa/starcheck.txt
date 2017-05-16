@@ -42,11 +42,11 @@ OBSID = 12739 at 2011:094:08:49:18.543   8 clean ACQ | 5 clean GUI |
 OBSID = 12963 at 2011:094:11:27:35.543   8 clean ACQ | 5 clean GUI | 
 OBSID = 12704 at 2011:094:14:02:06.543   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 55543 at 2011:094:17:16:49.408   8 clean ACQ | 8 clean GUI | 
-OBSID = 55542 at 2011:094:17:28:40.877   5 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
+OBSID = 55542 at 2011:094:17:28:40.877   5 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 55541 at 2011:094:19:22:39.005   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
 OBSID = 55540 at 2011:094:23:47:47.510   8 clean ACQ | 8 clean GUI | 
 OBSID = 55539 at 2011:095:01:40:43.877   0 clean ACQ | 0 clean GUI | 
-OBSID = 55538 at 2011:095:01:50:52.598   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 55538 at 2011:095:01:50:52.598   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 12952 at 2011:095:04:04:28.070   8 clean ACQ | 5 clean GUI | 
          ------  2011:095:11:15:00.000   OBC Load Segment Begins     CL095:1100 
 OBSID = 12813 at 2011:096:21:08:11.877   5 clean ACQ | 5 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
@@ -54,21 +54,21 @@ OBSID = 12813 at 2011:096:21:08:11.877   5 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 12980 at 2011:096:22:59:31.877   8 clean ACQ | 5 clean GUI | 
 OBSID = 12267 at 2011:097:02:14:24.018   6 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 55537 at 2011:097:08:43:09.572   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
-OBSID = 55536 at 2011:097:08:55:01.015   5 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
+OBSID = 55536 at 2011:097:08:55:01.015   5 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 55535 at 2011:097:10:37:09.928   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 55534 at 2011:097:15:19:00.051   8 clean ACQ | 8 clean GUI | 
-OBSID = 55533 at 2011:097:16:15:23.094   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 55533 at 2011:097:16:15:23.094   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
 OBSID = 55532 at 2011:097:16:51:41.015   0 clean ACQ | 0 clean GUI | 
 OBSID = 12953 at 2011:097:19:14:38.321   8 clean ACQ | 5 clean GUI | 
          ------  2011:098:05:10:01.285   OBC Load Segment Begins     CL098:0500 
 OBSID = 55531 at 2011:100:00:10:20.140   8 clean ACQ | 8 clean GUI | 
          ------  2011:099:21:00:00.000   OBC Load Segment Begins     CL099:2100 
 OBSID = 55530 at 2011:100:00:21:53.434   8 clean ACQ | 6 clean GUI | WARNINGS [ 2] 
-OBSID = 55529 at 2011:100:01:09:54.720   5 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
+OBSID = 55529 at 2011:100:01:09:54.720   5 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 55528 at 2011:100:03:19:59.223   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 55527 at 2011:100:06:55:10.227   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 55526 at 2011:100:08:58:00.434   0 clean ACQ | 0 clean GUI | 
-OBSID = 55525 at 2011:100:08:58:10.873   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
+OBSID = 55525 at 2011:100:08:58:10.873   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 4]
 OBSID = 12891 at 2011:100:11:05:04.784   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 ==================================================================================== 
 OBSID: 12877  Abell 1668             ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
@@ -347,6 +347,7 @@ MP_STARCAT at 2011:094:17:28:40.877 (VCDU count = 6715541)
 >> WARNING: [ 1] Search spoiler.  920652696: Y,Z,Radial,Mag seps:  41 104 112 -0.0
 >> WARNING: [ 3] Magnitude. Guide star 10.376
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 3] Magnitude.  10.376
 >> WARNING: [ 9] Magnitude.  10.400
 >> WARNING: [ 9] Search spoiler.  920651224: Y,Z,Radial,Mag seps: 146  39 152 -1.0
 >> WARNING: [ 9] Search spoiler.  920653720: Y,Z,Radial,Mag seps:  36 162 166 -0.4
@@ -451,6 +452,7 @@ MP_STARCAT at 2011:095:01:50:52.598 (VCDU count = 6833129)
 >> WARNING: [ 8] Magnitude. Guide star 10.509
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.35, Pos_Err = 0.10
+>> WARNING: [ 8] Magnitude.  10.509
 >> WARNING: [ 9] Magnitude.  10.569
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2011:095:02:30:02.000
 
@@ -650,6 +652,7 @@ MP_STARCAT at 2011:097:08:55:01.015 (VCDU count = 7606781)
 >> WARNING: [ 1] Search spoiler.  920652696: Y,Z,Radial,Mag seps:  35 106 112 -0.0
 >> WARNING: [ 3] Magnitude. Guide star 10.376
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 3] Magnitude.  10.376
 >> WARNING: [ 9] Magnitude.  10.400
 >> WARNING: [ 9] Search spoiler.  920651224: Y,Z,Radial,Mag seps: 148  31 152 -1.0
 >> WARNING: [ 9] Search spoiler.  920653720: Y,Z,Radial,Mag seps:  45 160 166 -0.4
@@ -743,6 +746,7 @@ MP_STARCAT at 2011:097:16:15:23.094 (VCDU count = 7709892)
 >> WARNING: [ 8] Magnitude. Guide star 10.509
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.35, Pos_Err = 0.10
+>> WARNING: [ 8] Magnitude.  10.509
 >> WARNING: [ 9] Magnitude.  10.569
 >> INFO   : Next obsid has no manvr; using next obs start date for checks (dither, momentum)
 
@@ -878,6 +882,7 @@ MP_STARCAT at 2011:100:01:09:54.720 (VCDU count = 8509391)
 >> WARNING: [ 1] Search spoiler.  920652696: Y,Z,Radial,Mag seps:  29 108 112 -0.0
 >> WARNING: [ 3] Magnitude. Guide star 10.376
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: [ 3] Magnitude.  10.376
 >> WARNING: [ 9] Magnitude.  10.400
 >> WARNING: [ 9] Search spoiler.  920651224: Y,Z,Radial,Mag seps: 150  23 152 -1.0
 >> WARNING: [ 9] Search spoiler.  920653720: Y,Z,Radial,Mag seps:  54 157 166 -0.4
@@ -982,6 +987,7 @@ MP_STARCAT at 2011:100:08:58:10.873 (VCDU count = 8619034)
 >> WARNING: [ 8] Magnitude. Guide star 10.509
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.35, Pos_Err = 0.10
+>> WARNING: [ 8] Magnitude.  10.509
 >> WARNING: [ 9] Bad Acquisition Star. 1020660952 has  1 failed out of  3 attempts
 >> WARNING: [ 9] Magnitude.  10.569
 

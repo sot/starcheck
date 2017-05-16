@@ -107,20 +107,20 @@ OBSID =  8185 at 2007:069:05:48:40.157   8 clean ACQ | 5 clean GUI |
 OBSID =  8368 at 2007:069:07:41:31.157   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID =  7871 at 2007:069:08:44:22.157   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
 OBSID = 58500 at 2007:069:10:57:47.285   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
-OBSID = 58499 at 2007:069:15:07:56.243   6 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 58499 at 2007:069:15:07:56.243   6 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
          ------  2007:069:22:15:00.000   OBC Load Segment Begins     CL069:2200 
-OBSID = 58498 at 2007:069:22:20:41.463   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 58498 at 2007:069:22:20:41.463   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
 OBSID = 58497 at 2007:069:22:46:11.285   0 clean ACQ | 0 clean GUI | 
-OBSID = 58496 at 2007:069:23:05:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 58496 at 2007:069:23:05:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
 OBSID = 58495 at 2007:069:23:29:11.285   0 clean ACQ | 0 clean GUI | 
-OBSID = 58494 at 2007:069:23:48:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 58494 at 2007:069:23:48:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
 OBSID = 58493 at 2007:070:00:12:11.285   0 clean ACQ | 0 clean GUI | 
-OBSID = 58492 at 2007:070:00:31:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 58492 at 2007:070:00:31:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
 OBSID = 58491 at 2007:070:00:55:11.285   0 clean ACQ | 0 clean GUI | 
-OBSID = 58490 at 2007:070:01:14:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 58490 at 2007:070:01:14:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
 OBSID = 58489 at 2007:070:01:38:11.285   0 clean ACQ | 0 clean GUI | 
-OBSID = 58488 at 2007:070:01:57:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
-OBSID = 58487 at 2007:070:02:21:17.285   6 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 58488 at 2007:070:01:57:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
+OBSID = 58487 at 2007:070:02:21:17.285   6 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
 OBSID = 58486 at 2007:070:02:51:13.923   8 clean ACQ | 8 clean GUI | 
 OBSID =  8523 at 2007:070:03:39:37.043   8 clean ACQ | 5 clean GUI |
 ==================================================================================== 
@@ -892,6 +892,8 @@ MP_STARCAT at 2007:069:15:07:56.243 (VCDU count = 13440122)
 >> WARNING: [ 8] Magnitude. Guide star 10.398
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 6] Search spoiler.  330175520: Y,Z,Radial,Mag seps: 118  13 118 -0.7
+>> WARNING: [ 7] Magnitude.  10.307
+>> WARNING: [ 8] Magnitude.  10.398
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.59, Pos_Err = 0.05
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.677	-5.734	-4.024	
@@ -925,6 +927,7 @@ MP_STARCAT at 2007:069:22:20:41.463 (VCDU count = 13541449)
 >> WARNING: [ 8] Magnitude. Guide star 10.554
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.58, Pos_Err = 0.06
+>> WARNING: [ 8] Magnitude.  10.554
 >> WARNING: [ 9] Magnitude.  10.446
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.667	-6.644	-4.837	
@@ -971,6 +974,7 @@ MP_STARCAT at 2007:069:23:05:17.285 (VCDU count = 13551892)
 >> WARNING: [ 8] Magnitude. Guide star 10.554
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.58, Pos_Err = 0.06
+>> WARNING: [ 8] Magnitude.  10.554
 >> WARNING: [ 9] Magnitude.  10.446
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.667	-6.644	-4.837	
@@ -1017,6 +1021,7 @@ MP_STARCAT at 2007:069:23:48:17.285 (VCDU count = 13561960)
 >> WARNING: [ 8] Magnitude. Guide star 10.554
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.58, Pos_Err = 0.06
+>> WARNING: [ 8] Magnitude.  10.554
 >> WARNING: [ 9] Magnitude.  10.446
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.667	-6.644	-4.837	
@@ -1063,6 +1068,7 @@ MP_STARCAT at 2007:070:00:31:17.285 (VCDU count = 13572028)
 >> WARNING: [ 8] Magnitude. Guide star 10.554
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.58, Pos_Err = 0.06
+>> WARNING: [ 8] Magnitude.  10.554
 >> WARNING: [ 9] Magnitude.  10.446
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.667	-6.644	-4.837	
@@ -1109,6 +1115,7 @@ MP_STARCAT at 2007:070:01:14:17.285 (VCDU count = 13582096)
 >> WARNING: [ 8] Magnitude. Guide star 10.554
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.58, Pos_Err = 0.06
+>> WARNING: [ 8] Magnitude.  10.554
 >> WARNING: [ 9] Magnitude.  10.446
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.667	-6.644	-4.837	
@@ -1155,6 +1162,7 @@ MP_STARCAT at 2007:070:01:57:17.285 (VCDU count = 13592165)
 >> WARNING: [ 8] Magnitude. Guide star 10.554
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.58, Pos_Err = 0.06
+>> WARNING: [ 8] Magnitude.  10.554
 >> WARNING: [ 9] Magnitude.  10.446
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.667	-6.644	-4.837	
@@ -1189,6 +1197,8 @@ MP_STARCAT at 2007:070:02:21:17.285 (VCDU count = 13597784)
 >> WARNING: [ 8] Magnitude. Guide star 10.398
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 6] Search spoiler.  330175520: Y,Z,Radial,Mag seps: 118  12 118 -0.7
+>> WARNING: [ 7] Magnitude.  10.307
+>> WARNING: [ 8] Magnitude.  10.398
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.59, Pos_Err = 0.05
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.682	-5.738	-4.028	
