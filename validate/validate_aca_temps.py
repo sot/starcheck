@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Licensed under a 3-clause BSD style license - see LICENSE.rst
 """
 Independent code to predict ACA CCD temperature stats during obsids
 

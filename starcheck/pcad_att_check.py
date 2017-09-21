@@ -1,3 +1,4 @@
+# Licensed under a 3-clause BSD style license - see LICENSE.rst
 import re
 import hopper
 from parse_cm import read_backstop, read_maneuver_summary, read_or_list
