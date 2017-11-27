@@ -622,9 +622,6 @@ sub check_dither {
     my $obs_end_pad = 3*60;
     my $manvr;
 
-    if ( $self->{obsid} =~ /^\d*$/){
-	return if ($self->{obsid} >= $ER_MIN_OBSID); # For eng obs, don't have OR to specify dither
-    }
     # If there's no starcat on purpose, return
     if (defined $self->{ok_no_starcat} and $self->{ok_no_starcat}){
         return;
@@ -654,8 +651,59 @@ sub check_dither {
         }
     }
 
-    my $bs_val = $dither->{state};
+    $self->{cmd_dither_status} = $dither->{state};
+    $self->{cmd_dither_y_amp} = $dither->{ampl_y};
+    $self->{cmd_dither_z_amp} = $dither->{ampl_p};
+    $self->{cmd_dither_y_period} = $dither->{period_y};
+    $self->{cmd_dither_z_period} = $dither->{period_p};
+
+
+    # Check for standard and large dither based solely on backstop/history values
+    # This needs to be before the checking for dither during the observation, because the pad
+    # for that checking is set here
+    if (($dither->{state} eq 'ENAB') and (defined $dither->{ampl_y} and defined $dither->{ampl_p})){
+        if (not standard_dither($dither)){
+            push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
+            if ($dither->{ampl_y} > $large_dith_thresh or $dither->{ampl_p} > $large_dith_thresh){
+                $self->large_dither_checks($dither, $dthr);
+                # If this is a large dither, set a larger pad at the end, as we expect
+                # standard dither parameters to be commanded at 5 minutes before end,
+                # which is greater than the 3 minutes used in the "no dither changes
+                # during observation check below
+                $obs_end_pad = 5.5 * 60;
+            }
+        }
+    }
+
+
+    # Loop to check for dither changes during the observation
+    # ACA-003
+    if (not defined $obs_tstop ){
+        push @{$self->{warn}},
+            "$alarm Unable to determine obs tstop; could not check for dither changes during obs\n";
+    }
+    else{
+        foreach my $dither (reverse @{$dthr}) {
+            if ($dither->{time} > ($obs_tstart + $obs_beg_pad)
+                    && $dither->{time} <= $obs_tstop - $obs_end_pad) {
+                push @{$self->{warn}}, "$alarm Dither commanding at $dither->{time}.  During observation.\n";
+            }
+            if ($dither->{time} < $obs_tstart){
+                last;
+            }
+        }
+    }
+
+
+
+
+    # For eng obs, don't have OR to specify dither, so stop before doing vs-OR comparisons
+    if ( $self->{obsid} =~ /^\d*$/){
+	return if ($self->{obsid} >= $ER_MIN_OBSID);
+    }
+
     # Get the OR value of dither and compare if available
+    my $bs_val = $dither->{state};
     my $or_val;
     if (defined $self->{DITHER_ON}){
         $or_val = $dthr_cmd{$self->{DITHER_ON}};
@@ -681,40 +729,6 @@ sub check_dither {
                                $y_amp, $z_amp,
                                $dither->{ampl_y}, $dither->{ampl_p});
             push @{$self->{warn}}, $warn;
-        }
-    }
-    # Check for standard and large dither based solely on backstop/history values
-    if (($bs_val eq 'ENAB') and (defined $dither->{ampl_y} and defined $dither->{ampl_p})){
-        $self->{cmd_dither_y_amp} = $dither->{ampl_y};
-        $self->{cmd_dither_z_amp} = $dither->{ampl_p};
-        if (not standard_dither($dither)){
-            push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
-            if ($dither->{ampl_y} > $large_dith_thresh or $dither->{ampl_p} > $large_dith_thresh){
-                $self->large_dither_checks($dither, $dthr);
-                # If this is a large dither, set a larger pad at the end, as we expect
-                # standard dither parameters to be commanded at 5 minutes before end,
-                # which is greater than the 3 minutes used in the "no dither changes
-                # during observation check below
-                $obs_end_pad = 5.5 * 60;
-            }
-        }
-    }
-
-    # Loop again to check for dither changes during the observation
-    # ACA-003
-    if (not defined $obs_tstop ){
-        push @{$self->{warn}},
-            "$alarm Unable to determine obs tstop; could not check for dither changes during obs\n";
-    }
-    else{
-        foreach my $dither (reverse @{$dthr}) {
-            if ($dither->{time} > ($obs_tstart + $obs_beg_pad)
-                    && $dither->{time} <= $obs_tstop - $obs_end_pad) {
-                push @{$self->{warn}}, "$alarm Dither commanding at $dither->{time}.  During observation.\n";
-            }
-            if ($dither->{time} < $obs_tstart){
-                last;
-            }
         }
     }
 }
@@ -1790,12 +1804,12 @@ sub print_report {
     if ( ( defined $self->{ra} ) and (defined $self->{dec}) and (defined $self->{roll})){
 	$o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     }
-    if ( defined $self->{DITHER_ON} && $self->{obsid} < $ER_MIN_OBSID ) {
-	$o .= sprintf "Dither: %-3s ",$self->{DITHER_ON};
+    if ( defined $self->{cmd_dither_status} ) {
+	$o .= sprintf "Dither: %-3s ",$self->{cmd_dither_status};
 	$o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f",
-		       $self->{DITHER_Y_AMP}*3600., $self->{DITHER_Z_AMP}*3600.,
-		       360./$self->{DITHER_Y_FREQ}, 360./$self->{DITHER_Z_FREQ})
-	    if ($self->{DITHER_ON} eq 'ON' && $self->{DITHER_Y_FREQ} && $self->{DITHER_Z_FREQ});
+		       $self->{cmd_dither_y_amp}*3600., $self->{cmd_dither_z_amp}*3600.,
+		       $self->{cmd_dither_y_period}, $self->{cmd_dither_z_period})
+        if ($self->{cmd_dither_status} eq 'ENAB' && $self->{cmd_dither_y_period} && $self->{cmd_dither_z_period});
 	$o .= "\n";
     }
 
