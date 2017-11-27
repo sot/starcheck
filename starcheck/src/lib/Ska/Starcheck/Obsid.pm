@@ -1072,7 +1072,7 @@ sub check_star_catalog {
    
     my $is_science = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} < $ER_MIN_OBSID);
     my $is_er      = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} >= $ER_MIN_OBSID);
-    my $min_guide    = $is_science ? 5 : 6; # Minimum number of each object type
+    my $min_guide    = $is_science ? 4 : 6; # Minimum number of each object type
     my $min_acq      = $is_science ? 4 : 5;
     my $min_fid      = 3;
     ########################################################################
@@ -1124,8 +1124,6 @@ sub check_star_catalog {
 	push @{$self->{warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). \n";		    
 	return;
     }
-    # Reset the minimum number of guide stars if a monitor window is commanded
-    $min_guide -= scalar grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
 
     print STDERR "Checking star catalog for obsid $self->{obsid}\n";
     
@@ -1136,7 +1134,11 @@ sub check_star_catalog {
     push @warn,"$alarm Too Many Fid Lights\n" if ( (@{$self->{fid}} > 0 && $is_er) ||
 						   (@{$self->{fid}} > $min_fid && $is_science) ) ;
     push @warn,"$alarm Too Few Acquisition Stars\n" if (@{$self->{acq}} < $min_acq);
-    push @warn,"$alarm Too Few Guide Stars\n" if (@{$self->{gui}} < $min_guide);
+    my $n_gui = @{$self->{gui}};
+    # Red warn if fewer than the minimum number of guide stars
+    push @warn,"$alarm Only $n_gui Guide Stars \n" if ($n_gui < $min_guide);
+    # Yellow warn if fewer than the nominal number of guide stars
+    push @yellow_warn, "$alarm Only $n_gui Guide Stars \n"if ($is_science && $n_gui < 5);
     push @warn,"$alarm Too Many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} + @{$self->{mon}} > 8);
     push @warn,"$alarm Too Many Acquisition Stars\n" if (@{$self->{acq}} > 8);
     
