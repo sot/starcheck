@@ -1138,7 +1138,7 @@ sub check_star_catalog {
     # Red warn if fewer than the minimum number of guide stars
     push @warn,"$alarm Only $n_gui Guide Stars \n" if ($n_gui < $min_guide);
     # Yellow warn if fewer than the nominal number of guide stars
-    push @yellow_warn, "$alarm Only $n_gui Guide Stars \n"if ($is_science && $n_gui < 5);
+    push @yellow_warn, "$alarm Only $n_gui Guide Stars \n"if ($is_science && $n_gui < 5 && $n_gui >= $min_guide);
     push @warn,"$alarm Too Many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} + @{$self->{mon}} > 8);
     push @warn,"$alarm Too Many Acquisition Stars\n" if (@{$self->{acq}} > 8);
     
