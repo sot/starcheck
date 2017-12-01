@@ -27,14 +27,19 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 use Inline Python => q{
 
 from chandra_aca.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
+from starcheck.zodiacal_brightness import zodi
 
-def _acq_success_prob(date, t_ccd, mag, color, spoiler, halfwidth):
-    out = acq_success_prob(date, float(t_ccd), float(mag), float(color), spoiler, int(halfwidth))
+def _acq_success_prob(date, t_ccd, mag, color, spoiler, halfwidth, zodi):
+    out = acq_success_prob(date, float(t_ccd), float(mag), float(color), spoiler, int(halfwidth), float(zodi))
     return out.tolist()
 
 def _prob_n_acq(acq_probs):
     n_acq_probs, n_or_fewer_probs = prob_n_acq(acq_probs)
     return n_acq_probs.tolist(), n_or_fewer_probs.tolist()
+
+def _zodi(ra, dec, date):
+    return float(zodi(float(ra), float(dec), date))
+
 };
 
 our $CUM_PROB_LIMIT = 8e-3;
@@ -50,7 +55,7 @@ sub make_figure_of_merit{
 
     my $t_ccd = $self->{ccd_temp};
     my $date = $c->{date};
-
+    my $zodi = _zodi($self->{ra}, $self->{dec}, $self->{date});
     foreach my $i (1..16) {
 	if ($c->{"TYPE$i"} =~ /BOT|ACQ/) {
 	    my $mag = $c->{"GS_MAG$i"};
@@ -58,7 +63,7 @@ sub make_figure_of_merit{
             my $spoiler = grep(/Search spoiler/i, @warnings) ? 1 : 0;
             my $color = $c->{"GS_BV$i"};
             my $hw = $c->{"HALFW$i"};
-            my $star_prob = _acq_success_prob($date, $t_ccd, $mag, $color, $spoiler, $hw);
+            my $star_prob = _acq_success_prob($date, $t_ccd, $mag, $color, $spoiler, $hw, $zodi);
 	    push @probs, $star_prob;
             $slot_probs{$c->{"IMNUM$i"}} = $star_prob;
             $c->{"P_ACQ$i"} = $star_prob;
