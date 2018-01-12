@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2009/JUL0609/oflsb/mps/ms186_
 Using radmon file /data/mpcrit1/mplogs/2009/JUL0609/oflsb/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2009/JUL0609/oflsb/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2009/JUL0609/oflsb/History/SIMTRANS.txt
-Using ACABadPixel file from 2017272 Dark Cal 
+Using ACABadPixel file from 2018002 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -88,7 +88,7 @@ OBSID = 56989 at 2009:187:07:53:05.053   8 clean ACQ | 8 clean GUI |
 OBSID = 56988 at 2009:187:09:12:24.551   8 clean ACQ | 8 clean GUI | 
 OBSID = 56987 at 2009:187:19:37:46.053   8 clean ACQ | 8 clean GUI | 
 OBSID = 56986 at 2009:187:20:37:15.977   8 clean ACQ | 8 clean GUI | 
-OBSID = 10222 at 2009:187:22:15:20.677   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID = 10222 at 2009:187:22:15:20.677   7 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
          ------  2009:188:04:00:00.000   OBC Load Segment Begins     CL188:0402 
 OBSID = 10757 at 2009:188:05:51:00.053   6 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 10925 at 2009:188:08:01:22.759   8 clean ACQ | 5 clean GUI | 
@@ -116,7 +116,7 @@ OBSID = 56971 at 2009:190:04:19:47.674   8 clean ACQ | 7 clean GUI | WARNINGS [ 
 OBSID = 56970 at 2009:190:04:43:47.674   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 56969 at 2009:190:06:15:37.674   8 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
 OBSID = 56968 at 2009:190:07:01:33.387   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID = 56967 at 2009:190:10:30:06.107   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID = 56967 at 2009:190:10:30:06.107   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
 OBSID = 10926 at 2009:190:13:49:16.883   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2009:190:22:45:00.000   OBC Load Segment Begins     CL190:2202 
 OBSID = 10132 at 2009:191:00:24:40.810   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
@@ -387,6 +387,7 @@ MP_STARCAT at 2009:187:22:15:20.677 (VCDU count = 10108726)
 [12]  1  1201018344   ACQ  6x6   0.897   9.939  11.438    181  -1482  20   1  120    a2    
 [13]  2  1200884224   ACQ  6x6   0.968   9.976  11.484   1675  -1994  20   1  120    a2    
 
+>> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  30,  44,  53
 >> WARNING: [12] Search spoiler. 1201016712: Y,Z,Radial,Mag seps:  63 161 173 -0.6
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.380	-6.392	-4.621	
@@ -1113,7 +1114,6 @@ MP_STARCAT at 2009:190:10:30:06.107 (VCDU count = 10955108)
 [10]  6  1100889560   ACQ  8x8   0.985   9.323  10.828   1030    -48  20   1  120          
 [11]  7  1100874624   ACQ  8x8   0.910   9.494  11.000    373    144  20   1  120    a2    
 
->> WARNING: [ 7] Nearby ACA bad pixel. Y,Z,Radial seps:  16,  25,  30
 >> WARNING: [11] Search spoiler. 1100752680: Y,Z,Radial,Mag seps: 156   1 156 -0.9
 >> INFO   : Momentum Unload (AOMUNLGR) in NPM at 2009:190:13:35:00.000
 

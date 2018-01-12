@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2007/MAR0507/oflsa/mps/ms064_
 Using radmon file /data/mpcrit1/mplogs/2007/MAR0507/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2007/MAR0507/oflsa/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2007/MAR0507/oflsa/History/SIMTRANS.txt
-Using ACABadPixel file from 2017272 Dark Cal 
+Using ACABadPixel file from 2018002 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -113,15 +113,15 @@ OBSID = 58498 at 2007:069:22:20:41.463   6 clean ACQ | 6 clean GUI | WARNINGS [ 
 OBSID = 58497 at 2007:069:22:46:11.285   0 clean ACQ | 0 clean GUI | 
 OBSID = 58496 at 2007:069:23:05:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
 OBSID = 58495 at 2007:069:23:29:11.285   0 clean ACQ | 0 clean GUI | 
-OBSID = 58494 at 2007:069:23:48:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
+OBSID = 58494 at 2007:069:23:48:17.285   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
 OBSID = 58493 at 2007:070:00:12:11.285   0 clean ACQ | 0 clean GUI | 
-OBSID = 58492 at 2007:070:00:31:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
+OBSID = 58492 at 2007:070:00:31:17.285   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
 OBSID = 58491 at 2007:070:00:55:11.285   0 clean ACQ | 0 clean GUI | 
-OBSID = 58490 at 2007:070:01:14:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
+OBSID = 58490 at 2007:070:01:14:17.285   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
 OBSID = 58489 at 2007:070:01:38:11.285   0 clean ACQ | 0 clean GUI | 
-OBSID = 58488 at 2007:070:01:57:17.285   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 3]
+OBSID = 58488 at 2007:070:01:57:17.285   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 3]
 OBSID = 58487 at 2007:070:02:21:17.285   6 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
-OBSID = 58486 at 2007:070:02:51:13.923   8 clean ACQ | 8 clean GUI | 
+OBSID = 58486 at 2007:070:02:51:13.923   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID =  8523 at 2007:070:03:39:37.043   8 clean ACQ | 5 clean GUI |
 ==================================================================================== 
 OBSID: 58507  
@@ -1016,6 +1016,7 @@ MP_STARCAT at 2007:069:23:48:17.285 (VCDU count = 13561960)
 [ 9]  7   330443344   ACQ  8x8   0.925  10.446  11.953   1750  -1614  20   1  120    a3    
 
 >> WARNING: [ 4] Nearby ACA bad pixel. Y,Z,Radial seps:  37,  18,  42
+>> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  43,  27,  51
 >> WARNING: [ 8] Magnitude. Guide star 10.554
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.58, Pos_Err = 0.06
@@ -1063,6 +1064,7 @@ MP_STARCAT at 2007:070:00:31:17.285 (VCDU count = 13572028)
 [ 9]  7   330443344   ACQ  8x8   0.925  10.446  11.953   1749  -1615  20   1  120    a3    
 
 >> WARNING: [ 4] Nearby ACA bad pixel. Y,Z,Radial seps:  37,  17,  41
+>> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  42,  25,  49
 >> WARNING: [ 8] Magnitude. Guide star 10.554
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.58, Pos_Err = 0.06
@@ -1110,6 +1112,7 @@ MP_STARCAT at 2007:070:01:14:17.285 (VCDU count = 13582096)
 [ 9]  7   330443344   ACQ  8x8   0.925  10.446  11.953   1747  -1617  20   1  120    a3    
 
 >> WARNING: [ 4] Nearby ACA bad pixel. Y,Z,Radial seps:  38,  16,  41
+>> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  41,  23,  47
 >> WARNING: [ 8] Magnitude. Guide star 10.554
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.58, Pos_Err = 0.06
@@ -1157,6 +1160,7 @@ MP_STARCAT at 2007:070:01:57:17.285 (VCDU count = 13592165)
 [ 9]  7   330443344   ACQ  8x8   0.925  10.446  11.953   1746  -1619  20   1  120    a3    
 
 >> WARNING: [ 4] Nearby ACA bad pixel. Y,Z,Radial seps:  38,  15,  41
+>> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  40,  21,  45
 >> WARNING: [ 8] Magnitude. Guide star 10.554
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Marginal star. B-V = 1.500, Mag_Err = 0.58, Pos_Err = 0.06
@@ -1227,6 +1231,8 @@ MP_STARCAT at 2007:070:02:51:13.923 (VCDU count = 13604795)
 [ 9]  5   867705480   ACQ  8x8   0.985   9.675  11.172  -2120    870  20   1  120    a2    
 [10]  6   867698192   ACQ  8x8   0.963  10.161  11.672   -478   -955  20   1  120    a2    
 [11]  7   867704496   ACQ  8x8   0.985   9.746  11.250   -744    440  20   1  120    a2    
+
+>> WARNING: [ 5] Nearby ACA bad pixel. Y,Z,Radial seps:  39,  30,  49
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.190	-7.110	-5.237	
 Acquisition Stars Expected  : 7.85

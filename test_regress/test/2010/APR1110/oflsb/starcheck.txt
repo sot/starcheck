@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2010/APR1110/oflsb/mps/ms101_
 Using radmon file /data/mpcrit1/mplogs/2010/APR1110/oflsb/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2010/APR1110/oflsb/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2010/APR1110/oflsb/History/SIMTRANS.txt
-Using ACABadPixel file from 2017272 Dark Cal 
+Using ACABadPixel file from 2018002 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -99,7 +99,7 @@ OBSID = 11324 at 2010:104:07:22:11.475   8 clean ACQ | 5 clean GUI |
 OBSID = 11848 at 2010:104:09:36:42.475   8 clean ACQ | 5 clean GUI | 
 OBSID = 11097 at 2010:104:23:15:46.679   8 clean ACQ | 5 clean GUI | 
          ------  2010:105:04:20:01.285   OBC Load Segment Begins     CL105:0418 
-OBSID = 56334 at 2010:105:08:04:34.648   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 56334 at 2010:105:08:04:34.648   8 clean ACQ | 8 clean GUI | 
 OBSID = 56333 at 2010:105:08:14:41.082   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 56332 at 2010:105:09:51:05.028   8 clean ACQ | 8 clean GUI | 
 OBSID = 56331 at 2010:105:16:59:40.042   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
@@ -698,7 +698,6 @@ MP_STARCAT at 2010:105:08:04:34.648 (VCDU count = 4665538)
 [ 8]  7  1198192408   GUI  8x8     ---   9.441  10.938    411  -2382   1   1   25    g2    
 [ 9]  7  1198192176   ACQ  8x8   0.985   9.499  11.000  -1083  -1016  20   1  120    a2    
 
->> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  37,  36,  52
 >> INFO   : Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	

@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2009/FEB1609/oflsa/mps/ms047_
 Using radmon file /data/mpcrit1/mplogs/2009/FEB1609/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2009/FEB1609/oflsa/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2009/FEB1609/oflsa/History/SIMTRANS.txt
-Using ACABadPixel file from 2017272 Dark Cal 
+Using ACABadPixel file from 2018002 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -81,11 +81,11 @@ Transponder B	before 2009:050:06:02:33.000
 
          ------  2009:047:10:19:58.000   OBC Load Segment Begins     CL047:1000 
 OBSID = 57298 at 2009:047:10:45:17.654   8 clean ACQ | 7 clean GUI | 
-OBSID = 57297 at 2009:047:16:33:39.462   7 clean ACQ | 6 clean GUI | WARNINGS [ 1] 
+OBSID = 57297 at 2009:047:16:33:39.462   8 clean ACQ | 7 clean GUI | 
 OBSID = 10650 at 2009:047:18:04:35.214   8 clean ACQ | 5 clean GUI | 
 OBSID = 10683 at 2009:047:21:07:46.653   8 clean ACQ | 5 clean GUI | 
 OBSID = 10648 at 2009:048:03:26:15.600   6 clean ACQ | 5 clean GUI | WARNINGS [ 3]
-OBSID = 57296 at 2009:048:06:56:36.090   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 57296 at 2009:048:06:56:36.090   8 clean ACQ | 8 clean GUI | 
 OBSID = 10651 at 2009:048:07:34:40.315   8 clean ACQ | 5 clean GUI | 
 OBSID = 10743 at 2009:048:10:14:56.315   8 clean ACQ | 5 clean GUI | 
          ------  2009:048:20:25:00.000   OBC Load Segment Begins     CL048:2000 
@@ -184,7 +184,6 @@ MP_STARCAT at 2009:047:16:33:39.462 (VCDU count = 13156469)
 [ 8]  7         ---   MON  8x8     ---     ---  13.938  -2099   1248   7   0   20    m1    
 [ 9]  7   792204600   ACQ  8x8   0.985   9.465  10.969    371    -32  20   1  120    a2    
 
->> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  36,  14,  39
 >> INFO   : Obsid contains flickering pixel MON
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.310	-7.221	-5.336	
@@ -311,8 +310,6 @@ MP_STARCAT at 2009:048:06:56:36.090 (VCDU count = 13358524)
 [ 8]  7  1158420712   GUI  8x8     ---   9.830  11.328    854   2082   1   1   25    g2    
 [ 9]  6  1158417176   ACQ  8x8   0.985   7.543   9.047    135    -59  20   1  120          
 [10]  7  1158421120   ACQ  8x8   0.868   9.845  11.344   1055    241  20   1  120    a2    
-
->> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  38,  11,  40
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.085	-6.135	-4.406	
 Acquisition Stars Expected  : 7.72

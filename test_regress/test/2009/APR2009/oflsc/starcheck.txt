@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2009/APR2009/oflsc/mps/ms110_
 Using radmon file /data/mpcrit1/mplogs/2009/APR2009/oflsc/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2009/APR2009/oflsc/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2009/APR2009/oflsc/History/SIMTRANS.txt
-Using ACABadPixel file from 2017272 Dark Cal 
+Using ACABadPixel file from 2018002 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -118,7 +118,7 @@ OBSID = 10095 at 2009:113:21:10:46.437   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 57145 at 2009:115:22:49:38.911   8 clean ACQ | 8 clean GUI | 
          ------  2009:115:21:31:36.121   OBC Load Segment Begins     CL115:2104 
 OBSID = 57144 at 2009:115:23:00:09.121   5 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 4]
-OBSID = 57143 at 2009:116:07:09:40.910   7 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 1]
+OBSID = 57143 at 2009:116:07:09:40.910   8 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
 OBSID = 57142 at 2009:116:10:21:13.530   8 clean ACQ | 8 clean GUI | 
 OBSID = 10905 at 2009:116:13:46:10.990   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 ==================================================================================== 
@@ -1131,7 +1131,6 @@ MP_STARCAT at 2009:116:07:09:40.910 (VCDU count = 2734763)
 [ 8]  7   118621000   GUI  8x8     ---  10.302  11.812   2412   1208   1   1   25    g3    
 [ 9]  7   118624864   ACQ  8x8   0.985   7.185   8.688     19  -1206  20   1  120          
 
->> WARNING: [ 4] Nearby ACA bad pixel. Y,Z,Radial seps:   8,  21,  23
 >> WARNING: [ 8] Magnitude. Guide star 10.302
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 8] Magnitude.  10.302

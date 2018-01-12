@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2011/APR0411/oflsa/mps/ms093_
 Using radmon file /data/mpcrit1/mplogs/2011/APR0411/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2011/APR0411/oflsa/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2011/APR0411/oflsa/History/SIMTRANS.txt
-Using ACABadPixel file from 2017272 Dark Cal 
+Using ACABadPixel file from 2018002 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  CCD TEMPERATURE PREDICTION -----------------
@@ -43,7 +43,7 @@ OBSID = 12963 at 2011:094:11:27:35.543   8 clean ACQ | 5 clean GUI |
 OBSID = 12704 at 2011:094:14:02:06.543   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 55543 at 2011:094:17:16:49.408   8 clean ACQ | 8 clean GUI | 
 OBSID = 55542 at 2011:094:17:28:40.877   5 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
-OBSID = 55541 at 2011:094:19:22:39.005   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 55541 at 2011:094:19:22:39.005   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 55540 at 2011:094:23:47:47.510   8 clean ACQ | 8 clean GUI | 
 OBSID = 55539 at 2011:095:01:40:43.877   0 clean ACQ | 0 clean GUI | 
 OBSID = 55538 at 2011:095:01:50:52.598   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 3]
@@ -380,7 +380,6 @@ MP_STARCAT at 2011:094:19:22:39.005 (VCDU count = 6742227)
 [ 9]  6   990912920   ACQ  8x8   0.932  10.142  11.641  -1943  -1348  20   1  120    a2    
 [10]  7   990909664   ACQ  8x8   0.931  10.147  11.656    774   -418  20   1  120    a2    
 
->> WARNING: [ 5] Nearby ACA bad pixel. Y,Z,Radial seps:  40,  29,  49
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.350	-5.539	-3.955	

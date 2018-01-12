@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2005/JUL1105/oflsc/mps/ms191_
 Using radmon file /data/mpcrit1/mplogs/2005/JUL1105/oflsc/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2005/JUL1105/oflsc/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2005/JUL1105/oflsc/History/SIMTRANS.txt
-Using ACABadPixel file from 2017272 Dark Cal 
+Using ACABadPixel file from 2018002 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -99,7 +99,7 @@ OBSID =  6338 at 2005:192:02:13:33.518   3 clean ACQ | 3 clean GUI | WARNINGS [ 
 OBSID =  6339 at 2005:192:04:45:35.788   2 clean ACQ | 2 clean GUI | WARNINGS [ 5] WARNINGS [ 5]
 OBSID =  6340 at 2005:192:07:17:37.309   2 clean ACQ | 3 clean GUI | WARNINGS [ 5] WARNINGS [ 7]
 OBSID = 59560 at 2005:192:09:53:28.797   6 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
-OBSID = 59559 at 2005:192:10:10:21.619   6 clean ACQ | 6 clean GUI | WARNINGS [ 2]
+OBSID = 59559 at 2005:192:10:10:21.619   5 clean ACQ | 5 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID =  6336 at 2005:192:10:36:49.533   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
          ------  2005:192:20:03:25.922   OBC Load Segment Begins     CL192:2006 
 OBSID = 59558 at 2005:192:20:06:31.922   8 clean ACQ | 8 clean GUI | 
@@ -110,7 +110,7 @@ OBSID = 59557 at 2005:193:18:30:29.953   6 clean ACQ | 7 clean GUI | WARNINGS [ 
 OBSID =  6344 at 2005:193:19:08:07.016   6 clean ACQ | 3 clean GUI | WARNINGS [ 2]
 OBSID = 59556 at 2005:193:21:57:47.439   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
 OBSID = 59555 at 2005:194:00:15:49.989   8 clean ACQ | 8 clean GUI | 
-OBSID = 59554 at 2005:194:02:19:05.245   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
+OBSID = 59554 at 2005:194:02:19:05.245   8 clean ACQ | 8 clean GUI | 
 OBSID = 59553 at 2005:194:02:48:17.639   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
          ------  2005:194:08:46:28.590   OBC Load Segment Begins     CL194:0806 
 OBSID = 59552 at 2005:194:08:49:34.590   8 clean ACQ | 8 clean GUI | 
@@ -127,7 +127,7 @@ OBSID = 59550 at 2005:196:15:39:59.124   8 clean ACQ | 8 clean GUI |
 OBSID = 59549 at 2005:196:18:02:00.644   6 clean ACQ | 8 clean GUI | WARNINGS [ 3]
 OBSID = 59548 at 2005:196:22:31:18.980   8 clean ACQ | 8 clean GUI | 
          ------  2005:197:00:39:25.291   OBC Load Segment Begins     CL197:0006 
-OBSID = 59547 at 2005:197:00:42:31.291   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
+OBSID = 59547 at 2005:197:00:42:31.291   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID =  6345 at 2005:197:07:21:31.868   8 clean ACQ | 5 clean GUI | 
 OBSID =  5448 at 2005:197:14:13:29.982   8 clean ACQ | 5 clean GUI | 
 OBSID =  6291 at 2005:197:20:22:21.089   8 clean ACQ | 5 clean GUI | 
@@ -749,6 +749,7 @@ MP_STARCAT at 2005:192:10:10:21.619 (VCDU count = 10034409)
 [ 8]  7   892865256   GUI  8x8     ---   9.636  11.141   -823    250   1   1   25    g2    
 [ 9]  7   892868336   ACQ  8x8   0.902   9.718  11.656   1741   1076  20   1  120    a2    
 
+>> WARNING: [ 1] Nearby ACA bad pixel. Y,Z,Radial seps:  43,  27,  51
 >> WARNING: [ 3] Search spoiler.  892865856: Y,Z,Radial,Mag seps:  87  72 113 -0.8
 >> WARNING: [ 4] Search spoiler.  892866592: Y,Z,Radial,Mag seps:  59 121 135 -0.9
 
@@ -1059,8 +1060,6 @@ MP_STARCAT at 2005:194:02:19:05.245 (VCDU count = 10598403)
 [ 8]  7   895091976   GUI  8x8     ---   9.226  10.734   1358   -629   1   1   25    g2    
 [ 9]  6   895092704   ACQ  8x8   0.984   9.646  11.156    219  -1719  20   1  120    a2    
 [10]  7   895093296   ACQ  8x8   0.909   9.689  11.281   1367   1377  20   1  120    a2    
-
->> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:   4,  15,  16
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.813	-6.759	-4.918	
 Acquisition Stars Expected  : 7.80
@@ -1526,7 +1525,6 @@ MP_STARCAT at 2005:197:00:42:31.291 (VCDU count = 11587305)
 [ 9]  6  1100754392   ACQ  8x8   0.985   9.385  10.891   -187    226  20   1  120    a2    
 [10]  7  1100753056   ACQ  8x8   0.985   9.566  11.062    409   1041  20   1  120    a2    
 
->> WARNING: [ 6] Nearby ACA bad pixel. Y,Z,Radial seps:  40,  35,  54
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.452	-7.341	-5.434	

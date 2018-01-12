@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2008/SEP0108/oflsb/mps/ms245_
 Using radmon file /data/mpcrit1/mplogs/2008/SEP0108/oflsb/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2008/SEP0108/oflsb/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2008/SEP0108/oflsb/History/SIMTRANS.txt
-Using ACABadPixel file from 2017272 Dark Cal 
+Using ACABadPixel file from 2018002 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  CCD TEMPERATURE PREDICTION -----------------
@@ -63,7 +63,7 @@ OBSID =  9680 at 2008:246:12:07:24.000   8 clean ACQ | 5 clean GUI |
 OBSID =  9681 at 2008:246:12:35:34.000   8 clean ACQ | 5 clean GUI | 
 OBSID = 57628 at 2008:246:13:18:44.796   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 57627 at 2008:246:15:32:54.394   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] 
-OBSID = 57626 at 2008:246:19:11:35.286   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
+OBSID = 57626 at 2008:246:19:11:35.286   6 clean ACQ | 7 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
          ------  2008:246:21:24:09.935   OBC Load Segment Begins     CL246:2108 
 OBSID = 57625 at 2008:246:21:27:15.935   8 clean ACQ | 7 clean GUI | 
 OBSID = 57624 at 2008:246:23:30:10.035   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] 
@@ -988,7 +988,6 @@ MP_STARCAT at 2008:246:19:11:35.286 (VCDU count = 7217582)
 [10]  6    79043024   ACQ  8x8   0.859  10.607  12.109  -1002   2238  20   1  120    a4    
 [11]  7    79439512   ACQ  8x8   0.938  10.285  11.797   2184   1001  20   1  120    a3    
 
->> WARNING: [ 7] Nearby ACA bad pixel. Y,Z,Radial seps:  25,   3,  25
 >> WARNING: [10] Magnitude.  10.607
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.73, Pos_Err = 0.17

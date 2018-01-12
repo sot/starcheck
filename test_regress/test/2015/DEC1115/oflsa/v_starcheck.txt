@@ -26,7 +26,7 @@ Using processing summary file /data/mpcrit1/mplogs/2015/DEC1115/oflsa/mps/ms345_
 Using radmon file /data/mpcrit1/mplogs/2015/DEC1115/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2015/DEC1115/oflsa/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2015/DEC1115/oflsa/History/SIMTRANS.txt
-Using ACABadPixel file from 2017272 Dark Cal 
+Using ACABadPixel file from 2018002 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  PROCESSING WARNING  -----------------
@@ -169,7 +169,7 @@ OBSID = 17180 at 2015:354:12:30:24.200   8 clean ACQ | 5 clean GUI |
 OBSID = 16769 at 2015:354:17:35:26.164   8 clean ACQ | 5 clean GUI | 
 OBSID = 18104 at 2015:355:03:54:33.525   8 clean ACQ | 5 clean GUI | 
          ------  2015:355:05:30:01.285   OBC Load Segment Begins     CL355:0503 
-OBSID = 51400 at 2015:355:07:39:50.947   8 clean ACQ | 8 clean GUI | 
+OBSID = 51400 at 2015:355:07:39:50.947   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
 OBSID = 51399 at 2015:355:07:51:24.241   8 clean ACQ | 8 clean GUI | 
 OBSID = 51398 at 2015:355:13:13:47.066   8 clean ACQ | 8 clean GUI | 
 OBSID = 51397 at 2015:355:15:19:02.006   4 clean ACQ | 6 clean GUI | WARNINGS [ 1] WARNINGS [ 4]
@@ -200,7 +200,7 @@ OBSID = 51382 at 2015:357:22:52:52.782   8 clean ACQ | 8 clean GUI |
 OBSID = 51381 at 2015:357:23:04:26.076   8 clean ACQ | 8 clean GUI | 
          ------  2015:358:01:43:30.076   OBC Load Segment Begins     CL358:0103 
 OBSID = 51380 at 2015:358:04:35:25.099   8 clean ACQ | 8 clean GUI | 
-OBSID = 51379 at 2015:358:10:55:32.499   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 4]
+OBSID = 51379 at 2015:358:10:55:32.499   6 clean ACQ | 8 clean GUI | WARNINGS [ 4]
 OBSID = 18716 at 2015:358:14:16:46.485   8 clean ACQ | 5 clean GUI | 
 OBSID = 18727 at 2015:358:18:59:34.076   8 clean ACQ | 5 clean GUI | 
 OBSID = 18164 at 2015:359:07:51:04.676   8 clean ACQ | 5 clean GUI | 
@@ -2069,6 +2069,7 @@ MP_STARCAT at 2015:355:07:39:50.947 (VCDU count = 13722352)
 [ 9]  6   652347824   ACQ  8x8   0.837   9.392  11.672    840     74  20   1  120    a2    
 [10]  7   652348896   ACQ  8x8   0.659   9.701  11.203    505   -521  20   1  120    a2    
 
+>> WARNING: [ 2] Nearby ACA bad pixel. Y,Z,Radial seps:  39,  33,  52
 >> INFO   : Special Case ER
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.283	-4.515	-3.011	
@@ -2889,7 +2890,6 @@ MP_STARCAT at 2015:358:10:55:32.499 (VCDU count = 14779685)
 [11]  6   377488904   ACQ  8x8   0.392  10.182  12.406   1795  -1595  20   1  120    a3   C
 [12]  7   379718192   ACQ  8x8   0.372  10.217  12.547  -1970    120  20   1  120    a3   C
 
->> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  12,  27,  29
 >> WARNING: [11] Marginal star. B-V = 1.500, Mag_Err = 0.69, Pos_Err = 0.09
 >> WARNING: [11] Magnitude.  10.182
 >> WARNING: [12] Marginal star. B-V = 1.500, Mag_Err = 0.73, Pos_Err = 0.10
