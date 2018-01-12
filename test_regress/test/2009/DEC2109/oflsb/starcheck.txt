@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2009/DEC2109/oflsb/mps/ms354_
 Using radmon file /data/mpcrit1/mplogs/2009/DEC2109/oflsb/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2009/DEC2109/oflsb/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2009/DEC2109/oflsb/History/SIMTRANS.txt
-Using ACABadPixel file from 2017185 Dark Cal 
+Using ACABadPixel file from 2017272 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  CCD TEMPERATURE PREDICTION -----------------
@@ -54,7 +54,7 @@ OBSID = 11027 at 2009:357:09:17:36.103   8 clean ACQ | 5 clean GUI |
 OBSID = 12065 at 2009:357:23:28:34.822   7 clean ACQ | 4 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
 OBSID = 11824 at 2009:358:05:19:33.541   5 clean ACQ | 3 clean GUI | WARNINGS [ 3]
          ------  2009:358:09:23:36.965   OBC Load Segment Begins     CL358:0902 
-OBSID = 11643 at 2009:358:09:26:42.965   4 clean ACQ | 3 clean GUI | WARNINGS [ 2] WARNINGS [ 2]
+OBSID = 11643 at 2009:358:09:26:42.965   5 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID = 11229 at 2009:358:10:55:50.722   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
 OBSID = 11028 at 2009:358:13:22:01.722   8 clean ACQ | 5 clean GUI | 
 OBSID = 11446 at 2009:359:01:05:20.311   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
@@ -691,7 +691,6 @@ MP_STARCAT at 2009:358:09:26:42.965 (VCDU count = 476082)
 [12]  2   652352264   ACQ  6x6   0.906  10.379  11.891   1623   -563  20   1  120    a3    
 
 >> WARNING: [ 4] Nearby ACA bad pixel. Y,Z,Radial seps:  30,  21,  37
->> WARNING: [ 7] Nearby ACA bad pixel. Y,Z,Radial seps:   5,   3,   6
 >> WARNING: [10] Marginal star. B-V = 1.500, Mag_Err = 0.68, Pos_Err = 0.09
 >> WARNING: [12] Magnitude.  10.379
 

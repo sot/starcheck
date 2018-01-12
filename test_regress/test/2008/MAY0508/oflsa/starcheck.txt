@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/mps/ms125_
 Using radmon file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/History/SIMTRANS.txt
-Using ACABadPixel file from 2017185 Dark Cal 
+Using ACABadPixel file from 2017272 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  CCD TEMPERATURE PREDICTION -----------------
@@ -34,7 +34,7 @@ Using acquisition model for multiple star filter enabled
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2008:125:23:06:49.831   OBC Load Segment Begins     CL125:2301 
-OBSID =  9599 at 2008:125:23:09:55.831   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
+OBSID =  9599 at 2008:125:23:09:55.831   7 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
 OBSID =  8961 at 2008:125:23:53:25.553   8 clean ACQ | 5 clean GUI | 
 OBSID =  9169 at 2008:126:03:48:25.930   8 clean ACQ | 5 clean GUI | 
 OBSID =  9560 at 2008:126:12:03:08.930   8 clean ACQ | 5 clean GUI | 
@@ -101,6 +101,7 @@ MP_STARCAT at 2008:125:23:09:55.831 (VCDU count = 4506906)
 [11]  1  1139279528   ACQ  6x6   0.879  10.210  11.719    219    357  20   1  120    a2    
 [12]  2  1139279048   ACQ  6x6   0.893   9.785  11.281   2209   1088  20   1  120    a2    
 
+>> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  28,  26,  38
 >> WARNING: [11] Search spoiler. 1139280088: Y,Z,Radial,Mag seps: 166 120 205 -0.9
 >> WARNING: [11] Search spoiler. 1139279224: Y,Z,Radial,Mag seps:  94  12  95 -0.9
 

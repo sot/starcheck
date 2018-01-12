@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/mps/ms030_
 Using radmon file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2012/JAN3012/oflsa/History/SIMTRANS.txt
-Using ACABadPixel file from 2017185 Dark Cal 
+Using ACABadPixel file from 2017272 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -89,7 +89,7 @@ OBSID = 54904 at 2012:031:04:29:14.884   8 clean ACQ | 7 clean GUI | WARNINGS [ 
 OBSID = 54903 at 2012:031:05:10:34.614   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 54902 at 2012:031:08:21:57.981   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 5]
 OBSID = 54901 at 2012:031:09:24:39.131   8 clean ACQ | 8 clean GUI | 
-OBSID = 54900 at 2012:031:10:27:21.136   7 clean ACQ | 6 clean GUI | WARNINGS [ 2] WARNINGS [ 1]
+OBSID = 54900 at 2012:031:10:27:21.136   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
 OBSID = 54899 at 2012:031:12:54:52.178   0 clean ACQ | 0 clean GUI | 
 OBSID = 54898 at 2012:031:13:19:07.452   7 clean ACQ | 7 clean GUI | WARNINGS [ 2] 
 OBSID = 13820 at 2012:031:14:39:01.717   7 clean ACQ | 5 clean GUI | WARNINGS [ 1] 
@@ -428,7 +428,6 @@ MP_STARCAT at 2012:031:10:27:21.136 (VCDU count = 16005311)
 [ 8]  7   690765656   GUI  8x8     ---  10.332  11.844  -2028  -2022   1   1   25    g3    
 [ 9]  7   690755384   ACQ  8x8   0.874  10.251  11.750   1275  -2188  20   1  120    a3    
 
->> WARNING: [ 5] Nearby ACA bad pixel. Y,Z,Radial seps:  40,  37,  55
 >> WARNING: [ 8] Magnitude. Guide star 10.332
 >> WARNING: [ 8] Magnitude.  10.332
 >> INFO   : Next obsid has no manvr; using next obs start date for checks (dither, momentum)

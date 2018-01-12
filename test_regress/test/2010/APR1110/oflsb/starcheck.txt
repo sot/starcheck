@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2010/APR1110/oflsb/mps/ms101_
 Using radmon file /data/mpcrit1/mplogs/2010/APR1110/oflsb/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2010/APR1110/oflsb/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2010/APR1110/oflsb/History/SIMTRANS.txt
-Using ACABadPixel file from 2017185 Dark Cal 
+Using ACABadPixel file from 2017272 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  DARK CURRENT CALIBRATION CHECKS  -----------------
@@ -117,7 +117,7 @@ OBSID = 11542 at 2010:107:11:14:40.332   7 clean ACQ | 5 clean GUI | WARNINGS [ 
 OBSID = 11386 at 2010:107:19:24:30.686   6 clean ACQ | 5 clean GUI | WARNINGS [ 3]
 OBSID = 11515 at 2010:107:21:30:01.227   7 clean ACQ | 5 clean GUI | WARNINGS [ 2]
 OBSID = 56330 at 2010:107:23:30:47.046   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
-OBSID = 56329 at 2010:107:23:40:53.480   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
+OBSID = 56329 at 2010:107:23:40:53.480   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 4]
 OBSID = 56328 at 2010:108:00:09:52.451   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 56327 at 2010:108:00:34:03.486   0 clean ACQ | 0 clean GUI | 
 OBSID = 56326 at 2010:108:00:53:09.486   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
@@ -129,7 +129,7 @@ OBSID = 56321 at 2010:108:02:43:03.486   0 clean ACQ | 0 clean GUI |
 OBSID = 56320 at 2010:108:03:02:09.486   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
 OBSID = 56319 at 2010:108:03:26:03.486   0 clean ACQ | 0 clean GUI | 
 OBSID = 56318 at 2010:108:03:45:09.486   8 clean ACQ | 8 clean GUI | WARNINGS [ 1] 
-OBSID = 56317 at 2010:108:04:09:09.486   6 clean ACQ | 6 clean GUI | WARNINGS [ 3] WARNINGS [ 4]
+OBSID = 56317 at 2010:108:04:09:09.486   5 clean ACQ | 5 clean GUI | WARNINGS [ 4] WARNINGS [ 4]
          ------  2010:108:09:35:29.887   OBC Load Segment Begins     CL108:0918 
 OBSID = 56316 at 2010:108:09:38:35.887   6 clean ACQ | 5 clean GUI | WARNINGS [ 3] WARNINGS [ 2]
 OBSID = 12138 at 2010:108:12:21:35.040   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
@@ -1238,6 +1238,7 @@ MP_STARCAT at 2010:107:23:40:53.480 (VCDU count = 5559114)
 [ 9]  7   724044904   ACQ  8x8   0.544  10.444  12.500    581  -1149  20   1  120    a3   C
 
 >> WARNING: [ 1] Magnitude. Guide star 10.316
+>> WARNING: [ 7] Nearby ACA bad pixel. Y,Z,Radial seps:  14,  43,  45
 >> WARNING: [ 8] Magnitude. Guide star 10.483
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 1] Magnitude.  10.316
@@ -1506,6 +1507,7 @@ MP_STARCAT at 2010:108:04:09:09.486 (VCDU count = 5621927)
 [ 9]  7   724044904   ACQ  8x8   0.544  10.444  12.500    586  -1146  20   1  120    a3   C
 
 >> WARNING: [ 1] Magnitude. Guide star 10.316
+>> WARNING: [ 7] Nearby ACA bad pixel. Y,Z,Radial seps:  19,  35,  40
 >> WARNING: [ 8] Magnitude. Guide star 10.483
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 1] Magnitude.  10.316

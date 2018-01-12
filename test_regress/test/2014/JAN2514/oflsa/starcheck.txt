@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2014/JAN2514/oflsa/mps/ms025_
 Using radmon file /data/mpcrit1/mplogs/2014/JAN2514/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2014/JAN2514/oflsa/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2014/JAN2514/oflsa/History/SIMTRANS.txt
-Using ACABadPixel file from 2017185 Dark Cal 
+Using ACABadPixel file from 2017272 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  PROCESSING WARNING  -----------------
@@ -45,7 +45,7 @@ Could not find a match in DOT for MP_OBSID at 2014:025:08:15:44.272
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2014:025:06:36:05.910   OBC Load Segment Begins     CL025:0603 
-OBSID = NONE1 at 2014:025:06:39:11.910   Undefined Obsid; ER? OR?  | WARNINGS [11] WARNINGS [ 5]
+OBSID = NONE1 at 2014:025:06:39:11.910   Undefined Obsid; ER? OR?  | WARNINGS [12] WARNINGS [ 4]
 OBSID = NONE2 at 2014:025:07:53:28.206   Undefined Obsid; ER? OR?  | WARNINGS [ 8] WARNINGS [ 1]
 OBSID = 16328 at 2014:025:12:50:06.000   3 clean ACQ | 4 clean GUI | WARNINGS [ 2] WARNINGS [ 5]
 OBSID = 16562 at 2014:025:14:14:53.876   8 clean ACQ | 5 clean GUI | 
@@ -105,37 +105,37 @@ MP_STARCAT at 2014:025:06:39:11.910 (VCDU count = 2606889)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0  *392043504   BOT  8x8   0.466  10.190  11.688   1129   2040  20   1  120          
+[ 1]  0  *392043504   BOT  8x8   0.430  10.190  11.688   1129   2040  20   1  120          
 [ 2]  1  *392169744   BOT  8x8   0.985   8.241   9.750  -1386   1887  15   1   95          
-[ 3]  2  *392171576   BOT  8x8   0.640  10.048  11.547  -2044   -806  20   1  120          
+[ 3]  2  *392171576   BOT  8x8   0.607  10.048  11.547  -2044   -806  20   1  120          
 [ 4]  3  *392172096   BOT  8x8   0.985   8.692  10.203   -350  -1538  20   1  120          
 [ 5]  4  *392172440   BOT  8x8   0.985   8.931  10.438  -1194    320   9   1   65          
 [ 6]  5  *392172568   BOT  8x8   0.985   8.294   9.797  -1318    764  20   1  120          
-[ 7]  6  *392175408   BOT  8x8   0.964   9.371  10.875   2004  -1092  20   1  120          
+[ 7]  6  *392175408   BOT  8x8   0.961   9.371  10.875   2004  -1092  20   1  120          
 [ 8]  7  *392044888   GUI  8x8     ---   9.999  11.500   1189   2275   1   1   25          
-[ 9]  7  *392170624   ACQ  8x8   0.565  10.129  11.641    451     81  20   1  120          
+[ 9]  7  *392170624   ACQ  8x8   0.527  10.129  11.641    451     81  20   1  120          
 
 >> WARNING: Could not find obsid NONE1 in processing summary
 >> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE1 (NONE1). 
 >> WARNING: No CCD temperature prediction for obsid
->> WARNING: Using -11.5 (planning limit) for t_ccd for mag limits
+>> WARNING: Using -10.9 (planning limit) for t_ccd for mag limits
 >> WARNING: Dither status not checked
+>> WARNING: [ 1] Magnitude.  10.190
 >> WARNING: [ 1] Search spoiler.  392044888: Y,Z,Radial,Mag seps:  60 234 242  0.2
 >> WARNING: [ 2] Search Box Size. Search Box smaller than slew error 
 >> WARNING: [ 5] Search Box Size. Search Box smaller than slew error 
 >> WARNING: Momentum Unloads not checked.
 >> WARNING: Perigee bright stars not being checked, no obs tstop available
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2014:025:06:39:10.267
->> WARNING: [ 1] Magnitude.  10.190
 >> WARNING: [ 3] Magnitude.  10.048
 >> WARNING: [ 8] Magnitude.   9.999
 >> WARNING: [ 9] Magnitude.  10.129
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.281	-3.518	-2.051	
-Acquisition Stars Expected  : 6.57
-Predicted Max CCD temperature: -11.5 C 
-Dynamic Mag Limits: Yellow 9.91 	 Red 10.19
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.155	-3.398	-1.943	
+Acquisition Stars Expected  : 6.46
+Predicted Max CCD temperature: -10.9 C 
+Dynamic Mag Limits: Yellow 9.88 	 Red 10.16
 ==================================================================================== 
 OBSID: NONE2  
 RA, Dec, Roll (deg):   275.039850    57.171784    30.849461

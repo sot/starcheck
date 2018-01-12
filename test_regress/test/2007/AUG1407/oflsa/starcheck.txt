@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2007/AUG1407/oflsa/mps/ms226_
 Using radmon file /data/mpcrit1/mplogs/2007/AUG1407/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2007/AUG1407/oflsa/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2007/AUG1407/oflsa/History/SIMTRANS.txt
-Using ACABadPixel file from 2017185 Dark Cal 
+Using ACABadPixel file from 2017272 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  PROCESSING WARNING  -----------------
@@ -110,24 +110,24 @@ MP_STARCAT at 2007:224:17:13:55.663 (VCDU count = 15399435)
 [ 1]  0         ---   FID  8x8     ---     ---   8.000    919   -844   1   1   25          
 [ 2]  1         ---   FID  8x8     ---     ---   8.000   -774   -850   1   1   25          
 [ 3]  2         ---   FID  8x8     ---     ---   8.000   2140   1055   1   1   25          
-[ 4]  3  *747252024   BOT  6x6   0.983   8.961  10.469  -1643   1226  20   1  120          
+[ 4]  3  *747252024   BOT  6x6   0.982   8.961  10.469  -1643   1226  20   1  120          
 [ 5]  4  *747112584   GUI  6x6     ---   7.434   8.938   -318  -2384   1   1   25          
 [ 6]  5  *747117232   GUI  6x6     ---   9.396  10.906  -2149  -2157   1   1   25          
 [ 7]  6  *747254504   GUI  6x6     ---   9.324  10.828   -855    666   1   1   25          
 [ 8]  7  *747249184   GUI  6x6     ---   9.389  10.891   -759    996   1   1   25          
 [ 9]  4  *747248216   ACQ  6x6   0.985   6.347   7.844  -1528   -405  20   1  120          
-[10]  5  *747253560   ACQ  6x6   0.897   9.582  11.078  -1240  -1037  20   1  120          
-[11]  6  *747246240   ACQ  6x6   0.857   9.586  11.719    591    834  20   1  120          
-[12]  7  *747253608   ACQ  6x6   0.968   9.612  11.109   -257  -1226  20   1  120          
-[13]  0  *747769744   ACQ  6x6   0.816   9.687  11.594   1477   -293  20   1  120          
-[14]  1  *747246520   ACQ  6x6   0.960   9.688  11.188  -1602  -1160  20   1  120          
-[15]  2  *747254264   ACQ  6x6   0.844   9.963  11.469   -155   1107  20   1  120          
+[10]  5  *747253560   ACQ  6x6   0.895   9.582  11.078  -1240  -1037  20   1  120          
+[11]  6  *747246240   ACQ  6x6   0.847   9.586  11.719    591    834  20   1  120          
+[12]  7  *747253608   ACQ  6x6   0.965   9.612  11.109   -257  -1226  20   1  120          
+[13]  0  *747769744   ACQ  6x6   0.805   9.687  11.594   1477   -293  20   1  120          
+[14]  1  *747246520   ACQ  6x6   0.957   9.688  11.188  -1602  -1160  20   1  120          
+[15]  2  *747254264   ACQ  6x6   0.836   9.963  11.469   -155   1107  20   1  120          
 
 >> WARNING: Could not find obsid NONE1 in processing summary
 >> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE1 (NONE1). 
 >> WARNING: No CCD temperature prediction for obsid
->> WARNING: Using -11.5 (planning limit) for t_ccd for mag limits
+>> WARNING: Using -10.9 (planning limit) for t_ccd for mag limits
 >> WARNING: Dither status not checked
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
@@ -141,9 +141,9 @@ MP_STARCAT at 2007:224:17:13:55.663 (VCDU count = 15399435)
 >> WARNING: [10] Search spoiler.  747253784: Y,Z,Radial,Mag seps:   6 194 194 -0.9
 >> WARNING: [15] Search spoiler.  747246048: Y,Z,Radial,Mag seps:  29  62  68 -0.5
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.652	-4.059	-2.734	
-Acquisition Stars Expected  : 7.30
-Predicted Max CCD temperature: -11.5 C 
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-5.522	-3.952	-2.650	
+Acquisition Stars Expected  : 7.27
+Predicted Max CCD temperature: -10.9 C 
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE2  
@@ -174,7 +174,7 @@ MP_STARCAT at 2007:224:20:33:58.922 (VCDU count = 15446277)
 >> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE2 (NONE2). 
 >> WARNING: No CCD temperature prediction for obsid
->> WARNING: Using -11.5 (planning limit) for t_ccd for mag limits
+>> WARNING: Using -10.9 (planning limit) for t_ccd for mag limits
 >> WARNING: Dither status not checked
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
@@ -188,7 +188,7 @@ MP_STARCAT at 2007:224:20:33:58.922 (VCDU count = 15446277)
 
 Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
 Acquisition Stars Expected  : 7.88
-Predicted Max CCD temperature: -11.5 C 
+Predicted Max CCD temperature: -10.9 C 
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE3  
@@ -210,16 +210,16 @@ MP_STARCAT at 2007:224:22:23:40.556 (VCDU count = 15471961)
 [ 6]  5 *1139289672   BOT  6x6   0.985   8.574  10.078  -1794   1287  12   1   80          
 [ 7]  6 *1180603928   BOT  6x6   0.985   8.813  10.312   2036   1044  20   1  120          
 [ 8]  7 *1139291160   GUI  6x6     ---   8.368   9.875  -1428    784   1   1   25          
-[ 9]  7 *1139279832   ACQ  6x6   0.983   9.380  10.891    830    611  20   1  120          
+[ 9]  7 *1139279832   ACQ  6x6   0.982   9.380  10.891    830    611  20   1  120          
 [10]  0 *1180608240   ACQ  6x6   0.985   8.931  10.438   1681    915  20   1  120          
 [11]  1 *1180607104   ACQ  6x6   0.985   9.226  10.734   1512   2139  20   1  120          
-[12]  2 *1139280768   ACQ  6x6   0.842   9.625  11.531    383   -505  20   1  120          
+[12]  2 *1139280768   ACQ  6x6   0.832   9.625  11.531    383   -505  20   1  120          
 
 >> WARNING: Could not find obsid NONE3 in processing summary
 >> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE3 (NONE3). 
 >> WARNING: No CCD temperature prediction for obsid
->> WARNING: Using -11.5 (planning limit) for t_ccd for mag limits
+>> WARNING: Using -10.9 (planning limit) for t_ccd for mag limits
 >> WARNING: Dither status not checked
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
@@ -231,9 +231,9 @@ MP_STARCAT at 2007:224:22:23:40.556 (VCDU count = 15471961)
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:224:22:23:38.913
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.550	-6.509	-4.685	
-Acquisition Stars Expected  : 7.73
-Predicted Max CCD temperature: -11.5 C 
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.508	-6.470	-4.650	
+Acquisition Stars Expected  : 7.72
+Predicted Max CCD temperature: -10.9 C 
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE4  
@@ -252,20 +252,20 @@ MP_STARCAT at 2007:224:23:35:00.556 (VCDU count = 15488664)
 [ 3]  2         ---   FID  8x8     ---     ---   8.000  -1828   1053   1   1   25          
 [ 4]  3  *668339728   BOT  6x6   0.985   7.821   9.328   -428  -1573  20   1  120          
 [ 5]  4  *668860704   BOT  6x6   0.985   8.819  10.328   1662  -1620  20   1  120          
-[ 6]  5  *670567232   BOT  6x6   0.982   9.391  10.891   -583   1215  20   1  120          
+[ 6]  5  *670567232   BOT  6x6   0.981   9.391  10.891   -583   1215  20   1  120          
 [ 7]  6  *670564456   GUI  6x6     ---   9.279  10.781   2125   -448   1   1   25          
 [ 8]  7  *670567344   GUI  6x6     ---   7.817   9.328   -905   2335   1   1   25          
 [ 9]  6  *670564496   ACQ  6x6   0.985   8.856  10.359   -378   -965  20   1  120          
-[10]  7  *668860840   ACQ  6x6   0.908   9.983  11.484   1472  -1286  20   1  120          
-[11]  0  *670041680   ACQ  6x6   0.914   9.958  11.469  -1632   -997  20   1  120          
-[12]  1  *670564504   ACQ  6x6   0.840   9.981  11.484    609   -552  20   1  120          
+[10]  7  *668860840   ACQ  6x6   0.900   9.983  11.484   1472  -1286  20   1  120          
+[11]  0  *670041680   ACQ  6x6   0.907   9.958  11.469  -1632   -997  20   1  120          
+[12]  1  *670564504   ACQ  6x6   0.832   9.981  11.484    609   -552  20   1  120          
 [13]  2  *670567656   ACQ  6x6   0.985   6.862   8.359   1062    739  20   1  120          
 
 >> WARNING: Could not find obsid NONE4 in processing summary
 >> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE4 (NONE4). 
 >> WARNING: No CCD temperature prediction for obsid
->> WARNING: Using -11.5 (planning limit) for t_ccd for mag limits
+>> WARNING: Using -10.9 (planning limit) for t_ccd for mag limits
 >> WARNING: Dither status not checked
 >> WARNING: Too Few Guide Stars
 >> WARNING: Unable to check fids because SI undefined
@@ -277,9 +277,9 @@ MP_STARCAT at 2007:224:23:35:00.556 (VCDU count = 15488664)
 >> WARNING: Perigee bright stars not being checked, no rad zone info available
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:224:23:34:58.913
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.251	-5.372	-3.740	
-Acquisition Stars Expected  : 7.58
-Predicted Max CCD temperature: -11.5 C 
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.146	-5.276	-3.656	
+Acquisition Stars Expected  : 7.55
+Predicted Max CCD temperature: -10.9 C 
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE5  
@@ -301,13 +301,13 @@ MP_STARCAT at 2007:225:10:40:33.637 (VCDU count = 15644500)
 [ 6]  5 *1041904480   BOT  8x8   0.985   7.971   9.469   1209    238  20   1  120          
 [ 7]  6 *1042298632   BOT  8x8   0.985   7.020   8.531   1410  -1993  20   1  120          
 [ 8]  7 *1042295352   GUI  8x8     ---   8.515  10.016   -771  -2441   1   1   25          
-[ 9]  7 *1041771800   ACQ  8x8   0.799   9.725  11.750    308  -1392  20   1  120          
+[ 9]  7 *1041771800   ACQ  8x8   0.787   9.725  11.750    308  -1392  20   1  120          
 
 >> WARNING: Could not find obsid NONE5 in processing summary
 >> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE5 (NONE5). 
 >> WARNING: No CCD temperature prediction for obsid
->> WARNING: Using -11.5 (planning limit) for t_ccd for mag limits
+>> WARNING: Using -10.9 (planning limit) for t_ccd for mag limits
 >> WARNING: Dither status not checked
 >> WARNING: [ 1] Search Box Size. Search Box smaller than slew error 
 >> WARNING: [ 1] Search spoiler. 1041776136: Y,Z,Radial,Mag seps:   4 164 164  1.5
@@ -319,9 +319,9 @@ MP_STARCAT at 2007:225:10:40:33.637 (VCDU count = 15644500)
 >> WARNING: Did not find match in MAN summary for MP_TARGQUAT at 2007:225:10:40:31.994
 >> WARNING: [ 3] Search spoiler. 1041774584: Y,Z,Radial,Mag seps:  61 149 161 -0.4
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.581	-4.795	-3.279	
-Acquisition Stars Expected  : 7.46
-Predicted Max CCD temperature: -11.5 C 
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.556	-4.772	-3.257	
+Acquisition Stars Expected  : 7.45
+Predicted Max CCD temperature: -10.9 C 
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE6  
@@ -336,22 +336,22 @@ MP_STARCAT at 2007:225:12:59:16.015 (VCDU count = 15676978)
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
 [ 1]  0 *1048445832   BOT  8x8   0.910   7.467   8.969   -128  -1508  20   1  120          
-[ 2]  1 *1048446056   BOT  8x8   0.769  10.204  11.703   -484   2095  20   1  120          
-[ 3]  2 *1048446120   BOT  8x8   0.885   9.704  11.203  -1566    265  20   1  120          
+[ 2]  1 *1048446056   BOT  8x8   0.755  10.204  11.703   -484   2095  20   1  120          
+[ 3]  2 *1048446120   BOT  8x8   0.882   9.704  11.203  -1566    265  20   1  120          
 [ 4]  3 *1048446232   BOT  8x8   0.985   8.339   9.844  -1508   -870  20   1  120          
-[ 5]  4 *1048448920   BOT  8x8   0.980   9.443  10.953  -1478   1420  20   1  120          
+[ 5]  4 *1048448920   BOT  8x8   0.978   9.443  10.953  -1478   1420  20   1  120          
 [ 6]  5 *1048447448   GUI  8x8     ---   9.025  10.531  -2356   1027   1   1   25          
 [ 7]  6 *1048450456   GUI  8x8     ---   9.438  10.938  -2230  -2371   1   1   25          
 [ 8]  7 *1048579768   GUI  8x8     ---   9.907  11.406   1932  -2336   1   1   25          
-[ 9]  5 *1048445048   ACQ  8x8   0.854   9.917  11.422   1329  -1098  20   1  120          
-[10]  6 *1048586096   ACQ  8x8   0.860  10.137  11.641   2050   -597  20   1  120          
-[11]  7 *1048582512   ACQ  8x8   0.911   9.970  11.469   1864  -1261  20   1  120          
+[ 9]  5 *1048445048   ACQ  8x8   0.847   9.917  11.422   1329  -1098  20   1  120          
+[10]  6 *1048586096   ACQ  8x8   0.847  10.137  11.641   2050   -597  20   1  120          
+[11]  7 *1048582512   ACQ  8x8   0.903   9.970  11.469   1864  -1261  20   1  120          
 
 >> WARNING: Could not find obsid NONE6 in processing summary
 >> WARNING: Could not determine obsid start and stop times for checks (dither, momentum)
 >> WARNING: No Guide Star Summary for obsid NONE6 (NONE6). 
 >> WARNING: No CCD temperature prediction for obsid
->> WARNING: Using -11.5 (planning limit) for t_ccd for mag limits
+>> WARNING: Using -10.9 (planning limit) for t_ccd for mag limits
 >> WARNING: Dither status not checked
 >> WARNING: [ 1] Search spoiler. 1048446792: Y,Z,Radial,Mag seps: 206 100 229  2.0
 >> WARNING: [ 1] Search spoiler. 1048457496: Y,Z,Radial,Mag seps: 214 101 237  0.7
@@ -363,9 +363,9 @@ MP_STARCAT at 2007:225:12:59:16.015 (VCDU count = 15676978)
 >> WARNING: [ 3] Search spoiler. 1048447320: Y,Z,Radial,Mag seps:  43 193 197 -0.7
 >> WARNING: [ 9] Search spoiler. 1048581064: Y,Z,Radial,Mag seps: 225 180 288 -1.0
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.922	-3.497	-2.334	
-Acquisition Stars Expected  : 7.15
-Predicted Max CCD temperature: -11.5 C 
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-4.797	-3.392	-2.251	
+Acquisition Stars Expected  : 7.10
+Predicted Max CCD temperature: -10.9 C 
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: NONE7  
