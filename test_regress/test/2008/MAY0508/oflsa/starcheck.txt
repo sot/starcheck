@@ -25,7 +25,7 @@ Using processing summary file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/mps/ms125_
 Using radmon file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/History/SIMTRANS.txt
-Using ACABadPixel file from 2017092 Dark Cal 
+Using ACABadPixel file from 2017185 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  CCD TEMPERATURE PREDICTION -----------------
@@ -94,7 +94,7 @@ MP_STARCAT at 2008:125:23:09:55.831 (VCDU count = 4506906)
 [ 4]  3  1139148408   BOT  6x6   0.985   8.080   9.578  -2199   1922  20   1  120          
 [ 5]  4  1139171176   BOT  6x6   0.985   8.498  10.000  -1322    909  20   1  120          
 [ 6]  5  1139280104   BOT  6x6   0.985   7.518   9.016   -178   1023  20   1  120          
-[ 7]  6  1180604328   BOT  6x6   0.930   9.624  11.125   1413   -261  20   1  120  a2g2    
+[ 7]  6  1180604328   BOT  6x6   0.931   9.624  11.125   1413   -261  20   1  120  a2g2    
 [ 8]  7  1180612104   GUI  6x6     ---   8.972  10.469    753  -2104   1   1   25    g2    
 [ 9]  7  1139171312   ACQ  6x6   0.985   9.431  10.938   -440   1642  20   1  120    a2    
 [10]  0  1139171352   ACQ  6x6   0.985   9.480  10.984  -1142   2060  20   1  120    a2    
@@ -104,7 +104,7 @@ MP_STARCAT at 2008:125:23:09:55.831 (VCDU count = 4506906)
 >> WARNING: [11] Search spoiler. 1139280088: Y,Z,Radial,Mag seps: 166 120 205 -0.9
 >> WARNING: [11] Search spoiler. 1139279224: Y,Z,Radial,Mag seps:  94  12  95 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.434	-5.535	-3.880	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.442	-5.542	-3.886	
 Acquisition Stars Expected  : 7.62
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
@@ -292,11 +292,11 @@ MP_STARCAT at 2008:127:01:02:50.930 (VCDU count = 4870516)
 [ 8]  7   897612528   BOT  6x6   0.985   7.234   8.734   -629   -189  20   1  120          
 [ 9]  0   897616624   ACQ  6x6   0.985   6.094   7.594  -1578  -1076  20   1  120    a2    
 [10]  1   897469264   ACQ  6x6   0.985   7.215   8.719  -2240   1764  20   1  120    a2    
-[11]  2   897598080   ACQ  6x6   0.954   9.478  11.562    532  -1240  20   1  120    a2    
+[11]  2   897598080   ACQ  6x6   0.955   9.478  11.562    532  -1240  20   1  120    a2    
 
 >> WARNING: Non-standard dither
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.103	-7.030	-5.167	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.106	-7.033	-5.169	
 Acquisition Stars Expected  : 7.84
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
@@ -377,10 +377,10 @@ MP_STARCAT at 2008:127:14:26:33.697 (VCDU count = 5058702)
 ---------------------------------------------------------------------------------------------
 [ 1]  0    45356200   BOT  8x8   0.985   9.571  11.078   1084   1166  20   1  120  a2g2    
 [ 2]  1    45356736   BOT  8x8   0.984   9.709  11.219  -1275   -107  20   1  120  a2g2    
-[ 3]  2    45357808   BOT  8x8   0.972   9.969  11.469  -1096   2049  20   1  120  a2g3    
+[ 3]  2    45357808   BOT  8x8   0.973   9.969  11.469  -1096   2049  20   1  120  a2g3    
 [ 4]  3   120466360   BOT  8x8   0.967  10.047  11.547  -2061  -1657  20   1  120  a2g3    
 [ 5]  4   120466888   BOT  8x8   0.985   8.543  10.047   1241  -2102  20   1  120          
-[ 6]  5   120467432   BOT  8x8   0.915   9.393  10.891   -569  -1022  20   1  120    a2    
+[ 6]  5   120467432   BOT  8x8   0.910   9.393  10.891   -569  -1022  20   1  120    a2    
 [ 7]  6   120467800   BOT  8x8   0.985   9.615  11.125   -337  -1843  20   1  120  a2g2    
 [ 8]  7   120466880   GUI  8x8     ---  10.093  11.594   -639  -1100   1   1   25    g3    
 [ 9]  7   120466352   ACQ  8x8   0.971   9.992  11.500    722   -887  20   1  120    a2    
@@ -388,7 +388,7 @@ MP_STARCAT at 2008:127:14:26:33.697 (VCDU count = 5058702)
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 6] Search spoiler.  120466880: Y,Z,Radial,Mag seps:  70  78 104 -0.7
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.153	-6.213	-4.493	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.145	-6.204	-4.483	
 Acquisition Stars Expected  : 7.76
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
@@ -413,15 +413,15 @@ MP_STARCAT at 2008:127:17:13:48.814 (VCDU count = 5097864)
 [ 6]  5  1025772384   GUI  8x8     ---   9.042  10.547   2279    716   1   1   25          
 [ 7]  6  1025787480   GUI  8x8     ---   9.198  10.703   2390   -396   1   1   25          
 [ 8]  7  1025794112   GUI  8x8     ---   8.782  10.281  -1223    179   1   1   25          
-[ 9]  3  1026307128   ACQ  8x8   0.979   9.221  10.781     74  -1006  20   1  120    a2    
+[ 9]  3  1026307128   ACQ  8x8   0.980   9.221  10.781     74  -1006  20   1  120    a2    
 [10]  4  1026313880   ACQ  8x8   0.985   9.296  10.797    132  -2030  20   1  120    a2    
 [11]  5  1026309080   ACQ  8x8   0.947   9.528  11.031   1584  -1443  20   1  120    a2    
-[12]  6  1026187312   ACQ  8x8   0.913   9.544  11.047  -1860  -1343  20   1  120    a2    
+[12]  6  1026187312   ACQ  8x8   0.910   9.544  11.047  -1860  -1343  20   1  120    a2    
 [13]  7  1025793440   ACQ  8x8   0.985   9.576  11.078   2119  -1214  20   1  120    a2    
 
 >> WARNING: [12] Search spoiler. 1026185568: Y,Z,Radial,Mag seps: 147 144 206 -0.7
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.296	-6.316	-4.557	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.289	-6.309	-4.550	
 Acquisition Stars Expected  : 7.76
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
@@ -441,18 +441,18 @@ MP_STARCAT at 2008:127:23:52:22.243 (VCDU count = 5191184)
 [ 1]  0   891158840   BOT  8x8   0.943   9.555  11.062   -648  -1402  20   1  120  a2g2    
 [ 2]  1   891160624   BOT  8x8   0.985   9.347  10.844  -1974  -1718  20   1  120          
 [ 3]  2   891162424   BOT  8x8   0.966  10.064  11.562  -1413  -1541  20   1  120  a2g3    
-[ 4]  3   891163024   BOT  8x8   0.846   9.932  11.438  -2312   -599   7   1   55  a2g3    
+[ 4]  3   891163024   BOT  8x8   0.948   9.932  11.438  -2312   -599   7   1   55  a2g3    
 [ 5]  4   891163384   BOT  8x8   0.958   9.452  10.953  -1214   -189  20   1  120  a2g3    
 [ 6]  5   891163512   BOT  8x8   0.985   9.547  11.047   -467   1323  20   1  120  a2g2    
 [ 7]  6   891305328   BOT  8x8   0.985   9.535  11.047   -411  -1665  20   1  120  a2g2    
 [ 8]  7   891164616   GUI  8x8     ---  10.299  11.797  -1647   -111   1   1   25    g3    
-[ 9]  7   891297472   ACQ  8x8   0.678  10.283  11.875  -1657  -2089  20   1  120    a3   C
+[ 9]  7   891297472   ACQ  8x8   0.680  10.283  11.875  -1657  -2089  20   1  120    a3   C
 
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.46, Pos_Err = 0.11
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.376	-4.623	-3.127	
-Acquisition Stars Expected  : 7.34
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.817	-5.025	-3.474	
+Acquisition Stars Expected  : 7.45
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -510,11 +510,11 @@ MP_STARCAT at 2008:128:10:42:30.697 (VCDU count = 5343413)
 [ 6]  5   896402976   BOT  6x6   0.985   7.539   9.047  -1222    539  20   1  120          
 [ 7]  6   896404568   BOT  6x6   0.985   7.641   9.250    687  -1174  20   1  120          
 [ 8]  7   896405616   BOT  6x6   0.985   7.855   9.359    519   1780  20   1  120          
-[ 9]  0   896405976   ACQ  6x6   0.981   9.189  10.688   -198   2084  20   1  120          
+[ 9]  0   896405976   ACQ  6x6   0.982   9.189  10.688   -198   2084  20   1  120          
 [10]  1   896404784   ACQ  6x6   0.985   9.304  10.812  -1734   -738  20   1  120          
 [11]  2   896403520   ACQ  6x6   0.985   9.030  10.531   -467  -1069   7   1   55          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.437	-7.328	-5.423	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.439	-7.330	-5.425	
 Acquisition Stars Expected  : 7.87
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
@@ -571,15 +571,15 @@ MP_STARCAT at 2008:129:20:42:50.686 (VCDU count = 5821149)
 [ 4]  3    36965296   BOT  6x6   0.985   9.141  10.641   1352   -702  20   1  120          
 [ 5]  4    36965816   BOT  6x6   0.970   9.344  10.844   1738   -914  20   1  120  a2g2    
 [ 6]  5    37356352   BOT  6x6   0.985   8.547  10.047  -1989   -436  20   1  120          
-[ 7]  6    37883040   BOT  6x6   0.974   9.936  11.438   2002   2307  12   1   80  a2g3    
+[ 7]  6    37883040   BOT  6x6   0.985   9.936  11.438   2002   2307  12   1   80  a2g3    
 [ 8]  7    36965896   GUI  6x6     ---   9.818  11.328   1660    395   1   1   25    g2    
-[ 9]  7    36965616   ACQ  6x6   0.967  10.040  11.547   1518    460  12   1   80    a2    
-[10]  0    36968408   ACQ  6x6   0.966  10.060  11.562   2303   1490  17   1  105    a2    
+[ 9]  7    36965616   ACQ  6x6   0.985  10.040  11.547   1518    460  12   1   80    a2    
+[10]  0    36968408   ACQ  6x6   0.975  10.060  11.562   2303   1490  17   1  105    a2    
 [11]  1    36963960   ACQ  6x6   0.976   9.903  11.406   1975  -1645  20   1  120    a2    
-[12]  2    36963696   ACQ  6x6   0.877   9.839  11.344   1170   -616  20   1  120    a2    
+[12]  2    36963696   ACQ  6x6   0.878   9.839  11.344   1170   -616  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.635	-5.777	-4.139	
-Acquisition Stars Expected  : 7.69
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.154	-6.197	-4.460	
+Acquisition Stars Expected  : 7.73
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
@@ -599,17 +599,17 @@ MP_STARCAT at 2008:130:06:12:49.463 (VCDU count = 5954608)
 [ 2]  1    45356736   BOT  8x8   0.984   9.709  11.219  -1280     26  20   1  120  a2g2    
 [ 3]  2   120466360   BOT  8x8   0.967  10.047  11.547  -2223  -1431  20   1  120  a2g3    
 [ 4]  3   120466888   BOT  8x8   0.985   8.543  10.047   1014  -2220  20   1  120          
-[ 5]  4   120467432   BOT  8x8   0.915   9.393  10.891   -674   -956  20   1  120    a2    
+[ 5]  4   120467432   BOT  8x8   0.910   9.393  10.891   -674   -956  20   1  120    a2    
 [ 6]  5   120467800   BOT  8x8   0.985   9.615  11.125   -529  -1797  20   1  120  a2g2    
 [ 7]  6    45353072   GUI  8x8     ---   9.326  10.828   2374   2327   1   1   25    g2    
 [ 8]  7    45358040   GUI  8x8     ---   9.751  11.250   1838   2294   1   1   25    g3    
-[ 9]  6    45357808   ACQ  8x8   0.972   9.969  11.469   -874   2153  20   1  120    a2    
+[ 9]  6    45357808   ACQ  8x8   0.973   9.969  11.469   -874   2153  20   1  120    a2    
 [10]  7   120466352   ACQ  8x8   0.971   9.992  11.500    625   -958  20   1  120    a2    
 
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 5] Search spoiler.  120466880: Y,Z,Radial,Mag seps:  77  70 104 -0.7
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.151	-6.212	-4.492	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.144	-6.203	-4.482	
 Acquisition Stars Expected  : 7.76
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
@@ -640,7 +640,7 @@ MP_STARCAT at 2008:130:08:41:27.723 (VCDU count = 5989411)
 
 >> WARNING: [ 7] Nearby ACA bad pixel. Y,Z,Radial seps:   2,  23,  23
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.410	-7.306	-5.405	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.414	-7.309	-5.408	
 Acquisition Stars Expected  : 7.87
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
@@ -662,16 +662,16 @@ MP_STARCAT at 2008:130:14:20:12.378 (VCDU count = 6068726)
 [ 3]  2   120466360   BOT  8x8   0.967  10.047  11.547  -2198   1049  20   1  120  a2g3    
 [ 4]  3   120466704   BOT  8x8   0.985   9.079  10.578   -492   -638  20   1  120          
 [ 5]  4   120466888   BOT  8x8   0.985   8.543  10.047   1052    317  20   1  120          
-[ 6]  5   120467432   BOT  8x8   0.915   9.393  10.891   -657   1551  20   1  120    a2    
+[ 6]  5   120467432   BOT  8x8   0.910   9.393  10.891   -657   1551  20   1  120    a2    
 [ 7]  6   120467800   BOT  8x8   0.985   9.615  11.125   -497    713  20   1  120  a2g2    
 [ 8]  7   120460808   GUI  8x8     ---   9.197  10.703   1919  -2463   1   1   25          
-[ 9]  7   120466376   ACQ  8x8   0.933  10.329  11.828   1735    215  20   1  120    a3    
+[ 9]  7   120466376   ACQ  8x8   0.934  10.329  11.828   1735    215  20   1  120    a3    
 
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 6] Search spoiler.  120466880: Y,Z,Radial,Mag seps:  76  71 104 -0.7
 >> WARNING: [ 9] Magnitude.  10.329
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.843	-5.936	-4.257	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.834	-5.927	-4.248	
 Acquisition Stars Expected  : 7.72
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
@@ -731,9 +731,9 @@ MP_STARCAT at 2008:131:01:48:20.303 (VCDU count = 6229850)
 [ 8]  7   756296152   BOT  6x6   0.985   9.238  10.750  -1516   2102  20   1  120          
 [ 9]  0   682099640   ACQ  6x6   0.985   9.571  11.078   1615   -482  20   1  120    a2    
 [10]  1   682103072   ACQ  6x6   0.985   9.686  11.188   -502  -2040  20   1  120    a2    
-[11]  2   682103904   ACQ  6x6   0.884   9.814  11.312   -513   1703  20   1  120    a2    
+[11]  2   682103904   ACQ  6x6   0.885   9.814  11.312   -513   1703  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.647	-6.608	-4.785	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.655	-6.615	-4.791	
 Acquisition Stars Expected  : 7.77
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
@@ -1047,11 +1047,11 @@ MP_STARCAT at 2008:132:02:42:55.096 (VCDU count = 6579800)
 [ 9]  7  1031930696   ACQ  6x6   0.985   6.991   8.500     -8  -2230  20   1  120          
 [10]  0  1031929904   ACQ  6x6   0.985   9.448  10.953    538   -874  20   1  120    a2    
 [11]  1  1031930768   ACQ  6x6   0.918   9.683  11.188    626   -467  20   1  120    a2    
-[12]  2  1031940992   ACQ  6x6   0.815   9.821  11.328  -1658   1605  20   1  120    a2    
+[12]  2  1031940992   ACQ  6x6   0.816   9.821  11.328  -1658   1605  20   1  120    a2    
 
 >> WARNING: [12] Search spoiler. 1031938576: Y,Z,Radial,Mag seps:  44  54  70 -1.0
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.908	-5.931	-4.185	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.913	-5.936	-4.189	
 Acquisition Stars Expected  : 7.64
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
@@ -1195,10 +1195,10 @@ MP_STARCAT at 2008:132:21:52:38.787 (VCDU count = 6849005)
 ---------------------------------------------------------------------------------------------
 [ 1]  0    45356200   BOT  8x8   0.985   9.571  11.078   1298    921  20   1  120  a2g2    
 [ 2]  1    45356736   BOT  8x8   0.984   9.709  11.219  -1271    153  20   1  120  a2g2    
-[ 3]  2    45357808   BOT  8x8   0.972   9.969  11.469   -657   2229  20   1  120  a2g3    
+[ 3]  2    45357808   BOT  8x8   0.973   9.969  11.469   -657   2229  20   1  120  a2g3    
 [ 4]  3    45358040   BOT  8x8   0.983   9.751  11.250   2056   2101  20   1  120  a2g3    
 [ 5]  4   120466888   BOT  8x8   0.985   8.543  10.047    789  -2310  20   1  120          
-[ 6]  5   120467432   BOT  8x8   0.915   9.393  10.891   -765   -885  20   1  120    a2    
+[ 6]  5   120467432   BOT  8x8   0.910   9.393  10.891   -765   -885  20   1  120    a2    
 [ 7]  6   120467800   BOT  8x8   0.985   9.615  11.125   -704  -1736  19   1  115  a2g2    
 [ 8]  7   120466360   GUI  8x8     ---  10.047  11.547  -2354  -1204   1   1   25    g3    
 [ 9]  7   120466352   ACQ  8x8   0.971   9.992  11.500    527  -1015  20   1  120    a2    
@@ -1206,7 +1206,7 @@ MP_STARCAT at 2008:132:21:52:38.787 (VCDU count = 6849005)
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
 >> WARNING: [ 6] Search spoiler.  120466880: Y,Z,Radial,Mag seps:  84  62 104 -0.7
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.365	-6.390	-4.632	
+Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.357	-6.381	-4.622	
 Acquisition Stars Expected  : 7.77
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
