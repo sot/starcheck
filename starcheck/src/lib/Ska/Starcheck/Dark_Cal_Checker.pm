@@ -17,6 +17,7 @@ use Ska::Parse_CM_File;
 # Add a module-wide hash to store a mapping of Obsid/OFLSIDs to dark cal
 # labels (DFC_?/DC_T?)
 my %dc_oflsid;
+my $N_REPL = 0;
 
 sub new{
     my $class = shift;
@@ -84,6 +85,7 @@ sub new{
     my $tlr = TLR->new($tlr_file, 'tlr', \%config);
 	$feedback{tlr} = $tlr;
 	#my $mm_file = get_file("$par{dir}/$par{mm}", 'Maneuver Management', 'required', \@{$feedback{input_files}});
+
     my $dot_file = get_file("$par{dir}/$par{dot}", 'DOT', 'required', \@{$feedback{input_files}});
     #my @mm = Ska::Parse_CM_File::MM({file => $mm_file, ret_type => 'array'});
     my ($dot_href, $s_touched, $dot_aref) = Ska::Parse_CM_File::DOT($dot_file);
@@ -101,7 +103,7 @@ sub new{
     my $timelines = iu_timeline($tlr);
     my @trim_tlr = @{ trim_tlr( $tlr, \%config )};
 
-    $feedback{aca_init_command} = compare_timingncommanding( [$tlr->{first_aca_hw_cmd}], [$templates{A}->{entries}[0]], \%config, 
+    $feedback{aca_init_command} = compare_timingncommanding( [$tlr->{first_aca_hw_cmd}], [$templates{A}->{entries}[0]], \%config,
                                                              "First ACA command is the template-independent init command");
     %feedback = (%feedback, %{replicas($tlr, \%templates, $timelines, \%config)});
     
@@ -111,7 +113,7 @@ sub new{
     $feedback{check_dwell} = check_dwell(\%config, $manvrs, $dwells);
     $feedback{check_manvr_point} = check_manvr_point( \%config, \@bs, $manvrs);
     $feedback{check_momentum_unloads} = check_momentum_unloads(\%config, \@bs, $manvrs, $dwells);
-	
+
     bless \%feedback, $class;
     return \%feedback;
 
@@ -262,8 +264,15 @@ sub replicas{
 	for my $r_idx (0 .. 4){
 		# find the indexes in the real tlr and trim to a reduced set of commands to check
 		# note that begin_replica and end_replica use trace_ids from the TLR
-		my $r_start = $tlr->begin_replica($r_idx)->index();
-		my $r_end = $tlr->end_replica($r_idx)->index();
+                my ($r_start, $r_end);
+                eval{
+		$r_start = $tlr->begin_replica($r_idx)->index();
+	        $r_end = $tlr->end_replica($r_idx)->index();
+                };
+                if ($@){
+                    last;
+                }
+                $N_REPL++;
 		my @replica_tlr;
 		for my $entry (@trim_tlr){
 			if (($entry->index() >= $r_start) and ($entry->index() <= $r_end)){
@@ -356,9 +365,8 @@ sub check_iu{
 			$output{status} = 0;
 		}
 	}
-
 	# check for changes during the replica
-	if ($state->{tstop} < $check_cfg->{r_tstop}){
+	if ((defined $state->{tstop}) and ($state->{tstop} < $check_cfg->{r_tstop})){
 		push @{$output{info}}, { text => "Transponder state change during replica at $state->{datestop}", type => 'error' };
 	}
 	else{
@@ -533,7 +541,7 @@ sub check_dither_enable_at_end{
 
     my $manvr_away_from_dfc;
     for my $man_idx (0 .. $#{$manvrs}){
-        if ($manvrs->[$man_idx]->{tstart} > $tlr->end_replica(4)->time()){
+        if ($manvrs->[$man_idx]->{tstart} > $tlr->end_replica($N_REPL - 1)->time()){
             # The maneuver to DFC after replica 4 is the first manvr after end_replica(4)->time
             # The maneuver *from* DFC should be the next one [$man_idx + 1]
             $manvr_away_from_dfc = $manvrs->[$man_idx + 1];
@@ -542,9 +550,9 @@ sub check_dither_enable_at_end{
     }
     my $manvr_datestop = time2date($manvr_away_from_dfc->{'tstop'});
 
-    push @{$output{criteria}}, sprintf("Steps through the TLR from the last hw command at replica 4");
+    push @{$output{criteria}}, sprintf("Steps through the TLR from the last hw command at last replica");
     push @{$output{criteria}}, sprintf("to the end of the maneuver from DFC to ADJCT, where");
-    push @{$output{criteria}}, sprintf("end replica 4 at " . $tlr->end_replica(4)->datestamp() );
+    push @{$output{criteria}}, sprintf("end last replica at " . $tlr->end_replica($N_REPL - 1)->datestamp() );
     push @{$output{criteria}}, sprintf("maneuver away from dfc ends at  " . $manvr_datestop);
     push @{$output{criteria}}, sprintf("looks for any dither enable or disable command mnemonics :");
 
@@ -560,7 +568,7 @@ sub check_dither_enable_at_end{
 
     my @dith_cmd;
 
-    my $index_end = $tlr->end_replica(4)->index();
+    my $index_end = $tlr->end_replica($N_REPL - 1)->index();
     for my $tlr_entry (@tlr_arr[$index_end .. $#tlr_arr]){
 	next unless ( grep { $tlr_entry->comm_mnem() eq $_->{comm_mnem} } (map {@$_} @{cmd_list{'dither_enable','dither_disable'}}) );
 	last if ($tlr_entry->time() > ($manvr_away_from_dfc->{tstop}));
@@ -694,7 +702,7 @@ sub check_dither_param_at_end{
 
     my $manvr_away_from_dfc;
     for my $man_idx (0 .. $#{$manvrs}){
-        if ($manvrs->[$man_idx]->{tstart} > $tlr->end_replica(4)->time()){
+        if ($manvrs->[$man_idx]->{tstart} > $tlr->end_replica($N_REPL - 1)->time()){
             # The maneuver to DFC after replica 4 is the first manvr after end_replica(4)->time
             # The maneuver *from* DFC should be the next one [$man_idx + 1]
             $manvr_away_from_dfc = $manvrs->[$man_idx + 1];
@@ -703,9 +711,9 @@ sub check_dither_param_at_end{
     }
     my $manvr_datestop = time2date($manvr_away_from_dfc->{'tstop'});
 
-    push @{$output{criteria}}, sprintf("Steps through the TLR from the last command at the end of replica 4");
+    push @{$output{criteria}}, sprintf("Steps through the TLR from the last command at the end of last replica");
     push @{$output{criteria}}, sprintf("to the end of the maneuver away from DFC to ADJCT");
-    push @{$output{criteria}}, sprintf( "end of replica 4 at " . $tlr->end_replica(4)->datestamp() );
+    push @{$output{criteria}}, sprintf( "end of last replica at " . $tlr->end_replica($N_REPL - 1)->datestamp() );
     push @{$output{criteria}}, sprintf( "end of maneuver away from dfc at " . $manvr_datestop);
     push @{$output{criteria}}, sprintf("looks for any dither parameter command mnemonics :");
 
@@ -721,7 +729,7 @@ sub check_dither_param_at_end{
     # create an array of those commands (even if just one command)
 
     my @dith_param;
-    my $index_end = $tlr->end_replica(4)->index();
+    my $index_end = $tlr->end_replica($N_REPL - 1)->index();
     for my $tlr_entry (@tlr_arr[$index_end .. $#tlr_arr]){
 	next unless (defined $cmd_list{$tlr_entry->comm_mnem});
 	last if ($tlr_entry->time() > $manvr_away_from_dfc->{'tstop'});
@@ -869,6 +877,10 @@ sub check_dwell{
 
 	# check 
 	for my $id (@check_ids){
+                # Skip if it isn't also in the dc_oflsid list
+                if (not exists $dc_oflsid{$id}){
+                    next;
+                }
 		if (not defined $dwells->{$id}){
 			push @{$output{info}}, { text => "No dwell found for $id from DOT maneuvers",
 									 type => "error"};
@@ -1006,6 +1018,10 @@ sub check_momentum_unloads {
 
 	# check all these dwells
 	for my $id (@oflsids){
+            # Skip if it isn't also in the dc_oflsid list
+            if (not exists $dc_oflsid{$id}){
+                next;
+            }
 		my ($outputs, $status) = single_unload_check( $dwells->{$id}, \@unloads);
 		push @{$output{info}}, @{$outputs};
 		$output{status} = 0 if ($status == 0);
@@ -1031,7 +1047,7 @@ sub single_unload_check{
 						 type => 'info' };
 	
 	for my $unload (@{$unloads}){
-		if ((date2time($unload) >= $dwell->{tstart})
+            if ((date2time($unload) >= $dwell->{tstart})
 			and (date2time($unload) <= $dwell->{tstop})){
 			$status = 0;
 			push @outputs, { text => sprintf("Momentum dump at %s during dwell at %s",
@@ -1361,6 +1377,7 @@ sub print{
 ##***************************************************************************
 
 	my $dark_cal_checker = shift;
+        #print Dumper $dark_cal_checker;
     my $opt = shift;
     my $out;
 
@@ -1379,16 +1396,23 @@ sub print{
     
     $out .= "\n\n";
     $out .= "ACA Dark Cal Checker Report:\n";
-    $out .= sprintf( "[" . is_ok($dark_cal_checker->{trans_replica_0}->{status} 
-								 and $dark_cal_checker->{trans_replica_1}->{status} 
-								 and $dark_cal_checker->{trans_replica_2}->{status} 
-								 and $dark_cal_checker->{trans_replica_3}->{status} 
-								 and $dark_cal_checker->{trans_replica_4}->{status}) . "]\ttransponder correctly selected before each replica\n");
-    $out .= sprintf("[" . is_ok($dark_cal_checker->{tnc_replica_0}->{status}
-								and $dark_cal_checker->{tnc_replica_1}->{status}
-								and $dark_cal_checker->{tnc_replica_2}->{status}
-								and $dark_cal_checker->{tnc_replica_3}->{status}
-								and $dark_cal_checker->{tnc_replica_4}->{status}) . "]\tACA Calibration Commanding (hex, sequence, and timing of ACA/OBC commands).\n");
+    $out .= sprintf( "[" . is_ok(($dark_cal_checker->{trans_replica_0}->{status} or not exists $dark_cal_checker->{trans_replica_0}->{status})
+								 and ($dark_cal_checker->{trans_replica_1}->{status} or not exists $dark_cal_checker->{trans_replica_1}->{status})
+								 and ($dark_cal_checker->{trans_replica_2}->{status} or not exists $dark_cal_checker->{trans_replica_2}->{status})
+								 and ($dark_cal_checker->{trans_replica_3}->{status} or not exists $dark_cal_checker->{trans_replica_3}->{status})
+								 and ($dark_cal_checker->{trans_replica_4}->{status} or not exists $dark_cal_checker->{trans_replica_4}->{status})) 
+. "]\ttransponder correctly selected before each replica\n");
+    $out .= sprintf("[" . is_ok(($dark_cal_checker->{tnc_replica_0}->{status}
+                   or not exists $dark_cal_checker->{tnc_replica_0}->{status})
+                   and ($dark_cal_checker->{tnc_replica_1}->{status}
+                   or not exists $dark_cal_checker->{tnc_replica_1}->{status})
+                   and ($dark_cal_checker->{tnc_replica_2}->{status}
+                   or not exists $dark_cal_checker->{tnc_replica_2}->{status})
+                   and ($dark_cal_checker->{tnc_replica_3}->{status}
+                   or not exists $dark_cal_checker->{tnc_replica_3}->{status})
+                   and ($dark_cal_checker->{tnc_replica_4}->{status}
+                   or not exists $dark_cal_checker->{tnc_replica_4}->{status})
+) . "]\tACA Calibration Commanding (hex, sequence, and timing of ACA/OBC commands).\n");
     $out .= sprintf("[". is_ok($dark_cal_checker->{check_manvr}->{status} and $dark_cal_checker->{check_dwell}->{status}) . "]\tManeuver and Dwell timing.\n");
     $out .= sprintf("[" . is_ok($dark_cal_checker->{check_manvr_point}->{status}) . "]\tManeuver targets.\n");
     $out .= sprintf("[" . is_ok($dark_cal_checker->{dither_disable_0}->{status}
@@ -1418,7 +1442,7 @@ sub transponder_timing{
 	my $self = shift;
 	my $trans = '';
 	my $text = "For dark current operations, transponder should be set to:\n";
-	for my $t (0 .. 4){
+	for my $t (0 .. $N_REPL - 1){
 		if ($trans ne $self->{"tnc_replica_$t"}->{'transponder'}){
 			$trans = $self->{"tnc_replica_$t"}->{'transponder'};
 			$text .= "Transponder " . $trans;
@@ -1472,6 +1496,10 @@ sub format_dark_cal_check{
 	my $blue_font_start = qq{<font color="#0000FF">};
 	my $font_stop = qq{</font>};
 
+        if ((not exists $feedback->{comment}) or 
+            (scalar($feedback->{comment}) == 0)){
+            return "";
+        }
     my $return_string;
 	
 	if ($opt->{criteria}){
@@ -1647,7 +1675,7 @@ sub last_aca_hw_cmd{
     my $self = shift;
     return $self->{last_aca_hw_cmd} if (defined $self->{last_aca_hw_cmd});
    
-    $self->{last_aca_hw_cmd} = $self->end_replica(4);
+    $self->{last_aca_hw_cmd} = $self->end_replica($N_REPL - 1);
    
 
     croak("No ACA commanding found.  Could not define reference entry")
@@ -2177,7 +2205,13 @@ sub replica{
 	return $self->{replica} if (defined $self->{replica});
 	for my $r_idx (0 .. 4){
 		# find the indexes in the real tlr and trim to a reduced set of commands to check
-		my $r_start = $self->{parent}->begin_replica($r_idx)->index();
+                my $r_start;
+                eval{
+		$r_start = $self->{parent}->begin_replica($r_idx)->index();
+                };
+                if ($@){
+                    return undef;
+                }
 		my $r_end = $self->{parent}->end_replica($r_idx)->index();
 		if (($self->index() >= $r_start) and ($self->index() <= $r_end)){
 			$self->{replica} = $r_idx;
