@@ -49,8 +49,6 @@ Load Input Files
 
       * Vehicle: ./vehicle/output/V_TEST_mechcheck.txt
 
-  - SOE: ./mps/soe/msddd:hhvv.soe
-
   - Fidsel: ./History/FIDSEL.txt
 
   - Dither: ./History/DITHER.txt
