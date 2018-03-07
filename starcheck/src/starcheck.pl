@@ -791,36 +791,32 @@ for my $obs_idx (0 .. $#obsid_id) {
     $out .= sprintf " at $obs{$obsid}->{date}   ";
 
     my $good_guide_count = $obs{$obsid}->{count_nowarn_stars}{GUI};
-    my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};
 
     # if Obsid is numeric, print tally info
     if ($obs{$obsid}->{obsid} =~ /^\d+$/ ){
 
         # minumum requirements for acq and guide for ERs and ORs
         # should be set by config...
-        my $min_num_acq = ($obs{$obsid}->{obsid} >= 38000 ) ? 5 : 4;
         my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000 ) ? 6 : 4;
 
         # if there is no star catalog and that's ok
         if (not ($obs{$obsid}->find_command("MP_STARCAT"))
-            and $obs{$obsid}->{ok_no_starcat}){
-            $min_num_acq = 0;
+                and $obs{$obsid}->{ok_no_starcat}){
             $min_num_gui = 0;
         }
 
         # use the 'special case' ER rules from ACA-044
         if ($obs{$obsid}->{special_case_er}){
-            $min_num_acq = 4;
             $min_num_gui = 4;
         }
 
-        my $acq_font_start = ($good_acq_count < $min_num_acq) ? $red_font_start
+        my $acq_font_start = $obs{$obsid}->{figure_of_merit}->{cum_prob_bad} ? $red_font_start
         : $empty_font_start;
         my $gui_font_start = ($good_guide_count < $min_num_gui) ? $red_font_start
         : $empty_font_start;
 
         $out .= "$acq_font_start";
-        $out .= sprintf "$good_acq_count clean ACQ | ";
+        $out .= sprintf("%3.1f  ACQ | ", $obs{$obsid}->{figure_of_merit}->{expected});
         $out .= "$font_stop";
 
         $out .= "$gui_font_start";
