@@ -816,7 +816,7 @@ for my $obs_idx (0 .. $#obsid_id) {
         : $empty_font_start;
 
         $out .= "$acq_font_start";
-        $out .= sprintf("%3.1f  ACQ | ", $obs{$obsid}->{figure_of_merit}->{expected});
+        $out .= sprintf("%3.1f ACQ | ", $obs{$obsid}->{figure_of_merit}->{expected});
         $out .= "$font_stop";
 
         $out .= "$gui_font_start";
