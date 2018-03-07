@@ -2503,9 +2503,7 @@ sub count_good_stars{
 ###################################################################################
     my $self=shift;
     my $c;
-    my $clean_acq_count = 0;
     my $clean_gui_count = 0;
-    $self->{count_nowarn_stars}{ACQ} = $clean_acq_count;
     $self->{count_nowarn_stars}{GUI} = $clean_gui_count;
 
     return unless ($c = find_command($self, 'MP_STARCAT'));
@@ -2513,11 +2511,6 @@ sub count_good_stars{
         my $type = $c->{"TYPE$i"};
         next if ($type eq 'NUL');
         next if ($type eq 'FID');
-	if ($type =~ /ACQ|BOT/){
-	    unless ($self->check_idx_warn($i)){
-		$clean_acq_count++;
-	    }
-	}
 	if ($type =~ /GUI|BOT/){
 	    unless ($self->check_idx_warn($i)){
 		$clean_gui_count++;
@@ -2525,7 +2518,6 @@ sub count_good_stars{
 	}
 	
     }
-    $self->{count_nowarn_stars}{ACQ} = $clean_acq_count;
     $self->{count_nowarn_stars}{GUI} = $clean_gui_count;
 
 }
