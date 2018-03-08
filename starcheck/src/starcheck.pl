@@ -124,6 +124,7 @@ my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
 my $empty_font_start = qq{<font>};
 my $red_font_start = qq{<font color="#FF0000">};
+my $orange_font_start = qq{<font color="#ff6400">};
 my $yellow_font_start = qq{<font color="#009900">};
 my $blue_font_start = qq{<font color="#0000FF">};
 my $font_stop = qq{</font>};
@@ -341,7 +342,8 @@ if ($dot_touched_by_sausage == 0 ){
 
 Ska::Starcheck::Obsid::setcolors({ red => $red_font_start,
 				   blue => $blue_font_start,
-				   yellow => $yellow_font_start, 
+				   yellow => $yellow_font_start,
+                                   orange => $orange_font_start,
 				   });
 
 my %odb = Ska::Parse_CM_File::odb($odb_file);
@@ -831,11 +833,15 @@ for my $obs_idx (0 .. $#obsid_id) {
 
     if (@{$obs{$obsid}->{warn}}) {
 	my $count_red_warn = $#{$obs{$obsid}->{warn}}+1;
-	$out .= sprintf("${red_font_start}WARNINGS [%2d]${font_stop} ", $count_red_warn);
-    } 
+	$out .= sprintf("${red_font_start}Critical:%2d${font_stop} ", $count_red_warn);
+    }
+    if (@{$obs{$obsid}->{orange_warn}}) {
+	my $count_orange_warn = $#{$obs{$obsid}->{orange_warn}}+1;
+	$out .= sprintf("${orange_font_start}Warn:%2d${font_stop} ", $count_orange_warn);
+    }
     if (@{$obs{$obsid}->{yellow_warn}}) {
 	my $count_yellow_warn = $#{$obs{$obsid}->{yellow_warn}}+1;
-	$out .= sprintf("${yellow_font_start}WARNINGS [%2d]${font_stop}", $count_yellow_warn);
+	$out .= sprintf("${yellow_font_start}Caution:%2d${font_stop}", $count_yellow_warn);
     }
     $out .= "\n";
 }

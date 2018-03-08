@@ -53,7 +53,7 @@ my %Default_SIM_Z = ('ACIS-I' => 92905,
 		     'HRC-S'  => -99612);
 
 my $font_stop = qq{</font>};
-my ($red_font_start, $blue_font_start, $yellow_font_start);
+my ($red_font_start, $blue_font_start, $orange_font_start, $yellow_font_start);
 
 my $ID_DIST_LIMIT = 1.5;		# 1.5 arcsec box for ID'ing a star
 
@@ -82,6 +82,7 @@ sub new {
     $self->{date}  = shift;
     $self->{dot_obsid} = $self->{obsid};
     @{$self->{warn}} = ();
+    @{$self->{orange_warn}} = ();
     @{$self->{yellow_warn}} = ();
     @{$self->{fyi}} = ();
     $self->{n_guide_summ} = 0;
@@ -108,6 +109,7 @@ sub setcolors {
     $red_font_start = $colorref->{red};
     $blue_font_start = $colorref->{blue};
     $yellow_font_start = $colorref->{yellow};
+    $orange_font_start = $colorref->{orange};
 }
 
 
@@ -1090,6 +1092,7 @@ sub check_star_catalog {
     }
 
     my @warn = ();
+    my @orange_warn = ();
     my @yellow_warn = ();
 
     my $oflsid = $self->{dot_obsid};
@@ -1445,6 +1448,7 @@ sub check_star_catalog {
 
     # Collect warnings
     push @{$self->{warn}}, @warn;
+    push @{$self->{orange_warn}}, @orange_warn;
     push @{$self->{yellow_warn}}, @yellow_warn;
 }
 
@@ -1983,6 +1987,13 @@ sub print_report {
     if (@{$self->{warn}}) {
 	$o .= "${red_font_start}";
 	foreach (@{$self->{warn}}) {
+	    $o .= $_;
+	}
+	$o .= "${font_stop}";
+    }
+    if (@{$self->{orange_warn}}) {
+	$o .= "${orange_font_start}";
+	foreach (@{$self->{orange_warn}}) {
 	    $o .= $_;
 	}
 	$o .= "${font_stop}";
