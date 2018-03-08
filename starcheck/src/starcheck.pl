@@ -627,7 +627,6 @@ foreach my $obsid (@obsid_id) {
 	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->check_for_special_case_er();
     $obs{$obsid}->check_bright_perigee($radmon);
-    $obs{$obsid}->count_good_stars();
     # Start check for big boxes at FEB1317 (which gets test products but no regress products)
     if ($bs[0]->{time} > date2time('2017:043:00:00:00.000')){
         $obs{$obsid}->check_big_box_stars();
@@ -790,7 +789,7 @@ for my $obs_idx (0 .. $#obsid_id) {
     $out .= sprintf "<A HREF=\"#obsid$obs{$obsid}->{obsid}\">OBSID = %5s</A>", $obs{$obsid}->{obsid};
     $out .= sprintf " at $obs{$obsid}->{date}   ";
 
-    my $good_guide_count = $obs{$obsid}->{count_nowarn_stars}{GUI};
+    my $guide_count = $obs{$obsid}->count_guide_stars();
 
     # if Obsid is numeric, print tally info
     if ($obs{$obsid}->{obsid} =~ /^\d+$/ ){
@@ -812,7 +811,7 @@ for my $obs_idx (0 .. $#obsid_id) {
 
         my $acq_font_start = $obs{$obsid}->{figure_of_merit}->{cum_prob_bad} ? $red_font_start
         : $empty_font_start;
-        my $gui_font_start = ($good_guide_count < $min_num_gui) ? $red_font_start
+        my $gui_font_start = ($guide_count < $min_num_gui) ? $red_font_start
         : $empty_font_start;
 
         $out .= "$acq_font_start";
@@ -820,7 +819,7 @@ for my $obs_idx (0 .. $#obsid_id) {
         $out .= "$font_stop";
 
         $out .= "$gui_font_start";
-        $out .= sprintf "$good_guide_count clean GUI | ";
+        $out .= sprintf("%3.1f GUI | ", $guide_count);
         $out .= "$font_stop";
 	
     }
