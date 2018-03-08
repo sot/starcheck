@@ -1240,7 +1240,7 @@ sub check_star_catalog {
             # for all others, including (B-V = 1.5 and guide), yellow warning
             if ( $marginal_note ){
                 if ($color eq '0.7000000' && $type =~ /BOT|GUI/ ) { 
-                    push @warn, $marginal_note;
+                    push @orange_warn, $marginal_note;
                 }
                 else{
                     push @yellow_warn, $marginal_note;
