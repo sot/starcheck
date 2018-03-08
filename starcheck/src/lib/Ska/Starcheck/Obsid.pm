@@ -88,7 +88,6 @@ sub new {
     @{$self->{commands}} = ();
     %{$self->{agasc_hash}} = ();
 #    @{$self->{agasc_stars}} = ();
-    %{$self->{count_nowarn_stars}} = ();
     $self->{ccd_temp} = undef;
     $self->{config} = \%config;
     return $self;
@@ -2499,27 +2498,25 @@ sub time2date {
 }
 
 ###################################################################################
-sub count_good_stars{
+sub count_guide_stars{
 ###################################################################################
     my $self=shift;
     my $c;
-    my $clean_gui_count = 0;
-    $self->{count_nowarn_stars}{GUI} = $clean_gui_count;
+    my $gui_count = 0;
 
     return unless ($c = find_command($self, 'MP_STARCAT'));
     for my $i (1 .. 16){
-        my $type = $c->{"TYPE$i"};
-        next if ($type eq 'NUL');
-        next if ($type eq 'FID');
-	if ($type =~ /GUI|BOT/){
-	    unless ($self->check_idx_warn($i)){
-		$clean_gui_count++;
-	    }
+	if ($c->{"TYPE$i"} =~ /GUI|BOT/){
+            my $mag = $c->{"GS_MAG$i"};
+            # Use the fractional magnitudes from ORViewer.  tab-ternary is if/elsif/else
+            my $star_contrib = $mag <= 10.0  ? 1
+                             : $mag <= 10.2  ?  .5
+                             : $mag <= 10.3  ?  .75
+                             :                 0;
+            $gui_count += $star_contrib;
 	}
-	
     }
-    $self->{count_nowarn_stars}{GUI} = $clean_gui_count;
-
+    return $gui_count;
 }
 
 ###################################################################################
@@ -2543,37 +2540,6 @@ sub check_big_box_stars{
     }
 }
 
-
-
-###################################################################################
-sub check_idx_warn{
-###################################################################################
-
-    my $self = shift;
-    my $i = shift;
-    my $warn_boolean = 0;
-
-    for my $red_warn (@{$self->{warn}}){
-	if ( $red_warn =~ /\[\s*$i\]/){
-	    $warn_boolean = 1;
-	    last;
-	}
-    }
-
-    # and why do the next loop if we match on the first one?
-    if ($warn_boolean){
-	return $warn_boolean;
-    }
-
-    for my $yellow_warn (@{$self->{yellow_warn}}){
-	if ($yellow_warn =~ /\[\s*$i\]/){
-	    $warn_boolean = 1;
-	    last;
-	}
-    }
-
-    return $warn_boolean;
-}
 
 ###################################################################################
 sub set_ccd_temps{
