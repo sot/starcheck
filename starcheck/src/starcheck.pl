@@ -796,19 +796,18 @@ for my $obs_idx (0 .. $#obsid_id) {
     # if Obsid is numeric, print tally info
     if ($obs{$obsid}->{obsid} =~ /^\d+$/ ){
 
-        # minumum requirements for acq and guide for ERs and ORs
-        # should be set by config...
-        my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000 ) ? 6 : 4;
+        # minumum requirements for fractional guide star count for ERs and ORs
+        my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000 ) ? 6.0 : 4.0;
 
         # if there is no star catalog and that's ok
         if (not ($obs{$obsid}->find_command("MP_STARCAT"))
                 and $obs{$obsid}->{ok_no_starcat}){
-            $min_num_gui = 0;
+            $min_num_gui = 0.0;
         }
 
         # use the 'special case' ER rules from ACA-044
         if ($obs{$obsid}->{special_case_er}){
-            $min_num_gui = 4;
+            $min_num_gui = 4.0;
         }
 
         my $acq_font_start = $obs{$obsid}->{figure_of_merit}->{cum_prob_bad} ? $red_font_start
