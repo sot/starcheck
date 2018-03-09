@@ -1124,8 +1124,8 @@ sub check_star_catalog {
 	push @{$self->{warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). \n";		    
 	return;
     }
-    # Reset the minimum number of guide stars if a monitor window is commanded
-    $min_guide -= scalar grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
+    # Decrement minimum number of guide stars on ORs if a monitor window is commanded
+    $min_guide -= @{$self->{mon}} if $is_science;
 
     print STDERR "Checking star catalog for obsid $self->{obsid}\n";
     
