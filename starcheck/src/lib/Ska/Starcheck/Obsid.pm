@@ -1284,13 +1284,6 @@ sub check_star_catalog {
                 if (($mag > 10.3) or ($mag < 6.0)){
                     push @warn, $guide_mag_warn;
                 }
-                elsif ($mag > 10.2){
-                    push @orange_warn, $guide_mag_warn;
-                }
-                elsif ($mag > 10.0){
-                    push @yellow_warn, $guide_mag_warn;
-                }
-
             }
             if ($type eq 'BOT' or $type eq ' ACQ'){
                 my $acq_mag_warn = sprintf "$alarm [%2d] Magnitude. Acq star %6.3f\n", $i, $mag;
