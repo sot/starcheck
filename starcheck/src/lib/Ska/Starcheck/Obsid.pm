@@ -1138,7 +1138,7 @@ sub check_star_catalog {
     push @warn,"$alarm Too Few Acquisition Stars\n" if (@{$self->{acq}} < $min_acq);
     # Red warn if fewer than the minimum number of guide stars
     my $n_gui = @{$self->{gui}};
-    push @warn,"$alarm Only $n_gui Guide Stars \n" if ($n_gui < $min_guide);
+    push @warn,"$alarm Only $n_gui Guide Stars ($min_guide required)\n" if ($n_gui < $min_guide);
     push @warn,"$alarm Too Many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} + @{$self->{mon}} > 8);
     push @warn,"$alarm Too Many Acquisition Stars\n" if (@{$self->{acq}} > 8);
     
