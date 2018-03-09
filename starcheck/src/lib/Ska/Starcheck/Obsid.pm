@@ -1058,7 +1058,6 @@ sub check_star_catalog {
 
     my $mag_faint_slot_diff = 1.4; # used in slot test like:
                                    # $c->{"MAXMAG$i"} - $c->{"GS_MAG$i"} >= $mag_faint_slot_diff
-    my $mag_bright      = 6.0;	# Bright mag limit 
 
     my $fid_faint = 7.2;
     my $fid_bright = 6.8;
@@ -1277,20 +1276,34 @@ sub check_star_catalog {
 	push @yellow_warn, sprintf "$alarm [%2d] Quadrant Boundary. \n",$i 
 	    unless ($type eq 'ACQ' or $type eq 'MON' or 
 		    (abs($yag-$y0) > $qb_dist + $slot_dither and abs($zag-$z0) > $qb_dist + $slot_dither ));
-	
-	# Faint and bright limits ~ACA-009 ACA-010
-	if ($type ne 'MON' and $mag ne '---') {
 
-            if (($type eq 'GUI' or $type eq 'BOT') and $mag > 10.3){
-		push @warn, sprintf "$alarm [%2d] Magnitude. Guide star %6.3f\n",$i,$mag;
+	# Faint and bright limits ~ACA-009 ACA-010
+	if ($mag ne '---') {
+            if ($type eq 'GUI' or $type eq 'BOT'){
+                my $guide_mag_warn = sprintf "$alarm [%2d] Magnitude. Guide star %6.3f\n", $i, $mag;
+                if (($mag > 10.3) or ($mag < 6.0)){
+                    push @warn, $guide_mag_warn;
+                }
+                elsif ($mag > 10.2){
+                    push @orange_warn, $guide_mag_warn;
+                }
+                elsif ($mag > 10.0){
+                    push @yellow_warn, $guide_mag_warn;
+                }
+
             }
-	    if ($mag < $mag_bright or $mag > $self->{mag_faint_red}) {
-		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
-	    }
-	    elsif ($mag > $self->{mag_faint_yellow}) {
-		push @yellow_warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
-	    }
-	
+            if ($type eq 'BOT' or $type eq ' ACQ'){
+                my $acq_mag_warn = sprintf "$alarm [%2d] Magnitude. Acq star %6.3f\n", $i, $mag;
+                if ($mag < 5.8){
+                    push @warn, $acq_mag_warn;
+                }
+                elsif ($mag > $self->{mag_faint_red}){
+                    push @orange_warn, $acq_mag_warn;
+                }
+                elsif ($mag > $self->{mag_faint_yellow}){
+                    push @yellow_warn, $acq_mag_warn;
+                }
+            }
 	}
 
 	# FID magnitude limits ACA-011
