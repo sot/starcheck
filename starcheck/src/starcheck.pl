@@ -810,13 +810,22 @@ for my $obs_idx (0 .. $#obsid_id) {
             $min_num_gui = 4.0;
         }
 
-        my $acq_font_start = $obs{$obsid}->{figure_of_merit}->{cum_prob_bad} ? $red_font_start
+        # Use the acq prob model values saved in figure_of_merit for the expected
+        # number of acq stars and a bad overall probability.  figure_of_merit isn't
+        # defined if there is no star catalog, so use default of 0 stars and not-bad (0 status)
+        my $n_acq = 0.0;
+        my $bad_acq_prob = 0;
+        if (defined $obs{$obsid}->{figure_of_merit}){
+            $n_acq = $obs{$obsid}->{figure_of_merit}->{expected};
+            $bad_acq_prob = $obs{$obsid}->{figure_of_merit}->{cum_prob_bad};
+        }
+        my $acq_font_start =  $bad_acq_prob ? $red_font_start
         : $empty_font_start;
         my $gui_font_start = ($guide_count < $min_num_gui) ? $red_font_start
         : $empty_font_start;
 
         $out .= "$acq_font_start";
-        $out .= sprintf("%3.1f ACQ | ", $obs{$obsid}->{figure_of_merit}->{expected});
+        $out .= sprintf("%3.1f ACQ | ", $n_acq);
         $out .= "$font_stop";
 
         $out .= "$gui_font_start";
