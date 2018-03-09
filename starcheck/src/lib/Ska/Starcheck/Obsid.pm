@@ -2519,9 +2519,9 @@ sub count_guide_stars{
 ###################################################################################
     my $self=shift;
     my $c;
-    my $gui_count = 0;
+    my $gui_count = 0.0;
 
-    return unless ($c = find_command($self, 'MP_STARCAT'));
+    return 0.0 unless ($c = find_command($self, 'MP_STARCAT'));
     for my $i (1 .. 16){
 	if ($c->{"TYPE$i"} =~ /GUI|BOT/){
             my $mag = $c->{"GS_MAG$i"};
