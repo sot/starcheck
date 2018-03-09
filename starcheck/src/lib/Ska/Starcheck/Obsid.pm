@@ -2532,7 +2532,8 @@ sub count_guide_stars{
     for my $i (1 .. 16){
 	if ($c->{"TYPE$i"} =~ /GUI|BOT/){
             my $mag = $c->{"GS_MAG$i"};
-            # Use the fractional magnitudes from ORViewer.  tab-ternary is if/elsif/else
+            # Compute fractional guide star count using magnitude bins and fractions
+            # defined in ORViewer. (Note tab-ternary is if/elsif/else)
             my $star_contrib = $mag <= 10.0  ? 1.0
                              : $mag <= 10.2  ? 0.5
                              : $mag <= 10.3  ? 0.75
