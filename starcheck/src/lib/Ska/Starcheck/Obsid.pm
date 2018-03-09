@@ -1139,8 +1139,8 @@ sub check_star_catalog {
     push @warn,"$alarm Too Few Guide Stars\n" if (@{$self->{gui}} < $min_guide);
     push @warn,"$alarm Too Many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} + @{$self->{mon}} > 8);
     push @warn,"$alarm Too Many Acquisition Stars\n" if (@{$self->{acq}} > 8);
-    push @warn,"$alarm Too many MON\n" if (($mon_count > 1 && $is_science) ||
-                                               ($mon_count > 2 && $is_er));
+    push @warn,"$alarm Too many MON\n" if ((@{$self->{mon}} > 1 && $is_science) ||
+                                               (@{$self->{mon}} > 2 && $is_er));
     
     # Match positions of fids in star catalog with expected, and verify a one to one 
     # correspondance between FIDSEL command and star catalog.  
