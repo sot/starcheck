@@ -1807,9 +1807,11 @@ sub print_report {
     if ( defined $self->{cmd_dither_status} ) {
 	$o .= sprintf "Dither: %-3s ",$self->{cmd_dither_status};
 	$o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f",
-		       $self->{cmd_dither_y_amp}*3600., $self->{cmd_dither_z_amp}*3600.,
+		       $self->{cmd_dither_y_amp}, $self->{cmd_dither_z_amp},
 		       $self->{cmd_dither_y_period}, $self->{cmd_dither_z_period})
         if ($self->{cmd_dither_status} eq 'ENAB' && $self->{cmd_dither_y_period} && $self->{cmd_dither_z_period});
+	$o .= sprintf ("(no commanded dither amp: checked with 20 arcsec dither)")
+        if ($self->{cmd_dither_status} eq 'ENAB' && not(defined $self->{cmd_dither_y_period}));
 	$o .= "\n";
     }
 
