@@ -1208,7 +1208,7 @@ sub check_star_catalog {
 	        $n_nbad = $db_stats->{gui_bad};
 	    }
 	    if ($n_nbad && $n_obs > $obs_min_cnt && $n_nbad/$n_obs > $obs_bad_frac){
-	        push @yellow_warn, sprintf 
+	        push @warn, sprintf
 		"$alarm [%2d] Bad Guide Star. %s has bad data %2d of %2d attempts\n",
 		$i, $sid, $n_nbad, $n_obs;
 	    }
