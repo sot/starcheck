@@ -1499,6 +1499,8 @@ sub check_monitor_commanding {
 
     my $r2a = 180./3.14159265*3600;
 
+    # Save the number of warnings when starting this method
+    my $n_warn = scalar(@{$self->{warn}});
 
     # if this is a real numeric obsid
     if ( $self->{obsid} =~ /^\d*$/ ){
@@ -1656,7 +1658,13 @@ sub check_monitor_commanding {
 	$cnt{$cmd} = 'no' if ($cnt{$cmd} == 0);
 	push @{$self->{warn}}, "$alarm Found $cnt{$cmd} $cmd commands near " . time2date($t_manv+$dt{$cmd}) . "\n";
     }
-}	
+
+    # If the number of warnings has not changed during this routine, it passed all checks
+    if (scalar(@{$self->{warn}}) == $n_warn){
+        push @{$self->{fyi}},
+            sprintf("$info Monitor window special commanding meets requirements\n");
+    }
+}
 
 #############################################################################################
 sub check_fids {
