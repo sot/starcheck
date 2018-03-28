@@ -149,7 +149,6 @@ my $or_file    = get_file("$par{dir}/mps/or/*.or",      'OR');
 my $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 my $dot_file   = get_file("$par{dir}/mps/md*.dot",     'DOT', 'required');
 my $mech_file  = get_file("$par{dir}/${sosa_dir_slash}output/${sosa_prefix}TEST_mechcheck.txt*", 'mech check');
-my $soe_file   = get_file("$par{dir}/mps/soe/ms*.soe", 'SOE');
 my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
 my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither'); 
 my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
@@ -275,9 +274,6 @@ my @ps = Ska::Parse_CM_File::PS($ps_file) if ($ps_file);
 
 # Read mech check file and parse
 my @mc  = Ska::Parse_CM_File::mechcheck($mech_file) if ($mech_file);
-
-# Read SOE file and parse
-my %soe  = Ska::Parse_CM_File::SOE($soe_file) if ($soe_file);
 
 # Read OR file and integrate into %obs
 my %or = Ska::Parse_CM_File::OR($or_file) if ($or_file);
