@@ -1378,7 +1378,7 @@ sub check_star_catalog {
 	# Bad Pixels ACA-025
         my @close_pixels;
         my @dr;
-	if ($type ne 'ACQ' and $c->{"GS_PASS$i"} =~ /^1|\s+|g[1-2]/) {
+        if ($type =~ /GUI|BOT/){
 	    foreach my $pixel (@bad_pixels) {
 		my $dy = abs($yag-$pixel->{yag});
 		my $dz = abs($zag-$pixel->{zag});
