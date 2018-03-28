@@ -1124,8 +1124,8 @@ sub check_star_catalog {
 	push @{$self->{warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). \n";		    
 	return;
     }
-    # Reset the minimum number of guide stars if a monitor window is commanded
-    $min_guide -= scalar grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
+    # Decrement minimum number of guide stars on ORs if a monitor window is commanded
+    $min_guide -= @{$self->{mon}} if $is_science;
 
     print STDERR "Checking star catalog for obsid $self->{obsid}\n";
     
@@ -1141,6 +1141,8 @@ sub check_star_catalog {
     push @warn,"$alarm Only $n_gui Guide Stars ($min_guide required)\n" if ($n_gui < $min_guide);
     push @warn,"$alarm Too Many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} + @{$self->{mon}} > 8);
     push @warn,"$alarm Too Many Acquisition Stars\n" if (@{$self->{acq}} > 8);
+    push @warn,"$alarm Too many MON\n" if ((@{$self->{mon}} > 1 && $is_science) ||
+                                               (@{$self->{mon}} > 2 && $is_er));
     
     # Match positions of fids in star catalog with expected, and verify a one to one 
     # correspondance between FIDSEL command and star catalog.  
