@@ -351,6 +351,16 @@ Ska::Starcheck::Obsid::set_odb(%odb);
 
 
 Ska::Starcheck::Obsid::set_config($config_ref);
+# If there is a dark current, add the obsids of the dark cal replicas
+# (which have keys beginning with "DC_T") to the set of obsids/oflsids
+# that are "ok" to not have star catalogs
+if ($dark_cal_checker->{dark_cal_present}){
+    foreach my $key (keys %{$dark_cal_checker->{dc_oflsid}}){
+        if ($key =~ /DC_T/){
+            push @{$config_ref->{no_starcat_oflsid}}, $dark_cal_checker->{dc_oflsid}->{$key};
+        }
+    }
+}
 
 # Set the multple star filter disabled in the model if after this date
 my $MSF_ENABLED = $bs[0]->{date} lt '2016:102:00:00:00.000';
