@@ -2528,8 +2528,8 @@ sub count_guide_stars{
             # Compute fractional guide star count using magnitude bins and fractions
             # defined in ORViewer. (Note tab-ternary is if/elsif/else)
             my $star_contrib = $mag <= 10.0  ? 1.0
-                             : $mag <= 10.2  ? 0.5
-                             : $mag <= 10.3  ? 0.75
+                             : $mag <= 10.2  ? 0.75
+                             : $mag <= 10.3  ? 0.5
                              :                 0.0;
             $gui_count += $star_contrib;
 	}
