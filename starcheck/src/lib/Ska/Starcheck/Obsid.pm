@@ -53,7 +53,7 @@ my %Default_SIM_Z = ('ACIS-I' => 92905,
 		     'HRC-S'  => -99612);
 
 my $font_stop = qq{</font>};
-my ($red_font_start, $blue_font_start, $yellow_font_start);
+my ($red_font_start, $blue_font_start, $orange_font_start, $yellow_font_start);
 
 my $ID_DIST_LIMIT = 1.5;		# 1.5 arcsec box for ID'ing a star
 
@@ -82,13 +82,13 @@ sub new {
     $self->{date}  = shift;
     $self->{dot_obsid} = $self->{obsid};
     @{$self->{warn}} = ();
+    @{$self->{orange_warn}} = ();
     @{$self->{yellow_warn}} = ();
     @{$self->{fyi}} = ();
     $self->{n_guide_summ} = 0;
     @{$self->{commands}} = ();
     %{$self->{agasc_hash}} = ();
 #    @{$self->{agasc_stars}} = ();
-    %{$self->{count_nowarn_stars}} = ();
     $self->{ccd_temp} = undef;
     $self->{config} = \%config;
     return $self;
@@ -109,6 +109,7 @@ sub setcolors {
     $red_font_start = $colorref->{red};
     $blue_font_start = $colorref->{blue};
     $yellow_font_start = $colorref->{yellow};
+    $orange_font_start = $colorref->{orange};
 }
 
 
@@ -1057,7 +1058,6 @@ sub check_star_catalog {
 
     my $mag_faint_slot_diff = 1.4; # used in slot test like:
                                    # $c->{"MAXMAG$i"} - $c->{"GS_MAG$i"} >= $mag_faint_slot_diff
-    my $mag_bright      = 6.0;	# Bright mag limit 
 
     my $fid_faint = 7.2;
     my $fid_bright = 6.8;
@@ -1091,6 +1091,7 @@ sub check_star_catalog {
     }
 
     my @warn = ();
+    my @orange_warn = ();
     my @yellow_warn = ();
 
     my $oflsid = $self->{dot_obsid};
@@ -1242,7 +1243,7 @@ sub check_star_catalog {
             # for all others, including (B-V = 1.5 and guide), yellow warning
             if ( $marginal_note ){
                 if ($color eq '0.7000000' && $type =~ /BOT|GUI/ ) { 
-                    push @warn, $marginal_note;
+                    push @orange_warn, $marginal_note;
                 }
                 else{
                     push @yellow_warn, $marginal_note;
@@ -1279,20 +1280,27 @@ sub check_star_catalog {
 	push @yellow_warn, sprintf "$alarm [%2d] Quadrant Boundary. \n",$i 
 	    unless ($type eq 'ACQ' or $type eq 'MON' or 
 		    (abs($yag-$y0) > $qb_dist + $slot_dither and abs($zag-$z0) > $qb_dist + $slot_dither ));
-	
-	# Faint and bright limits ~ACA-009 ACA-010
-	if ($type ne 'MON' and $mag ne '---') {
 
-            if (($type eq 'GUI' or $type eq 'BOT') and $mag > 10.3){
-		push @warn, sprintf "$alarm [%2d] Magnitude. Guide star %6.3f\n",$i,$mag;
+	# Faint and bright limits ~ACA-009 ACA-010
+	if ($mag ne '---') {
+            if ($type eq 'GUI' or $type eq 'BOT'){
+                my $guide_mag_warn = sprintf "$alarm [%2d] Magnitude. Guide star %6.3f\n", $i, $mag;
+                if (($mag > 10.3) or ($mag < 6.0)){
+                    push @warn, $guide_mag_warn;
+                }
             }
-	    if ($mag < $mag_bright or $mag > $self->{mag_faint_red}) {
-		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
-	    }
-	    elsif ($mag > $self->{mag_faint_yellow}) {
-		push @yellow_warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i,$mag;
-	    }
-	
+            if ($type eq 'BOT' or $type eq ' ACQ'){
+                my $acq_mag_warn = sprintf "$alarm [%2d] Magnitude. Acq star %6.3f\n", $i, $mag;
+                if ($mag < 5.8){
+                    push @warn, $acq_mag_warn;
+                }
+                elsif ($mag > $self->{mag_faint_red}){
+                    push @orange_warn, $acq_mag_warn;
+                }
+                elsif ($mag > $self->{mag_faint_yellow}){
+                    push @yellow_warn, $acq_mag_warn;
+                }
+            }
 	}
 
 	# FID magnitude limits ACA-011
@@ -1450,6 +1458,7 @@ sub check_star_catalog {
 
     # Collect warnings
     push @{$self->{warn}}, @warn;
+    push @{$self->{orange_warn}}, @orange_warn;
     push @{$self->{yellow_warn}}, @yellow_warn;
 }
 
@@ -2000,6 +2009,13 @@ sub print_report {
 	}
 	$o .= "${font_stop}";
     }
+    if (@{$self->{orange_warn}}) {
+	$o .= "${orange_font_start}";
+	foreach (@{$self->{orange_warn}}) {
+	    $o .= $_;
+	}
+	$o .= "${font_stop}";
+    }
     if (@{$self->{yellow_warn}}) {
 	$o .= "${yellow_font_start}";
 	foreach (@{$self->{yellow_warn}}) {
@@ -2511,35 +2527,26 @@ sub time2date {
 }
 
 ###################################################################################
-sub count_good_stars{
+sub count_guide_stars{
 ###################################################################################
     my $self=shift;
     my $c;
-    my $clean_acq_count = 0;
-    my $clean_gui_count = 0;
-    $self->{count_nowarn_stars}{ACQ} = $clean_acq_count;
-    $self->{count_nowarn_stars}{GUI} = $clean_gui_count;
+    my $gui_count = 0.0;
 
-    return unless ($c = find_command($self, 'MP_STARCAT'));
+    return 0.0 unless ($c = find_command($self, 'MP_STARCAT'));
     for my $i (1 .. 16){
-        my $type = $c->{"TYPE$i"};
-        next if ($type eq 'NUL');
-        next if ($type eq 'FID');
-	if ($type =~ /ACQ|BOT/){
-	    unless ($self->check_idx_warn($i)){
-		$clean_acq_count++;
-	    }
+	if ($c->{"TYPE$i"} =~ /GUI|BOT/){
+            my $mag = $c->{"GS_MAG$i"};
+            # Compute fractional guide star count using magnitude bins and fractions
+            # defined in ORViewer. (Note tab-ternary is if/elsif/else)
+            my $star_contrib = $mag <= 10.0  ? 1.0
+                             : $mag <= 10.2  ? 0.75
+                             : $mag <= 10.3  ? 0.5
+                             :                 0.0;
+            $gui_count += $star_contrib;
 	}
-	if ($type =~ /GUI|BOT/){
-	    unless ($self->check_idx_warn($i)){
-		$clean_gui_count++;
-	    }
-	}
-	
     }
-    $self->{count_nowarn_stars}{ACQ} = $clean_acq_count;
-    $self->{count_nowarn_stars}{GUI} = $clean_gui_count;
-
+    return $gui_count;
 }
 
 ###################################################################################
@@ -2563,37 +2570,6 @@ sub check_big_box_stars{
     }
 }
 
-
-
-###################################################################################
-sub check_idx_warn{
-###################################################################################
-
-    my $self = shift;
-    my $i = shift;
-    my $warn_boolean = 0;
-
-    for my $red_warn (@{$self->{warn}}){
-	if ( $red_warn =~ /\[\s*$i\]/){
-	    $warn_boolean = 1;
-	    last;
-	}
-    }
-
-    # and why do the next loop if we match on the first one?
-    if ($warn_boolean){
-	return $warn_boolean;
-    }
-
-    for my $yellow_warn (@{$self->{yellow_warn}}){
-	if ($yellow_warn =~ /\[\s*$i\]/){
-	    $warn_boolean = 1;
-	    last;
-	}
-    }
-
-    return $warn_boolean;
-}
 
 ###################################################################################
 sub set_ccd_temps{

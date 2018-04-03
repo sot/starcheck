@@ -111,6 +111,7 @@ sub new{
     $feedback{check_dwell} = check_dwell(\%config, $manvrs, $dwells);
     $feedback{check_manvr_point} = check_manvr_point( \%config, \@bs, $manvrs);
     $feedback{check_momentum_unloads} = check_momentum_unloads(\%config, \@bs, $manvrs, $dwells);
+    $feedback{dc_oflsid} = \%dc_oflsid;
 	
     bless \%feedback, $class;
     return \%feedback;

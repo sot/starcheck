@@ -124,6 +124,7 @@ my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
 my $empty_font_start = qq{<font>};
 my $red_font_start = qq{<font color="#FF0000">};
+my $orange_font_start = qq{<font color="#ff6400">};
 my $yellow_font_start = qq{<font color="#009900">};
 my $blue_font_start = qq{<font color="#0000FF">};
 my $font_stop = qq{</font>};
@@ -337,7 +338,8 @@ if ($dot_touched_by_sausage == 0 ){
 
 Ska::Starcheck::Obsid::setcolors({ red => $red_font_start,
 				   blue => $blue_font_start,
-				   yellow => $yellow_font_start, 
+				   yellow => $yellow_font_start,
+                                   orange => $orange_font_start,
 				   });
 
 my %odb = Ska::Parse_CM_File::odb($odb_file);
@@ -345,6 +347,16 @@ Ska::Starcheck::Obsid::set_odb(%odb);
 
 
 Ska::Starcheck::Obsid::set_config($config_ref);
+# If there is a dark current, add the obsids of the dark cal replicas
+# (which have keys beginning with "DC_T") to the set of obsids/oflsids
+# that are "ok" to not have star catalogs
+if ($dark_cal_checker->{dark_cal_present}){
+    foreach my $key (keys %{$dark_cal_checker->{dc_oflsid}}){
+        if ($key =~ /DC_T/){
+            push @{$config_ref->{no_starcat_oflsid}}, $dark_cal_checker->{dc_oflsid}->{$key};
+        }
+    }
+}
 
 # Set the multple star filter disabled in the model if after this date
 my $MSF_ENABLED = $bs[0]->{date} lt '2016:102:00:00:00.000';
@@ -623,7 +635,6 @@ foreach my $obsid (@obsid_id) {
 	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->check_for_special_case_er();
     $obs{$obsid}->check_bright_perigee($radmon);
-    $obs{$obsid}->count_good_stars();
     # Start check for big boxes at FEB1317 (which gets test products but no regress products)
     if ($bs[0]->{time} > date2time('2017:043:00:00:00.000')){
         $obs{$obsid}->check_big_box_stars();
@@ -786,41 +797,45 @@ for my $obs_idx (0 .. $#obsid_id) {
     $out .= sprintf "<A HREF=\"#obsid$obs{$obsid}->{obsid}\">OBSID = %5s</A>", $obs{$obsid}->{obsid};
     $out .= sprintf " at $obs{$obsid}->{date}   ";
 
-    my $good_guide_count = $obs{$obsid}->{count_nowarn_stars}{GUI};
-    my $good_acq_count = $obs{$obsid}->{count_nowarn_stars}{ACQ};
+    my $guide_count = $obs{$obsid}->count_guide_stars();
 
     # if Obsid is numeric, print tally info
     if ($obs{$obsid}->{obsid} =~ /^\d+$/ ){
 
-        # minumum requirements for acq and guide for ERs and ORs
-        # should be set by config...
-        my $min_num_acq = ($obs{$obsid}->{obsid} >= 38000 ) ? 5 : 4;
-        my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000 ) ? 6 : 4;
+        # minumum requirements for fractional guide star count for ERs and ORs
+        my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000 ) ? 6.0 : 4.0;
 
         # if there is no star catalog and that's ok
         if (not ($obs{$obsid}->find_command("MP_STARCAT"))
-            and $obs{$obsid}->{ok_no_starcat}){
-            $min_num_acq = 0;
-            $min_num_gui = 0;
+                and $obs{$obsid}->{ok_no_starcat}){
+            $min_num_gui = 0.0;
         }
 
         # use the 'special case' ER rules from ACA-044
         if ($obs{$obsid}->{special_case_er}){
-            $min_num_acq = 4;
-            $min_num_gui = 4;
+            $min_num_gui = 4.0;
         }
 
-        my $acq_font_start = ($good_acq_count < $min_num_acq) ? $red_font_start
+        # Use the acq prob model values saved in figure_of_merit for the expected
+        # number of acq stars and a bad overall probability.  figure_of_merit isn't
+        # defined if there is no star catalog, so use default of 0 stars and not-bad (0 status)
+        my $n_acq = 0.0;
+        my $bad_acq_prob = 0;
+        if (defined $obs{$obsid}->{figure_of_merit}){
+            $n_acq = $obs{$obsid}->{figure_of_merit}->{expected};
+            $bad_acq_prob = $obs{$obsid}->{figure_of_merit}->{cum_prob_bad};
+        }
+        my $acq_font_start =  $bad_acq_prob ? $red_font_start
         : $empty_font_start;
-        my $gui_font_start = ($good_guide_count < $min_num_gui) ? $red_font_start
+        my $gui_font_start = ($guide_count < $min_num_gui) ? $red_font_start
         : $empty_font_start;
 
         $out .= "$acq_font_start";
-        $out .= sprintf "$good_acq_count clean ACQ | ";
+        $out .= sprintf("%3.1f ACQ | ", $n_acq);
         $out .= "$font_stop";
 
         $out .= "$gui_font_start";
-        $out .= sprintf "$good_guide_count clean GUI | ";
+        $out .= sprintf("%3.1f GUI | ", $guide_count);
         $out .= "$font_stop";
 	
     }
@@ -832,11 +847,15 @@ for my $obs_idx (0 .. $#obsid_id) {
 
     if (@{$obs{$obsid}->{warn}}) {
 	my $count_red_warn = $#{$obs{$obsid}->{warn}}+1;
-	$out .= sprintf("${red_font_start}WARNINGS [%2d]${font_stop} ", $count_red_warn);
-    } 
+	$out .= sprintf("${red_font_start}Critical:%2d${font_stop} ", $count_red_warn);
+    }
+    if (@{$obs{$obsid}->{orange_warn}}) {
+	my $count_orange_warn = $#{$obs{$obsid}->{orange_warn}}+1;
+	$out .= sprintf("${orange_font_start}Warn:%2d${font_stop} ", $count_orange_warn);
+    }
     if (@{$obs{$obsid}->{yellow_warn}}) {
 	my $count_yellow_warn = $#{$obs{$obsid}->{yellow_warn}}+1;
-	$out .= sprintf("${yellow_font_start}WARNINGS [%2d]${font_stop}", $count_yellow_warn);
+	$out .= sprintf("${yellow_font_start}Caution:%2d${font_stop}", $count_yellow_warn);
     }
     $out .= "\n";
 }
