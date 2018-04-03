@@ -1289,7 +1289,7 @@ sub check_star_catalog {
                     push @warn, $guide_mag_warn;
                 }
             }
-            if ($type eq 'BOT' or $type eq ' ACQ'){
+            if ($type eq 'BOT' or $type eq 'ACQ'){
                 my $acq_mag_warn = sprintf "$alarm [%2d] Magnitude. Acq star %6.3f\n", $i, $mag;
                 if ($mag < 5.8){
                     push @warn, $acq_mag_warn;
