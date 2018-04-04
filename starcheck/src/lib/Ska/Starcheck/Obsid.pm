@@ -1239,10 +1239,10 @@ sub check_star_catalog {
                             $c->{"GS_BV$i"}, ($c->{"GS_MAGERR$i"})/100, ($c->{"GS_POSERR$i"})/1000)
                 if ($c->{"GS_NOTES$i"} =~ /[Ccmp]/);
 	    $marginal_note = sprintf("$alarm [%2d] Marginal star. %s\n",$i,$note) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
-            # for B-V = 0.7 and guide, red warnings
-            # for all others, including (B-V = 1.5 and guide), yellow warning
-            if ( $marginal_note ){
-                if ($color eq '0.7000000' && $type =~ /BOT|GUI/ ) { 
+            # for B-V = 0.7 and orange warnings
+            # for all others, including (B-V = 1.5), yellow warning
+            if (($marginal_note) && ($type =~ /BOT|GUI|ACQ/)) {
+                if ($color eq '0.7000000'){
                     push @orange_warn, $marginal_note;
                 }
                 else{
