@@ -1249,7 +1249,15 @@ sub check_star_catalog {
                     push @yellow_warn, $marginal_note;
                 }
             }
-	    push @warn, sprintf("$alarm [%2d] Bad star.  Class = %s %s\n", $i,$c->{"GS_CLASS$i"},$note) if ($c->{"GS_NOTES$i"} =~ /b/);
+            # If a star and bad class, print the bad star warning
+            if ($c->{"GS_CLASS$i"} != 0){
+                if ($type =~ /BOT|GUI|ACQ/ ){
+                    push @warn, sprintf("$alarm [%2d] Bad star.  Class = %s %s\n", $i,$c->{"GS_CLASS$i"},$note);
+                }
+                elsif ($type eq 'MON'){
+                    push @{$self->{fyi}}, sprintf("$info [%2d] MON class= %s %s (do not convert to GUI)\n", $i,$c->{"GS_CLASS$i"},$note);
+                }
+            }
 	}
 
 	# Star/fid outside of CCD boundaries
