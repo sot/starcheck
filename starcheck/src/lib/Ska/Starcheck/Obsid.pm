@@ -1232,7 +1232,7 @@ sub check_star_catalog {
 	    # ignore precision errors in color
 	    my $color = sprintf('%.7f', $c->{"GS_BV$i"});
 	    $c->{"GS_NOTES$i"} .= 'c' if ($color eq '0.7000000'); # ACA-033
-            $c->{"GS_NOTES$i"} .= 'C' if ($color eq '1.5000000') && ($mag > 10.0);
+            $c->{"GS_NOTES$i"} .= 'C' if ($color eq '1.5000000');
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
 	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 399);
 	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",
