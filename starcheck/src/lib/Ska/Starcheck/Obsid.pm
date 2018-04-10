@@ -1282,12 +1282,7 @@ sub check_star_catalog {
 		   || $pixel_col > $col_max - $pix_slot_dither || $pixel_col < $col_min + $pix_slot_dither) {
     		push @warn,sprintf "$alarm [%2d] Angle Too Large.\n",$i;
 	    }
-	}	
-		
-        # Quandrant boundary interference ACA-013 ACA-014 (and ACA-012 if it were actually a check)
-	push @yellow_warn, sprintf "$alarm [%2d] Quadrant Boundary. \n",$i 
-	    unless ($type eq 'ACQ' or $type eq 'MON' or 
-		    (abs($yag-$y0) > $qb_dist + $slot_dither and abs($zag-$z0) > $qb_dist + $slot_dither ));
+	}
 
 	# Faint and bright limits ~ACA-009 ACA-010
 	if ($mag ne '---') {

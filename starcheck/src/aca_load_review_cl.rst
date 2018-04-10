@@ -241,18 +241,6 @@ Checks
 |ACA-011|Magnitude limit   |X|X|FL: 6.8 - 7.2                              |n/a |Reduced aspect  |
 |       |                  | | |                                           |    |quality         |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
-|       |CCD quadrant inner|X|X|                                           |    |Possible Bright |
-|ACA-012|boundary exclusion| | |AS: n/a                                    |n/a |Star Hold       |
-|       |zones             | | |                                           |    |                |
-+-------+------------------+-+-+-------------------------------------------+----+----------------+
-|       |CCD quadrant inner|X|X|                                           |    |Reduced aspect  |
-|ACA-013|boundary exclusion| | |GS: (dither + 20) arcsec                   |n/a |quality         |
-|       |zones             | | |                                           |    |                |
-+-------+------------------+-+-+-------------------------------------------+----+----------------+
-|       |CCD quadrant inner|X|X|                                           |    |Reduced aspect  |
-|ACA-014|boundary exclusion| | |FL: 25 arcsec                              |n/a |quality         |
-|       |zones             | | |                                           |    |                |
-+-------+------------------+-+-+-------------------------------------------+----+----------------+
 |ACA-015|Search box size   |X|X|AS: Half-width (arcsec)                    |n/a |Possible Bright |
 |       |                  | | |       >= maneuver uncertainty             |    |Star Hold       |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
