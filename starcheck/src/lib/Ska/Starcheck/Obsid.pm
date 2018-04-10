@@ -1232,24 +1232,32 @@ sub check_star_catalog {
 	    # ignore precision errors in color
 	    my $color = sprintf('%.7f', $c->{"GS_BV$i"});
 	    $c->{"GS_NOTES$i"} .= 'c' if ($color eq '0.7000000'); # ACA-033
-            $c->{"GS_NOTES$i"} .= 'C' if ($color eq '1.5000000') && ($mag > 10.0);
+            $c->{"GS_NOTES$i"} .= 'C' if ($color eq '1.5000000');
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
 	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 399);
 	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",
                             $c->{"GS_BV$i"}, ($c->{"GS_MAGERR$i"})/100, ($c->{"GS_POSERR$i"})/1000)
                 if ($c->{"GS_NOTES$i"} =~ /[Ccmp]/);
 	    $marginal_note = sprintf("$alarm [%2d] Marginal star. %s\n",$i,$note) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
-            # for B-V = 0.7 and guide, red warnings
-            # for all others, including (B-V = 1.5 and guide), yellow warning
-            if ( $marginal_note ){
-                if ($color eq '0.7000000' && $type =~ /BOT|GUI/ ) { 
+            # Assign orange warnings to catalog stars with B-V = 0.7 .
+            # Assign yellow warnings to catalog stars with other issues (example B-V = 1.5).
+            if (($marginal_note) && ($type =~ /BOT|GUI|ACQ/)) {
+                if ($color eq '0.7000000'){
                     push @orange_warn, $marginal_note;
                 }
                 else{
                     push @yellow_warn, $marginal_note;
                 }
             }
-	    push @warn, sprintf("$alarm [%2d] Bad star.  Class = %s %s\n", $i,$c->{"GS_CLASS$i"},$note) if ($c->{"GS_NOTES$i"} =~ /b/);
+            # Print bad star warning on catalog stars with bad class.
+            if ($c->{"GS_CLASS$i"} != 0){
+                if ($type =~ /BOT|GUI|ACQ/ ){
+                    push @warn, sprintf("$alarm [%2d] Bad star.  Class = %s %s\n", $i,$c->{"GS_CLASS$i"},$note);
+                }
+                elsif ($type eq 'MON'){
+                    push @{$self->{fyi}}, sprintf("$info [%2d] MON class= %s %s (do not convert to GUI)\n", $i,$c->{"GS_CLASS$i"},$note);
+                }
+            }
 	}
 
 	# Star/fid outside of CCD boundaries
