@@ -1235,10 +1235,14 @@ sub check_star_catalog {
             $c->{"GS_NOTES$i"} .= 'C' if ($color eq '1.5000000');
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
 	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 399);
-	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",
-                            $c->{"GS_BV$i"}, ($c->{"GS_MAGERR$i"})/100, ($c->{"GS_POSERR$i"})/1000)
-                if ($c->{"GS_NOTES$i"} =~ /[Ccmp]/);
-	    $marginal_note = sprintf("$alarm [%2d] Marginal star. %s\n",$i,$note) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
+            # If 0.7 color or bad mag err or bad pos err, format a warning for the star.
+            # Color 1.5 stars do not get a text warning and bad class stars are handled
+            # separately a few lines lower.
+            if ($c->{"GS_NOTES$i"} =~ /[cmp]/){
+                $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",
+                                $c->{"GS_BV$i"}, ($c->{"GS_MAGERR$i"})/100, ($c->{"GS_POSERR$i"})/1000);
+                $marginal_note = sprintf("$alarm [%2d] Marginal star. %s\n",$i,$note);
+            }
             # Assign orange warnings to catalog stars with B-V = 0.7 .
             # Assign yellow warnings to catalog stars with other issues (example B-V = 1.5).
             if (($marginal_note) && ($type =~ /BOT|GUI|ACQ/)) {
