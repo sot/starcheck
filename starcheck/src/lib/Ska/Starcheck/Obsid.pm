@@ -1898,44 +1898,40 @@ sub print_report {
 		$idpad_n --;
 	    }
             my $acq_prob = "";
+            my $history_blurb = "";
             if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
                 my $prob = $self->{acq_probs}->{$c->{"IMNUM${i}"}};
                 $acq_prob = sprintf("Prob Acq Success %5.3f", $prob);
+
             }
 	    if ($db_stats->{acq} or $db_stats->{gui}){
-	    $table .= sprintf("${idpad}<A HREF=\"%s%s\" STYLE=\"text-decoration: none;\" "
-			      . "ONMOUSEOVER=\"return overlib ('"
-			      . "ACQ total:%d noid:%d <BR />"
-			      . "GUI total:%d bad:%d fail:%d obc_bad:%d <BR />"
-			      . "Avg Mag %4.2f <BR />"
-                              . "$acq_prob"
-			      . "', WIDTH, 220);\" ONMOUSEOUT=\"return nd();\">%s</A>", 
-			      $acq_stat_lookup, $c->{"GS_ID${i}"}, 
-			      $db_stats->{acq}, $db_stats->{acq_noid},
-			      $db_stats->{gui}, $db_stats->{gui_bad}, $db_stats->{gui_fail}, $db_stats->{gui_obc_bad},
-			      $db_stats->{avg_mag},
+                $history_blurb = sprintf("ACQ total:%d noid:%d <BR />"
+			       . "GUI total:%d bad:%d fail:%d obc_bad:%d <BR />"
+			       . "Avg Mag %4.2f <BR />",
+                                         $db_stats->{acq}, $db_stats->{acq_noid},
+                                         $db_stats->{gui}, $db_stats->{gui_bad},
+                                         $db_stats->{gui_fail}, $db_stats->{gui_obc_bad},
+                                         $db_stats->{avg_mag})
+            }
+
+            if (($c->{"TYPE$i"} ne 'FID')){
+                my $cat_blurb = "";
+                if (defined $c->{"GS_MAGERR$i"}){
+                    $cat_blurb = sprintf("mac_aca_err=%4.2f(mags) pos_err=%4.2f(arcsec) color1=%4.2f <BR />",
+                                            $c->{"GS_MAGERR$i"}/100., $c->{"GS_POSERR$i"}/1000., $c->{"GS_BV$i"});
+                }
+                $table .= sprintf("${idpad}<A HREF=\"%s%s\" STYLE=\"text-decoration: none;\" "
+                                      . "ONMOUSEOVER=\"return overlib ('"
+                                      . "$cat_blurb"
+                                      . "$history_blurb"
+                                      . "$acq_prob"
+                                      . "', WIDTH, 300);\" ONMOUSEOUT=\"return nd();\">%s</A>",
+			      $acq_stat_lookup, $c->{"GS_ID${i}"},
 			      $c->{"GS_ID${i}"});
-	  }
-	    else{
-                if ((not defined $db_handle) and ($c->{"TYPE${i}"} ne 'FID')){
-                    $table .= sprintf("${idpad}<A HREF=\"%s%s\">%s</A>",
-                                      $acq_stat_lookup, $c->{"GS_ID${i}"}, $c->{"GS_ID${i}"});
-                }
-                else{
-                    # if no previous data but it is still an ACQ, provide the probability
-                    # by itself in the mouseover
-                    if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
-                        $table .= sprintf("${idpad}<A ID=\"star\" STYLE=\"text-decoration: none;\" "
-                                          . "ONMOUSEOVER=\"return overlib ('"
-                                          . "$acq_prob"
-                                          . "', WIDTH, 220);\" ONMOUSEOUT=\"return nd();\">%s</A>",
-                                          $c->{"GS_ID${i}"});
-                    }
-                    else{
-                        $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
-                    }
-                }
-	    }
+            }
+            else{
+                $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
+            }
 	    for my $field_idx (0 .. $#fields){
 		my $curr_format = $format[$field_idx];
                 my $field_color = 'black';
