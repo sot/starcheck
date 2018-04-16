@@ -1897,13 +1897,25 @@ sub print_report {
 		$idpad .= " ";
 		$idpad_n --;
 	    }
+
+
             my $acq_prob = "";
-            my $history_blurb = "";
             if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
                 my $prob = $self->{acq_probs}->{$c->{"IMNUM${i}"}};
                 $acq_prob = sprintf("Prob Acq Success %5.3f", $prob);
 
             }
+            # Make the id a URL if there is star history or if star history could
+            # not be checked (no db_handle)
+            my $star_link;
+            if ((not defined $db_handle) or (($db_stats->{acq} or $db_stats->{gui}))){
+                $star_link = sprintf("HREF=\"%s%s\"",$acq_stat_lookup, $c->{"GS_ID${i}"});
+            }
+            else{
+                $star_link = sprintf("A=\"star\"");
+            }
+            # If there is database history, add it to the blurb
+            my $history_blurb = "";
 	    if ($db_stats->{acq} or $db_stats->{gui}){
                 $history_blurb = sprintf("ACQ total:%d noid:%d <BR />"
 			       . "GUI total:%d bad:%d fail:%d obc_bad:%d <BR />"
@@ -1913,24 +1925,27 @@ sub print_report {
                                          $db_stats->{gui_fail}, $db_stats->{gui_obc_bad},
                                          $db_stats->{avg_mag})
             }
+            # If the object has catalog information, add it to the blurb
+            # for the hoverover
+            my $cat_blurb = "";
+            if (defined $c->{"GS_MAGERR$i"}){
+                $cat_blurb = sprintf("mac_aca_err=%4.2f(mags) pos_err=%4.2f(arcsec) color1=%4.2f <BR />",
+                                     $c->{"GS_MAGERR$i"}/100., $c->{"GS_POSERR$i"}/1000., $c->{"GS_BV$i"});
+            }
 
-            if (($c->{"TYPE$i"} ne 'FID')){
-                my $cat_blurb = "";
-                if (defined $c->{"GS_MAGERR$i"}){
-                    $cat_blurb = sprintf("mac_aca_err=%4.2f(mags) pos_err=%4.2f(arcsec) color1=%4.2f <BR />",
-                                            $c->{"GS_MAGERR$i"}/100., $c->{"GS_POSERR$i"}/1000., $c->{"GS_BV$i"});
-                }
-                $table .= sprintf("${idpad}<A HREF=\"%s%s\" STYLE=\"text-decoration: none;\" "
+            # If the line is a fid, just print the number
+            if ($c->{"TYPE$i"} eq 'FID'){
+                $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
+            }
+            # Otherwise, construct a hoverover and a url as needed, using the blurbs made above
+            else{
+                $table .= sprintf("${idpad}<A $star_link STYLE=\"text-decoration: none;\" "
                                       . "ONMOUSEOVER=\"return overlib ('"
                                       . "$cat_blurb"
                                       . "$history_blurb"
                                       . "$acq_prob"
                                       . "', WIDTH, 300);\" ONMOUSEOUT=\"return nd();\">%s</A>",
-			      $acq_stat_lookup, $c->{"GS_ID${i}"},
-			      $c->{"GS_ID${i}"});
-            }
-            else{
-                $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
+                                  $c->{"GS_ID${i}"});
             }
 	    for my $field_idx (0 .. $#fields){
 		my $curr_format = $format[$field_idx];
