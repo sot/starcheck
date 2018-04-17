@@ -1929,7 +1929,7 @@ sub print_report {
             # for the hoverover
             my $cat_blurb = "";
             if (defined $c->{"GS_MAGERR$i"}){
-                $cat_blurb = sprintf("mac_aca_err=%4.2f(mags) pos_err=%4.2f(arcsec) color1=%4.2f <BR />",
+                $cat_blurb = sprintf("mac_aca_err=%4.2f pos_err=%4.2f color1=%4.2f <BR />",
                                      $c->{"GS_MAGERR$i"}/100., $c->{"GS_POSERR$i"}/1000., $c->{"GS_BV$i"});
             }
 
