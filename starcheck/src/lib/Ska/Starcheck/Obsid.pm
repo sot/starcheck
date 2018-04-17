@@ -1933,8 +1933,8 @@ sub print_report {
                                      $c->{"GS_MAGERR$i"}/100., $c->{"GS_POSERR$i"}/1000., $c->{"GS_BV$i"});
             }
 
-            # If the line is a fid, just print the number
-            if ($c->{"TYPE$i"} eq 'FID'){
+            # If the line is a fid or "---" don't make a hoverover
+            if (($c->{"TYPE$i"} eq 'FID') or ($c->{"GS_ID$i"} eq '---')){
                 $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
             }
             # Otherwise, construct a hoverover and a url as needed, using the blurbs made above
