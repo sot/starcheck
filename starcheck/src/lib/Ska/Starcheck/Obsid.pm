@@ -1235,10 +1235,14 @@ sub check_star_catalog {
             $c->{"GS_NOTES$i"} .= 'C' if ($color eq '1.5000000');
 	    $c->{"GS_NOTES$i"} .= 'm' if ($c->{"GS_MAGERR$i"} > 99);
 	    $c->{"GS_NOTES$i"} .= 'p' if ($c->{"GS_POSERR$i"} > 399);
-	    $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",
-                            $c->{"GS_BV$i"}, ($c->{"GS_MAGERR$i"})/100, ($c->{"GS_POSERR$i"})/1000)
-                if ($c->{"GS_NOTES$i"} =~ /[Ccmp]/);
-	    $marginal_note = sprintf("$alarm [%2d] Marginal star. %s\n",$i,$note) if ($c->{"GS_NOTES$i"} =~ /[^b]/);
+            # If 0.7 color or bad mag err or bad pos err, format a warning for the star.
+            # Color 1.5 stars do not get a text warning and bad class stars are handled
+            # separately a few lines lower.
+            if ($c->{"GS_NOTES$i"} =~ /[cmp]/){
+                $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",
+                                $c->{"GS_BV$i"}, ($c->{"GS_MAGERR$i"})/100, ($c->{"GS_POSERR$i"})/1000);
+                $marginal_note = sprintf("$alarm [%2d] Marginal star. %s\n",$i,$note);
+            }
             # Assign orange warnings to catalog stars with B-V = 0.7 .
             # Assign yellow warnings to catalog stars with other issues (example B-V = 1.5).
             if (($marginal_note) && ($type =~ /BOT|GUI|ACQ/)) {
@@ -1893,45 +1897,56 @@ sub print_report {
 		$idpad .= " ";
 		$idpad_n --;
 	    }
+
+
             my $acq_prob = "";
             if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
                 my $prob = $self->{acq_probs}->{$c->{"IMNUM${i}"}};
                 $acq_prob = sprintf("Prob Acq Success %5.3f", $prob);
+
             }
+            # Make the id a URL if there is star history or if star history could
+            # not be checked (no db_handle)
+            my $star_link;
+            if ((not defined $db_handle) or (($db_stats->{acq} or $db_stats->{gui}))){
+                $star_link = sprintf("HREF=\"%s%s\"",$acq_stat_lookup, $c->{"GS_ID${i}"});
+            }
+            else{
+                $star_link = sprintf("A=\"star\"");
+            }
+            # If there is database history, add it to the blurb
+            my $history_blurb = "";
 	    if ($db_stats->{acq} or $db_stats->{gui}){
-	    $table .= sprintf("${idpad}<A HREF=\"%s%s\" STYLE=\"text-decoration: none;\" "
-			      . "ONMOUSEOVER=\"return overlib ('"
-			      . "ACQ total:%d noid:%d <BR />"
-			      . "GUI total:%d bad:%d fail:%d obc_bad:%d <BR />"
-			      . "Avg Mag %4.2f <BR />"
-                              . "$acq_prob"
-			      . "', WIDTH, 220);\" ONMOUSEOUT=\"return nd();\">%s</A>", 
-			      $acq_stat_lookup, $c->{"GS_ID${i}"}, 
-			      $db_stats->{acq}, $db_stats->{acq_noid},
-			      $db_stats->{gui}, $db_stats->{gui_bad}, $db_stats->{gui_fail}, $db_stats->{gui_obc_bad},
-			      $db_stats->{avg_mag},
-			      $c->{"GS_ID${i}"});
-	  }
-	    else{
-                if ((not defined $db_handle) and ($c->{"TYPE${i}"} ne 'FID')){
-                    $table .= sprintf("${idpad}<A HREF=\"%s%s\">%s</A>",
-                                      $acq_stat_lookup, $c->{"GS_ID${i}"}, $c->{"GS_ID${i}"});
-                }
-                else{
-                    # if no previous data but it is still an ACQ, provide the probability
-                    # by itself in the mouseover
-                    if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
-                        $table .= sprintf("${idpad}<A ID=\"star\" STYLE=\"text-decoration: none;\" "
-                                          . "ONMOUSEOVER=\"return overlib ('"
-                                          . "$acq_prob"
-                                          . "', WIDTH, 220);\" ONMOUSEOUT=\"return nd();\">%s</A>",
-                                          $c->{"GS_ID${i}"});
-                    }
-                    else{
-                        $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
-                    }
-                }
-	    }
+                $history_blurb = sprintf("ACQ total:%d noid:%d <BR />"
+			       . "GUI total:%d bad:%d fail:%d obc_bad:%d <BR />"
+			       . "Avg Mag %4.2f <BR />",
+                                         $db_stats->{acq}, $db_stats->{acq_noid},
+                                         $db_stats->{gui}, $db_stats->{gui_bad},
+                                         $db_stats->{gui_fail}, $db_stats->{gui_obc_bad},
+                                         $db_stats->{avg_mag})
+            }
+            # If the object has catalog information, add it to the blurb
+            # for the hoverover
+            my $cat_blurb = "";
+            if (defined $c->{"GS_MAGERR$i"}){
+                $cat_blurb = sprintf("mac_aca_err=%4.2f pos_err=%4.2f color1=%4.2f <BR />",
+                                     $c->{"GS_MAGERR$i"}/100., $c->{"GS_POSERR$i"}/1000., $c->{"GS_BV$i"});
+            }
+
+            # If the line is a fid or "---" don't make a hoverover
+            if (($c->{"TYPE$i"} eq 'FID') or ($c->{"GS_ID$i"} eq '---')){
+                $table .= sprintf("${idpad}%s", $c->{"GS_ID${i}"});
+            }
+            # Otherwise, construct a hoverover and a url as needed, using the blurbs made above
+            else{
+                $table .= sprintf("${idpad}<A $star_link STYLE=\"text-decoration: none;\" "
+                                      . "ONMOUSEOVER=\"return overlib ('"
+                                      . "$cat_blurb"
+                                      . "$history_blurb"
+                                      . "$acq_prob"
+                                      . "', WIDTH, 300);\" ONMOUSEOUT=\"return nd();\">%s</A>",
+                                  $c->{"GS_ID${i}"});
+            }
 	    for my $field_idx (0 .. $#fields){
 		my $curr_format = $format[$field_idx];
                 my $field_color = 'black';
