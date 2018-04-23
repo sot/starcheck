@@ -2016,7 +2016,7 @@ sub print_report {
 
     $o .= $table;
     
-    $o .= "\n" if (@{$self->{warn}} || @{$self->{yellow_warn}} || @{$self->{fyi}} );
+    $o .= "\n" if (@{$self->{warn}} || @{$self->{yellow_warn}} || @{$self->{fyi}} || @{$self->{orange_warn}});
 
 
 
