@@ -28,7 +28,18 @@ use Inline Python => q{
 
 from chandra_aca.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
 
+def _mag_for_p_acq(p_acq, date, t_ccd):
+    try:
+       date = date.decode()
+    except:
+       pass
+    return mag_for_p_acq(p_acq, date, t_ccd)
+
 def _acq_success_prob(date, t_ccd, mag, color, spoiler, halfwidth):
+    try:
+       date = date.decode()
+    except:
+       pass
     out = acq_success_prob(date, float(t_ccd), float(mag), float(color), spoiler, int(halfwidth))
     return out.tolist()
 
@@ -89,7 +100,7 @@ sub set_dynamic_mag_limits{
     my $t_ccd = $self->{ccd_temp};
     # Dynamic mag limits based on 75% and 50% chance of successful star acq
     # Maximum limits of 10.3 and 10.6
-    $self->{mag_faint_yellow} = min(10.3, mag_for_p_acq(0.75, $date, $t_ccd));
-    $self->{mag_faint_red} = min(10.6, mag_for_p_acq(0.5, $date, $t_ccd));
+    $self->{mag_faint_yellow} = min(10.3, _mag_for_p_acq(0.75, $date, $t_ccd));
+    $self->{mag_faint_red} = min(10.6, _mag_for_p_acq(0.5, $date, $t_ccd));
 }
 

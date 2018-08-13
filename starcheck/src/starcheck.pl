@@ -48,21 +48,43 @@ $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 use Inline Python => q{
 
 import os
+import six
 from chandra_aca.star_probs import set_acq_model_ms_filter
 import starcheck
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.version import version
 
+def debyte_kwargs(kwargs):
+    if six.PY2:
+       return kwargs
+    else:
+       td = dict()
+       for key, val in six.iteritems(kwargs):
+           try:
+              key = key.decode()
+           except:
+              pass
+           try:
+              val = val.decode()
+           except:
+              pass
+           td[key] = val
+       return td
+
 def ccd_temp_wrapper(kwargs):
+    kwargs = debyte_kwargs(kwargs)
     return get_ccd_temps(**kwargs)
 
 def plot_cat_wrapper(kwargs):
+    kwargs = debyte_kwargs(kwargs)
     try:
         from starcheck.plot import make_plots_for_obsid
     except ImportError as err:
         # write errors to starcheck's global warnings and STDERR
         perl.warning("Error with Inline::Python imports {}\n".format(err))
+    debyte_cat = [debyte_kwargs(row) for row in kwargs['catalog']]
+    kwargs['catalog'] = debyte_cat
     return make_plots_for_obsid(**kwargs)
 
 def starcheck_version():
@@ -71,6 +93,10 @@ def starcheck_version():
 def get_data_dir():
     sc_data = os.path.join(os.path.dirname(starcheck.__file__), 'data')
     return sc_data if os.path.exists(sc_data) else ""
+
+def _make_pcad_attitude_check_report(kwargs):
+    kwargs = debyte_kwargs(kwargs)
+    return make_pcad_attitude_check_report(**kwargs)
 
 };
 
@@ -139,7 +165,6 @@ my $sosa_prefix = $par{vehicle} ? "V_" : "";
 
 # Set up for global warnings
 my @global_warn;
-
 # asterisk only include to make globs work correctly
 my $backstop   = get_file("$par{dir}/${sosa_dir_slash}*.backstop", 'backstop', 'required');
 my $guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
@@ -699,9 +724,10 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($ATT_CHECK_AFTER))){
     }
     else{
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
-        my $att_ok = make_pcad_attitude_check_report(
-            $backstop, $or_file, $mm_file, $simtrans_file, $simfocus_file,
-            $char_file, $att_report, $aimpoint_file);
+        my $att_ok = _make_pcad_attitude_check_report({
+            backstop_file=> $backstop, or_list_file=>$or_file, mm_file=> $mm_file,
+            simtrans_file=>$simtrans_file, simfocus_file=>$simfocus_file,
+            ofls_characteristics_file=>$char_file, out=>$att_report, dynamic_offsets_file=>$aimpoint_file});
         if ($att_ok){
             $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n";
         }
