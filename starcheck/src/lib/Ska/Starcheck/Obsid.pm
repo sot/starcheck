@@ -38,7 +38,8 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
     Return as a dictionary with the agasc ids as keys and all of the values as
     simple Python types (int, float)
     """
-    stars = agasc.get_agasc_cone(float(ra), float(dec), float(radius), date, agasc_file)
+    stars = agasc.get_agasc_cone(float(ra), float(dec), float(radius), date.decode('ascii'),
+                                 agasc_file.decode('ascii'))
     q_aca = Quaternion.Quat([float(ra), float(dec), float(roll)])
     yags, zags = radec2yagzag(stars['RA_PMCORR'], stars['DEC_PMCORR'], q_aca)
     yags *= 3600

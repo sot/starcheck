@@ -54,8 +54,17 @@ from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_char
 from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.version import version
 
+# Borrowed from https://stackoverflow.com/a/33160507
+def de_bytestr(data):
+    if isinstance(data, bytes):      return data.decode()
+    if isinstance(data, (str, float, int)): return data
+    if isinstance(data, dict):       return dict(map(de_bytestr, data.items()))
+    if isinstance(data, tuple):      return tuple(map(de_bytestr, data))
+    if isinstance(data, list):       return list(map(de_bytestr, data))
+    if isinstance(data, set):        return set(map(de_bytestr, data))
+
 def ccd_temp_wrapper(kwargs):
-    return get_ccd_temps(**kwargs)
+    return get_ccd_temps(**de_bytestr(kwargs))
 
 def plot_cat_wrapper(kwargs):
     try:
@@ -63,7 +72,7 @@ def plot_cat_wrapper(kwargs):
     except ImportError as err:
         # write errors to starcheck's global warnings and STDERR
         perl.warning("Error with Inline::Python imports {}\n".format(err))
-    return make_plots_for_obsid(**kwargs)
+    return make_plots_for_obsid(**de_bytestr(kwargs))
 
 def starcheck_version():
     return version
@@ -71,6 +80,9 @@ def starcheck_version():
 def get_data_dir():
     sc_data = os.path.join(os.path.dirname(starcheck.__file__), 'data')
     return sc_data if os.path.exists(sc_data) else ""
+
+def _make_pcad_attitude_check_report(kwargs):
+    return make_pcad_attitude_check_report(**de_bytestr(kwargs))
 
 };
 
@@ -139,7 +151,6 @@ my $sosa_prefix = $par{vehicle} ? "V_" : "";
 
 # Set up for global warnings
 my @global_warn;
-
 # asterisk only include to make globs work correctly
 my $backstop   = get_file("$par{dir}/${sosa_dir_slash}*.backstop", 'backstop', 'required');
 my $guide_summ = get_file("$par{dir}/mps/mg*.sum",   'guide summary');
@@ -699,9 +710,10 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($ATT_CHECK_AFTER))){
     }
     else{
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
-        my $att_ok = make_pcad_attitude_check_report(
-            $backstop, $or_file, $mm_file, $simtrans_file, $simfocus_file,
-            $char_file, $att_report, $aimpoint_file);
+        my $att_ok = _make_pcad_attitude_check_report({
+            backstop_file=> $backstop, or_list_file=>$or_file, mm_file=> $mm_file,
+            simtrans_file=>$simtrans_file, simfocus_file=>$simfocus_file,
+            ofls_characteristics_file=>$char_file, out=>$att_report, dynamic_offsets_file=>$aimpoint_file});
         if ($att_ok){
             $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n";
         }

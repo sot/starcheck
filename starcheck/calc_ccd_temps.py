@@ -613,7 +613,7 @@ if __name__ == '__main__':
     try:
         json_obstemps = get_ccd_temps(**vars(opt))
         write_obstemps(opt.output_temps, json_obstemps)
-    except Exception, msg:
+    except Exception as msg:
         if opt.traceback:
             raise
         else:
