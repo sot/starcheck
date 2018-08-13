@@ -2151,7 +2151,7 @@ sub print_report {
 	else{
 	    $o .= sprintf("<TD><img align=\"top\" src=\"%s/down.gif\" ></TD>", 
 			  $self->{STARCHECK} );
-	    $o .= sprintf("<TD>NEXT </TD>", $self->{next}->{obsid});
+	    $o .= sprintf("<TD>NEXT </TD>");
 	}
 	$o .= " </TR></TABLE>";
 

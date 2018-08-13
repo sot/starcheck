@@ -150,13 +150,13 @@ sub ptf2any {
 		next;
 	    }
 	    
-	    if ($ptf_cmd =~ /^target{([^}]*)}/) {
+	    if ($ptf_cmd =~ /^target\{([^}]*)\}/) {
 		if ($cmd{$fmt}->{target_start}) {
 		    $out .=  $cmd{$fmt}->{target_start} . $1 . $cmd{$fmt}->{target_end};
 		}
 	    }
 
-	    if ($ptf_cmd =~ /^link_target{[^}]*}/) {
+	    if ($ptf_cmd =~ /^link_target\{[^}]*\}/) {
 		if (exists $cmd{$fmt}->{link_target_end}) {
 		    my ($target, $text) = ($ptf_cmd =~ /\{([^,]+),([^,]+)\}/);
 		    $out .=  $cmd{$fmt}->{link_target_start} . $target
