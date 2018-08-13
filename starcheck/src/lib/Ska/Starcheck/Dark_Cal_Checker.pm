@@ -8,7 +8,7 @@ use Carp;
 use IO::All;
 use Ska::Convert qw(date2time time2date);
 use Quat;
-use Config::General;
+use Config::General qw( ParseConfig );
 use Math::Trig;
 use Data::Dumper;
 
