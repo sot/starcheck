@@ -48,7 +48,8 @@ $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 use Inline Python => q{
 
 import os
-import six
+import re
+import ast
 from chandra_aca.star_probs import set_acq_model_ms_filter
 import starcheck
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
@@ -56,14 +57,7 @@ from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.version import version
 
 def debyte_dict(d):
-    td = dict()
-    for key, val in iteritems(d):
-        if isinstance(key, bytes):
-            key = key.decode()
-        if isinstance(val, bytes):
-            val = val.decode()
-        td[key] = val
-     return td
+    return ast.literal_eval(re.sub(r"b'", "'", repr(d)))
 
 def ccd_temp_wrapper(kwargs):
     return get_ccd_temps(**debyte_dict(kwargs))
