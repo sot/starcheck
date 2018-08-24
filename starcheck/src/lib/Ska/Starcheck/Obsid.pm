@@ -2144,11 +2144,6 @@ sub print_report {
 			  $self->{STARCHECK} );
 	    $o .= sprintf("<TD><A HREF=\"#obsid%s\">NEXT</A> </TD>", $self->{next}->{obsid});
 	}
-	else{
-	    $o .= sprintf("<TD><img align=\"top\" src=\"%s/down.gif\" ></TD>", 
-			  $self->{STARCHECK} );
-	    $o .= sprintf("<TD>NEXT </TD>");
-	}
 	$o .= " </TR></TABLE>";
 
     }
