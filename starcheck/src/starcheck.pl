@@ -55,36 +55,27 @@ from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_char
 from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.version import version
 
-def debyte_kwargs(kwargs):
-    if six.PY2:
-       return kwargs
-    else:
-       td = dict()
-       for key, val in six.iteritems(kwargs):
-           try:
-              key = key.decode()
-           except:
-              pass
-           try:
-              val = val.decode()
-           except:
-              pass
-           td[key] = val
-       return td
+def debyte_dict(d):
+    td = dict()
+    for key, val in iteritems(d):
+        if isinstance(key, bytes):
+            key = key.decode()
+        if isinstance(val, bytes):
+            val = val.decode()
+        td[key] = val
+     return td
 
 def ccd_temp_wrapper(kwargs):
-    kwargs = debyte_kwargs(kwargs)
-    return get_ccd_temps(**kwargs)
+    return get_ccd_temps(**debyte_dict(kwargs))
 
 def plot_cat_wrapper(kwargs):
-    kwargs = debyte_kwargs(kwargs)
+    kwargs = debyte_dict(kwargs)
     try:
         from starcheck.plot import make_plots_for_obsid
     except ImportError as err:
         # write errors to starcheck's global warnings and STDERR
         perl.warning("Error with Inline::Python imports {}\n".format(err))
-    debyte_cat = [debyte_kwargs(row) for row in kwargs['catalog']]
-    kwargs['catalog'] = debyte_cat
+    kwargs['catalog'] = [debyte_dict(row) for row in kwargs['catalog']]
     return make_plots_for_obsid(**kwargs)
 
 def starcheck_version():
@@ -95,7 +86,7 @@ def get_data_dir():
     return sc_data if os.path.exists(sc_data) else ""
 
 def _make_pcad_attitude_check_report(kwargs):
-    kwargs = debyte_kwargs(kwargs)
+    kwargs = debyte_dict(kwargs)
     return make_pcad_attitude_check_report(**kwargs)
 
 };
