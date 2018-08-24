@@ -69,13 +69,17 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=No
     lines = []  # output report lines
 
     mm = read_maneuver_summary(mm_file)
-    q = [mm[0][key] for key in ['q1_0', 'q2_0', 'q3_0', 'q4_0']]
+    q = Quaternion.normalize([mm[0][key] for key in ['q1_0', 'q2_0', 'q3_0', 'q4_0']])
     bs = read_backstop(backstop_file)
     simfa_time, simfa = recent_sim_history(DateTime(bs[0]['date']).secs,
                                            simfocus_file)
     simpos_time, simpos = recent_sim_history(DateTime(bs[0]['date']).secs,
                                              simtrans_file)
-    initial_state = {'q_att': q,
+
+    initial_state = {'q1': q[0],
+                     'q2': q[1],
+                     'q3': q[2],
+                     'q4': q[3],
                      'simpos': simpos,
                      'simfa_pos': simfa}
 
