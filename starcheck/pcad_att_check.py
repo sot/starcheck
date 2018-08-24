@@ -121,22 +121,18 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=No
     # gives the history of updates as a dict with a `value` and `date` key.
     sc = hopper.run_cmds(backstop_file, or_list, ofls_characteristics_file,
                          initial_state=initial_state)
-    # Iterate through obsids in order
-    obsids = [obj['value'] for obj in sc.obsids]
-    for obsid in obsids:
-        if obsid not in sc.checks:
-            continue
-
-        checks = sc.checks[obsid]
-        for check in checks:
-            if check['name'] == 'CheckObsreqTargetFromPcad':
-                ok = check['ok']
+    # Iterate through checks by obsid to print status
+    checks = sc.get_checks_by_obsid()
+    for obsid in sc.obsids:
+        for check in checks[obsid]:
+            if check.name == 'attitude_consistent_with_obsreq':
+                ok = check.success
                 all_ok &= ok
-                if check.get('skip'):
-                    message = 'SKIPPED: {}'.format(check['message'])
+                if check.not_applicable:
+                    message = 'SKIPPED: {}'.format(":".join(check.infos))
                 else:
-                    message = 'OK' if ok else check['message']
-                line = '{:5d}: {}'.format(obsid, message)
+                    message = 'OK' if ok else "ERROR: {}".format(":".join(check.errors))
+                    line = '{:5d}: {}'.format(obsid, message)
                 lines.append(line)
 
     if out is not None:
