@@ -63,14 +63,12 @@ def ccd_temp_wrapper(kwargs):
     return get_ccd_temps(**debyte_dict(kwargs))
 
 def plot_cat_wrapper(kwargs):
-    kwargs = debyte_dict(kwargs)
     try:
         from starcheck.plot import make_plots_for_obsid
     except ImportError as err:
         # write errors to starcheck's global warnings and STDERR
         perl.warning("Error with Inline::Python imports {}\n".format(err))
-    kwargs['catalog'] = [debyte_dict(row) for row in kwargs['catalog']]
-    return make_plots_for_obsid(**kwargs)
+    return make_plots_for_obsid(**debyte_dict(kwargs))
 
 def starcheck_version():
     return version
@@ -80,8 +78,7 @@ def get_data_dir():
     return sc_data if os.path.exists(sc_data) else ""
 
 def _make_pcad_attitude_check_report(kwargs):
-    kwargs = debyte_dict(kwargs)
-    return make_pcad_attitude_check_report(**kwargs)
+    return make_pcad_attitude_check_report(**debyte_dict(kwargs))
 
 };
 
