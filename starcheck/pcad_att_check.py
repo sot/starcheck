@@ -1,9 +1,11 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 import re
-import hopper
+from astropy.table import Table
+import Quaternion
+
 from parse_cm import read_backstop, read_maneuver_summary, read_or_list
 from Chandra.Time import DateTime
-from astropy.table import Table
+import hopper
 
 
 def check_characteristics_date(ofls_characteristics_file, ref_date=None):
