@@ -96,7 +96,7 @@ my %par = (dir  => '.',
 		   );
 
 my $agasc_parent_dir = '/proj/sot/ska/data/agasc';
-my $default_agasc_dir = '/proj/sot/ska/data/agasc1p6/';
+my $default_agasc_dir = '/proj/sot/ska/data/agasc1p7/';
 
 GetOptions( \%par, 
 			'help', 
@@ -191,11 +191,11 @@ if ( defined $par{agasc} or defined $par{agasc_dir}){
     }
     else{
 	if ( defined $par{agasc} ){
-	    if ( $par{agasc} =~ /^(1p4|1p5|1p6)$/ ){
+	    if ( $par{agasc} =~ /^(1p4|1p5|1p6|1p7)$/ ){
 		$agasc_dir = $agasc_parent_dir . $par{agasc} . '/';
 	    }
 	    else{
-		croak("Problem with command line: if 'agasc' specified, choice must be '1p4', '1p5', or '1p6'");
+		croak("Problem with command line: if 'agasc' specified, choice must be '1p4', '1p5', '1p6', '1p7'");
 	    }
 	}
 	if ( defined $par{agasc_dir} ){
