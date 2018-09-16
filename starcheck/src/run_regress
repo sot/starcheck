@@ -5,13 +5,15 @@
 RunRegression()
 # Run regression tests.
 # Arg 1 is the AGASC version (e.g. 1p5)
-# Arg 2 is the fid characteristics name (e.g. fid_CHARACTERIS_FEB07)
+# Arg 2 is the AGASC file for h5
+# Arg 3 is the fid characteristics name (e.g. fid_CHARACTERIS_FEB07)
 {
   echo ""
   echo "***** Running starcheck on load $load *****"
 
   agasc=${1}
-  fid_char=${2}
+  agasc_file=${2}
+  fid_char=${3}
 
   test=$regtestdir/$load
   release=$home/test_regress/release/$load
@@ -36,9 +38,9 @@ RunRegression()
 
   # Run test version.  Use the 'starcheck' launcher to activate the dev environment
   #
-    echo "Running: ${home}/sandbox_starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+    echo "Running: ${home}/sandbox_starcheck -vehicle -agasc_file $agasc_file -fid_char $fid_char -dir $mphome/$load"
     echo "******************** (TEST VEHICLE) $load *******************" >> $vlog
-    ${home}/sandbox_starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
+    ${home}/sandbox_starcheck -vehicle -agasc_file $agasc_file -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
     # cut first 4 lines and replace test ska with release to make cleaner diffs
     perl -n -i.bak -e 'print if $. > 3' $test/v_starcheck.txt
     perl -p -i -e "s{$SKA}{$RELEASE}" $test/v_starcheck.txt
@@ -73,9 +75,9 @@ RunRegression()
 
   # Run test version.  Use the 'starcheck' launcher to activate the dev environment
   #
-  echo "Running: ${home}/sandbox_starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+  echo "Running: ${home}/sandbox_starcheck -agasc_file $agasc_file -fid_char $fid_char -dir $mphome/$load"
   echo "******************** (TEST) $load *******************" >> $log
-  ${home}/sandbox_starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
+  ${home}/sandbox_starcheck -agasc_file $agasc_file -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
   # cut first 4 lines and replace test ska with release to make cleaner diffs
   perl -n -i.bak -e 'print if $. > 3' $test/starcheck.txt
   perl -p -i -e "s{$SKA}{$RELEASE}" $test/starcheck.txt
@@ -168,19 +170,6 @@ do
 done
 
 
-# JAN2105A is the first AGASC 1.6 load
-
-# First a bunch of agasc 1.5 loads
-
-# Go through specified loads and run test and release starcheck versions
-for load in \
-    2004/AUG0104/oflsa \
-    2004/MAY3104/oflsc \
-    2004/JUL2604/oflsa \
-    2004/DEC2704/oflsb 
-do
-   RunRegression 1p5 fid_CHARACTERIS_JUL01
-done
 
 # Then a bunch of agasc 1.6 loads
 
@@ -197,7 +186,7 @@ for load in \
     2006/MAR0606/oflsc \
     2006/NOV2006/oflsb
 do
-  RunRegression 1p6 fid_CHARACTERIS_JUL01
+  RunRegression 1p6 /proj/sot/ska/data/agasc/agasc1p6.h5 fid_CHARACTERIS_JUL01
 done
 
 # Then, a bunch of agasc 1.6 loads with the updated fid characteristics
@@ -240,7 +229,7 @@ for load in \
     2015/DEC1115/oflsa \
     2015/DEC1115/oflsb
 do
-  RunRegression 1p6 fid_CHARACTERIS_FEB07
+  RunRegression 1p6 /proj/sot/ska/data/agasc/agasc1p6.h5 fid_CHARACTERIS_FEB07
 done
 
 # Copy log and diffs to version directory

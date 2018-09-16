@@ -21,6 +21,53 @@ package Ska::Starcheck::Obsid;
 use strict;
 use warnings;
 
+use Inline Python => q{
+
+from astropy.table import Table, Column
+import Quaternion
+from Ska.quatutil import radec2yagzag
+import agasc
+
+
+def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
+    """
+    Fetch the cone of agasc stars.  Update the table with the yag and zag of each star.
+    Return as a dictionary with the agasc ids as keys and all of the values as
+    simple Python types (int, float)
+    """
+    stars = agasc.get_agasc_cone(float(ra), float(dec), float(radius), date, agasc_file)
+    q_aca = Quaternion.Quat([float(ra), float(dec), float(roll)])
+    yags, zags = radec2yagzag(stars['RA_PMCORR'], stars['DEC_PMCORR'], q_aca)
+    yags *= 3600
+    zags *= 3600
+    stars['yang'] = yags
+    stars['zang'] = zags
+
+    # Get a dictionary of the stars with the columns that are used
+    # This needs to be de-numpy-ified to pass back into Perl
+    stars_dict = {}
+    for star in stars:
+        stars_dict["{}".format(star['AGASC_ID'])] = {
+            'id': int(star['AGASC_ID']),
+            'class': int(star['CLASS']),
+            'ra': float(star['RA_PMCORR']),
+            'dec': float(star['DEC_PMCORR']),
+            'mag_aca': float(star['MAG_ACA']),
+            'bv': float(star['COLOR1']),
+            'color1': float(star['COLOR1']),
+            'mag_aca_err': float(star['MAG_ACA_ERR']),
+            'poserr': float(star['POS_ERR']),
+            'yag': float(star['yang']),
+            'zag': float(star['zang']),
+            'aspq': int(star['ASPQ1']),
+            'var': int(star['VAR']),
+            'aspq1': int(star['ASPQ1'])}
+
+    return stars_dict
+
+};
+
+
 use List::Util qw( max );
 use Quat;
 use Ska::ACACoordConvert;
@@ -33,7 +80,6 @@ use Ska::Convert qw(date2time);
 use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit set_dynamic_mag_limits );
 use RDB;
 
-use Ska::AGASC;
 use SQL::Abstract;
 use Ska::DatabaseUtil qw( sql_fetchall_array_of_hashref );
 use Carp;
@@ -2181,51 +2227,25 @@ sub get_agasc_stars {
 #############################################################################################
 
     my $self = shift;
-    my $AGASC_DIR = shift;
+    my $AGASC_FILE = shift;
     my $c;
     return unless ($c = find_command($self, "MP_TARGQUAT"));
-    
 
-    my $agasc_region = Ska::AGASC->new({
-        agasc_dir => $AGASC_DIR,
-        ra => $self->{ra},
-        dec => $self->{dec},
-        radius => 1.3,
-        datetime => $self->{date},
-    });
+    # Use Python agasc to fetch the stars into a hash
+    $self->{agasc_hash} = _get_agasc_stars($self->{ra},
+                                           $self->{dec},
+                                           $self->{roll},
+                                           1.3,
+                                           $self->{date},
+                                           $AGASC_FILE);
 
-    my $q_aca = Quat->new($self->{ra}, $self->{dec}, $self->{roll});
-
-    for my $id ($agasc_region->list_ids() )  {
-
-	my $star = $agasc_region->get_star($id);
-	
-	my ($yag, $zag) = Quat::radec2yagzag(
-					     $star->ra_pmcorrected(), 
-					     $star->dec_pmcorrected(), 
-					     $q_aca);
-	$yag *= $r2a;
-	$zag *= $r2a;
-	if ($star->mag_aca() < -10 or $star->mag_aca_err() < -10) {
-	    push @{$self->{warn}}, sprintf("$alarm Star with bad mag %.1f or magerr %.1f at (yag,zag)=%.1f,%.1f\n",
-					   $star->mag_aca(), $star->mag_aca_err(), $yag, $zag);
+    foreach my $star (values %{$self->{agasc_hash}}) {
+	if ($star->{'mag_aca'} < -10 or $star->{'mag_aca_err'} < -10) {
+	    push @{$self->{warn}}, sprintf(
+                "$alarm Star with bad mag %.1f or magerr %.1f at (yag,zag)=%.1f,%.1f\n",
+                $star->{'mag_aca'}, $star->{'mag_aca_err'}, $star->{'yag'}, $star->{'zag'});
 	}
-	$self->{agasc_hash}{$id} = { 
-	    id=> $id, 
-	    class => $star->class(),
-	    ra  => $star->ra_pmcorrected(),
-	    dec => $star->dec_pmcorrected(),
-	    mag_aca => $star->mag_aca(),
-	    bv  => $star->color1(),
-	    mag_aca_err => $star->mag_aca_err(),
-	    poserr  => $star->pos_err(),
-	    yag => $yag, 
-	    zag => $zag, 
-	    aspq => $star->aspq1() 
-	    } ;
-	
     }
-
 
 }
 
