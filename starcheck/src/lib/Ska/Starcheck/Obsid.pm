@@ -2226,7 +2226,7 @@ sub get_agasc_stars {
 #############################################################################################
 
     my $self = shift;
-    my $AGASC_FILE = shift;
+    my $agasc_file = shift;
     my $c;
     return unless ($c = find_command($self, "MP_TARGQUAT"));
 
@@ -2236,7 +2236,7 @@ sub get_agasc_stars {
                                            $self->{roll},
                                            1.3,
                                            $self->{date},
-                                           $AGASC_FILE);
+                                           $agasc_file);
 
     foreach my $star (values %{$self->{agasc_hash}}) {
 	if ($star->{'mag_aca'} < -10 or $star->{'mag_aca_err'} < -10) {
