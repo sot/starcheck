@@ -23,7 +23,6 @@ use warnings;
 
 use Inline Python => q{
 
-from astropy.table import Table, Column
 import Quaternion
 from Ska.quatutil import radec2yagzag
 import agasc
