@@ -2290,9 +2290,9 @@ sub identify_stars {
             # Confirm that the agasc magnitude matches the guide star summary magnitude
             my $gs_mag = $c->{"GS_MAG$i"};
             my $dmag = abs($star->{mag_aca} - $gs_mag);
-            if ($dmag > 0.001){
+            if ($dmag > 0.01){
                 push @{$self->{warn}},
-                    sprintf("$alarm [%d] Mag diff from catalog mag %9.5f\n", $i, $dmag);
+                    sprintf("$alarm [%d] Guide sum mag diff from agasc mag %9.5f\n", $i, $dmag);
             }
 	    # let's still confirm that the backstop yag zag is what we expect
 	    # from agasc and ra,dec,roll ACA-043
