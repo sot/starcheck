@@ -15,11 +15,11 @@ DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
 
 
-TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/AUG0104A_test_data.tar.gz
+TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/JUL0918A_test_data.tar.gz
 # starcheck_characteristics tarball should be installed from
 # separate starcheck_characteristics project
 # with "make install_dist" from that project
-TEST_BACKSTOP = AUG0104A/CR214_0300.backstop 
+TEST_BACKSTOP = JUL0918A/CR190_0603.backstop
 
 DATA_FILES = starcheck/data/aca_spec.json starcheck/data/ACABadPixels starcheck/data/agasc.bad \
 	starcheck/data/fid_CHARACTERIS_JUL01 starcheck/data/fid_CHARACTERIS_FEB07 \
@@ -49,7 +49,8 @@ test: $(TEST_BACKSTOP) $(DATA_FILES)
 	if [ -r test.html ] ; then rm test.html ; fi
 	if [ -r test.txt ] ; then rm test.txt ; fi
 	if [ -d test ] ; then rm -r test ; fi
-	./sandbox_starcheck -dir AUG0104A -fid_char fid_CHARACTERIS_JUL01 -out test
+	./sandbox_starcheck -dir JUL0918A -agasc_file ${SKA}/data/agasc/agasc1p6.h5 -out test
+
 
 check: test
 
