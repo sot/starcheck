@@ -46,7 +46,7 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
     # This needs to be de-numpy-ified to pass back into Perl
     stars_dict = {}
     for star in stars:
-        stars_dict["{}".format(star['AGASC_ID'])] = {
+        stars_dict[str(star['AGASC_ID'])] = {
             'id': int(star['AGASC_ID']),
             'class': int(star['CLASS']),
             'ra': float(star['RA_PMCORR']),
