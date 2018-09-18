@@ -180,7 +180,6 @@ my $mp_top_link = guess_mp_toplevel({ path => abs_path($par{dir}),
 my $odb_file = get_file("$Starcheck_Data/$par{fid_char}*", 'odb', 'required');
 
 
-print STDERR "Using AGASC file from $par{agasc_file} \n";
 my $agasc_file = get_file("$par{agasc_file}", "agasc_file");
 
 
