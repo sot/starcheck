@@ -90,7 +90,7 @@ my %par = (dir  => '.',
 		   html => 1,
 		   text => 1,
 		   yaml => 1,
-                   agasc_file => '/proj/sot/ska/data/agasc/agasc1p7.h5',
+                   agasc_file => "${SKA}/data/agasc/agasc1p7.h5",
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
 		   );
@@ -1279,7 +1279,7 @@ Enable (or disable) generation of report in TEXT format.  Default is TEXT enable
 
 =item B<-agasc_file <agasc>>
 
-Specify locate of agasc h5 file.  Default is /proj/sot/ska/data/agasc/agasc1p7.h5 .
+Specify location of agasc h5 file.  Default is SKA/data/agasc/agasc1p7.h5 .
 
 =item B<-fid_char <fid characteristics file>>
 
