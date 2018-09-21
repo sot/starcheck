@@ -41,7 +41,6 @@ use Cwd qw( abs_path );
 
 use HTML::TableExtract;
 
-use Ska::AGASC;
 use Carp 'verbose';
 $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 
@@ -91,12 +90,11 @@ my %par = (dir  => '.',
 		   html => 1,
 		   text => 1,
 		   yaml => 1,
+                   agasc_file => "${SKA}/data/agasc/agasc1p7.h5",
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
 		   );
 
-my $agasc_parent_dir = '/proj/sot/ska/data/agasc';
-my $default_agasc_dir = '/proj/sot/ska/data/agasc1p6/';
 
 GetOptions( \%par, 
 			'help', 
@@ -107,8 +105,7 @@ GetOptions( \%par,
 			'text!',
 			'yaml!',
 			'vehicle!',
-			'agasc=s',
-			'agasc_dir=s',
+			'agasc_file=s',
 			'sc_data=s',
 			'fid_char=s',
 			'config_file=s',
@@ -183,28 +180,7 @@ my $mp_top_link = guess_mp_toplevel({ path => abs_path($par{dir}),
 my $odb_file = get_file("$Starcheck_Data/$par{fid_char}*", 'odb', 'required');
 
 
-my $agasc_dir = $default_agasc_dir;
-if ( defined $par{agasc} or defined $par{agasc_dir}){
-    if ( defined $par{agasc} and defined $par{agasc_dir}){
-	print STDERR "Option 'agasc_dir' overrides 'agasc' \n";
-	$agasc_dir = $par{agasc_dir};
-    }
-    else{
-	if ( defined $par{agasc} ){
-	    if ( $par{agasc} =~ /^(1p4|1p5|1p6)$/ ){
-		$agasc_dir = $agasc_parent_dir . $par{agasc} . '/';
-	    }
-	    else{
-		croak("Problem with command line: if 'agasc' specified, choice must be '1p4', '1p5', or '1p6'");
-	    }
-	}
-	if ( defined $par{agasc_dir} ){
-	    $agasc_dir = $par{agasc_dir};
-	}
-    }
-}
-print STDERR "Using AGASC from $agasc_dir \n";
-
+my $agasc_file = get_file("$par{agasc_file}", "agasc_file");
 
 
 my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
@@ -284,14 +260,6 @@ my %or = Ska::Parse_CM_File::OR($or_file) if ($or_file);
 
 my ($fid_time_violation, $error, $fidsel) = Ska::Parse_CM_File::fidsel($fidsel_file, \@bs) ;
 map { warning("$_\n") } @{$error};
-
-
-# do a tiny AGASC search to see which method will be used
-my $tiny_agasc_search = Ska::AGASC->new({ra=>0,dec=>0,w=>0.001}); 
-my $agasc_method = $Ska::AGASC::access_method;
-if ($agasc_method =~ /cfitsio/){
-    warning("Ska::AGASC call to mp_get_agasc failed.  Output not approved for authoritative load review. \n");
-} 
 
 ## Warn if we are on Solaris
 if ($OS eq 'SunOS'){
@@ -608,7 +576,7 @@ if ($obsid_temps){
 
 # Do main checking
 foreach my $obsid (@obsid_id) {
-    $obs{$obsid}->get_agasc_stars($agasc_dir);
+    $obs{$obsid}->get_agasc_stars($agasc_file);
     $obs{$obsid}->identify_stars();
     my $cat = Ska::Starcheck::Obsid::find_command($obs{$obsid}, "MP_STARCAT");
     # If the catalog is empty, don't make plots
@@ -663,14 +631,14 @@ $save_hash{run}{date} = $date;
 
 $out .= "------------  Starcheck $version    -----------------\n";
 $out .= " Run on $date by $ENV{USER} from $hostname\n";
-$out .= " Configuration:  Using AGASC at $agasc_dir\n";
+$out .= " Configuration:  Using AGASC at $agasc_file\n";
 # ASCDS $ascds_version_name ($ascds_version)\n"
 #    if ($mp_agasc_version and $ascds_version_name);
 $out .= "\n";
 
 $save_hash{run}{user} = $ENV{USER};
 $save_hash{run}{host} = $hostname;
-$save_hash{run}{agasc} = $agasc_dir;
+$save_hash{run}{agasc} = $agasc_file;
 
 if ($mp_top_link){
     $out .= sprintf("<A HREF=\"%s\">Short Term Schedule: %s</A>", $mp_top_link->{url}, $mp_top_link->{week});
@@ -1308,13 +1276,9 @@ Enable (or disable) generation of report in HTML format.  Default is HTML enable
 
 Enable (or disable) generation of report in TEXT format.  Default is TEXT enabled.
 
-=item B<-agasc <agasc>>
+=item B<-agasc_file <agasc>>
 
-Specify version of agasc ( 1p4, 1p5, or 1p6 ).  Default is 1p6 .
-
-=item B<-agasc_dir <agasc directory>>
-
-Specify directory path to agasc.  Overrides -agasc option.
+Specify location of agasc h5 file.  Default is SKA/data/agasc/agasc1p7.h5 .
 
 =item B<-fid_char <fid characteristics file>>
 
