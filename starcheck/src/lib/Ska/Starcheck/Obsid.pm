@@ -191,21 +191,19 @@ sub set_ACA_bad_pixels {
     my $pixel_file = shift;
     my @tmp = io($pixel_file)->slurp;
     my @lines = grep { /^\s+(\d|-)/ } @tmp;
-    splice(@lines, 0, 2); # the first two lines are quadrant boundaries
     foreach (@lines) {
 	my @line = split /;|,/, $_;
-	#cut out the quadrant boundaries
 	foreach my $i ($line[0]..$line[1]) {
 	    foreach my $j ($line[2]..$line[3]) {
-		my $pixel = {};
 		my ($yag,$zag) = Ska::ACACoordConvert::toAngle($i,$j);
-		$pixel->{yag} = $yag;
-		$pixel->{zag} = $zag;
-		push @bad_pixels, $pixel;
+                my %pixel = ('row' => $i,
+                             'col' => $j,
+                             'yag' => $yag,
+                             'zag' => $zag);
+		push @bad_pixels, \%pixel;
 	    }
 	}
     }
-
     print STDERR "Read ", ($#bad_pixels+1), " ACA bad pixels from $pixel_file\n";
 }
 
@@ -1473,13 +1471,14 @@ sub check_star_catalog {
 		my $dz = abs($zag-$pixel->{zag});
 		my $dr = sqrt($dy**2 + $dz**2);
 		next unless ( $dz < $dither_z+25 and $dy < $dither_y+25 );
-		push @close_pixels, sprintf("%3d, %3d, %3d\n", $dy, $dz, $dr);
+		push @close_pixels, sprintf(" row, col (%d, %d), dy, dz (%d, %d) \n",
+                                            $pixel->{row}, $pixel->{col}, $dy, $dz);
 		push @dr, $dr;
 	    }   
 	    if ( @close_pixels > 0 ) {
 		my ($closest) = sort { $dr[$a] <=> $dr[$b] } (0 .. $#dr);
-		my $warn = sprintf("$alarm [%2d] Nearby ACA bad pixel. " .
-				   "Y,Z,Radial seps: " . $close_pixels[$closest],
+		my $warn = sprintf("$alarm [%2d] Nearby ACA bad pixel. "
+				   . $close_pixels[$closest],
 				   $i); #Only warn for the closest pixel
 		push @warn, $warn;
 	    }

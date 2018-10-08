@@ -200,17 +200,6 @@ my $bad_acqs_file = get_file( "$Starcheck_Data/bad_acq_stars.rdb", 'acq_star_rdb
 my $bad_gui_file = get_file( "$Starcheck_Data/bad_gui_stars.rdb", 'gui_star_rdb');
 
 
-# Let's find which dark current made the current bad pixel file
-
-my $ACA_badpix_date;
-my $ACA_badpix_firstline =  io($ACA_bad_pixel_file)->getline;
-
-if ($ACA_badpix_firstline =~ /Bad Pixel.*\d{7}\s+\d{7}\s+(\d{7}).*/ ){
-    $ACA_badpix_date = $1;
-    print STDERR "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
-}
-
-
 unless (-e $STARCHECK) {
     die "Couldn't make directory $STARCHECK\n" unless (mkdir $STARCHECK, 0777);
     print STDERR "Created plot directory $STARCHECK\n";
@@ -666,13 +655,6 @@ if (%input_files) {
             $out .= "Using $name file $input_files{$name}\n";
         }
     };
-     
-# Add info about which bad pixel file is being used:
-    if (defined $ACA_badpix_date){
-	$out .= "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
-	$save_hash{run}{badpix} = $ACA_badpix_date;
-    }
-
     $out .= "Using acquisition model for multiple star filter "
         . ($MSF_ENABLED ? "enabled\n" : "disabled\n");
 
