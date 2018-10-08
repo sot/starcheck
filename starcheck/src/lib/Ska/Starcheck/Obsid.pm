@@ -1144,11 +1144,13 @@ sub check_star_catalog {
     my $max_z = $z_ang_min;
     my $min_z = $z_ang_max;
 
-    my $dither;			# Global dither for observation
+    my ($dither_y, $dither_z); 			# Global dither for observation
     if (defined $self->{cmd_dither_y_amp} and defined $self->{cmd_dither_z_amp}) {
-	$dither = max($self->{cmd_dither_y_amp}, $self->{cmd_dither_z_amp});
+	$dither_y = $self->{cmd_dither_y_amp};
+        $dither_z = $self->{cmd_dither_z_amp};
     } else {
-	$dither = 20.0;
+	$dither_y = 20.0;
+	$dither_z = 20.0;
     }
 
     my @warn = ();
@@ -1235,8 +1237,10 @@ sub check_star_catalog {
 	    $min_z = ($min_z < $zag ) ? $min_z : $zag;
 	}
 	next if ($type eq 'NUL');
-	my $slot_dither = ($type =~ /FID/ ? 5.0 : $dither); # Pseudo-dither, depending on star or fid
-	my $pix_slot_dither = $slot_dither / $ang_per_pix;
+	my $slot_dither_y = ($type =~ /FID/ ? 5.0 : $dither_y); # Pseudo-dither, depending on star or fid
+	my $slot_dither_z = ($type =~ /FID/ ? 5.0 : $dither_z); # Pseudo-dither, depending on star or fid
+	my $pix_slot_dither_y = $slot_dither_y / $ang_per_pix;
+	my $pix_slot_dither_z = $slot_dither_z / $ang_per_pix;
 
        # Warn if star not identified ACA-042
 	if ( $type =~ /BOT|GUI|ACQ/ and not defined $c->{"GS_IDENTIFIED$i"}) {
@@ -1343,8 +1347,8 @@ sub check_star_catalog {
 	    }
 	}
 	else{
-	    if (   $pixel_row > $row_max - $pix_slot_dither || $pixel_row < $row_min + $pix_slot_dither
-		   || $pixel_col > $col_max - $pix_slot_dither || $pixel_col < $col_min + $pix_slot_dither) {
+	    if (   $pixel_row > $row_max - $pix_slot_dither_y || $pixel_row < $row_min + $pix_slot_dither_y
+		   || $pixel_col > $col_max - $pix_slot_dither_z || $pixel_col < $col_min + $pix_slot_dither_z) {
     		push @warn,sprintf "$alarm [%2d] Angle Too Large.\n",$i;
 	    }
 	}
@@ -1459,7 +1463,7 @@ sub check_star_catalog {
 		my $dy = abs($yag-$pixel->{yag});
 		my $dz = abs($zag-$pixel->{zag});
 		my $dr = sqrt($dy**2 + $dz**2);
-		next unless ( $dz < $dither+25 and $dy < $dither+25 );
+		next unless ( $dz < $dither_z+25 and $dy < $dither_y+25 );
 		push @close_pixels, sprintf("%3d, %3d, %3d\n", $dy, $dz, $dr);
 		push @dr, $dr;
 	    }   
@@ -1488,7 +1492,7 @@ sub check_star_catalog {
 	    
 	    # Fid within $dither + 25 arcsec of a star (yellow) and within 4 mags (red) ACA-024
 	    if ($type eq 'FID'
-		and $dz < $dither+25 and $dy < $dither+25
+		and $dz < $dither_z+25 and $dy < $dither_y+25
 		and $dm > -5.0) {
 		my $warn = sprintf("$alarm [%2d] Fid spoiler.  %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
