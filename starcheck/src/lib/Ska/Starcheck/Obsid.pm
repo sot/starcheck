@@ -68,7 +68,7 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
 };
 
 
-use List::Util qw( max );
+use List::Util qw(max min);
 use Quat;
 use Ska::ACACoordConvert;
 use File::Basename;
@@ -1347,11 +1347,20 @@ sub check_star_catalog {
 	    }
 	}
 	else{
-	    if (   $pixel_row > $row_max - $pix_slot_dither_y || $pixel_row < $row_min + $pix_slot_dither_y
-		   || $pixel_col > $col_max - $pix_slot_dither_z || $pixel_col < $col_min + $pix_slot_dither_z) {
-    		push @warn,sprintf "$alarm [%2d] Angle Too Large.\n",$i;
-	    }
-	}
+            my $edge_delta = min(($row_max - $pix_slot_dither_y) - $pixel_row,
+                                 $pixel_row - ($row_min + $pix_slot_dither_y),
+                                 ($col_max - $pix_slot_dither_z) - $pixel_col,
+                                 $pixel_col - ($col_min + $pix_slot_dither_z));
+            if (($type =~ /BOT|GUI|FID/) and ($edge_delta < 0)){
+                push @warn,sprintf "$alarm [%2d] Off (padded) CCD.\n",$i;
+            }
+            elsif (($type eq 'ACQ') and ($edge_delta < (-1 * 12))){
+                push @orange_warn,sprintf "$alarm [%2d] Off (padded) CCD by > 60 arcsec.\n",$i;
+            }
+            elsif (($type eq 'ACQ') and ($edge_delta < 0)){
+                push @yellow_warn,sprintf "$alarm [%2d] Off (padded) CCD.\n",$i;
+            }
+        }
 
 	# Faint and bright limits ~ACA-009 ACA-010
 	if ($mag ne '---') {
