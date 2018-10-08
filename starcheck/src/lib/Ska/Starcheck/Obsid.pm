@@ -22,10 +22,14 @@ use strict;
 use warnings;
 
 use Inline Python => q{
-
+import numpy as np
+from chandra_aca.star_probs import guide_count
 import Quaternion
 from Ska.quatutil import radec2yagzag
 import agasc
+
+def _guide_count(mags, t_ccd):
+    return float(guide_count(np.array(mags), t_ccd))
 
 
 def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
@@ -2575,22 +2579,16 @@ sub count_guide_stars{
 ###################################################################################
     my $self=shift;
     my $c;
-    my $gui_count = 0.0;
 
     return 0.0 unless ($c = find_command($self, 'MP_STARCAT'));
+    my @mags = ();
     for my $i (1 .. 16){
 	if ($c->{"TYPE$i"} =~ /GUI|BOT/){
             my $mag = $c->{"GS_MAG$i"};
-            # Compute fractional guide star count using magnitude bins and fractions
-            # defined in ORViewer. (Note tab-ternary is if/elsif/else)
-            my $star_contrib = $mag <= 10.0  ? 1.0
-                             : $mag <= 10.2  ? 0.75
-                             : $mag <= 10.3  ? 0.5
-                             :                 0.0;
-            $gui_count += $star_contrib;
+            push @mags, $mag;
 	}
     }
-    return $gui_count;
+    return _guide_count(\@mags, $self->{ccd_temp});
 }
 
 ###################################################################################
