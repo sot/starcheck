@@ -75,26 +75,27 @@ GUIDES = mica.stats.guide_stats.get_stats()
 
 def get_mica_stats(agasc_id, time):
 
-    acqs = ACQS[ACQS['agasc_id'] == int(agasc_id)]
     time = float(time)
-    acq_5y = acqs[(acqs['guide_tstart'] >= (time - (5 * 365 * 86400)))
-                 & (acqs['guide_tstart'] <= time)]
-    ok_5y = (acq_5y['img_func'] == 'star') & (~acq_5y['ion_rad']) & (~acq_5y['sat_pix'])
 
-    guides = GUIDES[GUIDES['agasc_id'] == int(agasc_id)]
+    acqs = ACQS[(ACQS['agasc_id'] == int(agasc_id))
+               & (ACQS['guide_tstart'] < time)]
+    ok = (acqs['img_func'] == 'star') & (~acqs['ion_rad']) & (~acqs['sat_pix'])
 
-    mags = acqs['mag_obs'][acqs['mag_obs'] != 0].tolist()
-    mags.extend(guides['aoacmag_mean'][guides['aoacmag_mean'] != 0].tolist())
+    guides = GUIDES[(GUIDES['agasc_id'] == int(agasc_id))
+                   & (GUIDES['kalman_tstart'] < time)]
+
+    mags = np.concatenate(
+               [acqs['mag_obs'][acqs['mag_obs'] != 0],
+                guides['aoacmag_mean'][guides['aoacmag_mean'] != 0]])
+
     avg_mag = float(np.mean(mags)) if (len(mags) > 0) else float(13.94)
     stats = {'acq': len(acqs),
-            'acq_noid': int(np.count_nonzero(acqs['acqid'] == False)),
-            'acq_5y': len(acq_5y),
-            'acq_5ynoms_noid': int(np.count_nonzero(~ok_5y)),
-            'gui' : len(guides),
-            'gui_bad': int(np.count_nonzero(guides['f_track'] < .95)),
-            'gui_fail': int(np.count_nonzero(guides['f_track'] < .01)),
-            'gui_obc_bad': int(np.count_nonzero(guides['f_obc_bad'] > .05)),
-            'avg_mag': avg_mag}
+             'acq_noid': int(np.count_nonzero(~ok)),
+             'gui' : len(guides),
+             'gui_bad': int(np.count_nonzero(guides['f_track'] < .95)),
+             'gui_fail': int(np.count_nonzero(guides['f_track'] < .01)),
+             'gui_obc_bad': int(np.count_nonzero(guides['f_obc_bad'] > .05)),
+             'avg_mag': avg_mag}
     return stats
 
 
