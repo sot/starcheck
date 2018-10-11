@@ -23,9 +23,51 @@ use warnings;
 
 use Inline Python => q{
 
+import scipy.signal
+import numpy as np
+
 import Quaternion
 from Ska.quatutil import radec2yagzag
+from chandra_aca.transform import yagzag_to_pixels, count_rate_to_mag
+from mica.archive import aca_dark
 import agasc
+
+
+def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z, dmag=1.0):
+
+    dark = aca_dark.get_dark_cal_image(date=date.decode('ascii'),
+                                           t_ccd_ref=float(t_ccd), aca_image=True)
+
+    def get_ax_range(r, extent):
+        rminus = int(np.floor(r - row_extent))
+        rplus = int(np.ceil(r + row_extent))
+        if (np.floor(r) != np.ceil(r)):
+            if r - np.floor(r) > .5:
+                rplus += 1
+            else:
+                rminus -= 1
+        return rminus, rplus
+
+    fails = []
+    for i, y, z, mag, ctype in zip(idxs, yags, zags, mags, types):
+        ctype = ctype.decode('ascii')
+        if ctype == 'BOT' or ctype == 'GUI':
+            star_row, star_col = yagzag_to_pixels(y, z)
+            row_extent = np.ceil(4 + float(dither_y) / 5.)
+            col_extent = np.ceil(4 + float(dither_z) / 5.)
+            rminus, rplus = get_ax_range(star_row, row_extent)
+            cminus, cplus = get_ax_range(star_col, col_extent)
+            pix = np.array(dark.aca[rminus:rplus, cminus:cplus])
+            kernel = np.ones((2, 2))
+            bin2 = scipy.signal.convolve2d(pix, kernel)[1:-1, 1:-1]
+            if count_rate_to_mag(np.max(bin2)) < (mag + dmag):
+                bidx = np.unravel_index(np.argmax(bin2), bin2.shape)
+                r = rminus + star_row + bidx[0] * 2
+                c = cminus + star_col + bidx[1] * 2
+                fails.append({'i': int(i), 'row': float(r), 'col': float(c),
+                              'mag': float(count_rate_to_mag(np.max(bin2)))})
+
+    return fails
 
 
 def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
@@ -1214,6 +1256,30 @@ sub check_star_catalog {
     # store a list of the fid positions
     my @fid_positions = map {{'y' => $c->{"YANG$_"}, 'z' => $c->{"ZANG$_"}}} @{$self->{fid}};
 
+
+    # Make arrays of the items that we need for the hot pixel region check
+    my (@idxs, @yags, @zags, @mags, @types);
+    foreach my $i (1..16){
+        if ($c->{"TYPE$i"} ne 'NUL'){
+            push @idxs, $i;
+            push @yags, $c->{"YANG$i"};
+            push @zags, $c->{"ZANG$i"};
+            push @mags, $c->{"GS_MAG$i"};
+            push @types, $c->{"TYPE$i"};
+        }
+    }
+
+    # Run the hot pixel region check on the Python side
+    my @imposters = check_hot_pix(\@idxs, \@yags, \@zags, \@mags, \@types,
+                                   $self->{ccd_temp}, $self->{date}, $dither_y, $dither_z);
+    # Assign warnings based on those hot pixel region checks
+    for my $imposter (@imposters){
+        push @warn, sprintf(
+            "$alarm [%2d] Imposter/hot pix 2x2. pseudomag %.1f at (row %d, col %d) \n", 
+        $imposter->{i}, $imposter->{mag}, $imposter->{row}, $imposter->{col});
+    }
+
+    # Run the rest of the per-index checks on the catalog
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
 	my $type = $c->{"TYPE$i"};
