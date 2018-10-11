@@ -23,9 +23,51 @@ use warnings;
 
 use Inline Python => q{
 
+import scipy.signal
+import numpy as np
+
 import Quaternion
 from Ska.quatutil import radec2yagzag
+from chandra_aca.transform import yagzag_to_pixels, count_rate_to_mag
+from mica.archive import aca_dark
 import agasc
+
+
+def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z, dmag=1.0):
+
+    dark = aca_dark.get_dark_cal_image(date=date.decode('ascii'),
+                                           t_ccd_ref=float(t_ccd), aca_image=True)
+
+    def get_ax_range(r, extent):
+        rminus = int(np.floor(r - row_extent))
+        rplus = int(np.ceil(r + row_extent))
+        if (np.floor(r) != np.ceil(r)):
+            if r - np.floor(r) > .5:
+                rplus += 1
+            else:
+                rminus -= 1
+        return rminus, rplus
+
+    fails = []
+    for i, y, z, mag, ctype in zip(idxs, yags, zags, mags, types):
+        ctype = ctype.decode('ascii')
+        if ctype == 'BOT' or ctype == 'GUI':
+            star_row, star_col = yagzag_to_pixels(y, z)
+            row_extent = np.ceil(4 + float(dither_y) / 5.)
+            col_extent = np.ceil(4 + float(dither_z) / 5.)
+            rminus, rplus = get_ax_range(star_row, row_extent)
+            cminus, cplus = get_ax_range(star_col, col_extent)
+            pix = np.array(dark.aca[rminus:rplus, cminus:cplus])
+            kernel = np.ones((2, 2))
+            bin2 = scipy.signal.convolve2d(pix, kernel)[1:-1, 1:-1]
+            if count_rate_to_mag(np.max(bin2)) < (mag + dmag):
+                bidx = np.unravel_index(np.argmax(bin2), bin2.shape)
+                r = rminus + star_row + bidx[0] * 2
+                c = cminus + star_col + bidx[1] * 2
+                fails.append({'i': int(i), 'row': float(r), 'col': float(c),
+                              'mag': float(count_rate_to_mag(np.max(bin2)))})
+
+    return fails
 
 
 def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
@@ -68,7 +110,7 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
 };
 
 
-use List::Util qw( max );
+use List::Util qw(max min);
 use Quat;
 use Ska::ACACoordConvert;
 use File::Basename;
@@ -191,21 +233,19 @@ sub set_ACA_bad_pixels {
     my $pixel_file = shift;
     my @tmp = io($pixel_file)->slurp;
     my @lines = grep { /^\s+(\d|-)/ } @tmp;
-    splice(@lines, 0, 2); # the first two lines are quadrant boundaries
     foreach (@lines) {
 	my @line = split /;|,/, $_;
-	#cut out the quadrant boundaries
 	foreach my $i ($line[0]..$line[1]) {
 	    foreach my $j ($line[2]..$line[3]) {
-		my $pixel = {};
 		my ($yag,$zag) = Ska::ACACoordConvert::toAngle($i,$j);
-		$pixel->{yag} = $yag;
-		$pixel->{zag} = $zag;
-		push @bad_pixels, $pixel;
+                my %pixel = ('row' => $i,
+                             'col' => $j,
+                             'yag' => $yag,
+                             'zag' => $zag);
+		push @bad_pixels, \%pixel;
 	    }
 	}
     }
-
     print STDERR "Read ", ($#bad_pixels+1), " ACA bad pixels from $pixel_file\n";
 }
 
@@ -659,8 +699,6 @@ sub check_dither {
     my $self = shift;
 
     my $dthr = shift;		  # Ref to array of hashes containing dither states
-    my %dthr_cmd = (ON => 'ENAB',   # Translation from OR terminology to dither state term.
-		    OFF => 'DISA');
 
     my $large_dith_thresh = 30;   # Amplitude larger than this requires special checking/handling
 
@@ -669,9 +707,6 @@ sub check_dither {
     my $obs_end_pad = 3*60;
     my $manvr;
 
-    if ( $self->{obsid} =~ /^\d*$/){
-	return if ($self->{obsid} >= $ER_MIN_OBSID); # For eng obs, don't have OR to specify dither
-    }
     # If there's no starcat on purpose, return
     if (defined $self->{ok_no_starcat} and $self->{ok_no_starcat}){
         return;
@@ -701,11 +736,62 @@ sub check_dither {
         }
     }
 
-    my $bs_val = $dither->{state};
+    $self->{cmd_dither_status} = $dither->{state};
+    $self->{cmd_dither_y_amp} = $dither->{ampl_y};
+    $self->{cmd_dither_z_amp} = $dither->{ampl_p};
+    $self->{cmd_dither_y_period} = $dither->{period_y};
+    $self->{cmd_dither_z_period} = $dither->{period_p};
+
+
+    # Check for standard and large dither based solely on backstop/history values
+    # This needs to be before the checking for dither during the observation, because the pad
+    # for that checking is set here
+    if (($dither->{state} eq 'ENAB') and (defined $dither->{ampl_y} and defined $dither->{ampl_p})){
+        if (not standard_dither($dither)){
+            push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
+            if ($dither->{ampl_y} > $large_dith_thresh or $dither->{ampl_p} > $large_dith_thresh){
+                $self->large_dither_checks($dither, $dthr);
+                # If this is a large dither, set a larger pad at the end, as we expect
+                # standard dither parameters to be commanded at 5 minutes before end,
+                # which is greater than the 3 minutes used in the "no dither changes
+                # during observation check below
+                $obs_end_pad = 5.5 * 60;
+            }
+        }
+    }
+
+
+    # Loop to check for dither changes during the observation
+    # ACA-003
+    if (not defined $obs_tstop ){
+        push @{$self->{warn}},
+            "$alarm Unable to determine obs tstop; could not check for dither changes during obs\n";
+    }
+    else{
+        foreach my $dither (reverse @{$dthr}) {
+            if ($dither->{time} > ($obs_tstart + $obs_beg_pad)
+                    && $dither->{time} <= $obs_tstop - $obs_end_pad) {
+                push @{$self->{warn}}, "$alarm Dither commanding at $dither->{time}.  During observation.\n";
+            }
+            if ($dither->{time} < $obs_tstart){
+                last;
+            }
+        }
+    }
+
+
+
+
+    # For eng obs, don't have OR to specify dither, so stop before doing vs-OR comparisons
+    if ( $self->{obsid} =~ /^\d*$/){
+	return if ($self->{obsid} >= $ER_MIN_OBSID);
+    }
+
     # Get the OR value of dither and compare if available
+    my $bs_val = $dither->{state};
     my $or_val;
     if (defined $self->{DITHER_ON}){
-        $or_val = $dthr_cmd{$self->{DITHER_ON}};
+        $or_val = ($self->{DITHER_ON} eq 'ON') ? 'ENAB' : 'DISA';
         # ACA-002
         push @{$self->{warn}}, "$alarm Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
             if ($or_val ne $bs_val);
@@ -730,40 +816,6 @@ sub check_dither {
             push @{$self->{warn}}, $warn;
         }
     }
-    # Check for standard and large dither based solely on backstop/history values
-    if (($bs_val eq 'ENAB') and (defined $dither->{ampl_y} and defined $dither->{ampl_p})){
-        $self->{cmd_dither_y_amp} = $dither->{ampl_y};
-        $self->{cmd_dither_z_amp} = $dither->{ampl_p};
-        if (not standard_dither($dither)){
-            push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
-            if ($dither->{ampl_y} > $large_dith_thresh or $dither->{ampl_p} > $large_dith_thresh){
-                $self->large_dither_checks($dither, $dthr);
-                # If this is a large dither, set a larger pad at the end, as we expect
-                # standard dither parameters to be commanded at 5 minutes before end,
-                # which is greater than the 3 minutes used in the "no dither changes
-                # during observation check below
-                $obs_end_pad = 5.5 * 60;
-            }
-        }
-    }
-
-    # Loop again to check for dither changes during the observation
-    # ACA-003
-    if (not defined $obs_tstop ){
-        push @{$self->{warn}},
-            "$alarm Unable to determine obs tstop; could not check for dither changes during obs\n";
-    }
-    else{
-        foreach my $dither (reverse @{$dthr}) {
-            if ($dither->{time} > ($obs_tstart + $obs_beg_pad)
-                    && $dither->{time} <= $obs_tstop - $obs_end_pad) {
-                push @{$self->{warn}}, "$alarm Dither commanding at $dither->{time}.  During observation.\n";
-            }
-            if ($dither->{time} < $obs_tstart){
-                last;
-            }
-        }
-    }
 }
 
 
@@ -777,23 +829,24 @@ sub standard_dither{
     my %standard_z_dither = (20 => 768.6,
                              8 => 707.1);
 
+    my $z_amp = int($dthr->{ampl_p} + .5);
+    my $y_amp = int($dthr->{ampl_y} + .5);
     # If the rounded amplitude is not in the standard set, return 0
-    if (not (grep $_ eq int($dthr->{ampl_p} + .5), (keys %standard_z_dither))){
+    if (not (grep $_ eq $z_amp, (keys %standard_z_dither))){
         return 0;
     }
-    if (not (grep $_ eq int($dthr->{ampl_y} + .5), (keys %standard_y_dither))){
+    if (not (grep $_ eq $y_amp, (keys %standard_y_dither))){
         return 0;
     }
     # If the period is not standard for the standard amplitudes return 0
-    if (abs($dthr->{period_p} - $standard_z_dither{int($dthr->{ampl_p} + .5)}) > 10){
+    if (abs($dthr->{period_p} - $standard_z_dither{$z_amp}) > 10){
         return 0;
     }
-    if (abs($dthr->{period_y} - $standard_y_dither{int($dthr->{ampl_y} + .5)}) > 10){
+    if (abs($dthr->{period_y} - $standard_y_dither{$y_amp}) > 10){
         return 0;
     }
-
     # If those tests passed, the dither is standard
-    return 1;
+    return (($y_amp == 20) & ($z_amp == 20)) ? 'hrc' : 'acis';
 }
 
 
@@ -840,11 +893,12 @@ sub large_dither_checks {
             last;
         }
     }
-    # Is dither disabled at EOM and one minute before?
-    if ((abs($obs_tstart - $obs_start_dither->{time} - 60) > $time_tol)
-            or ($obs_start_dither->{state} ne 'DISA')){
+
+    my $det = (($self->{SI} eq 'HRC-S') or ($self->{SI} eq 'HRC-I')) ? 'hrc' : 'acis';
+    # Is dither nominal for detector at EOM
+    if ($det ne standard_dither($obs_start_dither)){
         push @{$self->{warn}},
-            sprintf("$alarm Dither should be disabled 1 min before obs start for Large Dither\n");
+            sprintf("$alarm Dither should be detector nominal 1 min before obs start for Large Dither\n");
     }
 
 
@@ -856,6 +910,7 @@ sub large_dither_checks {
             last;
         }
     }
+
     # Check that the dither state at the end of the observation started 5 minutes before
     # the end (within time_tol)
     if ((abs($obs_tstop - $obs_stop_dither->{time} - 300) > $time_tol)){
@@ -1129,11 +1184,13 @@ sub check_star_catalog {
     my $max_z = $z_ang_min;
     my $min_z = $z_ang_max;
 
-    my $dither;			# Global dither for observation
+    my ($dither_y, $dither_z); 			# Global dither for observation
     if (defined $self->{cmd_dither_y_amp} and defined $self->{cmd_dither_z_amp}) {
-	$dither = max($self->{cmd_dither_y_amp}, $self->{cmd_dither_z_amp});
+	$dither_y = $self->{cmd_dither_y_amp};
+        $dither_z = $self->{cmd_dither_z_amp};
     } else {
-	$dither = 20.0;
+	$dither_y = 20.0;
+	$dither_z = 20.0;
     }
 
     my @warn = ();
@@ -1199,6 +1256,30 @@ sub check_star_catalog {
     # store a list of the fid positions
     my @fid_positions = map {{'y' => $c->{"YANG$_"}, 'z' => $c->{"ZANG$_"}}} @{$self->{fid}};
 
+
+    # Make arrays of the items that we need for the hot pixel region check
+    my (@idxs, @yags, @zags, @mags, @types);
+    foreach my $i (1..16){
+        if ($c->{"TYPE$i"} ne 'NUL'){
+            push @idxs, $i;
+            push @yags, $c->{"YANG$i"};
+            push @zags, $c->{"ZANG$i"};
+            push @mags, $c->{"GS_MAG$i"};
+            push @types, $c->{"TYPE$i"};
+        }
+    }
+
+    # Run the hot pixel region check on the Python side
+    my @imposters = check_hot_pix(\@idxs, \@yags, \@zags, \@mags, \@types,
+                                   $self->{ccd_temp}, $self->{date}, $dither_y, $dither_z);
+    # Assign warnings based on those hot pixel region checks
+    for my $imposter (@imposters){
+        push @warn, sprintf(
+            "$alarm [%2d] Imposter/hot pix 2x2. pseudomag %.1f at (row %d, col %d) \n", 
+        $imposter->{i}, $imposter->{mag}, $imposter->{row}, $imposter->{col});
+    }
+
+    # Run the rest of the per-index checks on the catalog
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
 	my $type = $c->{"TYPE$i"};
@@ -1220,8 +1301,10 @@ sub check_star_catalog {
 	    $min_z = ($min_z < $zag ) ? $min_z : $zag;
 	}
 	next if ($type eq 'NUL');
-	my $slot_dither = ($type =~ /FID/ ? 5.0 : $dither); # Pseudo-dither, depending on star or fid
-	my $pix_slot_dither = $slot_dither / $ang_per_pix;
+	my $slot_dither_y = ($type =~ /FID/ ? 5.0 : $dither_y); # Pseudo-dither, depending on star or fid
+	my $slot_dither_z = ($type =~ /FID/ ? 5.0 : $dither_z); # Pseudo-dither, depending on star or fid
+	my $pix_slot_dither_y = $slot_dither_y / $ang_per_pix;
+	my $pix_slot_dither_z = $slot_dither_z / $ang_per_pix;
 
        # Warn if star not identified ACA-042
 	if ( $type =~ /BOT|GUI|ACQ/ and not defined $c->{"GS_IDENTIFIED$i"}) {
@@ -1328,11 +1411,20 @@ sub check_star_catalog {
 	    }
 	}
 	else{
-	    if (   $pixel_row > $row_max - $pix_slot_dither || $pixel_row < $row_min + $pix_slot_dither
-		   || $pixel_col > $col_max - $pix_slot_dither || $pixel_col < $col_min + $pix_slot_dither) {
-    		push @warn,sprintf "$alarm [%2d] Angle Too Large.\n",$i;
-	    }
-	}
+            my $edge_delta = min(($row_max - $pix_slot_dither_y) - $pixel_row,
+                                 $pixel_row - ($row_min + $pix_slot_dither_y),
+                                 ($col_max - $pix_slot_dither_z) - $pixel_col,
+                                 $pixel_col - ($col_min + $pix_slot_dither_z));
+            if (($type =~ /BOT|GUI|FID/) and ($edge_delta < 0)){
+                push @warn,sprintf "$alarm [%2d] Off (padded) CCD.\n",$i;
+            }
+            elsif (($type eq 'ACQ') and ($edge_delta < (-1 * 12))){
+                push @orange_warn,sprintf "$alarm [%2d] Off (padded) CCD by > 60 arcsec.\n",$i;
+            }
+            elsif (($type eq 'ACQ') and ($edge_delta < 0)){
+                push @yellow_warn,sprintf "$alarm [%2d] Off (padded) CCD.\n",$i;
+            }
+        }
 
 	# Faint and bright limits ~ACA-009 ACA-010
 	if ($mag ne '---') {
@@ -1444,14 +1536,15 @@ sub check_star_catalog {
 		my $dy = abs($yag-$pixel->{yag});
 		my $dz = abs($zag-$pixel->{zag});
 		my $dr = sqrt($dy**2 + $dz**2);
-		next unless ( $dz < $dither+25 and $dy < $dither+25 );
-		push @close_pixels, sprintf("%3d, %3d, %3d\n", $dy, $dz, $dr);
+		next unless ( $dz < $dither_z+25 and $dy < $dither_y+25 );
+		push @close_pixels, sprintf(" row, col (%d, %d), dy, dz (%d, %d) \n",
+                                            $pixel->{row}, $pixel->{col}, $dy, $dz);
 		push @dr, $dr;
 	    }   
 	    if ( @close_pixels > 0 ) {
 		my ($closest) = sort { $dr[$a] <=> $dr[$b] } (0 .. $#dr);
-		my $warn = sprintf("$alarm [%2d] Nearby ACA bad pixel. " .
-				   "Y,Z,Radial seps: " . $close_pixels[$closest],
+		my $warn = sprintf("$alarm [%2d] Nearby ACA bad pixel. "
+				   . $close_pixels[$closest],
 				   $i); #Only warn for the closest pixel
 		push @warn, $warn;
 	    }
@@ -1473,7 +1566,7 @@ sub check_star_catalog {
 	    
 	    # Fid within $dither + 25 arcsec of a star (yellow) and within 4 mags (red) ACA-024
 	    if ($type eq 'FID'
-		and $dz < $dither+25 and $dy < $dither+25
+		and $dz < $dither_z+25 and $dy < $dither_y+25
 		and $dm > -5.0) {
 		my $warn = sprintf("$alarm [%2d] Fid spoiler.  %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
@@ -1864,12 +1957,14 @@ sub print_report {
     if ( ( defined $self->{ra} ) and (defined $self->{dec}) and (defined $self->{roll})){
 	$o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     }
-    if ( defined $self->{DITHER_ON} && $self->{obsid} < $ER_MIN_OBSID ) {
-	$o .= sprintf "Dither: %-3s ",$self->{DITHER_ON};
+    if ( defined $self->{cmd_dither_status} ) {
+	$o .= sprintf "Dither: %-3s ", $self->{cmd_dither_status} eq 'ENAB' ? 'ON' : 'OFF';
 	$o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f",
-		       $self->{DITHER_Y_AMP}*3600., $self->{DITHER_Z_AMP}*3600.,
-		       360./$self->{DITHER_Y_FREQ}, 360./$self->{DITHER_Z_FREQ})
-	    if ($self->{DITHER_ON} eq 'ON' && $self->{DITHER_Y_FREQ} && $self->{DITHER_Z_FREQ});
+		       $self->{cmd_dither_y_amp}, $self->{cmd_dither_z_amp},
+		       $self->{cmd_dither_y_period}, $self->{cmd_dither_z_period})
+        if ($self->{cmd_dither_status} eq 'ENAB' && $self->{cmd_dither_y_period} && $self->{cmd_dither_z_period});
+	$o .= sprintf ("(no commanded dither amp: checked with 20 arcsec dither)")
+        if ($self->{cmd_dither_status} eq 'ENAB' && not(defined $self->{cmd_dither_y_period}));
 	$o .= "\n";
     }
 
