@@ -65,6 +65,39 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
 
     return stars_dict
 
+import numpy as np
+import mica.stats.acq_stats
+import mica.stats.guide_stats
+
+ACQS = mica.stats.acq_stats.get_stats()
+GUIDES = mica.stats.guide_stats.get_stats()
+
+
+def get_mica_stats(agasc_id, time):
+
+    acqs = ACQS[ACQS['agasc_id'] == int(agasc_id)]
+    time = float(time)
+    acq_5y = acqs[(acqs['guide_tstart'] >= (time - (5 * 365 * 86400)))
+                 & (acqs['guide_tstart'] <= time)]
+    ok_5y = (acq_5y['img_func'] == 'star') & (~acq_5y['ion_rad']) & (~acq_5y['sat_pix'])
+
+    guides = GUIDES[GUIDES['agasc_id'] == int(agasc_id)]
+
+    mags = acqs['mag_obs'][acqs['mag_obs'] != 0].tolist()
+    mags.extend(guides['aoacmag_mean'][guides['aoacmag_mean'] != 0].tolist())
+    avg_mag = float(np.mean(mags)) if (len(mags) > 0) else float(13.94)
+    stats = {'acq': len(acqs),
+            'acq_noid': int(np.count_nonzero(acqs['acqid'] == False)),
+            'acq_5y': len(acq_5y),
+            'acq_5ynoms_noid': int(np.count_nonzero(~ok_5y)),
+            'gui' : len(guides),
+            'gui_bad': int(np.count_nonzero(guides['f_track'] < .95)),
+            'gui_fail': int(np.count_nonzero(guides['f_track'] < .01)),
+            'gui_obc_bad': int(np.count_nonzero(guides['f_obc_bad'] > .05)),
+            'avg_mag': avg_mag}
+    return stats
+
+
 };
 
 
@@ -77,11 +110,8 @@ use English;
 use IO::All;
 use Ska::Convert qw(date2time);
 
-use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit set_dynamic_mag_limits );
 use RDB;
-
-use SQL::Abstract;
-use Ska::DatabaseUtil qw( sql_fetchall_array_of_hashref );
+use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit set_dynamic_mag_limits );
 use Carp;
 
 # Constants
@@ -112,7 +142,6 @@ my %bad_acqs;
 my %bad_gui;
 my %bad_id;
 my %config;
-my $db_handle;
 
 
 1;
@@ -139,14 +168,6 @@ sub new {
     $self->{config} = \%config;
     return $self;
 }
-    
-##################################################################################
-sub set_db_handle {
-##################################################################################
-    my $handle = shift;
-    $db_handle = $handle;
-}
-
 
 ##################################################################################
 sub setcolors {
@@ -1951,10 +1972,9 @@ sub print_report {
                 $acq_prob = sprintf("Prob Acq Success %5.3f", $prob);
 
             }
-            # Make the id a URL if there is star history or if star history could
-            # not be checked (no db_handle)
+            # Make the id a URL if there is star history
             my $star_link;
-            if ((not defined $db_handle) or (($db_stats->{acq} or $db_stats->{gui}))){
+            if ($db_stats->{acq} or $db_stats->{gui}){
                 $star_link = sprintf("HREF=\"%s%s\"",$acq_stat_lookup, $c->{"GS_ID${i}"});
             }
             else{
@@ -2354,107 +2374,9 @@ sub star_dbhist {
 
     my $star_id = shift;
     my $obs_tstart = shift;
-
     my $obs_tstart_minus_day = $obs_tstart - 86400;
 
-    return undef if (not defined $db_handle);
-
-    my %stats  =  ( 
-		   'agasc_id' => $star_id,
-		   'acq' => 0,
-		   'acq_noid' => 0,
-		   'gui' => 0,
-		   'gui_bad' => 0,
-		   'gui_fail' => 0,
-		   'gui_obc_bad' => 0,
-		   'avg_mag' => 13.9375,
-		  );
-    
-
-
-    eval{
-	# acq_stats_data
-	my $sql = SQL::Abstract->new();
-	my %acq_where =  ( 'agasc_id' => $star_id,
-                           'type' =>  { '!=' => 'FID'},
-                           'tstart' => { '<' => $obs_tstart_minus_day }
-			   );
-
-	my ($acq_all_stmt, @acq_all_bind ) = $sql->select('acq_stats_data', 
-							  '*',
-							  \%acq_where );
-
-	my @acq_all = sql_fetchall_array_of_hashref( $db_handle, $acq_all_stmt, @acq_all_bind );
-	my @mags;
-
-	if (scalar(@acq_all)){
-	    my $noid = 0;
-	    for my $attempt (@acq_all){
-		if ($attempt->{'obc_id'} =~ 'NOID'){
-		    $noid++;
-		}
-		else{
-		  push @mags, $attempt->{'mag_obs'};
-		}
-	    }
-	    $stats{'acq'} = scalar(@acq_all);
-	    $stats{'acq_noid'} = $noid;
-	}
-
-	# guide_stats_view
-	$sql = SQL::Abstract->new();
-	my %gui_where = ( 'id' => $star_id,
-			  'type' => { '!=' => 'FID' },
-			  'kalman_tstart' => { '<' => $obs_tstart_minus_day });
-
-	my ($gui_all_stmt, @gui_all_bind ) = $sql->select('guide_stats_view', 
-							  '*',
-							  \%gui_where );
-
-	my @gui_all = sql_fetchall_array_of_hashref( $db_handle, $gui_all_stmt, @gui_all_bind );
-
-
-	if (scalar(@gui_all)){
-	    my $bad = 0;
-	    my $fail = 0;
-	    my $obc_bad = 0;
-	    for my $attempt (@gui_all){
-		if ($attempt->{'percent_not_tracking'} >= 5){
-		    $bad++;
-		}
-		if ($attempt->{'percent_not_tracking'} == 100){
-		    $fail++;
-		}
-		else{
-		  if ((defined $attempt->{'mag_obs_mean'}) and ($attempt->{'mag_obs_mean'} < 13.9 )){
-		    push @mags, $attempt->{'mag_obs_mean'};
-		  }
-		}
-		if ($attempt->{'percent_obc_bad_status'} >= 5){
-		    $obc_bad++;
-		}
-	    }
-	    $stats{'gui'} = scalar(@gui_all);
-	    $stats{'gui_bad'} = $bad;
-	    $stats{'gui_fail'} = $fail;
-	    $stats{'gui_obc_bad'} = $obc_bad;
-	}
-
-	my $mag_sum = 0;
-	if (scalar(@mags)){
-	  map { $mag_sum += $_ } @mags;
-	  $stats{'avg_mag'} = $mag_sum / scalar(@mags);
-	}
-    };
-    if ($@){
-      # if we get db errors, just print and move on
-      print STDERR $@;
-
-    }
-
-    return \%stats;
-
-
+    return get_mica_stats($star_id, $obs_tstart_minus_day);
 }
 
 #############################################################################################
