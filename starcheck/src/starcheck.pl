@@ -50,11 +50,14 @@ use Inline Python => q{
 import os
 import re
 import ast
+
+from Chandra.Time import DateTime
 from chandra_aca.star_probs import set_acq_model_ms_filter
 import starcheck
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.version import version
+from kadi.commands import states
 
 def debyte_dict(d):
     return ast.literal_eval(re.sub(r"b'", "'", repr(d)))
@@ -79,6 +82,17 @@ def get_data_dir():
 
 def _make_pcad_attitude_check_report(kwargs):
     return make_pcad_attitude_check_report(**debyte_dict(kwargs))
+
+def get_dither_kadi_state(date):
+    date = date.decode('ascii')
+    cols = ['dither', 'dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw']
+    state = states.get_continuity(date, cols)
+    # Cast the numpy floats as plain floats
+    for key in ['dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw']:
+        state[key] = float(state[key])
+    # get most recent change time
+    state['time'] = float(np.max([DateTime(state['__dates__'][key]).secs for key in cols]))
+    return state
 
 };
 
@@ -343,8 +357,10 @@ if ($manerr_file) {
     @manerr = Ska::Parse_CM_File::man_err($manerr_file);
 } else { warning("Could not find Maneuver Error file in output/ directory\n") };
 
+
+my $kadi_dither = get_dither_kadi_state($bs[0]->{date});
 # Read DITHER history file and backstop to determine expected dither state
-my ($dither_time_violation, $dither) = Ska::Parse_CM_File::dither($dither_file, \@bs);
+my ($dither_time_violation, $dither) = Ska::Parse_CM_File::dither($dither_file, \@bs, $kadi_dither);
 
 my ($radmon_time_violation, $radmon) = Ska::Parse_CM_File::radmon($radmon_file, \@bs);
 
