@@ -153,17 +153,31 @@ sub dither {
          if defined $params[$_]->{RATEP};
       $dither_period_y = 1 / ($params[$_]->{RATEY} / (2 * $pi))
          if defined $params[$_]->{RATEP};
-      push @dither, { time => $time[$_],
-		      state => $dither_state,
-		      source => $time[$_] < $bs_start ? 'kadi' : 'backstop',
-		      ampl_p => $dither_ampl_p,
-		      ampl_y => $dither_ampl_y,
-                      period_p => $dither_period_p,
-                      period_y => $dither_period_y,
-                      tlmsid => $params[$_]->{TLMSID},
-                  };
+      if ($dither_state eq 'DISA'){
+          # If disabled, reset the amplitudes to be 0.  The params may be nonzero onboard
+          # but we're more interested in the effective amplitudes for starcheck.
+          push @dither, { time => $time[$_],
+                          state => 'DISA',
+                          source => $time[$_] < $bs_start ? 'kadi' : 'backstop',
+                          ampl_p => 0,
+                          ampl_y => 0,
+                          period_p => $dither_period_p,
+                          period_y => $dither_period_y,
+                          tlmsid => $params[$_]->{TLMSID},
+                      };
+      }
+      else{
+          push @dither, { time => $time[$_],
+                          state => $dither_state,
+                          source => $time[$_] < $bs_start ? 'kadi' : 'backstop',
+                          ampl_p => $dither_ampl_p,
+                          ampl_y => $dither_ampl_y,
+                          period_p => $dither_period_p,
+                          period_y => $dither_period_y,
+                          tlmsid => $params[$_]->{TLMSID},
+                      };
+      }
   }
-
     return (0, \@dither);
 }
 
