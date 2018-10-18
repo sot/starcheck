@@ -2722,11 +2722,13 @@ sub set_ccd_temps{
         push @{$self->{warn}}, "$alarm No CCD temperature prediction for obsid\n";
         push @{$self->{warn}}, sprintf("$alarm Using %s (planning limit) for t_ccd for mag limits\n",
                                        $config{ccd_temp_red_limit});
+        $self->{ccd_temp_acq} = $config{ccd_temp_red_limit};
         $self->{ccd_temp} = $config{ccd_temp_red_limit};
         return;
     }
     # set the temperature to the value for the current obsid
     $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
+    $self->{ccd_temp_acq} = $obsid_temps->{$self->{obsid}}->{ccd_temp_acq};
     $self->{n100_warm_frac} = $obsid_temps->{$self->{obsid}}->{n100_warm_frac};
     # add warnings for limit violations
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
