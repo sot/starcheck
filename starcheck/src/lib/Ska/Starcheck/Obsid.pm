@@ -797,23 +797,24 @@ sub standard_dither{
     my %standard_z_dither = (20 => 768.6,
                              8 => 707.1);
 
+    my $z_amp = int($dthr->{ampl_p} + .5);
+    my $y_amp = int($dthr->{ampl_y} + .5);
     # If the rounded amplitude is not in the standard set, return 0
-    if (not (grep $_ eq int($dthr->{ampl_p} + .5), (keys %standard_z_dither))){
+    if (not (grep $_ eq $z_amp, (keys %standard_z_dither))){
         return 0;
     }
-    if (not (grep $_ eq int($dthr->{ampl_y} + .5), (keys %standard_y_dither))){
+    if (not (grep $_ eq $y_amp, (keys %standard_y_dither))){
         return 0;
     }
     # If the period is not standard for the standard amplitudes return 0
-    if (abs($dthr->{period_p} - $standard_z_dither{int($dthr->{ampl_p} + .5)}) > 10){
+    if (abs($dthr->{period_p} - $standard_z_dither{$z_amp}) > 10){
         return 0;
     }
-    if (abs($dthr->{period_y} - $standard_y_dither{int($dthr->{ampl_y} + .5)}) > 10){
+    if (abs($dthr->{period_y} - $standard_y_dither{$y_amp}) > 10){
         return 0;
     }
-
     # If those tests passed, the dither is standard
-    return 1;
+    return (($y_amp == 20) & ($z_amp == 20)) ? 'hrc' : 'acis';
 }
 
 
@@ -857,11 +858,12 @@ sub large_dither_checks {
             last;
         }
     }
-    # Is dither disabled at EOM and one minute before?
-    if ((abs($obs_tstart - $obs_start_dither->{time} - 60) > $time_tol)
-            or ($obs_start_dither->{state} ne 'DISA')){
+
+    my $det = (($self->{SI} eq 'HRC-S') or ($self->{SI} eq 'HRC-I')) ? 'hrc' : 'acis';
+    # Is dither nominal for detector at EOM
+    if ($det ne standard_dither($obs_start_dither)){
         push @{$self->{warn}},
-            sprintf("$alarm Dither should be disabled 1 min before obs start for Large Dither\n");
+            sprintf("$alarm Dither should be detector nominal 1 min before obs start for Large Dither\n");
     }
 
 
