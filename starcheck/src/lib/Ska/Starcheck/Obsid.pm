@@ -1321,9 +1321,16 @@ sub check_star_catalog {
 	}
 
 	# Warn if acquisition star has non-zero aspq1
-	push @yellow_warn, sprintf "$alarm [%2d] Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n", 
-	$i, $sid, $c->{"GS_ASPQ$i"} 
-	if ($type =~ /BOT|ACQ|GUI/ && defined $c->{"GS_ASPQ$i"} && $c->{"GS_ASPQ$i"} != 0);
+	if ($type =~ /BOT|ACQ/ && defined $c->{"GS_ASPQ$i"} && $c->{"GS_ASPQ$i"} > 40){
+            push @orange_warn, sprintf "$alarm [%2d] Acq Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n", 
+                $i, $sid, $c->{"GS_ASPQ$i"};
+        }
+	# Warn if acquisition star has non-zero aspq1
+	if ($type =~ /BOT|GUI/ && defined $c->{"GS_ASPQ$i"} && $c->{"GS_ASPQ$i"} > 20){
+            push @orange_warn, sprintf "$alarm [%2d] Guide Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n", 
+                $i, $sid, $c->{"GS_ASPQ$i"};
+        }
+
 
 	my $obs_min_cnt = 2;
 	my $obs_bad_frac = 0.3;
