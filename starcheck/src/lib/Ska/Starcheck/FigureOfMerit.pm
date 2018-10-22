@@ -26,6 +26,11 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 use Inline Python => q{
 
+from proseco.acq import get_acq_catalog
+
+#def get_proseco_acq_cat(date, att, man_angle, t_ccd_acq, dither_acq, agasc_ids, halfwidths):
+
+
 from chandra_aca.star_probs import acq_success_prob, prob_n_acq, mag_for_p_acq
 
 def _mag_for_p_acq(p_acq, date, t_ccd):
@@ -46,39 +51,47 @@ sub make_figure_of_merit{
     my $c;
     my $self = shift;
     return unless ($c = $self->find_command("MP_STARCAT"));
-    return unless (defined $self->{ccd_temp});
 
-    my @probs;
-    my %slot_probs;
-
-    my $t_ccd = $self->{ccd_temp};
-    my $date = $c->{date};
+    my @ids;
+    my @halfwidths;
 
     foreach my $i (1..16) {
-	if ($c->{"TYPE$i"} =~ /BOT|ACQ/) {
-	    my $mag = $c->{"GS_MAG$i"};
-            my @warnings = grep {/\[\s{0,1}$i\]/} (@{$self->{warn}}, @{$self->{yellow_warn}});
-            my $spoiler = grep(/Search spoiler/i, @warnings) ? 1 : 0;
-            my $color = $c->{"GS_BV$i"};
-            my $hw = $c->{"HALFW$i"};
-            my $star_prob = _acq_success_prob($date, $t_ccd, $mag, $color, $spoiler, $hw);
-	    push @probs, $star_prob;
-            $slot_probs{$c->{"IMNUM$i"}} = $star_prob;
-            $c->{"P_ACQ$i"} = $star_prob;
+	if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
+            push @ids, $c->{"GS_ID$i"};
+            push @halfwidths, $c->{"HALFW$i"};
+
 	}
     }
-    $self->{acq_probs} = \%slot_probs;
+
+    if (defined $self->{pcat}){
+        use Data::Dumper;
+        print Dumper $self->{pcat};
+        exit;
+    }
+    #acq_pcat = get_proseco_acq_cat(obsid=$self->{obsid},
+    #                               date=$c->{date}, t_ccd_acq=$self->{ccd_temp_acq},
+    #                               dither_acq=$self->{dither_acq},
+    #                               ids=\@ids, halfwidths=\@halfwidths
+    #
+    #        $c->{"P_ACQ$i"} = $star_prob;
+
+    #
+    #my $t_ccd = $self->{ccd_temp_acq};
+    #my $date = $c->{date};
+
+
+    #$self->{acq_probs} = \%slot_probs;
 
     # Calculate the probability of acquiring n stars
-    my ($n_acq_probs, $n_or_fewer_probs) = _prob_n_acq(\@probs);
+    #my ($n_acq_probs, $n_or_fewer_probs) = _prob_n_acq(\@probs);
 
-    $self->{figure_of_merit} = {expected => substr(sum(@probs), 0, 4),
-                                cum_prob => [map { log($_) / log(10.0) } @{$n_or_fewer_probs}],
-                                cum_prob_bad => ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT)
-                                };
-    if ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT){
-        push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $CUM_PROB_LIMIT\n";
-    }
+    #$self->{figure_of_merit} = {expected => substr(sum(@probs), 0, 4),
+    #                            cum_prob => [map { log($_) / log(10.0) } @{$n_or_fewer_probs}],
+    #                            cum_prob_bad => ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT)
+    #                            };
+    #if ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT){
+    #    push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $CUM_PROB_LIMIT\n";
+    #}
 
 }
 

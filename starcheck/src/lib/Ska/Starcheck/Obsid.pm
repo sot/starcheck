@@ -21,18 +21,48 @@ package Ska::Starcheck::Obsid;
 use strict;
 use warnings;
 
+use List::Util qw(min sum);
+use Quat;
+use Ska::ACACoordConvert;
+use File::Basename;
+use POSIX qw(floor);
+use English;
+use IO::All;
+use Ska::Convert qw(date2time);
+
+use RDB;
+
+use SQL::Abstract;
+use Ska::DatabaseUtil qw( sql_fetchall_array_of_hashref );
+use Carp;
+
+
+use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
+
+require Exporter;
+
+our @ISA = qw(Exporter);
+our @EXPORT = qw();
+our @EXPORT_OK = qw( make_figure_of_merit set_dynamic_mag_limits );
+our %EXPORT_TAGS = ( all => \@EXPORT_OK );
+
+
 use Inline Python => q{
 import scipy.signal
 import numpy as np
-from chandra_aca.star_probs import guide_count
-from chandra_aca.transform import yagzag_to_pixels, count_rate_to_mag
+import pickle
+
 import Quaternion
 from Ska.quatutil import radec2yagzag
 from mica.archive import aca_dark
 import agasc
+from Chandra.Time import DateTime
+from chandra_aca.star_probs import guide_count
+from chandra_aca.transform import yagzag_to_pixels, count_rate_to_mag
 
-def _guide_count(mags, t_ccd):
-    return float(guide_count(np.array(mags), t_ccd))
+import proseco
+from proseco.acq import get_acq_catalog
+
 
 def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z, dmag=1.0):
 
@@ -111,22 +141,6 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
 };
 
 
-use List::Util qw(max min);
-use Quat;
-use Ska::ACACoordConvert;
-use File::Basename;
-use POSIX qw(floor);
-use English;
-use IO::All;
-use Ska::Convert qw(date2time);
-
-use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit set_dynamic_mag_limits );
-use RDB;
-
-use SQL::Abstract;
-use Ska::DatabaseUtil qw( sql_fetchall_array_of_hashref );
-use Carp;
-
 # Constants
 
 my $VERSION = '$Id$';  # '
@@ -155,6 +169,7 @@ my %bad_acqs;
 my %bad_gui;
 my %bad_id;
 my %config;
+my $OUTDIR;
 my $db_handle;
 
 
@@ -170,6 +185,7 @@ sub new {
     $self->{obsid} = shift;
     $self->{date}  = shift;
     $self->{dot_obsid} = $self->{obsid};
+    #$self->{proseco} = get_pcat($self->{obsid});
     @{$self->{warn}} = ();
     @{$self->{orange_warn}} = ();
     @{$self->{yellow_warn}} = ();
@@ -217,6 +233,10 @@ sub set_config {
 ##################################################################################
     my $config_ref = shift;
     %config = %{$config_ref};
+}
+
+sub set_outdir{
+    $OUTDIR = shift;
 }
 
 
@@ -1977,13 +1997,17 @@ sub print_report {
     if ( ( defined $self->{ra} ) and (defined $self->{dec}) and (defined $self->{roll})){
 	$o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     }
-    if ( defined $self->{DITHER_ON} && $self->{obsid} < $ER_MIN_OBSID ) {
-	$o .= sprintf "Dither: %-3s ",$self->{DITHER_ON};
-	$o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f",
-		       $self->{DITHER_Y_AMP}*3600., $self->{DITHER_Z_AMP}*3600.,
-		       360./$self->{DITHER_Y_FREQ}, 360./$self->{DITHER_Z_FREQ})
-	    if ($self->{DITHER_ON} eq 'ON' && $self->{DITHER_Y_FREQ} && $self->{DITHER_Z_FREQ});
-	$o .= "\n";
+    if (defined $self->{dither_guide}){
+        my $z_amp = int($self->{dither_guide}->{ampl_p} + .5);
+        my $y_amp = int($self->{dither_guide}->{ampl_y} + .5);
+        if ($self->{dither_guide}->{state} eq 'ENAB'){
+            $o .= sprintf "Dither:  ON ";
+            $o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f \n",
+                           $y_amp, $z_amp, $self->{dither_guide}->{period_y}, $self->{dither_guide}->{period_p});
+        }
+        else{
+            $o .= sprintf "Dither: OFF\n";
+        }
     }
 
     $o .= sprintf("<A HREF=\"%s/%s.html#%s\">BACKSTOP</A> ", $self->{STARCHECK}, basename($self->{backstop}), $self->{obsid});
@@ -2210,14 +2234,10 @@ sub print_report {
     $o .= "\n";
 
     if (exists $self->{figure_of_merit}) {
-	my @probs = @{ $self->{figure_of_merit}->{cum_prob}};
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
 	$o .= "$red_font_start" if $bad_FOM;
-	$o .= "Probability of acquiring 2,3, and 4 or fewer stars (10^x):\t";
-        # override formatting to match pre-JSON strings
-        foreach (2..4) {
-            $o .= substr(sprintf("%.4f", "$probs[$_]"), 0, 6) . "\t";
-        }
+	$o .= "Probability of acquiring 2 or fewer stars (10^x):\t";
+        $o .= substr(sprintf("%.4f", $self->{figure_of_merit}->{cum_prob_2}), 0, 6) . "\t";
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
 	$o .= sprintf("Acquisition Stars Expected  : %.2f\n",
@@ -2743,3 +2763,233 @@ sub set_ccd_temps{
                                        $config{ccd_temp_red_limit});
     }
 }
+
+
+
+use Inline Python => q{
+
+def _guide_count(mags, t_ccd):
+    return float(guide_count(np.array(mags), t_ccd))
+
+PROSECO_CATS = None
+def load_proseco_pkl(pfile):
+    global PROSECO_CATS
+    PROSECO_CATS = pickle.load(open(pfile.decode('ascii'), 'rb'))
+
+def get_pcat(obsid):
+    return PROSECO_CATS[f'{int(obsid)}']
+
+def make_report_from_saved(obsid, outdir):
+    pcat = get_pcat(str(int(obsid)))
+    import proseco.report
+    proseco.report.make_report(int(obsid), pcat, outdir.decode('ascii'))
+
+
+def check_proseco_args(kwargs):
+    p_acq = []
+    warns = []
+    call_matches = True
+
+    kwargs = de_bytestr(kwargs)
+    if 'obsid' not in kwargs or 'q1' not in kwargs:
+        return 0, 0, 0
+    print(kwargs)
+    obsid = kwargs['obsid']
+    pcat = get_pcat(str(obsid))
+    date = kwargs['date']
+    if not np.abs(DateTime(date).secs - DateTime(pcat.call_args['date']).secs) < 60:
+        warns.append('date differs by more than 60 seconds')
+        call_matches = False
+    if not np.abs(kwargs['man_angle'] - pcat.call_args['man_angle']) < 1.0:
+        warns.append('man_angle differs by more than 1 degree')
+        call_matches = False
+    prod_q = Quaternion.Quat([kwargs['q1'], kwargs['q2'], kwargs['q3'], kwargs['q4']])
+    proseco_q = pcat.call_args['att']
+    dq = prod_q.dq(proseco_q)
+    if (np.abs(dq.pitch * 3600) > 1.0
+        or np.abs(dq.yaw * 3600) > 1.0
+        or np.abs(np.min([dq.roll, 360 - dq.roll]) * 3600) > 1.0):
+            warns.append('attitude differs by more than arcsec in yaw, pitch, or roll')
+            call_matches = False
+    if (int(obsid) < 38000 and kwargs['detector'] is not None and kwargs['detector'] != pcat.call_args['detector']):
+        warns.append('detector mismatch')
+        return 1
+    if (int(pcat.call_args['dither_acq'][0] + .5) != int(float(kwargs['dither_acq_y']) + .5)
+        or int(pcat.call_args['dither_acq'][1] + .5) != int(float(kwargs['dither_acq_z']) + .5)
+        or int(pcat.call_args['dither_acq'][0] + .5) != int(float(kwargs['dither_guide_y']) + .5)
+        or int(pcat.call_args['dither_acq'][0] + .5) != int(float(kwargs['dither_guide_z']) + .5)):
+            warns.append('dither mismatch')
+            call_matches = False
+    if (int(obsid) < 38000 and kwargs['offset'] is not None and kwargs['offset'] != pcat.call_args['sim_offset']):
+        warns.append('sim_offset not equal')
+        call_matches = False
+
+    acq_match = set(kwargs['acqs']) == set(pcat.acqs['id'])
+    if acq_match:
+        for acq, halfw in zip(kwargs['acqs'], kwargs['halfwidths']):
+            acq_match = halfw == pcat.acqs['halfw'][pcat.acqs['id'] == acq][0]
+    fid_match = set(pcat.fids['id']) == set(kwargs['fids'])
+    guide_match = set(pcat.guides['id']) == set(kwargs['guides'])
+    return int(acq_match), int(fid_match), int(guide_match)
+
+
+def calc_man_ang(q1, q2, q3, q4, initq1, initq2, initq3, initq4):
+    init_q = Quaternion.Quat([float(initq1), float(initq2), float(initq3), float(initq4)])
+    final_q = Quaternion.Quat([float(q1), float(q2), float(q3), float(q4)])
+    ang = float(np.degrees(2 * np.arccos(np.dot(init_q.q, final_q.q))))
+    ang = ang if ang <= 180 else 360 - ang
+    return ang
+
+
+def proseco_probs(kwargs):
+
+    kw = de_bytestr(kwargs)
+
+    acq_cat = get_acq_catalog(obsid=0, att=Quaternion.normalize([kw['q1'], kw['q2'], kw['q3'], kw['q4']]),
+                             n_acq=len(kw['acqs']), man_angle=kw['man_angle'], t_ccd=kw['t_ccd_acq'],
+                             date=kw['date'], dither=(kw['dither_acq_y'], kw['dither_acq_z']),
+                             detector=kw['detector'], sim_offset=kw['offset'],
+                             include_ids=kw['acqs'], include_halfws=kw['halfwidths'])
+    p_acqs = []
+    for acq in kw['acqs']:
+        if np.any(acq_cat['id'] == acq):
+            p_acqs.append(float(acq_cat['p_acq'][acq_cat['id'] == acq][0]))
+        else:
+            p_acqs.append(float(0.0))
+
+    return p_acqs, float(acq_cat.get_log_p_2_or_fewer()), float(np.sum(p_acqs))
+
+
+};
+
+
+sub make_proseco_report{
+    my $self = shift;
+    my $proseco_args = $self->{proseco_args};
+    if (not defined $proseco_args){
+        return;
+    }
+    my ($acq_match, $fid_match, $guide_match) = check_proseco_args($proseco_args);
+    print "$acq_match, $fid_match, $guide_match \n";
+    make_report_from_saved($self->{obsid}, $self->{outdir});
+}
+
+
+our $CUM_PROB_LIMIT = 8e-3;
+
+sub proseco_args{
+
+    my $self = shift;
+    my %proseco_args;
+    my $targ_cmd = find_command($self, "MP_TARGQUAT");
+    my $cat_cmd = find_command($self, "MP_STARCAT");
+    if ((not $targ_cmd) or (not $cat_cmd)){
+        return \%proseco_args;
+    }
+    my $si = 'ACIS-S';
+    my $offset = 0;
+    if ($self->{obsid} < 38000){
+        $si = $self->{SI};
+        $offset = $self->{SIM_OFFSET_Z};
+    }
+    my $man_ang;
+    if (defined $targ_cmd->{initq1}){
+        $man_ang = calc_man_ang(
+            0 + $targ_cmd->{q1}, 0 + $targ_cmd->{q2}, 0 + $targ_cmd->{q3}, 0 + $targ_cmd->{q4},
+            0 + $targ_cmd->{initq1}, 0 + $targ_cmd->{initq2}, 0 + $targ_cmd->{initq3}, 0 + $targ_cmd->{initq4});
+    }
+
+    my @acq_ids;
+    my @acq_indexes;
+    my @gui_ids;
+    my @fid_ids;
+    my @halfwidths;
+    foreach my $i (1..16) {
+        if ($cat_cmd->{"TYPE$i"} =~ /BOT|ACQ/){
+            push @acq_ids, $cat_cmd->{"GS_ID$i"};
+            push @halfwidths, $cat_cmd->{"HALFW$i"};
+            push @acq_indexes, $i;
+        }
+        if ($cat_cmd->{"TYPE$i"} =~ /BOT|GUI/){
+            push @gui_ids, $cat_cmd->{"GS_ID$i"};
+        }
+        if ($cat_cmd->{"TYPE$i"} =~ /FID/){
+            push @fid_ids, $cat_cmd->{"GS_ID$i"};
+        }
+    }
+
+    %proseco_args = (
+        obsid => $self->{obsid},
+        date => $targ_cmd->{stop_date},
+        q1 => 0 + $targ_cmd->{q1}, q2 => 0 + $targ_cmd->{q2},
+        q3 => 0 + $targ_cmd->{q3}, q4 =>0 + $targ_cmd->{q4},
+        man_angle => $man_ang, detector => $si, offset=> 0 + $offset,
+        dither_acq_y => $self->{dither_acq}->{ampl_y}, dither_acq_z => $self->{dither_acq}->{ampl_p},
+        dither_guide_y => $self->{dither_guide}->{ampl_y}, dither_guide_z => $self->{dither_guide}->{ampl_p},
+        t_ccd_acq => $self->{ccd_temp_acq}, t_ccd_guide => $self->{ccd_temp},
+        acqs => \@acq_ids, halfwidths => \@halfwidths, fids => \@fid_ids, guides => \@gui_ids,
+        acq_indexes => \@acq_indexes);
+
+    return \%proseco_args
+
+}
+
+
+sub set_proseco_probs{
+    my $self = shift;
+    my $cat_cmd = find_command($self, "MP_STARCAT");
+    my $args = $self->{proseco_args};
+    if ((not $cat_cmd)){
+        return
+    }
+    my ($p_acqs, $two_or_fewer, $expected) = proseco_probs($args);
+
+    my @acq_indexes = @{$args->{acq_indexes}};
+
+    # Assign those p_acqs to a slot hash and the catalog P_ACQ by index
+    my %slot_probs;
+    for my $idx (0 .. $#acq_indexes) {
+        my $i = $acq_indexes[$idx];
+        $cat_cmd->{"P_ACQ$i"} = $p_acqs->[$idx];
+        $slot_probs{$cat_cmd->{"IMNUM$i"}} = $p_acqs->[$idx];
+    }
+
+    $self->{acq_probs} = \%slot_probs;
+
+    $self->{figure_of_merit} = {expected => substr($expected, 0, 4),
+                                cum_prob_2 => $two_or_fewer,
+                                cum_prob_bad => ($two_or_fewer > $CUM_PROB_LIMIT)};
+    if ($two_or_fewer > $CUM_PROB_LIMIT){
+        push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $CUM_PROB_LIMIT\n";
+    }
+
+
+
+};
+
+
+
+use Inline Python => q{
+
+from chandra_aca.star_probs import mag_for_p_acq
+
+def _mag_for_p_acq(p_acq, date, t_ccd):
+    return mag_for_p_acq(p_acq, date.decode(), t_ccd)
+
+};
+
+
+
+sub set_dynamic_mag_limits{
+    my $c;
+    my $self = shift;
+    return unless ($c = $self->find_command("MP_STARCAT"));
+
+    my $date = $c->{date};
+    my $t_ccd = $self->{ccd_temp};
+    # Dynamic mag limits based on 75% and 50% chance of successful star acq
+    # Maximum limits of 10.3 and 10.6
+    $self->{mag_faint_yellow} = min(10.3, _mag_for_p_acq(0.75, $date, $t_ccd));
+    $self->{mag_faint_red} = min(10.6, _mag_for_p_acq(0.5, $date, $t_ccd));
+}
+

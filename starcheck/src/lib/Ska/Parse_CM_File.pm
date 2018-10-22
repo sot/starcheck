@@ -178,6 +178,8 @@ sub dither {
                       };
       }
   }
+    use Data::Dumper;
+    print Dumper \@dither;
     return (0, \@dither);
 }
 
@@ -749,6 +751,11 @@ sub MM {
         $manvr_hash{q2} = $quat[1];
         $manvr_hash{q3} = $quat[2];
         $manvr_hash{q4} = $quat[3];
+        my @init_quat = ($1,$2,$3,$4) if ($initial_attitude =~ /Quaternion:\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/);
+        $manvr_hash{initq1} = $init_quat[0];
+        $manvr_hash{initq2} = $init_quat[1];
+        $manvr_hash{initq3} = $init_quat[2];
+        $manvr_hash{initq4} = $init_quat[3];
         $manvr_hash{tstart} = date2time($manvr_hash{start_date});
         $manvr_hash{tstop} = date2time($manvr_hash{stop_date});
 

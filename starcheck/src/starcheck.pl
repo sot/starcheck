@@ -48,8 +48,6 @@ $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 use Inline Python => q{
 
 import os
-import re
-import ast
 
 from Chandra.Time import DateTime
 from chandra_aca.star_probs import set_acq_model_ms_filter
@@ -59,11 +57,17 @@ from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.version import version
 from kadi.commands import states
 
-def debyte_dict(d):
-    return ast.literal_eval(re.sub(r"b'", "'", repr(d)))
+# Borrowed from https://stackoverflow.com/a/33160507
+def de_bytestr(data):
+    if isinstance(data, bytes):      return data.decode()
+    if isinstance(data, (str, float, int)): return data
+    if isinstance(data, dict):       return dict(map(de_bytestr, data.items()))
+    if isinstance(data, tuple):      return tuple(map(de_bytestr, data))
+    if isinstance(data, list):       return list(map(de_bytestr, data))
+    if isinstance(data, set):        return set(map(de_bytestr, data))
 
 def ccd_temp_wrapper(kwargs):
-    return get_ccd_temps(**debyte_dict(kwargs))
+    return get_ccd_temps(**de_bytestr(kwargs))
 
 def plot_cat_wrapper(kwargs):
     try:
@@ -71,7 +75,7 @@ def plot_cat_wrapper(kwargs):
     except ImportError as err:
         # write errors to starcheck's global warnings and STDERR
         perl.warning("Error with Inline::Python imports {}\n".format(err))
-    return make_plots_for_obsid(**debyte_dict(kwargs))
+    return make_plots_for_obsid(**de_bytestr(kwargs))
 
 def starcheck_version():
     return version
@@ -81,10 +85,10 @@ def get_data_dir():
     return sc_data if os.path.exists(sc_data) else ""
 
 def _make_pcad_attitude_check_report(kwargs):
-    return make_pcad_attitude_check_report(**debyte_dict(kwargs))
+    return make_pcad_attitude_check_report(**de_bytestr(kwargs))
 
 def get_dither_kadi_state(date):
-    date = date.decode('ascii')
+    date = de_bytestr(date)
     cols = ['dither', 'dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw']
     state = states.get_continuity(date, cols)
     # Cast the numpy floats as plain floats
@@ -131,6 +135,7 @@ GetOptions( \%par,
 			'sc_data=s',
 			'fid_char=s',
 			'config_file=s',
+                        'debug_report!',
 			) ||
     exit( 1 );
 
@@ -190,6 +195,14 @@ my $aimpoint_file;
 if (glob("$par{dir}/output/*_dynamical_offsets.txt")){
     $aimpoint_file = get_file("$par{dir}/output/*_dynamical_offsets.txt", 'aimpoint');
 }
+
+# Check for a dynamic aimpoint file.  Precheck existence of file to avoid errors about a
+# missing file on historical products that won't have this file
+my $proseco_pkl;
+if (glob("$par{dir}/output/*_proseco.pkl")){
+    $proseco_pkl = get_file("$par{dir}/output/*_proseco.pkl", 'proseco');
+}
+
 
 my $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
 
@@ -334,6 +347,7 @@ Ska::Starcheck::Obsid::setcolors({ red => $red_font_start,
 my %odb = Ska::Parse_CM_File::odb($odb_file);
 Ska::Starcheck::Obsid::set_odb(%odb);
 
+Ska::Starcheck::Obsid::set_outdir($STARCHECK);
 
 Ska::Starcheck::Obsid::set_config($config_ref);
 # If there is a dark current, add the obsids of the dark cal replicas
@@ -397,6 +411,12 @@ warning("Could not open ACA bad pixel file $ACA_bad_pixel_file\n")
 # Read bad AGASC stars
 warning("Could not open bad AGASC file $bad_agasc_file\n")
     unless (Ska::Starcheck::Obsid::set_bad_agasc($bad_agasc_file));
+
+if (defined $proseco_pkl){
+    Ska::Starcheck::Obsid::load_proseco_pkl($proseco_pkl);
+}
+
+
 
 # Initialize list of "interesting" commands
 
@@ -558,7 +578,7 @@ sub force_numbers {
 sub json_obsids{
 
     my @all_obs;
-    my %exclude = ('next' => 1, 'prev' => 1, 'agasc_hash' => 1);
+    my %exclude = ('next' => 1, 'prev' => 1, 'agasc_hash' => 1, 'proseco' => 1);
     foreach my $obsid (@obsid_id){
         my %obj = ();
         for my $tkey (keys(%{$obs{$obsid}})){
@@ -630,7 +650,14 @@ foreach my $obsid (@obsid_id) {
     if ($bs[0]->{time} > date2time('2017:043:00:00:00.000')){
         $obs{$obsid}->check_big_box_stars();
     }
-    $obs{$obsid}->make_figure_of_merit();
+    # Get the args that proseco would want
+    $obs{$obsid}->{'proseco_args'} = $obs{$obsid}->proseco_args();
+    $obs{$obsid}->set_proseco_probs();
+    if ($par{debug_report}){
+        $obs{$obsid}->make_proseco_report();
+    }
+    #$obs{$obsid}->make_figure_of_merit();
+
 # Make sure there is only one star catalog per obsid
     warning ("More than one star catalog assigned to Obsid $obsid\n")
 	if ($obs{$obsid}->find_command('MP_STARCAT',2));
