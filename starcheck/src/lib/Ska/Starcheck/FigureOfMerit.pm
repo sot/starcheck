@@ -37,7 +37,6 @@ def _prob_n_acq(acq_probs):
     return n_acq_probs.tolist(), n_or_fewer_probs.tolist()
 };
 
-our $CUM_PROB_LIMIT = 8e-3;
 
 sub make_figure_of_merit{
     my $c;
@@ -49,6 +48,8 @@ sub make_figure_of_merit{
     my %slot_probs;
 
     my $t_ccd = $self->{ccd_temp};
+    my $prob_limit = $t_ccd > -10.2 ? 1e-5 : 1e-3;
+
     my $date = $c->{date};
 
     foreach my $i (1..16) {
@@ -71,10 +72,12 @@ sub make_figure_of_merit{
 
     $self->{figure_of_merit} = {expected => substr(sum(@probs), 0, 4),
                                 cum_prob => [map { log($_) / log(10.0) } @{$n_or_fewer_probs}],
-                                cum_prob_bad => ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT)
+                                cum_prob_bad => ($n_or_fewer_probs->[2] > $prob_limit)
                                 };
-    if ($n_or_fewer_probs->[2] > $CUM_PROB_LIMIT){
-        push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $CUM_PROB_LIMIT\n";
+
+
+    if ($n_or_fewer_probs->[2] > $prob_limit){
+        push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $prob_limit\n";
     }
 
 }
