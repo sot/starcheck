@@ -4,16 +4,14 @@
 
 RunRegression()
 # Run regression tests.
-# Arg 1 is the AGASC version (e.g. 1p5)
-# Arg 2 is the AGASC file for h5
-# Arg 3 is the fid characteristics name (e.g. fid_CHARACTERIS_FEB07)
+# Arg 1 is the AGASC file for h5
+# Arg 2 is the fid characteristics name (e.g. fid_CHARACTERIS_FEB07)
 {
   echo ""
   echo "***** Running starcheck on load $load *****"
 
-  agasc=${1}
-  agasc_file=${2}
-  fid_char=${3}
+  agasc_file=${1}
+  fid_char=${2}
 
   test=$regtestdir/$load
   release=$home/test_regress/release/$load
@@ -56,9 +54,9 @@ RunRegression()
       echo "cd $release"
       cd $release
       
-      echo "Running: $RELEASE/bin/starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+      echo "Running: $RELEASE/bin/starcheck -vehicle -agasc_file $agasc_file -fid_char $fid_char -dir $mphome/$load"
       echo "**** (RELEASE VEHICLE) $load ****" >> $vlog
-      env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck -vehicle -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
+      env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck -vehicle -agasc_file $agasc_file -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
       perl -n -i.bak -e 'print if $. > 3' $release/v_starcheck.txt
     fi  
 
@@ -93,9 +91,9 @@ RunRegression()
     echo "cd $release"
     cd $release
 
-    echo "Running: $RELEASE/bin/starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load"
+    echo "Running: $RELEASE/bin/starcheck -agasc_file $agasc_file -fid_char $fid_char -dir $mphome/$load"
     echo "**** (RELEASE) $load ****" >> $log
-    env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck -agasc $agasc -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
+    env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck -agasc_file $agasc_file -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
     perl -n -i.bak -e 'print if $. > 3' $release/starcheck.txt
   fi  
 
@@ -186,7 +184,7 @@ for load in \
     2006/MAR0606/oflsc \
     2006/NOV2006/oflsb
 do
-  RunRegression 1p6 /proj/sot/ska/data/agasc/agasc1p6.h5 fid_CHARACTERIS_JUL01
+  RunRegression /proj/sot/ska/data/agasc/agasc1p6.h5 fid_CHARACTERIS_JUL01
 done
 
 # Then, a bunch of agasc 1.6 loads with the updated fid characteristics
@@ -229,7 +227,7 @@ for load in \
     2015/DEC1115/oflsa \
     2015/DEC1115/oflsb
 do
-  RunRegression 1p6 /proj/sot/ska/data/agasc/agasc1p6.h5 fid_CHARACTERIS_FEB07
+  RunRegression /proj/sot/ska/data/agasc/agasc1p6.h5 fid_CHARACTERIS_FEB07
 done
 
 # Copy log and diffs to version directory
