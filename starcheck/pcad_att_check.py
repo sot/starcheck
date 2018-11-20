@@ -9,6 +9,10 @@ import hopper
 
 
 def check_characteristics_date(ofls_characteristics_file, ref_date=None):
+    # de_bytetring these inputs from Perl -> Python 3
+    ofls_characteristics_file = ofls_characteristics_file.decode()
+    if ref_date is not None:
+        ref_date = ref_date.decode()
     match = re.search(r'CHARACTERIS_(\d\d)([A-Z]{3})(\d\d)', ofls_characteristics_file)
     if not match:
         return False
