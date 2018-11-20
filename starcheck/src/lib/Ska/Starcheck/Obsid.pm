@@ -1537,7 +1537,7 @@ sub check_flick_pix_mon {
 
     for my $mon_star (@mon_stars){
 
-	push @{$self->{fyi}}, sprintf("$info Obsid contains flickering pixel MON\n", $mon_star);
+	push @{$self->{fyi}}, sprintf("$info Obsid contains flickering pixel MON\n");
 
 
 	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Size is not 8x8\n", $mon_star)
