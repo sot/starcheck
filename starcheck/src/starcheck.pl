@@ -710,6 +710,9 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($ATT_CHECK_AFTER))){
     if ((not defined $char_file) and (not defined $aimpoint_file)){
         $out .= "Error.  No dynamic aimpoint or characteristics file. \n";
     }
+    elsif ($par{vehicle}){
+        $out .= "Skipping attitude checks for vehicle-only processing. \n";
+    }
     else{
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
         my $att_ok = _make_pcad_attitude_check_report({
