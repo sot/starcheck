@@ -3,7 +3,7 @@ FLIGHT_ENV = SKA
 
 SRC = starcheck/src
 
-include $(SKA)/include/Makefile.FLIGHT
+#include $(SKA)/include/Makefile.FLIGHT
 
 RELATED_LIB = $(SRC)/StarcheckParser.pm
 BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
@@ -27,7 +27,7 @@ DATA_FILES = starcheck/data/aca_spec.json starcheck/data/ACABadPixels starcheck/
 	starcheck/data/A.tlr starcheck/data/B.tlr starcheck/data/tlr.cfg \
 	starcheck/data/overlib.js starcheck/data/up.gif starcheck/data/down.gif \
 
-SHA_FILES = ${SKA_ARCH_OS}/bin/ska_version ${SKA_ARCH_OS}/pkgs.manifest $(BIN) $(LIB) \
+SHA_FILES = ${SKA_ARCH_OS}/bin/ska_version $(BIN) $(LIB) \
 	$(DATA_FILES) $(PYTHON_LIB)
 
 # Calculate the SHA1 checksum of the set of files in SHA_FILES and return the abbreviated sum
@@ -62,7 +62,7 @@ dark_regress: $(TEST_BACKSTOP) $(DATA_FILES)
 
 # Comprehensive regression test
 .PHONY: regress
-regress: $(TEST_BACKSTOP) $(DATA_FILES)
+regress: $(DATA_FILES)
 	$(SRC)/run_regress "$(HOSTNAME)_$(SHA)"
 
 checklist:
