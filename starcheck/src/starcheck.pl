@@ -82,8 +82,10 @@ def get_data_dir():
     return sc_data if os.path.exists(sc_data) else ""
 
 def _make_pcad_attitude_check_report(kwargs):
-    return make_pcad_attitude_check_report(**de_bytestr(kwargs))
-
+    try:
+       return make_pcad_attitude_check_report(**de_bytestr(kwargs))
+    except Exception as err:
+       perl.warning("Error running dynamic attitude checks {}\n".format(err))
 };
 
 
