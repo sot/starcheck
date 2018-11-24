@@ -142,7 +142,7 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, attitude_f
     # Any state value (e.g. obsid or q_att) has a corresponding plural that
     # gives the history of updates as a dict with a `value` and `date` key.
     sc = hopper.run_cmds(backstop_file, or_list, ofls_characteristics_file,
-                         initial_state=initial_state)
+                         initial_state=initial_state, starcheck=True)
     # Iterate through checks by obsid to print status
     checks = sc.get_checks_by_obsid()
     for obsid in sc.obsids:
