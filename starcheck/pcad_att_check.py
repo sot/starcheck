@@ -3,7 +3,7 @@ import re
 from astropy.table import Table
 import Quaternion
 
-from parse_cm import read_backstop, read_maneuver_summary, read_or_list
+from parse_cm import read_backstop, read_or_list
 from Chandra.Time import DateTime
 import hopper
 
@@ -60,7 +60,22 @@ def recent_sim_history(time, file):
                 return greta_time, int(value)
 
 
-def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=None,
+def recent_attitude_history(time, file):
+    """
+    Read from the end of the a ATTITUDE history file and return the
+    first (last) time and value before the given time.  Specific
+    to ATTITUDE and transition history based on the regex for
+    parsing.
+    """
+    for line in reversed(open(file).readlines()):
+        match = re.match('^(\d+\.\d+)\s+\|\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s*', line)
+        if match:
+            greta_time, q1, q2, q3, q4 = match.groups()
+            if (DateTime(greta_time, format='greta').secs < time):
+                return greta_time, float(q1), float(q2), float(q3), float(q4)
+
+
+def make_pcad_attitude_check_report(backstop_file, or_list_file=None, attitude_file=None,
                                     simtrans_file=None, simfocus_file=None,
                                     ofls_characteristics_file=None, out=None,
                                     dynamic_offsets_file=None,
@@ -72,9 +87,12 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=No
     all_ok = True
     lines = []  # output report lines
 
-    mm = read_maneuver_summary(mm_file)
-    q = Quaternion.normalize([mm[0][key] for key in ['q1_0', 'q2_0', 'q3_0', 'q4_0']])
     bs = read_backstop(backstop_file)
+
+    # Get initial state attitude and sim position from history
+    att_time, q1, q2, q3, q4 = recent_attitude_history(DateTime(bs[0]['date']).secs,
+                                            attitude_file)
+    q = Quaternion.normalize([q1, q2, q3, q4])
     simfa_time, simfa = recent_sim_history(DateTime(bs[0]['date']).secs,
                                            simfocus_file)
     simpos_time, simpos = recent_sim_history(DateTime(bs[0]['date']).secs,

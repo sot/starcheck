@@ -165,6 +165,7 @@ my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');
 my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
 my $simtrans_file= get_file("$par{dir}/History/SIMTRANS.txt*", 'simtrans');
 my $simfocus_file= get_file("$par{dir}/History/SIMFOCUS.txt*", 'simfocus');
+my $attitude_file= get_file("$par{dir}/History/ATTITUDE.txt*", 'attitude');
 
 # Check for characteristics.  Ignore the get_file required vs not API and just pre-check
 # to see if there is characteristics
@@ -716,8 +717,8 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($ATT_CHECK_AFTER))){
     else{
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
         my $att_ok = _make_pcad_attitude_check_report({
-            backstop_file=> $backstop, or_list_file=>$or_file, mm_file=> $mm_file,
-            simtrans_file=>$simtrans_file, simfocus_file=>$simfocus_file,
+            backstop_file=> $backstop, or_list_file=>$or_file,
+            simtrans_file=>$simtrans_file, simfocus_file=>$simfocus_file, attitude_file=>$attitude_file,
             ofls_characteristics_file=>$char_file, out=>$att_report, dynamic_offsets_file=>$aimpoint_file});
         if ($att_ok){
             $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n";
