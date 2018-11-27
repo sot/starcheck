@@ -79,7 +79,7 @@ use File::Basename;
 use POSIX qw(floor);
 use English;
 use IO::All;
-use Ska::Convert qw(date2time);
+use Ska::Convert qw(date2time time2date);
 
 use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit set_dynamic_mag_limits );
 use RDB;
@@ -2557,18 +2557,6 @@ sub quat2radecroll {
     return ($ra, $dec, $roll);
 }
 
-###################################################################################
-sub time2date {
-###################################################################################
-# Date format:  1999:260:03:30:01.542
-    my $time = shift;
-    my $t1998 = @_ ? 0.0 : 883612736.816; # 2nd argument implies Unix time not CXC time
-    my $floor_time = POSIX::floor($time+$t1998);
-    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($floor_time);
-
-    return sprintf ("%04d:%03d:%02d:%02d:%06.3f",
-		    $year+1900, $yday+1, $hour, $min, $sec + ($time+$t1998-$floor_time));
-}
 
 ###################################################################################
 sub count_guide_stars{
