@@ -56,12 +56,17 @@ from starcheck.version import version
 
 # Borrowed from https://stackoverflow.com/a/33160507
 def de_bytestr(data):
-    if isinstance(data, bytes):      return data.decode()
-    if isinstance(data, (str, float, int)): return data
-    if isinstance(data, dict):       return dict(map(de_bytestr, data.items()))
-    if isinstance(data, tuple):      return tuple(map(de_bytestr, data))
-    if isinstance(data, list):       return list(map(de_bytestr, data))
-    if isinstance(data, set):        return set(map(de_bytestr, data))
+    if isinstance(data, bytes):
+        return data.decode()
+    if isinstance(data, dict):
+        return dict(map(de_bytestr, data.items()))
+    if isinstance(data, tuple):
+        return tuple(map(de_bytestr, data))
+    if isinstance(data, list):
+        return list(map(de_bytestr, data))
+    if isinstance(data, set):
+        return set(map(de_bytestr, data))
+    return data
 
 def ccd_temp_wrapper(kwargs):
     return get_ccd_temps(**de_bytestr(kwargs))
