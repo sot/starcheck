@@ -51,7 +51,7 @@ sub make_figure_of_merit{
     my %slot_probs;
 
     my $t_ccd = $self->{ccd_temp};
-    my $prob_limit = $t_ccd > -10.2 ? 1e-5 : 1e-3;
+    my $prob_limit = 0.008;
 
     my $date = $c->{date};
 
