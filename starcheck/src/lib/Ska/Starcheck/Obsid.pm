@@ -815,11 +815,8 @@ sub large_dither_checks {
     # Save the number of warnings when starting this method
     my $n_warn = scalar(@{$self->{warn}});
 
-    # The obs tstart and tstop times are derived from the OFLS maneuver summary file,
-    # which for implementation reasons gives the maneuver times offset by 10 seconds
-    # from the actual command timing. Fix this here.
-    my $obs_tstart = $self->{obs_tstart} - 10;
-    my $obs_tstop = $self->{obs_tstop} - 10;
+    my $obs_tstart = $self->{obs_tstart};
+    my $obs_tstop = $self->{obs_tstop};
 
     # Now check in backstop commands for :
     #  Dither is disabled (AODSDITH) 1 min prior to the end of the maneuver (EOM)
