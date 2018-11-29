@@ -810,7 +810,7 @@ sub large_dither_checks {
     my $self = shift;
     my $dither_state = shift;
     my $all_dither = shift;
-    my $time_tol = 10;         # Commands must be within $time_tol of expectation
+    my $time_tol = 11;         # Commands must be within $time_tol of expectation
 
     # Save the number of warnings when starting this method
     my $n_warn = scalar(@{$self->{warn}});
