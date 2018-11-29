@@ -1,7 +1,12 @@
 #!/bin/bash
 
-unset LD_LIBRARY_PATH
-unset SYBASE
+# Don't unset LD_LIBRARY_PATH and SYBASE because 'perl' below
+# is no longer a wrapper
+#unset LD_LIBRARY_PATH
+#unset SYBASE
+
+# Unset PYTHONPATH because custom PYTHONPATH should never be allowed
+# for flight starcheck
 unset PYTHONPATH
 export PYTHONHOME=$SKA_ARCH_OS
 PERL_INLINE_DIRECTORY=`/bin/mktemp -d -t starcheck_inline.XXXXXX` || exit 1

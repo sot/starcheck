@@ -43,6 +43,8 @@ RunRegression()
     perl -n -i.bak -e 'print if $. > 3' $test/v_starcheck.txt
     perl -p -i -e "s{$SKA}{$RELEASE}" $test/v_starcheck.txt
     perl -p -i -e "s{$local_data}{$release_data}" $test/v_starcheck.txt
+    perl -n -i -e "print unless /DATA.*starcheck\/data/" $test/v_starcheck.txt
+    perl -n -i -e "print unless /Using template file/" $test/v_starcheck.txt
 
   # Now run current release version if not already there
   #
@@ -58,6 +60,9 @@ RunRegression()
       echo "**** (RELEASE VEHICLE) $load ****" >> $vlog
       env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck -vehicle -agasc_file $agasc_file -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $vlog
       perl -n -i.bak -e 'print if $. > 3' $release/v_starcheck.txt
+      perl -n -i -e "print unless /DATA.*starcheck\/data/" $release/v_starcheck.txt
+      perl -n -i -e "print unless /Using template file/" $release/v_starcheck.txt
+
     fi  
 
 
@@ -80,6 +85,8 @@ RunRegression()
   perl -n -i.bak -e 'print if $. > 3' $test/starcheck.txt
   perl -p -i -e "s{$SKA}{$RELEASE}" $test/starcheck.txt
   perl -p -i -e "s{$local_data}{$release_data}" $test/starcheck.txt
+  perl -n -i -e "print unless /DATA.*starcheck\/data/" $test/starcheck.txt
+  perl -n -i -e "print unless /Using template file/" $test/starcheck.txt
 
   # Now run current release version if not already there
   #
@@ -95,6 +102,8 @@ RunRegression()
     echo "**** (RELEASE) $load ****" >> $log
     env SKA=$RELEASE PERL5LIB='' SYBASE='' SYBASE_OCS='' $RELEASE/bin/starcheck -agasc_file $agasc_file -fid_char $fid_char -dir $mphome/$load 2>&1| tee -a $log
     perl -n -i.bak -e 'print if $. > 3' $release/starcheck.txt
+    perl -n -i -e "print unless /DATA.*starcheck\/data/" $release/starcheck.txt
+    perl -n -i -e "print unless /Using template file/" $release/starcheck.txt
   fi  
 
 

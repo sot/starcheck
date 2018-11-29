@@ -1,12 +1,18 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 import re
-import hopper
-from parse_cm import read_backstop, read_maneuver_summary, read_or_list
-from Chandra.Time import DateTime
 from astropy.table import Table
+import Quaternion
+
+from parse_cm import read_backstop, read_or_list
+from Chandra.Time import DateTime
+import hopper
 
 
 def check_characteristics_date(ofls_characteristics_file, ref_date=None):
+    # de_bytetring these inputs from Perl -> Python 3
+    ofls_characteristics_file = ofls_characteristics_file.decode()
+    if ref_date is not None:
+        ref_date = ref_date.decode()
     match = re.search(r'CHARACTERIS_(\d\d)([A-Z]{3})(\d\d)', ofls_characteristics_file)
     if not match:
         return False
@@ -54,7 +60,22 @@ def recent_sim_history(time, file):
                 return greta_time, int(value)
 
 
-def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=None,
+def recent_attitude_history(time, file):
+    """
+    Read from the end of the a ATTITUDE history file and return the
+    first (last) time and value before the given time.  Specific
+    to ATTITUDE and transition history based on the regex for
+    parsing.
+    """
+    for line in reversed(open(file).readlines()):
+        match = re.match('^(\d+\.\d+)\s+\|\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s*', line)
+        if match:
+            greta_time, q1, q2, q3, q4 = match.groups()
+            if (DateTime(greta_time, format='greta').secs < time):
+                return greta_time, float(q1), float(q2), float(q3), float(q4)
+
+
+def make_pcad_attitude_check_report(backstop_file, or_list_file=None, attitude_file=None,
                                     simtrans_file=None, simfocus_file=None,
                                     ofls_characteristics_file=None, out=None,
                                     dynamic_offsets_file=None,
@@ -66,14 +87,21 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=No
     all_ok = True
     lines = []  # output report lines
 
-    mm = read_maneuver_summary(mm_file)
-    q = [mm[0][key] for key in ['q1_0', 'q2_0', 'q3_0', 'q4_0']]
     bs = read_backstop(backstop_file)
+
+    # Get initial state attitude and sim position from history
+    att_time, q1, q2, q3, q4 = recent_attitude_history(DateTime(bs[0]['date']).secs,
+                                            attitude_file)
+    q = Quaternion.normalize([q1, q2, q3, q4])
     simfa_time, simfa = recent_sim_history(DateTime(bs[0]['date']).secs,
                                            simfocus_file)
     simpos_time, simpos = recent_sim_history(DateTime(bs[0]['date']).secs,
                                              simtrans_file)
-    initial_state = {'q_att': q,
+
+    initial_state = {'q1': q[0],
+                     'q2': q[1],
+                     'q3': q[2],
+                     'q4': q[3],
                      'simpos': simpos,
                      'simfa_pos': simfa}
 
@@ -114,23 +142,19 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, mm_file=No
     # Any state value (e.g. obsid or q_att) has a corresponding plural that
     # gives the history of updates as a dict with a `value` and `date` key.
     sc = hopper.run_cmds(backstop_file, or_list, ofls_characteristics_file,
-                         initial_state=initial_state)
-    # Iterate through obsids in order
-    obsids = [obj['value'] for obj in sc.obsids]
-    for obsid in obsids:
-        if obsid not in sc.checks:
-            continue
-
-        checks = sc.checks[obsid]
-        for check in checks:
-            if check['name'] == 'CheckObsreqTargetFromPcad':
-                ok = check['ok']
+                         initial_state=initial_state, starcheck=True)
+    # Iterate through checks by obsid to print status
+    checks = sc.get_checks_by_obsid()
+    for obsid in sc.obsids:
+        for check in checks[obsid]:
+            if check.name == 'attitude_consistent_with_obsreq':
+                ok = check.success
                 all_ok &= ok
-                if check.get('skip'):
-                    message = 'SKIPPED: {}'.format(check['message'])
+                if check.not_applicable:
+                    message = 'SKIPPED: {}'.format(":".join(check.infos))
                 else:
-                    message = 'OK' if ok else check['message']
-                line = '{:5d}: {}'.format(obsid, message)
+                    message = 'OK' if ok else "ERROR: {}".format(":".join(check.errors))
+                    line = '{:5d}: {}'.format(obsid, message)
                 lines.append(line)
 
     if out is not None:
