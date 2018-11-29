@@ -858,8 +858,8 @@ sub large_dither_checks {
         }
     }
     # Check that the dither state at the end of the observation started 5 minutes before
-    # the end (within time_tol)
-    if ((abs($obs_tstop - $obs_stop_dither->{time} - 300) > $time_tol)){
+    # the end (within time_tol) .  obs_tstop appears not corrected by 10s so use 310 instead of 300
+    if ((abs($obs_tstop - $obs_stop_dither->{time} - 310) > $time_tol)){
         push @{$self->{warn}},
             sprintf("$alarm Last dither state for Large Dither should start 5 minutes before obs end.\n");
     }
