@@ -1906,13 +1906,17 @@ sub print_report {
     if ( ( defined $self->{ra} ) and (defined $self->{dec}) and (defined $self->{roll})){
 	$o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     }
-    if ( defined $self->{DITHER_ON} && $self->{obsid} < $ER_MIN_OBSID ) {
-	$o .= sprintf "Dither: %-3s ",$self->{DITHER_ON};
-	$o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f",
-		       $self->{DITHER_Y_AMP}*3600., $self->{DITHER_Z_AMP}*3600.,
-		       360./$self->{DITHER_Y_FREQ}, 360./$self->{DITHER_Z_FREQ})
-	    if ($self->{DITHER_ON} eq 'ON' && $self->{DITHER_Y_FREQ} && $self->{DITHER_Z_FREQ});
-	$o .= "\n";
+    if (defined $self->{dither_guide}){
+        my $z_amp = int($self->{dither_guide}->{ampl_p} + .5);
+        my $y_amp = int($self->{dither_guide}->{ampl_y} + .5);
+        if ($self->{dither_guide}->{state} eq 'ENAB'){
+            $o .= sprintf "Dither:  ON ";
+            $o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f \n",
+                           $y_amp, $z_amp, $self->{dither_guide}->{period_y}, $self->{dither_guide}->{period_p});
+        }
+        else{
+            $o .= sprintf "Dither: OFF\n";
+        }
     }
 
     $o .= sprintf("<A HREF=\"%s/%s.html#%s\">BACKSTOP</A> ", $self->{STARCHECK}, basename($self->{backstop}), $self->{obsid});
