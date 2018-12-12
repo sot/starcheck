@@ -65,30 +65,20 @@ sub dither {
 ###############################################################
     my $dh_file = shift;      # Dither history file name
     my $bs_arr = shift;               # Backstop array reference
+    my $kadi_dither = shift;
+
     my $bs;
-    my @bs_state;
-    my @bs_time;
-    my @bs_params;
-    my @dh_state;
-    my @dh_time;
-    my @dh_params;
+
     my %dith_cmd = ('DSDITH' => 'DISA', 
 		    'ENDITH' => 'ENAB', 
 		    'DITPAR' => undef);
+
+    my @dh_state;
+    my @dh_time;
+    my @dh_params;
     my %obs;
-    # First get everything from backstop
-    foreach $bs (@{$bs_arr}) {
-	if ($bs->{cmd} =~ '(COMMAND_SW|MP_DITHER)') {
-	    my %params = %{$bs->{command}};
-	    if ($params{TLMSID} =~ 'AO(DSDITH|ENDITH|DITPAR)') {
-		push @bs_state, $dith_cmd{$1};
-		push @bs_time, $bs->{time};  # see comment below about timing
-		push @bs_params, { %params };
-	    }
-	}
-    }
-    
-    # Now get everything from DITHER
+
+    # First get everything from DITHER
     # Parse lines like:
     # 2002262.094827395   | DSDITH  AODSDITH
     # 2002262.095427395   | ENDITH  AOENDITH
@@ -103,17 +93,33 @@ sub dither {
 	    }
           }
 	$dith_hist_fh->close();
-    
-    my @ok = grep { $dh_time[$_] < $bs_arr->[0]->{time} } (0 .. $#dh_time);
-    my @state = (@dh_state[@ok], @bs_state);
-    my @time   = (@dh_time[@ok], @bs_time);
-    my @params = (@dh_params[@ok], @bs_params);
+
+    # Confirm that last state matches kadi continuity ENAB/DISA
+    if ($kadi_dither->{'dither'} ne $dh_state[-1]){
+        print STDERR "Dither status in kadi commands does not match DITHER history\n";
+        return (1, undef);
+    }
+
+    my @state;
+    my @time;
+    my @params;
+    # Then get everything from backstop
+    foreach $bs (@{$bs_arr}) {
+	if ($bs->{cmd} =~ '(COMMAND_SW|MP_DITHER)') {
+	    my %params = %{$bs->{command}};
+	    if ($params{TLMSID} =~ 'AO(DSDITH|ENDITH|DITPAR)') {
+		push @state, $dith_cmd{$1};
+		push @time, $bs->{time};  # see comment below about timing
+		push @params, { %params };
+	    }
+	}
+    }
+
 
     # if the most recent/last entry in the dither file has a timestamp newer than
-    # the first entry in the load
-    my $dither_time_violation = ($dh_time[-1] >= $bs_arr->[0]->{time});
-    if ($dither_time_violation){
-      return ($dither_time_violation, undef);
+    # the first entry in the load, complain
+    if ($dh_time[-1] >= $bs_arr->[0]->{time}){
+      return (1, undef);
     }
 
     # Now make an array of hashes as the final output.  Keep track of where the info
@@ -123,12 +129,22 @@ sub dither {
     my $r2a = 3600. * 180. / 3.14159265;
     my $pi = 3.14159265;
 
-    my $dither_state;
-    my $dither_ampl_p;
-    my $dither_ampl_y;
-    my $dither_period_p;
-    my $dither_period_y;
- 
+
+    my $dither_state = $kadi_dither->{dither};
+    my $dither_ampl_p = $kadi_dither->{'dither_ampl_pitch'};
+    my $dither_ampl_y = $kadi_dither->{'dither_ampl_yaw'};
+    my $dither_period_p = $kadi_dither->{'dither_period_pitch'};
+    my $dither_period_y = $kadi_dither->{'dither_period_yaw'};
+
+    push @dither, { 'time' => $kadi_dither->{'time'},
+                    'state' => $dither_state,
+                    'source' => 'kadi',
+                    'ampl_p' => $dither_ampl_p,
+                    'ampl_y' => $dither_ampl_y,
+                    'period_p' => $dither_period_p,
+                    'period_y' => $dither_period_y};
+
+    # Build dither states using just kadi initial state and backstop cmds
     foreach (0 .. $#state) {
       $dither_state = $state[$_] if defined $state[$_];
       $dither_ampl_p = $params[$_]->{COEFP} * $r2a if defined $params[$_]->{COEFP};
@@ -139,7 +155,7 @@ sub dither {
          if defined $params[$_]->{RATEP};
       push @dither, { time => $time[$_],
 		      state => $dither_state,
-		      source => $time[$_] < $bs_start ? 'history' : 'backstop',
+		      source => $time[$_] < $bs_start ? 'kadi' : 'backstop',
 		      ampl_p => $dither_ampl_p,
 		      ampl_y => $dither_ampl_y,
                       period_p => $dither_period_p,
@@ -147,7 +163,8 @@ sub dither {
                       tlmsid => $params[$_]->{TLMSID},
                   };
   }
-    return ($dither_time_violation, \@dither);
+
+    return (0, \@dither);
 }
 
 
