@@ -1229,10 +1229,13 @@ sub check_star_catalog {
 	    push @warn, sprintf("$alarm [%2d] Missing Star. No AGASC star near search center \n", $i);
 	}
 
-	# Warn if acquisition star has non-zero aspq1
-	push @yellow_warn, sprintf "$alarm [%2d] Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n", 
-	$i, $sid, $c->{"GS_ASPQ$i"} 
-	if ($type =~ /BOT|ACQ|GUI/ && defined $c->{"GS_ASPQ$i"} && $c->{"GS_ASPQ$i"} != 0);
+	# Warn if ASPQ1 is too large for nominal ACQ or GUI selection
+        if (($type =~ /BOT|ACQ|GUI/) and (defined $c->{"GS_ASPQ$i"})){
+            if ((($type =~ /BOT|GUI/) and ($c->{"GS_ASPQ$i"} > 20)) or
+                    (($type =~ /BOT|ACQ/) && ($c->{"GS_ASPQ$i"} > 40))){
+                push @orange_warn, sprintf "$alarm [%2d] Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n", 
+            }
+        }
 
 	my $obs_min_cnt = 2;
 	my $obs_bad_frac = 0.3;
