@@ -375,13 +375,13 @@ if ($manerr_file) {
 
 my $kadi_dither = get_dither_kadi_state($bs[0]->{date});
 # Read DITHER history file and backstop to determine expected dither state
-my ($dither_time_violation, $dither) = Ska::Parse_CM_File::dither($dither_file, \@bs, $kadi_dither);
+my ($dither_error, $dither) = Ska::Parse_CM_File::dither($dither_file, \@bs, $kadi_dither);
 
 my ($radmon_time_violation, $radmon) = Ska::Parse_CM_File::radmon($radmon_file, \@bs);
 
-# if dither history runs into load
-if ($dither_time_violation){
-    warning("Dither History runs into load\n");
+# if dither history runs into load or kadi mismatch
+if ($dither_error ne ""){
+    warning($dither_error);
 } 
 
 # if radmon history runs into load

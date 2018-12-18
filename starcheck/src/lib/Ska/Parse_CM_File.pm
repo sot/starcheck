@@ -96,8 +96,7 @@ sub dither {
 
     # Confirm that last state matches kadi continuity ENAB/DISA
     if ($kadi_dither->{'dither'} ne $dh_state[-1]){
-        print STDERR "Dither status in kadi commands does not match DITHER history\n";
-        return (1, undef);
+        return ("Dither status in kadi commands does not match DITHER history\n", undef);
     }
 
     my @state;
@@ -119,7 +118,7 @@ sub dither {
     # if the most recent/last entry in the dither file has a timestamp newer than
     # the first entry in the load, complain
     if ($dh_time[-1] >= $bs_arr->[0]->{time}){
-      return (1, undef);
+       return ("Dither history runs into load\n", undef);
     }
 
     # Now make an array of hashes as the final output.  Keep track of where the info
@@ -178,7 +177,7 @@ sub dither {
                       };
       }
   }
-    return (0, \@dither);
+    return ("", \@dither);
 }
 
 
