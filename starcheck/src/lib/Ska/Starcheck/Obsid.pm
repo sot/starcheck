@@ -2616,4 +2616,12 @@ sub set_ccd_temps{
         push @{$self->{fyi}}, sprintf("$info CCD temperature exceeds %.1f C\n",
                                        $config{ccd_temp_red_limit});
     }
+    if (($self->{ccd_temp} > -1.0) or ($self->{ccd_temp} < -16.0)){
+        push @{$self->{yellow_warn}}, sprintf(
+            ">> WARNING: t_ccd %.2f outside range -16.0 to -1.0. Clipped.",
+            $self->{ccd_temp});
+        $self->{ccd_temp} = $self->{ccd_temp}  >  -1.0  ? -1.0
+                          : $self->{ccd_temp} < -16.0  ? -16.0
+                          : $self->{ccd_temp};
+    }
 }
