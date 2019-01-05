@@ -771,7 +771,7 @@ sub check_dither {
             "$alarm Unable to determine dither from OR list\n";
     }
 
-    # If dither is anabled according to the OR, check that parameters match OR vs Backstop
+    # If dither is enabled according to the OR, check that parameters match OR vs Backstop
     if ((defined $or_val) and ($or_val eq 'ENAB')){
         my $y_amp = $self->{DITHER_Y_AMP} * 3600;
         my $z_amp = $self->{DITHER_Z_AMP} * 3600;
