@@ -708,20 +708,10 @@ sub check_dither {
     $self->{dither_acq} = $acq_dither;
     $self->{dither_guide} = $guide_dither;
 
-    # Check for standard and large dither
-    # This needs to be before the checking for dither during the observation, because the pad
-    # for that checking is set here
+    # Check for standard dither
     if ($guide_dither->{state} eq 'ENAB'){
         if ((not standard_dither($guide_dither)) or not standard_dither($acq_dither)){
             push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
-            if ($guide_dither->{ampl_y} > $large_dith_thresh or $guide_dither->{ampl_p} > $large_dith_thresh){
-                $self->large_dither_checks($guide_dither, $dthr);
-                # If this is a large dither, set a larger pad at the end, as we expect
-                # standard dither parameters to be commanded at 5 minutes before end,
-                # which is greater than the 3 minutes used in the "no dither changes
-                # during observation check below
-                $obs_end_pad = 5.5 * 60;
-            }
         }
         else{
             if (($guide_dither->{ampl_p} != $acq_dither->{ampl_p})
@@ -731,7 +721,19 @@ sub check_dither {
         }
     }
 
-    # Loop to check for dither changes during the observation
+    # Check for large dither.  If large dither present, run the large dither checks and set the obs_end_pad
+    if ($guide_dither->{state} eq 'ENAB'){
+        if ($guide_dither->{ampl_y} > $large_dith_thresh or $guide_dither->{ampl_p} > $large_dith_thresh){
+            $self->large_dither_checks($guide_dither, $dthr);
+            # If this is a large dither, set a larger pad at the end, as we expect
+            # standard dither parameters to be commanded at 5 minutes before end,
+            # which is greater than the 3 minutes used in the "no dither changes
+            # during observation check below
+            $obs_end_pad = 5.5 * 60;
+        }
+    }
+
+    # Check for dither changes during the observation
     # ACA-003
     if (not defined $obs_tstop ){
         push @{$self->{warn}},
