@@ -644,7 +644,10 @@ foreach my $obsid (@obsid_id) {
     if ($bs[0]->{time} > date2time('2017:043:00:00:00.000')){
         $obs{$obsid}->check_big_box_stars();
     }
-    $obs{$obsid}->make_figure_of_merit();
+    # Get the args that proseco would want
+    $obs{$obsid}->{'proseco_args'} = $obs{$obsid}->proseco_args();
+    $obs{$obsid}->set_proseco_probs();
+
 # Make sure there is only one star catalog per obsid
     warning ("More than one star catalog assigned to Obsid $obsid\n")
 	if ($obs{$obsid}->find_command('MP_STARCAT',2));

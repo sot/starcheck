@@ -72,7 +72,7 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
 };
 
 
-use List::Util qw(max min);
+use List::Util qw(min max);
 use Quat;
 use Ska::ACACoordConvert;
 use File::Basename;
@@ -81,7 +81,6 @@ use English;
 use IO::All;
 use Ska::Convert qw(date2time time2date);
 
-use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit set_dynamic_mag_limits );
 use RDB;
 
 use SQL::Abstract;
@@ -2178,14 +2177,10 @@ sub print_report {
     $o .= "\n";
 
     if (exists $self->{figure_of_merit}) {
-	my @probs = @{ $self->{figure_of_merit}->{cum_prob}};
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
 	$o .= "$red_font_start" if $bad_FOM;
-	$o .= "Probability of acquiring 2,3, and 4 or fewer stars (10^x):\t";
-        # override formatting to match pre-JSON strings
-        foreach (2..4) {
-            $o .= substr(sprintf("%.4f", "$probs[$_]"), 0, 6) . "\t";
-        }
+	$o .= "Probability of acquiring 2 or fewer stars (10^x):\t";
+        $o .= substr(sprintf("%.4f", $self->{figure_of_merit}->{cum_prob_2}), 0, 6) . "\t";
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
 	$o .= sprintf("Acquisition Stars Expected  : %.2f\n",
@@ -2686,14 +2681,192 @@ sub set_ccd_temps{
         push @{$self->{warn}}, sprintf("$alarm Using %s (planning limit) for t_ccd for mag limits\n",
                                        $config{ccd_temp_red_limit});
         $self->{ccd_temp} = $config{ccd_temp_red_limit};
+        $self->{ccd_temp_acq} = $config{ccd_temp_red_limit};
         return;
     }
     # set the temperature to the value for the current obsid
     $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
+    $self->{ccd_temp_acq} = $obsid_temps->{$self->{obsid}}->{ccd_temp_acq};
     $self->{n100_warm_frac} = $obsid_temps->{$self->{obsid}}->{n100_warm_frac};
     # add warnings for limit violations
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
         push @{$self->{fyi}}, sprintf("$info CCD temperature exceeds %.1f C\n",
                                        $config{ccd_temp_red_limit});
     }
+    if (($self->{ccd_temp_acq} > -1.0) or ($self->{ccd_temp_acq} < -16.0)){
+        push @{$self->{yellow_warn}}, sprintf(
+            ">> WARNING: acq t_ccd %.2f outside range -16.0 to -1.0. Clipped.",
+            $self->{ccd_temp_acq});
+        $self->{ccd_temp_acq} = $self->{ccd_temp_acq}  >  -1.0  ? -1.0
+                              : $self->{ccd_temp_acq}  < -16.0  ? -16.0
+                              : $self->{ccd_temp_acq};
+    }
 }
+
+use Inline Python => q{
+
+from proseco.acq import get_acq_catalog
+
+def calc_man_ang(q1, q2, q3, q4, initq1, initq2, initq3, initq4):
+    init_q = Quaternion.Quat([float(initq1), float(initq2), float(initq3), float(initq4)])
+    final_q = Quaternion.Quat([float(q1), float(q2), float(q3), float(q4)])
+    ang = float(np.degrees(2 * np.arccos(np.dot(init_q.q, final_q.q))))
+    ang = ang if ang <= 180 else 360 - ang
+    return ang
+
+
+def proseco_probs(kwargs):
+
+    kw = de_bytestr(kwargs)
+    acq_cat = get_acq_catalog(obsid=0, att=Quaternion.normalize([kw['q1'], kw['q2'], kw['q3'], kw['q4']]),
+                             n_acq=len(kw['acqs']), man_angle=kw['man_angle'], t_ccd=kw['t_ccd_acq'],
+                             date=kw['date'], dither=(kw['dither_acq_y'], kw['dither_acq_z']),
+                             detector=kw['detector'], sim_offset=kw['offset'],
+                             include_ids=kw['acqs'], include_halfws=kw['halfwidths'])
+    p_acqs = []
+    for acq in kw['acqs']:
+        if np.any(acq_cat['id'] == acq):
+            p_acqs.append(float(acq_cat['p_acq'][acq_cat['id'] == acq][0]))
+        else:
+            p_acqs.append(float(0.0))
+
+    return p_acqs, float(acq_cat.get_log_p_2_or_fewer()), float(np.sum(p_acqs))
+};
+
+
+
+sub proseco_args{
+
+    my $self = shift;
+    my %proseco_args;
+    my $targ_cmd = find_command($self, "MP_TARGQUAT");
+    my $cat_cmd = find_command($self, "MP_STARCAT");
+    if ((not $targ_cmd) or (not $cat_cmd)){
+        return \%proseco_args;
+    }
+    my $si = 'ACIS-S';
+    my $offset = 0;
+    if ($self->{obsid} < 38000){
+        $si = $self->{SI};
+        $offset = $self->{SIM_OFFSET_Z};
+    }
+    my $man_ang;
+    if (defined $targ_cmd->{initq1}){
+        $man_ang = calc_man_ang(
+            0 + $targ_cmd->{q1}, 0 + $targ_cmd->{q2},
+            0 + $targ_cmd->{q3}, 0 + $targ_cmd->{q4},
+            0 + $targ_cmd->{initq1}, 0 + $targ_cmd->{initq2},
+            0 + $targ_cmd->{initq3}, 0 + $targ_cmd->{initq4});
+    }
+
+    my @acq_ids;
+    my @acq_indexes;
+    my @gui_ids;
+    my @fid_ids;
+    my @halfwidths;
+    foreach my $i (1..16) {
+        if ($cat_cmd->{"TYPE$i"} =~ /BOT|ACQ/){
+            push @acq_ids, $cat_cmd->{"GS_ID$i"};
+            my $hw = $cat_cmd->{"HALFW$i"};
+            if (($hw > 180) or ($hw < 60)){
+                push @{$self->{yellow_warn}}, sprintf(
+                    ">> WARNING: [%2d] Halfwidth %d outside range 60 to 180. Clipped for probs.",
+                    $i, $hw);
+                # Clip hw if outside the range 60 to 180 for probabilities
+                $hw =   $hw < 60  ? 60
+                      : $hw > 180 ? 180
+                      : $hw ;
+            }
+            push @halfwidths, $hw;
+            push @acq_indexes, $i;
+        }
+        if ($cat_cmd->{"TYPE$i"} =~ /BOT|GUI/){
+            push @gui_ids, $cat_cmd->{"GS_ID$i"};
+        }
+        if ($cat_cmd->{"TYPE$i"} =~ /FID/){
+            push @fid_ids, $cat_cmd->{"GS_ID$i"};
+        }
+    }
+
+    %proseco_args = (
+        obsid => $self->{obsid},
+        date => $targ_cmd->{stop_date},
+        q1 => 0 + $targ_cmd->{q1}, q2 => 0 + $targ_cmd->{q2}, q3 => 0 + $targ_cmd->{q3}, q4 =>0 + $targ_cmd->{q4},
+        man_angle => $man_ang,
+        detector => $si, offset=> 0 + $offset,
+        dither_acq_y => $self->{dither_acq}->{ampl_y},
+        dither_acq_z => $self->{dither_acq}->{ampl_p},
+        dither_guide_y => $self->{dither_guide}->{ampl_y},
+        dither_guide_z => $self->{dither_guide}->{ampl_p},
+        t_ccd_acq => $self->{ccd_temp_acq},
+        t_ccd_guide => $self->{ccd_temp},
+        acqs => \@acq_ids,
+        halfwidths => \@halfwidths,
+        fids => \@fid_ids,
+        guides => \@gui_ids,
+        acq_indexes => \@acq_indexes);
+
+    return \%proseco_args
+
+}
+
+my $CUM_PROB_LIMIT = 0.008;
+
+sub set_proseco_probs{
+    my $self = shift;
+    my $cat_cmd = find_command($self, "MP_STARCAT");
+    my $args = $self->{proseco_args};
+    if ((not $cat_cmd)){
+        return
+    }
+    my ($p_acqs, $two_or_fewer, $expected) = proseco_probs($args);
+
+    my @acq_indexes = @{$args->{acq_indexes}};
+
+    # Assign those p_acqs to a slot hash and the catalog P_ACQ by index
+    my %slot_probs;
+    for my $idx (0 .. $#acq_indexes) {
+        my $i = $acq_indexes[$idx];
+        $cat_cmd->{"P_ACQ$i"} = $p_acqs->[$idx];
+        $slot_probs{$cat_cmd->{"IMNUM$i"}} = $p_acqs->[$idx];
+    }
+
+    $self->{acq_probs} = \%slot_probs;
+
+    $self->{figure_of_merit} = {expected => substr($expected, 0, 4),
+                                cum_prob_2 => $two_or_fewer,
+                                cum_prob_bad => ($two_or_fewer > $CUM_PROB_LIMIT)};
+    if ($two_or_fewer > $CUM_PROB_LIMIT){
+        push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $CUM_PROB_LIMIT\n";
+    }
+
+
+
+};
+
+
+
+use Inline Python => q{
+
+from chandra_aca.star_probs import mag_for_p_acq
+
+def _mag_for_p_acq(p_acq, date, t_ccd):
+    return mag_for_p_acq(p_acq, date.decode(), t_ccd)
+
+};
+
+
+
+sub set_dynamic_mag_limits{
+    my $c;
+    my $self = shift;
+    return unless ($c = $self->find_command("MP_STARCAT"));
+
+    my $date = $c->{date};
+    my $t_ccd = $self->{ccd_temp};
+    # Dynamic mag limits based on 75% and 50% chance of successful star acq
+    # Maximum limits of 10.3 and 10.6
+    $self->{mag_faint_yellow} = min(10.3, _mag_for_p_acq(0.75, $date, $t_ccd));
+    $self->{mag_faint_red} = min(10.6, _mag_for_p_acq(0.5, $date, $t_ccd));
+}
+
