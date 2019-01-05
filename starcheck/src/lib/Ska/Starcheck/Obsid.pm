@@ -799,8 +799,8 @@ sub standard_dither{
     my %standard_z_dither = (20 => 768.6,
                              8 => 707.1);
 
-    my $z_amp = int($dthr->{ampl_p} + .5);
-    my $y_amp = int($dthr->{ampl_y} + .5);
+    my $z_amp = int($dthr->{ampl_p} + 0.5);
+    my $y_amp = int($dthr->{ampl_y} + 0.5);
     # If the rounded amplitude is not in the standard set, return 0
     if (not (grep $_ eq $z_amp, (keys %standard_z_dither))){
         return 0;
