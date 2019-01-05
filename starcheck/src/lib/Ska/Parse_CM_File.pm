@@ -61,93 +61,122 @@ sub TLR_load_segments{
 
 
 ###############################################################
-sub dither { 
+sub dither {
+    # Takes dither history file, array of backstop commands, and a kadi dynamic states "state".
+    # The kadi dynamic states state is fetched/intended to be the state just before the first
+    # backstop command.  It is a reference to a hash with keys 'time', 'dither' (ENAB/DISA),
+    # 'dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw'.
+    #
+    # This routine:
+    # 1) confirms that the kadi state and the dither history file match with regard to
+    #    the dither enabled/disabled status at the very start of products.
+    # 2) confirms that the dither history file is readable and ends before the backstop starts
+    # 3) builds an array of dither states using the backstop commands, starting with the fully
+    #    determined state of the initial kadi dynamic state.
+    # 4) returns a string for error status and the array of dither states
 ###############################################################
     my $dh_file = shift;      # Dither history file name
     my $bs_arr = shift;               # Backstop array reference
+    my $kadi_dither = shift;
+
     my $bs;
-    my @bs_state;
-    my @bs_time;
-    my @bs_params;
+
+    my %dith_enab_cmd_map = ('DSDITH' => 'DISA',
+                             'ENDITH' => 'ENAB',
+                             'DITPAR' => undef);
+
     my @dh_state;
     my @dh_time;
     my @dh_params;
-    my %dith_cmd = ('DSDITH' => 'DISA', 
-		    'ENDITH' => 'ENAB', 
-		    'DITPAR' => undef);
-    my %obs;
-    # First get everything from backstop
-    foreach $bs (@{$bs_arr}) {
-	if ($bs->{cmd} =~ '(COMMAND_SW|MP_DITHER)') {
-	    my %params = %{$bs->{command}};
-	    if ($params{TLMSID} =~ 'AO(DSDITH|ENDITH|DITPAR)') {
-		push @bs_state, $dith_cmd{$1};
-		push @bs_time, $bs->{time};  # see comment below about timing
-		push @bs_params, { %params };
-	    }
-	}
-    }
-    
-    # Now get everything from DITHER
+
+    # First get everything from DITHER
     # Parse lines like:
     # 2002262.094827395   | DSDITH  AODSDITH
     # 2002262.095427395   | ENDITH  AOENDITH
-    my $dith_hist_fh = IO::File->new($dh_file, "r") or return (undef, undef); 
-	while (<$dith_hist_fh>) {
+    my $dith_hist_fh = IO::File->new($dh_file, "r") or return ("Dither history file read err", undef);
+        while (<$dith_hist_fh>) {
 	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (ENDITH|DSDITH)/x) {
 		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
 		my $time = date2time("$yr:$doy:$hr:$min:$sec");
-		push @dh_state, $dith_cmd{$state};
+		push @dh_state, $dith_enab_cmd_map{$state};
 		push @dh_time, $time;
 		push @dh_params, {};
 	    }
           }
 	$dith_hist_fh->close();
-    
-    my @ok = grep { $dh_time[$_] < $bs_arr->[0]->{time} } (0 .. $#dh_time);
-    my @state = (@dh_state[@ok], @bs_state);
-    my @time   = (@dh_time[@ok], @bs_time);
-    my @params = (@dh_params[@ok], @bs_params);
 
-    # if the most recent/last entry in the dither file has a timestamp newer than
-    # the first entry in the load
-    my $dither_time_violation = ($dh_time[-1] >= $bs_arr->[0]->{time});
-    if ($dither_time_violation){
-      return ($dither_time_violation, undef);
+    # If the most recent/last entry in the dither file has a timestamp newer than
+    # the first entry in the load, return string error and undef dither history.
+    if ($dh_time[-1] >= $bs_arr->[0]->{time}){
+       return ("Dither history runs into load\n", undef);
     }
 
+    # Confirm that last state matches kadi continuity ENAB/DISA.
+    # Otherwise, return string error and undef dither history.
+    if ($kadi_dither->{'dither'} ne $dh_state[-1]){
+        return ("Dither status in kadi commands does not match DITHER history\n", undef);
+    }
+
+
+
     # Now make an array of hashes as the final output.  Keep track of where the info
-    # came from to assist in debugging.
+    # came from to assist in debugging ('source' key)
     my @dither;
     my $bs_start = $bs_arr->[0]->{time};
     my $r2a = 3600. * 180. / 3.14159265;
     my $pi = 3.14159265;
 
-    my $dither_state;
-    my $dither_ampl_p;
-    my $dither_ampl_y;
-    my $dither_period_p;
-    my $dither_period_y;
- 
-    foreach (0 .. $#state) {
-      $dither_state = $state[$_] if defined $state[$_];
-      $dither_ampl_p = $params[$_]->{COEFP} * $r2a if defined $params[$_]->{COEFP};
-      $dither_ampl_y = $params[$_]->{COEFY} * $r2a if defined $params[$_]->{COEFY};
-      $dither_period_p = 1 / ($params[$_]->{RATEP} / (2 * $pi))
-         if defined $params[$_]->{RATEP};
-      $dither_period_y = 1 / ($params[$_]->{RATEY} / (2 * $pi))
-         if defined $params[$_]->{RATEP};
-      push @dither, { time => $time[$_],
-		      state => $dither_state,
-		      source => $time[$_] < $bs_start ? 'history' : 'backstop',
-		      ampl_p => $dither_ampl_p,
-		      ampl_y => $dither_ampl_y,
-                      period_p => $dither_period_p,
-                      period_y => $dither_period_y,
-                      tlmsid => $params[$_]->{TLMSID},
-                  };
-  }
-    return ($dither_time_violation, \@dither);
+
+    my $dither_enab = $kadi_dither->{'dither'};
+    my $dither_ampl_p = $kadi_dither->{'dither_ampl_pitch'};
+    my $dither_ampl_y = $kadi_dither->{'dither_ampl_yaw'};
+    my $dither_period_p = $kadi_dither->{'dither_period_pitch'};
+    my $dither_period_y = $kadi_dither->{'dither_period_yaw'};
+
+    push @dither, { 'time' => $kadi_dither->{'time'},
+                    'state' => $dither_enab,
+                    'source' => 'kadi',
+                    'ampl_p' => $dither_ampl_p,
+                    'ampl_y' => $dither_ampl_y,
+                    'period_p' => $dither_period_p,
+                    'period_y' => $dither_period_y};
+
+
+
+    # Build dither states using just kadi initial state and backstop cmds
+    foreach $bs (@{$bs_arr}) {
+        # Skip all commands except ones that could be dither related
+	if ($bs->{cmd} =~ '(COMMAND_SW|MP_DITHER)') {
+	    my %params = %{$bs->{command}};
+	    if ($params{TLMSID} =~ 'AO(DSDITH|ENDITH|DITPAR)') {
+                my $dith_string = $1;
+                # The "if defined" logic for each means that the AODITPAR does not
+                # change the dither-enabled status, and the AOENDITH, does not change
+                # the dither parameters...
+                $dither_enab = $dith_enab_cmd_map{$dith_string}
+                    if defined $dith_enab_cmd_map{$dith_string};
+                $dither_ampl_p = $params{COEFP} * $r2a if defined $params{COEFP};
+                $dither_ampl_y = $params{COEFY} * $r2a if defined $params{COEFY};
+                $dither_period_p = 1 / ($params{RATEP} / (2 * $pi))
+                    if defined $params{RATEP};
+                $dither_period_y = 1 / ($params{RATEY} / (2 * $pi))
+                    if defined $params{RATEP};
+                # If disabled, reset the amplitudes to be 0.  The params may be nonzero onboard
+                # but we're more interested in the effective amplitudes for starcheck.
+                push @dither, { time => $bs->{time},
+                                state => $dither_enab,
+                                source => 'backstop',
+                                ampl_p => $dither_enab eq 'DISA' ? 0 : $dither_ampl_p,
+                                ampl_y => $dither_enab eq 'DISA' ? 0 : $dither_ampl_y,
+                                ampl_y => $dither_ampl_y,
+                                period_p => $dither_period_p,
+                                period_y => $dither_period_y,
+                                tlmsid => $params{TLMSID},
+                            };
+            }
+        }
+    }
+    return ("", \@dither);
 }
 
 
