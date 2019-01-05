@@ -62,6 +62,15 @@ sub make_figure_of_merit{
             my $spoiler = grep(/Search spoiler/i, @warnings) ? 1 : 0;
             my $color = $c->{"GS_BV$i"};
             my $hw = $c->{"HALFW$i"};
+            if (($hw > 180) or ($hw < 60)){
+                push @{$self->{yellow_warn}}, sprintf(
+                    ">> WARNING: [%2d] Halfwidth %d outside range 60 to 180. Clipped in model.",
+                    $i, $hw);
+                # Clip hw if outside the range 60 to 180 for probabilities
+                $hw =   $hw < 60  ? 60
+                      : $hw > 180 ? 180
+                      : $hw ;
+            }
             my $star_prob = _acq_success_prob($date, $t_ccd, $mag, $color, $spoiler, $hw);
 	    push @probs, $star_prob;
             $slot_probs{$c->{"IMNUM$i"}} = $star_prob;
