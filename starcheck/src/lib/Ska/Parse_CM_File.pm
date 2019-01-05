@@ -64,7 +64,9 @@ sub TLR_load_segments{
 sub dither {
     # Takes dither history file, array of backstop commands, and a kadi dynamic states "state".
     # The kadi dynamic states state is fetched/intended to be the state just before the first
-    # backstop command.
+    # backstop command.  It is a reference to a hash with keys 'time', 'dither' (ENAB/DISA),
+    # 'dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw'.
+    #
     # This routine:
     # 1) confirms that the kadi state and the dither history file match with regard to
     #    the dither enabled/disabled status at the very start of products.
