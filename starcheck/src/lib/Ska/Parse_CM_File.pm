@@ -61,7 +61,17 @@ sub TLR_load_segments{
 
 
 ###############################################################
-sub dither { 
+sub dither {
+    # Takes dither history file, array of backstop commands, and a kadi dynamic states "state".
+    # The kadi dynamic states state is fetched/intended to be the state just before the first
+    # backstop command.
+    # This routine:
+    # 1) confirms that the kadi state and the dither history file match with regard to
+    #    the dither enabled/disabled status at the very start of products.
+    # 2) confirms that the dither history file is readable and ends before the backstop starts
+    # 3) builds an array of dither states using the backstop commands, starting with the fully
+    #    determined state of the initial kadi dynamic state.
+    # 4) returns a string for error status and the array of dither states
 ###############################################################
     my $dh_file = shift;      # Dither history file name
     my $bs_arr = shift;               # Backstop array reference
