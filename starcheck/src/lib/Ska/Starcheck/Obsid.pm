@@ -2027,9 +2027,13 @@ sub print_report {
 
             my $acq_prob = "";
             if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
-                my $prob = $self->{acq_probs}->{$c->{"IMNUM${i}"}};
-                $acq_prob = sprintf("Prob Acq Success %5.3f", $prob);
-
+                if (defined $self->{acq_probs}->{$c->{"IMNUM${i}"}}){
+                    my $prob = $self->{acq_probs}->{$c->{"IMNUM${i}"}};
+                    $acq_prob = sprintf("Prob Acq Success %5.3f", $prob);
+                }
+                else{
+                    $acq_prob = sprintf("Prob Acq Success 0.0");
+                }
             }
             # Make the id a URL if there is star history or if star history could
             # not be checked (no db_handle)
@@ -2753,9 +2757,25 @@ sub proseco_args{
     my @gui_ids;
     my @fid_ids;
     my @halfwidths;
+  IDX:
     foreach my $i (1..16) {
+        (my $sid  = $cat_cmd->{"GS_ID$i"}) =~ s/[\s\*]//g;
+        # If there is no star there is nothing for proseco probs to do so skip it.
+        # But warn if it was a thing that should have had an id (BOT/ACQ/GUI).
+        if ($sid eq '---'){
+            if ($cat_cmd->{"TYPE$i"} =~ /BOT|ACQ|GUI/){
+                push @{$self->{warn}}, sprintf(
+                    ">> WARNING: [%2d] Could not calculate acq prob for star with no id.", $i);
+            }
+            next IDX;
+        }
+        $sid = int($sid);
+        ## Strip off asterisk if present (there's probably a cleaner Perl way to do this).
+        #if ($sid =~ /\*(\d+)/){
+        #    $sid = $1;
+        #}
         if ($cat_cmd->{"TYPE$i"} =~ /BOT|ACQ/){
-            push @acq_ids, $cat_cmd->{"GS_ID$i"};
+            push @acq_ids, $sid;;
             my $hw = $cat_cmd->{"HALFW$i"};
             if (($hw > 180) or ($hw < 60)){
                 push @{$self->{yellow_warn}}, sprintf(
@@ -2770,10 +2790,10 @@ sub proseco_args{
             push @acq_indexes, $i;
         }
         if ($cat_cmd->{"TYPE$i"} =~ /BOT|GUI/){
-            push @gui_ids, $cat_cmd->{"GS_ID$i"};
+            push @gui_ids, $sid;
         }
         if ($cat_cmd->{"TYPE$i"} =~ /FID/){
-            push @fid_ids, $cat_cmd->{"GS_ID$i"};
+            push @fid_ids, $sid;
         }
     }
 
@@ -2805,8 +2825,9 @@ sub set_proseco_probs{
     my $self = shift;
     my $cat_cmd = find_command($self, "MP_STARCAT");
     my $args = $self->{proseco_args};
-    if ((not $cat_cmd)){
-        return
+
+    if (not %{$args}){
+        return;
     }
     my ($p_acqs, $two_or_fewer, $expected) = proseco_probs($args);
 
@@ -2828,10 +2849,7 @@ sub set_proseco_probs{
     if ($two_or_fewer > $CUM_PROB_LIMIT){
         push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $CUM_PROB_LIMIT\n";
     }
-
-
-
-};
+}
 
 
 
