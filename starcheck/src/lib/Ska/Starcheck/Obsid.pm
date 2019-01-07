@@ -2707,13 +2707,6 @@ use Inline Python => q{
 
 from proseco.acq import get_acq_catalog
 
-def calc_man_ang(q1, q2, q3, q4, initq1, initq2, initq3, initq4):
-    init_q = Quaternion.Quat([float(initq1), float(initq2), float(initq3), float(initq4)])
-    final_q = Quaternion.Quat([float(q1), float(q2), float(q3), float(q4)])
-    ang = float(np.degrees(2 * np.arccos(np.dot(init_q.q, final_q.q))))
-    ang = ang if ang <= 180 else 360 - ang
-    return ang
-
 
 def proseco_probs(kwargs):
 
@@ -2750,13 +2743,9 @@ sub proseco_args{
         $si = $self->{SI};
         $offset = $self->{SIM_OFFSET_Z};
     }
-    my $man_ang;
-    if (defined $targ_cmd->{initq1}){
-        $man_ang = calc_man_ang(
-            0 + $targ_cmd->{q1}, 0 + $targ_cmd->{q2},
-            0 + $targ_cmd->{q3}, 0 + $targ_cmd->{q4},
-            0 + $targ_cmd->{initq1}, 0 + $targ_cmd->{initq2},
-            0 + $targ_cmd->{initq3}, 0 + $targ_cmd->{initq4});
+    my $man_ang = 90;
+    if (defined $targ_cmd->{angle}){
+        $man_ang = $targ_cmd->{angle};
     }
 
     my @acq_ids;
