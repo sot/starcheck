@@ -694,6 +694,11 @@ sub check_dither {
     my $obs_tstart = $self->{obs_tstart};
     my $obs_tstop = $self->{obs_tstop};
 
+    unless (defined $obs_tstart){
+        push @{$self->{warn}}, "$alarm Cannot determine obs start time for dither. \n";
+        return;
+    }
+
     # Determine guide dither by finding the last dither commanding before
     # the start of observation (+ 8 minutes)
     my $guide_dither;
