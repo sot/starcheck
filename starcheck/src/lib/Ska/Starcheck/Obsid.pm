@@ -2738,7 +2738,7 @@ sub proseco_args{
     my %proseco_args;
     my $targ_cmd = find_command($self, "MP_TARGQUAT", -1);
     my $cat_cmd = find_command($self, "MP_STARCAT");
-    if ((not $targ_cmd) or (not $cat_cmd)){
+    if ((not $targ_cmd) or (not $cat_cmd) or ($self->{obsid} =~ /NONE(\d+)/)){
         return \%proseco_args;
     }
     my $si = 'ACIS-S';
