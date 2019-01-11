@@ -23,13 +23,46 @@ use warnings;
 
 use Inline Python => q{
 import numpy as np
+from astropy.table import Table
+
+from mica.archive import aca_dark
 from chandra_aca.star_probs import guide_count
+from chandra_aca.transform import yagzag_to_pixels, count_rate_to_mag
 import Quaternion
 from Ska.quatutil import radec2yagzag
 import agasc
 
+from proseco.core import ACABox
+from proseco.guide import get_imposter_mags
+
 def _guide_count(mags, t_ccd):
     return float(guide_count(np.array(mags), t_ccd))
+
+def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z, dmag=1.0):
+
+    dark = aca_dark.get_dark_cal_image(date=date.decode('ascii'),
+                                           t_ccd_ref=float(t_ccd), aca_image=True)
+
+    guide_stars = []
+    for i, y, z, mag, ctype in zip(idxs, yags, zags, mags, types):
+        ctype = ctype.decode('ascii')
+        if ctype == 'BOT' or ctype == 'GUI':
+            star_row, star_col = yagzag_to_pixels(float(y), float(z))
+            guide_stars.append({'row': star_row,
+                               'col': star_col,
+                               'mag': mag,
+                               'i': i})
+
+    guide_stars = Table(guide_stars)
+    imp_mags, imp_rows, imp_cols = get_imposter_mags(guide_stars, dark, ACABox((dither_y, dither_z)))
+
+    fails = []
+    for star, imp_mag, r, c in zip(guide_stars, imp_mags, imp_rows, imp_cols):
+        if imp_mag < (star['mag'] + dmag):
+             fails.append({'i': int(star['i']), 'star_row': float(star['row']), 'star_col': float(star['col']),
+                           'bad2_row': float(r), 'bad2_col': float(c), 'bad2_mag': float(imp_mag)})
+
+    return fails
 
 
 def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
@@ -195,10 +228,8 @@ sub set_ACA_bad_pixels {
     my $pixel_file = shift;
     my @tmp = io($pixel_file)->slurp;
     my @lines = grep { /^\s+(\d|-)/ } @tmp;
-    splice(@lines, 0, 2); # the first two lines are quadrant boundaries
     foreach (@lines) {
 	my @line = split /;|,/, $_;
-	#cut out the quadrant boundaries
 	foreach my $i ($line[0]..$line[1]) {
 	    foreach my $j ($line[2]..$line[3]) {
 		my $pixel = {'row' => $i,
@@ -1238,6 +1269,31 @@ sub check_star_catalog {
 
     # store a list of the fid positions
     my @fid_positions = map {{'y' => $c->{"YANG$_"}, 'z' => $c->{"ZANG$_"}}} @{$self->{fid}};
+
+
+    # Make arrays of the items that we need for the hot pixel region check
+    my (@idxs, @yags, @zags, @mags, @types);
+    foreach my $i (1..16){
+        if ($c->{"TYPE$i"} =~ /BOT|GUI|FID/){
+            push @idxs, $i;
+            push @yags, $c->{"YANG$i"};
+            push @zags, $c->{"ZANG$i"};
+            # Add zero to get items that look more like float values in the arrays
+            push @mags, ($c->{"GS_MAG$i"} eq '---') ? 13.94 : $c->{"GS_MAG$i"} + 0.0;
+            push @types, $c->{"TYPE$i"};
+        }
+    }
+
+    # Run the hot pixel region check on the Python side on FID|GUI|BOT
+    my @imposters = check_hot_pix(\@idxs, \@yags, \@zags, \@mags, \@types,
+                                   $self->{ccd_temp}, $self->{date}, $dither_guide_y, $dither_guide_z);
+    # Assign warnings based on those hot pixel region checks
+    for my $imposter (@imposters){
+        push @warn, sprintf(
+            "$alarm [%2d] Imposter 2x2. psmag %.1f (row % 4d, col % 4d) star (% 4d, % 4d) \n",
+        $imposter->{i}, $imposter->{bad2_mag}, $imposter->{bad2_row}, $imposter->{bad2_col},
+        $imposter->{star_row}, $imposter->{star_col});
+    }
 
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
