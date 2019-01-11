@@ -168,7 +168,6 @@ sub dither {
                                 source => 'backstop',
                                 ampl_p => $dither_enab eq 'DISA' ? 0 : $dither_ampl_p,
                                 ampl_y => $dither_enab eq 'DISA' ? 0 : $dither_ampl_y,
-                                ampl_y => $dither_ampl_y,
                                 period_p => $dither_period_p,
                                 period_y => $dither_period_y,
                                 tlmsid => $params{TLMSID},
