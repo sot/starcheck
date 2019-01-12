@@ -728,11 +728,10 @@ sub check_dither {
         if ((not standard_dither($guide_dither)) or not standard_dither($acq_dither)){
             push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
         }
-        else{
-            if (($guide_dither->{ampl_p} != $acq_dither->{ampl_p})
-                    or ($guide_dither->{ampl_y} != $acq_dither->{ampl_y})){
-                push @{$self->{yellow_warn}}, "$alarm Dither changes between ACQ and GUI \n";
-            }
+        if (($guide_dither->{ampl_p} != $acq_dither->{ampl_p})
+                or ($guide_dither->{ampl_y} != $acq_dither->{ampl_y})){
+            push @{$self->{yellow_warn}}, sprintf("$alarm Reviewed with ACQ dither Y=%.1f Z=%.1f \n",
+                                                  $acq_dither->{ampl_y}, $acq_dither->{ampl_p});
         }
     }
 
