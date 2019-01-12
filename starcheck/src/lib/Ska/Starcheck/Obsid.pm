@@ -1183,26 +1183,7 @@ sub check_star_catalog {
     
     ########################################################################
     # Constants used in star catalog checks
-    my $y_ang_min    =-2410;	# CCD boundaries in arcsec
-    my $y_ang_max    = 2473;
-    my $z_ang_min    =-2504;
-    my $z_ang_max    = 2450;
 
-    # For boundary checks in pixel coordinates
-    # see /proj/sot/ska/acaflt/quad_limits_sausage.* for more info
-    my $ccd_row_min = -512.5;
-    my $ccd_row_max =  511.5;
-    my $ccd_col_min = -512.5;
-    my $ccd_col_max =  511.5;
-
-    my $pix_window_pad = 7; # half image size + point uncertainty + ? + 1 pixel of margin
-    my $pix_row_pad = 8; # min pad at row limits (pixels) [ACA requirement]
-    my $pix_col_pad = 1; # min pad at col limits (pixels) [because outer col is not full-sized]
-
-    my $row_min = $ccd_row_min + ($pix_row_pad + $pix_window_pad);
-    my $row_max = $ccd_row_max - ($pix_row_pad + $pix_window_pad);
-    my $col_min = $ccd_col_min + ($pix_col_pad + $pix_window_pad);
-    my $col_max = $ccd_col_max - ($pix_col_pad + $pix_window_pad);
 
     # Rough angle / pixel scale for dither
     my $ang_per_pix = 5;
@@ -1239,11 +1220,6 @@ sub check_star_catalog {
     my $min_fid      = 3;
     ########################################################################
 
-    # Set smallest maximums and largest minimums for rectangle edges
-    my $max_y = $y_ang_min;
-    my $min_y = $y_ang_max;
-    my $max_z = $z_ang_min;
-    my $min_z = $z_ang_max;
 
 
     my @warn = ();
@@ -1370,6 +1346,12 @@ sub check_star_catalog {
             push @orange_warn, $warn;
         }
     }
+
+    # Seed smallest maximums and largest minimums for guide star box
+    my $max_y = 3000;
+    my $min_y = -3000;
+    my $max_z = 3000;
+    my $min_z = -3000;
 
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
@@ -1501,22 +1483,45 @@ sub check_star_catalog {
 	    }
 	}
 	else{
-            my $guide_edge_delta = min(($row_max - $dither_guide_y / $ang_per_pix) - $pixel_row,
-                                       $pixel_row - ($row_min + $dither_guide_y / $ang_per_pix),
-                                       ($col_max - $dither_guide_z / $ang_per_pix) - $pixel_col,
-                                       $pixel_col - ($col_min + $dither_guide_z / $ang_per_pix));
-            my $acq_edge_delta = min(($row_max - $dither_acq_y / $ang_per_pix) - $pixel_row,
-                                     $pixel_row - ($row_min + $dither_acq_y / $ang_per_pix),
-                                     ($col_max - $dither_acq_z / $ang_per_pix) - $pixel_col,
-                                     $pixel_col - ($col_min + $dither_acq_z / $ang_per_pix));
-            if (($type =~ /BOT|GUI|FID/) and ($guide_edge_delta < 0)){
-                push @warn,sprintf "$alarm [%2d] Off (padded) CCD.\n",$i;
+            my $pix_window_pad = 7; # half image size + point uncertainty + ? + 1 pixel of margin
+            my $pix_row_pad = 8;
+            my $pix_col_pad = 1;
+            my $row_lim = 512.0 - ($pix_row_pad + $pix_window_pad);
+            my $col_lim = 512.0 - ($pix_col_pad + $pix_window_pad);
+
+            my %guide_limits = ('row' => $row_lim - $dither_guide_y / $ang_per_pix,
+                                'col' => $col_lim - $dither_guide_z / $ang_per_pix);
+
+            my %pixel = ('row' => $pixel_row,
+                         'col' => $pixel_col);
+            my %pixel_sign = ('row' => ($pixel_row < 0) ? -1 : 1,
+                              'col' => ($pixel_col < 0) ? -1 : 1);
+
+            if ($type =~ /BOT|GUI|FID/){
+                foreach my $lim ('row', 'col'){
+                    my $guide_delta = abs($guide_limits{$lim}) - abs($pixel{$lim});
+                    if ($guide_delta < 0){
+                        push @warn, sprintf "$alarm [%2d] Off (padded) CCD $lim lim %.1f val %.1f delta %.1f\n",
+                            $i, $pixel_sign{$lim} * $guide_limits{$lim}, $guide_delta;
+                    }
+                    elsif ($guide_delta < 3){
+                        push @orange_warn, sprintf "$alarm [%2d] Within 3 pix of CCD $lim lim %.1f val %.1f delta %.1f\n",
+                            $i, $pixel_sign{$lim} * $guide_limits{$lim}, $pixel{$lim}, $guide_delta;
+                    }
+                    elsif ($guide_delta < 6){
+                        push @yellow_warn, sprintf "$alarm [%2d] Within 6 pix of CCD $lim lim %.1f val %.1f delta %.1f\n",
+                            $i, $pixel_sign{$lim} * $guide_limits{$lim}, $pixel{$lim}, $guide_delta;
+                    }
+                }
+            }
+
+            my $acq_edge_delta = min(($row_lim - $dither_acq_y / $ang_per_pix) - abs($pixel_row),
+                                     ($col_lim - $dither_acq_z / $ang_per_pix) - abs($pixel_col));
+            if (($type eq 'ACQ') and ($acq_edge_delta < 0)){
+                push @yellow_warn,sprintf "$alarm [%2d] Off (padded) CCD.\n",$i;
             }
             elsif (($type eq 'ACQ') and ($acq_edge_delta < (-1 * 12))){
                 push @orange_warn,sprintf "$alarm [%2d] Off (padded) CCD by > 60 arcsec.\n",$i;
-            }
-            elsif (($type eq 'ACQ') and ($acq_edge_delta < 0)){
-                push @yellow_warn,sprintf "$alarm [%2d] Off (padded) CCD.\n",$i;
             }
         }
 
