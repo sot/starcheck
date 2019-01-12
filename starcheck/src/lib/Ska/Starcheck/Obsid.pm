@@ -720,6 +720,8 @@ sub check_dither {
 
     $self->{dither_acq} = $acq_dither;
     $self->{dither_guide} = $guide_dither;
+    $self->{dither_guide_y_max} = $guide_dither->{ampl_y};
+    $self->{dither_guide_z_max} = $guide_dither->{ampl_p};
 
     # Check for standard dither
     if ($guide_dither->{state} eq 'ENAB'){
@@ -754,6 +756,10 @@ sub check_dither {
     }
     else{
         foreach my $dither (reverse @{$dthr}) {
+            if ($dither->{time} < $obs_tstop){
+                $self->{dither_guide_z_max} = max(($dither->{ampl_p}, $self->{dither_guide_z_max}));
+                $self->{dither_guide_y_max} = max(($dither->{ampl_y}, $self->{dither_guide_y_max}));
+            }
             if ($dither->{time} > ($obs_tstart + $obs_beg_pad)
                     && $dither->{time} <= $obs_tstop - $obs_end_pad) {
                 push @{$self->{warn}}, "$alarm Dither commanding at $dither->{time}.  During observation.\n";
@@ -764,8 +770,11 @@ sub check_dither {
         }
     }
 
-
-
+    if (($self->{dither_guide_y_max} != $self->{dither_guide}->{ampl_y})
+            or ($self->{dither_guide_z_max} != $self->{dither_guide}->{ampl_p})){
+        push @{$self->{yellow_warn}}, sprintf("$alarm Max Y Z ampl during guide used for checking Y=%.1f Z=%.1f \n",
+                                              $self->{dither_guide_y_max} + 0.0, $self->{dither_guide_z_max} + 0.0);
+    }
 
     # For eng obs, don't have OR to specify dither, so stop before doing vs-OR comparisons
     if ( $self->{obsid} =~ /^\d*$/){
@@ -1172,9 +1181,9 @@ sub check_star_catalog {
 	$dither_acq_z = 20.0;
     }
 
-    if (defined $self->{dither_guide}){
-	$dither_guide_y = $self->{dither_guide}->{ampl_y};
-        $dither_guide_z = $self->{dither_guide}->{ampl_p};
+    if (defined $self->{dither_guide}->{ampl_y_max}){
+	$dither_guide_y = $self->{dither_guide}->{ampl_y_max};
+        $dither_guide_z = $self->{dither_guide}->{ampl_p_max};
     } else {
 	$dither_guide_y = 20.0;
 	$dither_guide_z = 20.0;
