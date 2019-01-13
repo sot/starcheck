@@ -42,25 +42,22 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
 
     dark = aca_dark.get_dark_cal_image(date=date.decode('ascii'),
                                            t_ccd_ref=float(t_ccd), aca_image=True)
-
-    guide_stars = []
+    fails = []
     for i, y, z, mag, ctype in zip(idxs, yags, zags, mags, types):
         ctype = ctype.decode('ascii')
-        if ctype == 'BOT' or ctype == 'GUI':
-            star_row, star_col = yagzag_to_pixels(float(y), float(z))
-            guide_stars.append({'row': star_row,
-                               'col': star_col,
-                               'mag': mag,
-                               'i': i})
-
-    guide_stars = Table(guide_stars)
-    imp_mags, imp_rows, imp_cols = get_imposter_mags(guide_stars, dark, ACABox((dither_y, dither_z)))
-
-    fails = []
-    for star, imp_mag, r, c in zip(guide_stars, imp_mags, imp_rows, imp_cols):
-        if imp_mag < (star['mag'] + dmag):
-             fails.append({'i': int(star['i']), 'star_row': float(star['row']), 'star_col': float(star['col']),
-                           'bad2_row': float(r), 'bad2_col': float(c), 'bad2_mag': float(imp_mag)})
+        if ctype in ['BOT', 'GUI', 'FID']:
+            if ctype in ['BOT', 'GUI']:
+                dither = ACABox((float(dither_y), float(dither_z)))
+            else:
+                dither = ACABox((5.0, 5.0))
+            row, col = yagzag_to_pixels(float(y), float(z))
+            entry = Table([{'i': int(i), 'row': row, 'col': col, 'mag': float(mag), 'type': ctype}])
+            imp_mags, imp_rows, imp_cols = get_imposter_mags(entry, dark, dither)
+            if imp_mags[0] < (entry['mag'] + dmag):
+                fails.append({'i': int(entry['i']),
+                              'entry_row': float(entry['row']), 'entry_col': float(entry['col']),
+                              'bad2_row': float(imp_rows[0]), 'bad2_col': float(imp_cols[0]),
+                              'bad2_mag': float(imp_mags[0])})
 
     return fails
 
@@ -1292,7 +1289,7 @@ sub check_star_catalog {
         push @warn, sprintf(
             "$alarm [%2d] Imposter 2x2. psmag %.1f (row % 4d, col % 4d) star (% 4d, % 4d) \n",
         $imposter->{i}, $imposter->{bad2_mag}, $imposter->{bad2_row}, $imposter->{bad2_col},
-        $imposter->{star_row}, $imposter->{star_col});
+        $imposter->{entry_row}, $imposter->{entry_col});
     }
 
     foreach my $i (1..16) {
