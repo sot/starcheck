@@ -695,7 +695,7 @@ sub check_dither {
     my $obs_tstop = $self->{obs_tstop};
 
     unless (defined $obs_tstart){
-        push @{$self->{warn}}, "$alarm Cannot determine obs start time for dither. \n";
+        push @{$self->{warn}}, "$alarm Cannot determine obs start time for dither, not checking.\n";
         return;
     }
 
