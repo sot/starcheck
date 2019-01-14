@@ -2699,12 +2699,9 @@ def proseco_probs(kwargs):
                              date=kw['date'], dither=(kw['dither_acq_y'], kw['dither_acq_z']),
                              detector=kw['detector'], sim_offset=kw['offset'],
                              include_ids=kw['acqs'], include_halfws=kw['halfwidths'])
-    p_acqs = []
-    for acq in kw['acqs']:
-        if np.any(acq_cat['id'] == acq):
-            p_acqs.append(float(acq_cat['p_acq'][acq_cat['id'] == acq][0]))
-        else:
-            p_acqs.append(float(0.0))
+
+    # Assign the proseco probabilities back into an array.
+    p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq][0]) for acq in kw['acqs']]
 
     return p_acqs, float(acq_cat.get_log_p_2_or_fewer()), float(np.sum(p_acqs))
 };
@@ -2725,10 +2722,6 @@ sub proseco_args{
     if ($self->{obsid} < 38000){
         $si = $self->{SI};
         $offset = $self->{SIM_OFFSET_Z};
-    }
-    my $man_ang = 90;
-    if (defined $targ_cmd->{angle}){
-        $man_ang = $targ_cmd->{angle};
     }
 
     my @acq_ids;
@@ -2780,7 +2773,7 @@ sub proseco_args{
         obsid => $self->{obsid},
         date => $targ_cmd->{stop_date},
         q1 => 0 + $targ_cmd->{q1}, q2 => 0 + $targ_cmd->{q2}, q3 => 0 + $targ_cmd->{q3}, q4 =>0 + $targ_cmd->{q4},
-        man_angle => $man_ang,
+        man_angle => 0 + $targ_cmd->{angle},
         detector => $si, offset=> 0 + $offset,
         dither_acq_y => $self->{dither_acq}->{ampl_y},
         dither_acq_z => $self->{dither_acq}->{ampl_p},
