@@ -1933,7 +1933,9 @@ sub print_report {
     if ( ( defined $self->{ra} ) and (defined $self->{dec}) and (defined $self->{roll})){
 	$o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     }
-    if (defined $self->{dither_guide}){
+    # This 'defined' check has been changed to be a test on the amplitude.  It looks like for the undefined
+    # case such as replan, this {dither_guide} is set but is an empty hash ref.
+    if (defined $self->{dither_guide}->{ampl_y}){
         my $z_amp = int($self->{dither_guide}->{ampl_p} + .5);
         my $y_amp = int($self->{dither_guide}->{ampl_y} + .5);
         if ($self->{dither_guide}->{state} eq 'ENAB'){
