@@ -730,8 +730,8 @@ sub check_dither {
         }
         if (($guide_dither->{ampl_p} != $acq_dither->{ampl_p})
                 or ($guide_dither->{ampl_y} != $acq_dither->{ampl_y})){
-            push @{$self->{yellow_warn}}, sprintf("$alarm Reviewed with ACQ dither Y=%.1f Z=%.1f \n",
-                                                  $acq_dither->{ampl_y}, $acq_dither->{ampl_p});
+            push @{$self->{fyi}}, sprintf("$info Reviewed with ACQ dither Y=%.1f Z=%.1f \n",
+                                          $acq_dither->{ampl_y}, $acq_dither->{ampl_p});
         }
     }
 
@@ -771,9 +771,9 @@ sub check_dither {
 
     if (($self->{dither_guide}->{ampl_y_max} != $self->{dither_guide}->{ampl_y})
             or ($self->{dither_guide}->{ampl_p_max} != $self->{dither_guide}->{ampl_p})){
-        push @{$self->{yellow_warn}}, sprintf("$alarm Max Y Z ampl during guide used for checking Y=%.1f Z=%.1f \n",
-                                              $self->{dither_guide}->{ampl_y_max} + 0.0,
-                                              $self->{dither_guide}->{ampl_p_max} + 0.0);
+        push @{$self->{fyi}}, sprintf("$info Max Y Z ampl during guide used for checking Y=%.1f Z=%.1f \n",
+                                      $self->{dither_guide}->{ampl_y_max} + 0.0,
+                                      $self->{dither_guide}->{ampl_p_max} + 0.0);
     }
 
     # For eng obs, don't have OR to specify dither, so stop before doing vs-OR comparisons
