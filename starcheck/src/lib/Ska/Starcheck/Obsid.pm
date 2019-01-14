@@ -2690,8 +2690,30 @@ use Inline Python => q{
 
 from proseco.acq import get_acq_catalog
 
-
 def proseco_probs(kwargs):
+    """
+    Call proseco's get_acq_catalog with the parameters supplied in `kwargs` for a specific obsid catalog
+    and return the individual acq star probabilities, the P2 value for the catalog, and the expected
+    number of acq stars.
+
+    `kwargs` will be a Perl hash converted to dict (by Inline) of the expected keyword params. These keys
+    must be defined:
+
+    'q1', 'q2', 'q3', 'q4' = the target quaternion
+    'man_angle' the maneuver angle to the target quaternion in degrees.
+    'acqs' list of acq star ids
+    'halfwidths' list of acq star halfwidths in arcsecs
+    't_ccd_acq' acquisition temperature in deg C
+    'date' observation date (in Chandra.Time compatible format)
+    'detector' science detector
+    'sim_offset' SIM offset
+
+    As these values are from a Perl hash, bytestrings will be converted by de_bytestr early in this method.
+
+    :param kwargs: dict of expected keywords
+    :return tuple: (list of floats of star acq probabilties, float P2, float expected acq stars)
+
+    """
 
     kw = de_bytestr(kwargs)
     acq_cat = get_acq_catalog(obsid=0, att=Quaternion.normalize([kw['q1'], kw['q2'], kw['q3'], kw['q4']]),
@@ -2707,16 +2729,26 @@ def proseco_probs(kwargs):
 };
 
 
-
+###################################################################################
 sub proseco_args{
-
+###################################################################################
+# Build a hash that corresponds to reasonable arguments to use to call proseco get_acq_catalog
+# to calculate marginalized acquisition probabilities for a star catalog.
+# This routine also saves the guides and fids into lists, but those are not used
+# by get_acq_catalog.
+# If an observation does not have a target quaternion or a starcat, it is skipped and
+# an empty hash is returned with no warning.
     my $self = shift;
     my %proseco_args;
+    # For the target quaternion, use the -1 to get the last quaternion (there could be more than
+    # one for a segmented maneuver).
     my $targ_cmd = find_command($self, "MP_TARGQUAT", -1);
     my $cat_cmd = find_command($self, "MP_STARCAT");
+    # For observations without a target attitude, catalog, or defined obsid return an empty hash
     if ((not $targ_cmd) or (not $cat_cmd) or ($self->{obsid} =~ /NONE(\d+)/)){
         return \%proseco_args;
     }
+    # Use a default SI (which should only be used for ERs and should have no effect without fid lights)
     my $si = 'ACIS-S';
     my $offset = 0;
     if ($self->{obsid} < 38000){
@@ -2729,6 +2761,7 @@ sub proseco_args{
     my @gui_ids;
     my @fid_ids;
     my @halfwidths;
+    # Loop over the star catalog and assign the acqs, guide stars, and fids to arrays.
   IDX:
     foreach my $i (1..16) {
         (my $sid  = $cat_cmd->{"GS_ID$i"}) =~ s/[\s\*]//g;
@@ -2742,10 +2775,7 @@ sub proseco_args{
             next IDX;
         }
         $sid = int($sid);
-        ## Strip off asterisk if present (there's probably a cleaner Perl way to do this).
-        #if ($sid =~ /\*(\d+)/){
-        #    $sid = $1;
-        #}
+        # While assigning ACQ stars into a list, clip to allowed ranges and warn as needed.
         if ($cat_cmd->{"TYPE$i"} =~ /BOT|ACQ/){
             push @acq_ids, $sid;;
             my $hw = $cat_cmd->{"HALFW$i"};
@@ -2769,6 +2799,9 @@ sub proseco_args{
         }
     }
 
+    # Build a hash of the arguments that could be used by proseco (get_aca_catalog or get_acq_catalog).
+    # Zeros are added to most of the numeric parameters as that seems to help "cast" them to floats or ints in
+    # Perl to some extent.
     %proseco_args = (
         obsid => $self->{obsid},
         date => $targ_cmd->{stop_date},
@@ -2791,9 +2824,16 @@ sub proseco_args{
 
 }
 
-my $CUM_PROB_LIMIT = 0.008;
 
+###################################################################################
 sub set_proseco_probs{
+###################################################################################
+# For observations with a star catalog and which have valid parameters already determined
+# in $self->{proseco_args}, call the Python proseco_probs method to calculate the
+# marginalized probabilities, P2, and expected stars, and assign those values back
+# where expected in the data structure.
+# This assigns the individual acq star probabilites back into $self->{acq_probs} and
+# assigns the P2 and expected values into $self->{figure_of_merit}.
     my $self = shift;
     my $cat_cmd = find_command($self, "MP_STARCAT");
     my $args = $self->{proseco_args};
@@ -2812,7 +2852,6 @@ sub set_proseco_probs{
         $cat_cmd->{"P_ACQ$i"} = $p_acqs->[$idx];
         $slot_probs{$cat_cmd->{"IMNUM$i"}} = $p_acqs->[$idx];
     }
-
     $self->{acq_probs} = \%slot_probs;
 
     $self->{figure_of_merit} = {expected => substr($expected, 0, 4),
@@ -2830,13 +2869,19 @@ use Inline Python => q{
 from chandra_aca.star_probs import mag_for_p_acq
 
 def _mag_for_p_acq(p_acq, date, t_ccd):
-    return mag_for_p_acq(p_acq, date.decode(), t_ccd)
+    """
+    Call mag_for_p_acq, but cast p_acq and t_ccd as floats (may or may not be needed) and
+    convert date from a bytestring (from the Perl interface).
+    """
+    return mag_for_p_acq(float(p_acq), date.decode(), float(t_ccd))
 
 };
 
 
 
 sub set_dynamic_mag_limits{
+# Use the t_ccd at time of acquistion and time to set the mag limits corresponding to the the magnitude
+# for a 75% acquisition succes (yellow limit) and a 50% acquisition success (red limit)
     my $c;
     my $self = shift;
     return unless ($c = $self->find_command("MP_STARCAT"));
