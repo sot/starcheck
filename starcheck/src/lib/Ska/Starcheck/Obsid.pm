@@ -2024,15 +2024,15 @@ sub print_report {
 		$idpad_n --;
 	    }
 
-
+            # Get a string for acquisition probability in the hover-over
             my $acq_prob = "";
             if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
+                # Fetch this slot's acq probability for the hover-over string,
+                # but if the probability is not defined (expected for weird cases such as
+                # replan/reopen) just leave $acq_prob as the initialized empty string.
                 if (defined $self->{acq_probs}->{$c->{"IMNUM${i}"}}){
-                    my $prob = $self->{acq_probs}->{$c->{"IMNUM${i}"}};
-                    $acq_prob = sprintf("Prob Acq Success %5.3f", $prob);
-                }
-                else{
-                    $acq_prob = sprintf("Prob Acq Success 0.0");
+                    $acq_prob = sprintf("Prob Acq Success %5.3f",
+                                        $self->{acq_probs}->{$c->{"IMNUM${i}"}})
                 }
             }
             # Make the id a URL if there is star history or if star history could
