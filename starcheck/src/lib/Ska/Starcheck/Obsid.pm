@@ -720,8 +720,8 @@ sub check_dither {
 
     $self->{dither_acq} = $acq_dither;
     $self->{dither_guide} = $guide_dither;
-    $self->{dither_guide_y_max} = $guide_dither->{ampl_y};
-    $self->{dither_guide_z_max} = $guide_dither->{ampl_p};
+    $self->{dither_guide}->{ampl_y_max} = $guide_dither->{ampl_y};
+    $self->{dither_guide}->{ampl_p_max} = $guide_dither->{ampl_p};
 
     # Check for standard dither
     if ($guide_dither->{state} eq 'ENAB'){
@@ -756,8 +756,8 @@ sub check_dither {
     else{
         foreach my $dither (reverse @{$dthr}) {
             if ($dither->{time} < $obs_tstop){
-                $self->{dither_guide_z_max} = max(($dither->{ampl_p}, $self->{dither_guide_z_max}));
-                $self->{dither_guide_y_max} = max(($dither->{ampl_y}, $self->{dither_guide_y_max}));
+                $self->{dither_guide}->{ampl_p_max} = max(($dither->{ampl_p}, $self->{dither_guide}->{ampl_p_max}));
+                $self->{dither_guide}->{ampl_y_max} = max(($dither->{ampl_y}, $self->{dither_guide}->{ampl_y_max}));
             }
             if ($dither->{time} > ($obs_tstart + $obs_beg_pad)
                     && $dither->{time} <= $obs_tstop - $obs_end_pad) {
@@ -769,10 +769,11 @@ sub check_dither {
         }
     }
 
-    if (($self->{dither_guide_y_max} != $self->{dither_guide}->{ampl_y})
-            or ($self->{dither_guide_z_max} != $self->{dither_guide}->{ampl_p})){
+    if (($self->{dither_guide}->{ampl_y_max} != $self->{dither_guide}->{ampl_y})
+            or ($self->{dither_guide}->{ampl_p_max} != $self->{dither_guide}->{ampl_p})){
         push @{$self->{yellow_warn}}, sprintf("$alarm Max Y Z ampl during guide used for checking Y=%.1f Z=%.1f \n",
-                                              $self->{dither_guide_y_max} + 0.0, $self->{dither_guide_z_max} + 0.0);
+                                              $self->{dither_guide}->{ampl_y_max} + 0.0,
+                                              $self->{dither_guide}->{ampl_p_max} + 0.0);
     }
 
     # For eng obs, don't have OR to specify dither, so stop before doing vs-OR comparisons
@@ -796,13 +797,13 @@ sub check_dither {
 
     # If dither is enabled according to the OR, check that parameters match OR vs Backstop
     if ((defined $or_val) and ($or_val eq 'ENAB')){
-        my $y_amp = $self->{DITHER_Y_AMP} * 3600;
-        my $z_amp = $self->{DITHER_Z_AMP} * 3600;
-        if ((abs($y_amp - $guide_dither->{ampl_y}) > 0.1
-                 or abs($z_amp - $guide_dither->{ampl_p}) > 0.1)){
+        my $or_ampl_y = $self->{DITHER_Y_AMP} * 3600;
+        my $or_ampl_p = $self->{DITHER_Z_AMP} * 3600;
+        if ((abs($or_ampl_y - $guide_dither->{ampl_y}) > 0.1
+                 or abs($or_ampl_p - $guide_dither->{ampl_p}) > 0.1)){
             my $warn = sprintf("$alarm Dither amp. mismatch - OR: (Y %.1f, Z %.1f) "
                                    . "!= Backstop: (Y %.1f, Z %.1f)\n",
-                               $y_amp, $z_amp,
+                               $or_ampl_y, $or_ampl_p,
                                $guide_dither->{ampl_y}, $guide_dither->{ampl_p});
             push @{$self->{warn}}, $warn;
         }
@@ -815,29 +816,29 @@ sub check_dither {
 sub standard_dither{
 #############################################################################################
     my $dthr = shift;
-    my %standard_y_dither = (20 => 1087.0,
+    my %standard_dither_y = (20 => 1087.0,
                              8 => 1000.0);
-    my %standard_z_dither = (20 => 768.6,
+    my %standard_dither_p = (20 => 768.6,
                              8 => 707.1);
 
-    my $z_amp = int($dthr->{ampl_p} + 0.5);
-    my $y_amp = int($dthr->{ampl_y} + 0.5);
+    my $ampl_p = int($dthr->{ampl_p} + 0.5);
+    my $ampl_y = int($dthr->{ampl_y} + 0.5);
     # If the rounded amplitude is not in the standard set, return 0
-    if (not (grep $_ eq $z_amp, (keys %standard_z_dither))){
+    if (not (grep $_ eq $ampl_p, (keys %standard_dither_p))){
         return 0;
     }
-    if (not (grep $_ eq $y_amp, (keys %standard_y_dither))){
+    if (not (grep $_ eq $ampl_y, (keys %standard_dither_y))){
         return 0;
     }
     # If the period is not standard for the standard amplitudes return 0
-    if (abs($dthr->{period_p} - $standard_z_dither{$z_amp}) > 10){
+    if (abs($dthr->{period_p} - $standard_dither_p{$ampl_p}) > 10){
         return 0;
     }
-    if (abs($dthr->{period_y} - $standard_y_dither{$y_amp}) > 10){
+    if (abs($dthr->{period_y} - $standard_dither_y{$ampl_y}) > 10){
         return 0;
     }
     # If those tests passed, the dither is standard
-    return (($y_amp == 20) & ($z_amp == 20)) ? 'hrc' : 'acis';
+    return (($ampl_y == 20) & ($ampl_p == 20)) ? 'hrc' : 'acis';
 }
 
 
