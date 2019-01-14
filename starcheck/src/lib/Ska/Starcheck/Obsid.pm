@@ -1483,40 +1483,49 @@ sub check_star_catalog {
 	    }
 	}
 	else{
+            # Set "acq phase" dither to acq dither or 20.0 if undefined
+            my $dither_acq_y = $self->{dither_acq}->{ampl_y} or 20.0;
+            my $dither_acq_p = $self->{dither_acq}->{ampl_y} or 20.0;
+
+            # Set "dither" for FID to be pseudodither of 5.0 to give 1 pix margin
+            # Set "track phase" dither for BOT GUI to guide dither or 20.0 if undefined.
+            my $dither_track_y = ($type eq 'FID') ? 5.0 : $self->{dither_guide}->{ampl_y} or 20.0;
+            my $dither_track_p = ($type eq 'FID') ? 5.0 : $self->{dither_guide}->{ampl_y} or 20.0;
+
             my $pix_window_pad = 7; # half image size + point uncertainty + ? + 1 pixel of margin
             my $pix_row_pad = 8;
             my $pix_col_pad = 1;
             my $row_lim = 512.0 - ($pix_row_pad + $pix_window_pad);
             my $col_lim = 512.0 - ($pix_col_pad + $pix_window_pad);
 
-            my %guide_limits = ('row' => $row_lim - $dither_guide_y / $ang_per_pix,
-                                'col' => $col_lim - $dither_guide_z / $ang_per_pix);
-
+            my %track_limits = ('row' => $row_lim - $dither_track_y / $ang_per_pix,
+                                'col' => $col_lim - $dither_track_p / $ang_per_pix);
             my %pixel = ('row' => $pixel_row,
                          'col' => $pixel_col);
+            # Store the sign of the pixel row/col just to make it easier to print the corresponding limit
             my %pixel_sign = ('row' => ($pixel_row < 0) ? -1 : 1,
                               'col' => ($pixel_col < 0) ? -1 : 1);
 
             if ($type =~ /BOT|GUI|FID/){
                 foreach my $lim ('row', 'col'){
-                    my $guide_delta = abs($guide_limits{$lim}) - abs($pixel{$lim});
-                    if ($guide_delta < 0){
+                    my $track_delta = abs($track_limits{$lim}) - abs($pixel{$lim});
+                    if ($track_delta < 0){
                         push @warn, sprintf "$alarm [%2d] Off (padded) CCD $lim lim %.1f val %.1f delta %.1f\n",
-                            $i, $pixel_sign{$lim} * $guide_limits{$lim}, $guide_delta;
+                            $i, $pixel_sign{$lim} * $track_limits{$lim}, $track_delta;
                     }
-                    elsif ($guide_delta < 3){
+                    elsif ($track_delta < 3){
                         push @orange_warn, sprintf "$alarm [%2d] Within 3 pix of CCD $lim lim %.1f val %.1f delta %.1f\n",
-                            $i, $pixel_sign{$lim} * $guide_limits{$lim}, $pixel{$lim}, $guide_delta;
+                            $i, $pixel_sign{$lim} * $track_limits{$lim}, $pixel{$lim}, $track_delta;
                     }
-                    elsif ($guide_delta < 6){
+                    elsif ($track_delta < 6){
                         push @yellow_warn, sprintf "$alarm [%2d] Within 6 pix of CCD $lim lim %.1f val %.1f delta %.1f\n",
-                            $i, $pixel_sign{$lim} * $guide_limits{$lim}, $pixel{$lim}, $guide_delta;
+                            $i, $pixel_sign{$lim} * $track_limits{$lim}, $pixel{$lim}, $track_delta;
                     }
                 }
             }
 
             my $acq_edge_delta = min(($row_lim - $dither_acq_y / $ang_per_pix) - abs($pixel_row),
-                                     ($col_lim - $dither_acq_z / $ang_per_pix) - abs($pixel_col));
+                                     ($col_lim - $dither_acq_p / $ang_per_pix) - abs($pixel_col));
             if (($type eq 'ACQ') and ($acq_edge_delta < 0)){
                 push @yellow_warn,sprintf "$alarm [%2d] Off (padded) CCD.\n",$i;
             }
@@ -1642,7 +1651,7 @@ sub check_star_catalog {
 		my $dy = abs($yag-$pixel->{yag});
 		my $dz = abs($zag-$pixel->{zag});
 		my $dr = sqrt($dy**2 + $dz**2);
-		next unless ( $dz < $dither_guide_z+25 and $dy < $dither_guide_y+25 );
+		next unless ($dz < $self->{dither_guide}->{ampl_p} + 25 and $dy < $self->{dither_guide}->{ampl_y} + 25);
 		push @close_pixels, sprintf(" row, col (%d, %d), dy, dz (%d, %d) \n",
                                             $pixel->{row}, $pixel->{col}, $dy, $dz);
 		push @dr, $dr;
@@ -1672,7 +1681,8 @@ sub check_star_catalog {
 	    
 	    # Fid within $dither + 25 arcsec of a star (yellow) and within 4 mags (red) ACA-024
 	    if ($type eq 'FID'
-		and $dz < $dither_guide_z+25 and $dy < $dither_guide_y+25
+                and $dz < $self->{dither_guide}->{ampl_p} + 25
+                and $dy < $self->{dither_guide}->{ampl_y} + 25
 		and $dm > -5.0) {
 		my $warn = sprintf("$alarm [%2d] Fid spoiler.  %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
