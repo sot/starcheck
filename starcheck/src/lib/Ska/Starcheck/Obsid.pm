@@ -2889,7 +2889,7 @@ sub set_dynamic_mag_limits{
     return unless ($c = $self->find_command("MP_STARCAT"));
 
     my $date = $c->{date};
-    my $t_ccd = $self->{ccd_temp};
+    my $t_ccd = $self->{ccd_temp_acq};
     # Dynamic mag limits based on 75% and 50% chance of successful star acq
     # Maximum limits of 10.3 and 10.6
     $self->{mag_faint_yellow} = min(10.3, _mag_for_p_acq(0.75, $date, $t_ccd));
