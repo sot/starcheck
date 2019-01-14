@@ -2854,11 +2854,13 @@ sub set_proseco_probs{
     }
     $self->{acq_probs} = \%slot_probs;
 
+    # Set the P2 to be 2.0 (aka 0.01)
+    my $cum_prob_limit = 0.01;
     $self->{figure_of_merit} = {expected => substr($expected, 0, 4),
                                 cum_prob_2 => $two_or_fewer,
-                                cum_prob_bad => ($two_or_fewer > $CUM_PROB_LIMIT)};
-    if ($two_or_fewer > $CUM_PROB_LIMIT){
-        push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $CUM_PROB_LIMIT\n";
+                                cum_prob_bad => ($two_or_fewer > $cum_prob_limit)};
+    if ($two_or_fewer > $cum_prob_limit){
+        push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $cum_prob_limit\n";
     }
 }
 
