@@ -672,8 +672,16 @@ sub check_dither {
     my $obs_end_pad = 3*60;
     my $manvr;
 
-    # If there's no starcat on purpose, return
-    if (defined $self->{ok_no_starcat} and $self->{ok_no_starcat}){
+    # If there's no starcat on purpose, return without doing any dither checks.
+    # This used to just check if "ok_no_starcat" was defined and set to non-zero, but
+    # that can actually happen on RDE observations that have star catalogs, such as
+    # obsid 57166 in APR2009C.  Now this checks that an observation doesn't actually
+    # have a star catalog before checking to see if it is "allowed" to not have
+    # a star catalog.  This RDE/RDX business only applies to legacy loads pre ORViewer-DOT
+    # and can likely be removed in the future along with the ok_no_starcat entries
+    # for them in characteristics.
+    my $cat_cmd = find_command($self, 'MP_STARCAT');
+    if (not $cat_cmd and defined $self->{ok_no_starcat} and $self->{ok_no_starcat}){
         return;
     }
 
