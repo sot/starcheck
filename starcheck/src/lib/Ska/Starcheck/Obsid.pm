@@ -2750,13 +2750,10 @@ sub proseco_args{
     if ((not $targ_cmd) or (not $cat_cmd) or ($self->{obsid} =~ /NONE(\d+)/)){
         return \%proseco_args;
     }
-    # Use a default SI (which should only be used for ERs and should have no effect without fid lights)
-    my $si = 'ACIS-S';
-    my $offset = 0;
-    if ($self->{obsid} < 38000){
-        $si = $self->{SI};
-        $offset = $self->{SIM_OFFSET_Z};
-    }
+    # Use a default SI and offset for ERs (no effect without fid lights)
+    my $is_OR = $self->{obsid} < $ER_MIN_OBSID;
+    my $si = $is_OR ? $self->{SI} : 'ACIS-S';
+    my $offset = $is_OR ? $self->{SIM_OFFSET_Z} : 0;
 
     my @acq_ids;
     my @acq_indexes;
