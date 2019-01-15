@@ -2676,6 +2676,8 @@ sub set_ccd_temps{
         push @{$self->{fyi}}, sprintf("$info CCD temperature exceeds %.1f C\n",
                                        $config{ccd_temp_red_limit});
     }
+    # Clip the acq ccd temperature to the calibrated range of the grid acq probability model
+    # and add a yellow warning to let the user know this has happened.
     if (($self->{ccd_temp_acq} > -1.0) or ($self->{ccd_temp_acq} < -16.0)){
         push @{$self->{yellow_warn}}, sprintf(
             ">> WARNING: acq t_ccd %.2f outside range -16.0 to -1.0. Clipped.\n",
