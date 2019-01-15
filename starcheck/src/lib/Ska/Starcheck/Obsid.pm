@@ -677,7 +677,9 @@ sub check_dither {
     # that can actually happen on RDE observations that have star catalogs, such as
     # obsid 57166 in APR2009C.  Now this checks that an observation doesn't actually
     # have a star catalog before checking to see if it is "allowed" to not have
-    # a star catalog.
+    # a star catalog.  This RDE/RDX business only applies to legacy loads pre ORViewer-DOT
+    # and can likely be removed in the future along with the ok_no_starcat entries
+    # for them in characteristics.
     my $cat_cmd = find_command($self, 'MP_STARCAT');
     if (not $cat_cmd and defined $self->{ok_no_starcat} and $self->{ok_no_starcat}){
         return;
