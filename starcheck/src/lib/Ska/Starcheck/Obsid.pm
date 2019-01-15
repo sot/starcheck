@@ -39,9 +39,33 @@ def _guide_count(mags, t_ccd):
     return float(guide_count(np.array(mags), t_ccd))
 
 def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z, dmag=1.0):
+    """
+    Return a list of info to make warnings on guide stars or fid lights with local dark map that gives an
+    'imposter_mag' that is brighter than `dmag` fainter than the candidate (star or fid).
+    As in for a 7th mag star, set an entry in the fails list if there is an imposter brighter than (7 + dmag), where
+    by default dmag is 1.0 (so warn on imposter mag brighter than 8.0 mag)
+
+    This fetches the dark current before the date of the observation and passes it to
+    proseco.get_imposter_mags with the star candidate positions to fetch the brightest
+    2x2 for each and calculates the mag for that region.  If the imposter mag is brighter
+    than the candidate plus dmag, warn.
+
+    :param idxs: catalog indexes as list or array
+    :param yags: catalog yangs as list or array
+    :param zags: catalog zangs as list or array
+    :param mags: catalog mags (AGASC mags for stars estimated fid mags for fids) list or array
+    :param types: catalog TYPE (ACQ|BOT|FID|MON|GUI) as list or array
+    :param date: observation date (bytestring via Inline)
+    :param dither_y: dither_y in arcsecs (guide dither)
+    :param dither_z: dither_z in arcsecs (guide dither)
+    :param dmag: delta mag for warning (default 1.0 mag)
+    :return fails: list of dictionaries with keys that define the index, the imposter mag, and star or fid
+             info to make a warning.
+    """
+
 
     dark = aca_dark.get_dark_cal_image(date=date.decode('ascii'),
-                                           t_ccd_ref=float(t_ccd), aca_image=True)
+                                       t_ccd_ref=float(t_ccd), aca_image=True)
     fails = []
     for i, y, z, mag, ctype in zip(idxs, yags, zags, mags, types):
         ctype = ctype.decode('ascii')
