@@ -2701,7 +2701,7 @@ def proseco_probs(kwargs):
 
     'q1', 'q2', 'q3', 'q4' = the target quaternion
     'man_angle' the maneuver angle to the target quaternion in degrees.
-    'acqs' list of acq star ids
+    'acq_ids' list of acq star ids
     'halfwidths' list of acq star halfwidths in arcsecs
     't_ccd_acq' acquisition temperature in deg C
     'date' observation date (in Chandra.Time compatible format)
@@ -2717,13 +2717,13 @@ def proseco_probs(kwargs):
 
     kw = de_bytestr(kwargs)
     acq_cat = get_acq_catalog(obsid=0, att=Quaternion.normalize([kw['q1'], kw['q2'], kw['q3'], kw['q4']]),
-                             n_acq=len(kw['acqs']), man_angle=kw['man_angle'], t_ccd=kw['t_ccd_acq'],
+                             n_acq=len(kw['acq_ids']), man_angle=kw['man_angle'], t_ccd=kw['t_ccd_acq'],
                              date=kw['date'], dither=(kw['dither_acq_y'], kw['dither_acq_z']),
                              detector=kw['detector'], sim_offset=kw['offset'],
-                             include_ids=kw['acqs'], include_halfws=kw['halfwidths'])
+                             include_ids=kw['acq_ids'], include_halfws=kw['halfwidths'])
 
     # Assign the proseco probabilities back into an array.
-    p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq][0]) for acq in kw['acqs']]
+    p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq_id][0]) for acq_id in kw['acq_ids']]
 
     return p_acqs, float(-np.log10(acq_cat.calc_p_safe())), float(np.sum(p_acqs))
 };
@@ -2761,7 +2761,7 @@ sub proseco_args{
     my @gui_ids;
     my @fid_ids;
     my @halfwidths;
-    # Loop over the star catalog and assign the acqs, guide stars, and fids to arrays.
+    # Loop over the star catalog and assign the acq stars, guide stars, and fids to arrays.
   IDX:
     foreach my $i (1..16) {
         (my $sid  = $cat_cmd->{"GS_ID$i"}) =~ s/[\s\*]//g;
@@ -2798,7 +2798,8 @@ sub proseco_args{
 
     # Build a hash of the arguments that could be used by proseco (get_aca_catalog or get_acq_catalog).
     # Zeros are added to most of the numeric parameters as that seems to help "cast" them to floats or ints in
-    # Perl to some extent.
+    # Perl to some extent.  Also save the acquisition star catalog indexes to make it easier to assign back
+    # the probabilities without having to search again on the Perl side by agasc id.
     %proseco_args = (
         obsid => $self->{obsid},
         date => $targ_cmd->{stop_date},
@@ -2811,10 +2812,10 @@ sub proseco_args{
         dither_guide_z => $self->{dither_guide}->{ampl_p},
         t_ccd_acq => $self->{ccd_temp_acq},
         t_ccd_guide => $self->{ccd_temp},
-        acqs => \@acq_ids,
+        acq_ids => \@acq_ids,
         halfwidths => \@halfwidths,
-        fids => \@fid_ids,
-        guides => \@gui_ids,
+        fid_ids => \@fid_ids,
+        guide_ids => \@gui_ids,
         acq_indexes => \@acq_indexes);
 
     return \%proseco_args
