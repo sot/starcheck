@@ -2775,18 +2775,15 @@ sub proseco_args{
             next IDX;
         }
         $sid = int($sid);
-        # While assigning ACQ stars into a list, clip to allowed ranges and warn as needed.
+        # While assigning ACQ stars into a list, warn if outside the 60 to 180 range used by proseco
+        # and the grid acq model.
         if ($cat_cmd->{"TYPE$i"} =~ /BOT|ACQ/){
             push @acq_ids, $sid;;
             my $hw = $cat_cmd->{"HALFW$i"};
             if (($hw > 180) or ($hw < 60)){
-                push @{$self->{yellow_warn}}, sprintf(
-                    ">> WARNING: [%2d] Halfwidth %d outside range 60 to 180. Clipped for probs.",
+                push @{$self->{orange_warn}}, sprintf(
+                    ">> WARNING: [%2d] Halfwidth %d outside range 60 to 180. Will be clipped in proseco probs.\n",
                     $i, $hw);
-                # Clip hw if outside the range 60 to 180 for probabilities
-                $hw =   $hw < 60  ? 60
-                      : $hw > 180 ? 180
-                      : $hw ;
             }
             push @halfwidths, $hw;
             push @acq_indexes, $i;
