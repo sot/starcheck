@@ -2183,8 +2183,8 @@ sub print_report {
     if (exists $self->{figure_of_merit}) {
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
 	$o .= "$red_font_start" if $bad_FOM;
-	$o .= "Probability of acquiring 2 or fewer stars (10^x):\t";
-        $o .= substr(sprintf("%.4f", $self->{figure_of_merit}->{cum_prob_2}), 0, 6) . "\t";
+	$o .= "Probability of acquiring 2 or fewer stars (10^-x):\t";
+        $o .= substr(sprintf("%.4f", $self->{figure_of_merit}->{P2}), 0, 6) . "\t";
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
 	$o .= sprintf("Acquisition Stars Expected  : %.2f\n",
@@ -2725,7 +2725,7 @@ def proseco_probs(kwargs):
     # Assign the proseco probabilities back into an array.
     p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq][0]) for acq in kw['acqs']]
 
-    return p_acqs, float(acq_cat.get_log_p_2_or_fewer()), float(np.sum(p_acqs))
+    return p_acqs, float(-np.log10(acq_cat.calc_p_safe())), float(np.sum(p_acqs))
 };
 
 
@@ -2838,7 +2838,7 @@ sub set_proseco_probs{
     if (not %{$args}){
         return;
     }
-    my ($p_acqs, $two_or_fewer, $expected) = proseco_probs($args);
+    my ($p_acqs, $P2, $expected) = proseco_probs($args);
 
     my @acq_indexes = @{$args->{acq_indexes}};
 
@@ -2851,13 +2851,13 @@ sub set_proseco_probs{
     }
     $self->{acq_probs} = \%slot_probs;
 
-    # Set the P2 to be 2.0 (aka 0.01)
-    my $cum_prob_limit = 0.01;
+    # Set the P2 requirement to be 2.0
+    my $P2_required = 2.0;
     $self->{figure_of_merit} = {expected => substr($expected, 0, 4),
-                                cum_prob_2 => $two_or_fewer,
-                                cum_prob_bad => ($two_or_fewer > $cum_prob_limit)};
-    if ($two_or_fewer > $cum_prob_limit){
-        push @{$self->{warn}}, ">> WARNING: Probability of 2 or fewer stars > $cum_prob_limit\n";
+                                P2 => $P2,
+                                cum_prob_bad => ($P2 < $P2_required)};
+    if ($P2 < $P2_required){
+        push @{$self->{warn}}, ">> WARNING: -log10 probability of 2 or fewer stars < $P2_required\n";
     }
 }
 
