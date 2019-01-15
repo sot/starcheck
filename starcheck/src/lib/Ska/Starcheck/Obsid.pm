@@ -2678,7 +2678,7 @@ sub set_ccd_temps{
     }
     if (($self->{ccd_temp_acq} > -1.0) or ($self->{ccd_temp_acq} < -16.0)){
         push @{$self->{yellow_warn}}, sprintf(
-            ">> WARNING: acq t_ccd %.2f outside range -16.0 to -1.0. Clipped.",
+            ">> WARNING: acq t_ccd %.2f outside range -16.0 to -1.0. Clipped.\n",
             $self->{ccd_temp_acq});
         $self->{ccd_temp_acq} = $self->{ccd_temp_acq}  >  -1.0  ? -1.0
                               : $self->{ccd_temp_acq}  < -16.0  ? -16.0
