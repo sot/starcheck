@@ -256,7 +256,6 @@ for my $data_file ('up.gif', 'down.gif', 'overlib.js'){
 
 
 # First read the Backstop file, and split into components
-my $bogus_obsid = 1;
 my @bs = Ska::Parse_CM_File::backstop($backstop);
 
 my $i = 0;
@@ -1193,22 +1192,17 @@ sub get_obsid {
 		    die "Couldn't parse obsid_index = '$obsid_index' in get_obsid()\n";
 		}
 	    }
-
-
 	}
     }
 
+    # Couldn't match input command to DOT.  This happens normally for
+    # replan/reopen loads.  This command is ignored for subsequent 
+    # starcheck checking, but a global warning at the top is printed
+    # in case this is not expected.
+
     warning("Could not find a match in DOT for $cmd at $date\n");
 
-    # Couldn't match input command to DOT.  For TARGQUAT or STARCAT, force
-    # processing by making a bogus obsid 
-
-    if ($cmd =~ /MP_(TARGQUAT|STARCAT)/) {
-	$obsid = "NONE$bogus_obsid" ;
-	warning("Creating bogus obsid $obsid\n") unless ($obs{$obsid});
-	$bogus_obsid++ if ($cmd eq 'MP_STARCAT');
-    }
-    return ($obsid);
+    return ();
 }    
 
 
@@ -1234,18 +1228,6 @@ sub get_file {
     return $files[0];
 }
 
-##***************************************************************************
-#sub insert_bogus_obsid {
-##***************************************************************************
-#    @date = (@date[0..$i-1], $date[$i_last_starcat], @date[$i..$#date]);
-#    @vcdu = (@vcdu[0..$i-1], $vcdu[$i_last_starcat]+4, @vcdu[$i..$#vcdu]);
-#    @cmd = (@cmd[0..$i-1], 'MP_OBSID', @cmd[$i..$#cmd]);
-#    @params = (@params[0..$i-1], "ID= NONE$bogus_obsid", @params[$i..$#params]);
-#    warning ("A star catalog does not have an associated obsid, " 
-#	. "using bogus obsid NONE$bogus_obsid\n");
-#    $bogus_obsid++;
-#}
-    
 
 ##***************************************************************************
 sub warning {
