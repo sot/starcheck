@@ -55,6 +55,7 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
     :param zags: catalog zangs as list or array
     :param mags: catalog mags (AGASC mags for stars estimated fid mags for fids) list or array
     :param types: catalog TYPE (ACQ|BOT|FID|MON|GUI) as list or array
+    :param t_ccd: observation t_ccd in deg C (should be max t_ccd in guide phase)
     :param date: observation date (bytestring via Inline)
     :param dither_y: dither_y in arcsecs (guide dither)
     :param dither_z: dither_z in arcsecs (guide dither)
@@ -63,22 +64,30 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
              info to make a warning.
     """
 
+    idxs = [int(idx) for idx in idxs]
+    yags = [float(yag) for yag in yags]
+    zags = [float(zag) for zag in zags]
+    mags = [float(mag) for mag in mags]
+    types = [t.decode('ascii') for t in types]
+    t_ccd = float(t_ccd)
+    date = date.decode('ascii')
+    dither_y = float(dither_y)
+    dither_z = float(dither_z)
 
-    dark = aca_dark.get_dark_cal_image(date=date.decode('ascii'),
-                                       t_ccd_ref=float(t_ccd), aca_image=True)
+    dark = aca_dark.get_dark_cal_image(date=date, t_ccd_ref=t_ccd, aca_image=True)
     fails = []
-    for i, y, z, mag, ctype in zip(idxs, yags, zags, mags, types):
-        ctype = ctype.decode('ascii')
+    for idx, yag, zag, mag, ctype in zip(idxs, yags, zags, mags, types):
         if ctype in ['BOT', 'GUI', 'FID']:
             if ctype in ['BOT', 'GUI']:
-                dither = ACABox((float(dither_y), float(dither_z)))
+                dither = ACABox((dither_y, dither_z))
             else:
                 dither = ACABox((5.0, 5.0))
-            row, col = yagzag_to_pixels(float(y), float(z))
-            entry = Table([{'i': int(i), 'row': row, 'col': col, 'mag': float(mag), 'type': ctype}])
+            row, col = yagzag_to_pixels(yag, zag)
+            entries = Table([{'idx': idx, 'row': row, 'col': col, 'mag': mag, 'type': ctype}])
+            entry = entries[0]
             imp_mags, imp_rows, imp_cols = get_imposter_mags(entry, dark, dither)
             if imp_mags[0] < (entry['mag'] + dmag):
-                fails.append({'i': int(entry['i']),
+                fails.append({'idx': int(entry['idx']),
                               'entry_row': float(entry['row']), 'entry_col': float(entry['col']),
                               'bad2_row': float(imp_rows[0]), 'bad2_col': float(imp_cols[0]),
                               'bad2_mag': float(imp_mags[0])})
@@ -1312,7 +1321,7 @@ sub check_star_catalog {
     for my $imposter (@imposters){
         push @warn, sprintf(
             "$alarm [%2d] Imposter 2x2. psmag %.1f (row % 4d, col % 4d) star (% 4d, % 4d) \n",
-        $imposter->{i}, $imposter->{bad2_mag}, $imposter->{bad2_row}, $imposter->{bad2_col},
+        $imposter->{idx}, $imposter->{bad2_mag}, $imposter->{bad2_row}, $imposter->{bad2_col},
         $imposter->{entry_row}, $imposter->{entry_col});
     }
 
