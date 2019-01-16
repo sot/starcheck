@@ -1172,27 +1172,6 @@ sub check_star_catalog {
     my $max_z = $z_ang_min;
     my $min_z = $z_ang_max;
 
-    my ($dither_acq_y, $dither_acq_z, $dither_guide_y, $dither_guide_z);
-    if (defined $self->{dither_acq}){
-	$dither_acq_y = $self->{dither_acq}->{ampl_y};
-        $dither_acq_z = $self->{dither_acq}->{ampl_p};
-    } else {
-        push @{$self->{yellow_warn}},
-            "$alarm Acquisition dither could not be determined, using 20\"x20\" for checking.\n";
-	$dither_acq_y = 20.0;
-	$dither_acq_z = 20.0;
-    }
-
-    if (defined $self->{dither_guide}->{ampl_y_max}){
-	$dither_guide_y = $self->{dither_guide}->{ampl_y_max};
-        $dither_guide_z = $self->{dither_guide}->{ampl_p_max};
-    } else {
-        push @{$self->{yellow_warn}},
-            "$alarm Guide dither could not be determined, using 20\"x20\" for checking.\n";
-	$dither_guide_y = 20.0;
-	$dither_guide_z = 20.0;
-    }
-
 
     my @warn = ();
     my @orange_warn = ();
@@ -1229,6 +1208,29 @@ sub check_star_catalog {
 	push @{$self->{warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). \n";		    
 	return;
     }
+
+    my ($dither_acq_y, $dither_acq_z, $dither_guide_y, $dither_guide_z);
+    if (defined $self->{dither_acq}){
+	$dither_acq_y = $self->{dither_acq}->{ampl_y};
+        $dither_acq_z = $self->{dither_acq}->{ampl_p};
+    } else {
+        push @{$self->{yellow_warn}},
+            "$alarm Acquisition dither could not be determined, using 20\"x20\" for checking.\n";
+	$dither_acq_y = 20.0;
+	$dither_acq_z = 20.0;
+    }
+
+    if (defined $self->{dither_guide}->{ampl_y_max}){
+	$dither_guide_y = $self->{dither_guide}->{ampl_y_max};
+        $dither_guide_z = $self->{dither_guide}->{ampl_p_max};
+    } else {
+        push @{$self->{yellow_warn}},
+            "$alarm Guide dither could not be determined, using 20\"x20\" for checking.\n";
+	$dither_guide_y = 20.0;
+	$dither_guide_z = 20.0;
+    }
+
+
     # Decrement minimum number of guide stars on ORs if a monitor window is commanded
     $min_guide -= @{$self->{mon}} if $is_science;
 
