@@ -62,6 +62,7 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
     :param yellow_lim: yellow limit centroid offset threshold limit (in arcsecs)
     :param red_lim: red limit centroid offset threshold limit (in arcsecs)
     :return imposters: list of dictionaries with keys that define the index, the imposter mag,
+             a 'status' key that has value 0 if the code to get the imposter mag ran successfully,
              calculated centroid offset, and star or fid info to make a warning.
     """
 
@@ -95,17 +96,22 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
                 dither = ACABox((dither_y, dither_z))
             else:
                 dither = ACABox((5.0, 5.0))
-            row, col = yagzag_to_pixels(yag, zag)
-            # get_imposter_mags takes a Table of candidates as its first argument, so construct
-            # a single-candidate table `entries`
-            entries = Table([{'idx': idx, 'row': row, 'col': col, 'mag': mag, 'type': ctype}])
-            imp_mags, imp_rows, imp_cols = get_imposter_mags(entries, dark, dither)
-            offset = imposter_offset(mag, imp_mags[0])
-            imposters.append({'idx': int(idx),
-                              'entry_row': float(row), 'entry_col': float(col),
-                              'bad2_row': float(imp_rows[0]), 'bad2_col': float(imp_cols[0]),
-                              'bad2_mag': float(imp_mags[0]), 'offset': float(offset)})
-
+            row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
+            # Handle any errors in get_imposter_mags with a try/except.  This doesn't
+            # try to pass back a message.  Most likely this will only fail if the star
+            # or fid is completely off the CCD and will have other warning.
+            try:
+                # get_imposter_mags takes a Table of candidates as its first argument, so construct
+                # a single-candidate table `entries`
+                entries = Table([{'idx': idx, 'row': row, 'col': col, 'mag': mag, 'type': ctype}])
+                imp_mags, imp_rows, imp_cols = get_imposter_mags(entries, dark, dither)
+                offset = imposter_offset(mag, imp_mags[0])
+                imposters.append({'idx': int(idx), 'status': int(0),
+                                  'entry_row': float(row), 'entry_col': float(col),
+                                  'bad2_row': float(imp_rows[0]), 'bad2_col': float(imp_cols[0]),
+                                  'bad2_mag': float(imp_mags[0]), 'offset': float(offset)})
+            except:
+                imposters.append({'idx': int(idx), 'status': int(1)})
     return imposters
 
 
@@ -1333,7 +1339,13 @@ sub check_star_catalog {
                                    $self->{ccd_temp}, $self->{date}, $dither_guide_y, $dither_guide_z);
 
     # Assign warnings based on those hot pixel region checks
+  IMPOSTER:
     for my $imposter (@imposters){
+        # If the check just fails on the Python side write out a warning and move on.
+        if ($imposter->{status} == 1){
+            push @warn, "$alarm [%d] Processing error when checking for hot pixels.\n";
+            next IMPOSTER;
+        }
         my $warn = sprintf("$alarm [%2d] Imposter mag %.1f offset %.1f (row % 4d, col % 4d) star (% 4d, % 4d)\n",
                            $imposter->{idx}, $imposter->{bad2_mag}, $imposter->{offset},
                            $imposter->{bad2_row}, $imposter->{bad2_col},
