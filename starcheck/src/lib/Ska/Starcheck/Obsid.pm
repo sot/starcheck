@@ -1438,9 +1438,16 @@ sub check_star_catalog {
 
         # Check for situation that occurred for obsid 14577 with a fid light
         # inside the search box (PR #50).
+
         if ($type =~ /BOT|ACQ/){
+            # Margin for fid spoiling the acquisition star is the search box halfwidth
+            # plus the uncertainty in fid position.  See starcheck #251 for justification
+            # of the 25 arcsec value here.
+            $fid_spoil_margin = $halfw + 25.0
+
             for my $fpos (@fid_positions){
-                if (abs($fpos->{y} - $yag) < $halfw and abs($fpos->{z} - $zag) < $halfw){
+                if (abs($fpos->{y} - $yag) < $fid_spoil_margin and
+                        abs($fpos->{z} - $zag) < $fid_spoil_margin){
                     if ($type =~ /ACQ/){
                         push @yellow_warn, sprintf "$alarm [%2d] Fid light in search box\n", $i;
                     }
