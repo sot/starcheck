@@ -694,6 +694,11 @@ sub check_dither {
     my $obs_tstart = $self->{obs_tstart};
     my $obs_tstop = $self->{obs_tstop};
 
+    unless (defined $obs_tstart){
+        push @{$self->{warn}}, "$alarm Cannot determine obs start time for dither, not checking.\n";
+        return;
+    }
+
     # Determine guide dither by finding the last dither commanding before
     # the start of observation (+ 8 minutes)
     my $guide_dither;
@@ -715,17 +720,18 @@ sub check_dither {
 
     $self->{dither_acq} = $acq_dither;
     $self->{dither_guide} = $guide_dither;
+    $self->{dither_guide}->{ampl_y_max} = $guide_dither->{ampl_y};
+    $self->{dither_guide}->{ampl_p_max} = $guide_dither->{ampl_p};
 
     # Check for standard dither
     if ($guide_dither->{state} eq 'ENAB'){
         if ((not standard_dither($guide_dither)) or not standard_dither($acq_dither)){
             push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
         }
-        else{
-            if (($guide_dither->{ampl_p} != $acq_dither->{ampl_p})
-                    or ($guide_dither->{ampl_y} != $acq_dither->{ampl_y})){
-                push @{$self->{yellow_warn}}, "$alarm Dither changes between ACQ and GUI \n";
-            }
+        if (($guide_dither->{ampl_p} != $acq_dither->{ampl_p})
+                or ($guide_dither->{ampl_y} != $acq_dither->{ampl_y})){
+            push @{$self->{fyi}}, sprintf("$info Reviewed with ACQ dither Y=%.1f Z=%.1f \n",
+                                          $acq_dither->{ampl_y}, $acq_dither->{ampl_p});
         }
     }
 
@@ -749,6 +755,10 @@ sub check_dither {
     }
     else{
         foreach my $dither (reverse @{$dthr}) {
+            if ($dither->{time} < $obs_tstop){
+                $self->{dither_guide}->{ampl_p_max} = max(($dither->{ampl_p}, $self->{dither_guide}->{ampl_p_max}));
+                $self->{dither_guide}->{ampl_y_max} = max(($dither->{ampl_y}, $self->{dither_guide}->{ampl_y_max}));
+            }
             if ($dither->{time} > ($obs_tstart + $obs_beg_pad)
                     && $dither->{time} <= $obs_tstop - $obs_end_pad) {
                 push @{$self->{warn}}, "$alarm Dither commanding at $dither->{time}.  During observation.\n";
@@ -759,8 +769,12 @@ sub check_dither {
         }
     }
 
-
-
+    if (($self->{dither_guide}->{ampl_y_max} != $self->{dither_guide}->{ampl_y})
+            or ($self->{dither_guide}->{ampl_p_max} != $self->{dither_guide}->{ampl_p})){
+        push @{$self->{fyi}}, sprintf("$info Max Y Z ampl during guide used for checking Y=%.1f Z=%.1f \n",
+                                      $self->{dither_guide}->{ampl_y_max} + 0.0,
+                                      $self->{dither_guide}->{ampl_p_max} + 0.0);
+    }
 
     # For eng obs, don't have OR to specify dither, so stop before doing vs-OR comparisons
     if ( $self->{obsid} =~ /^\d*$/){
@@ -783,13 +797,13 @@ sub check_dither {
 
     # If dither is enabled according to the OR, check that parameters match OR vs Backstop
     if ((defined $or_val) and ($or_val eq 'ENAB')){
-        my $y_amp = $self->{DITHER_Y_AMP} * 3600;
-        my $z_amp = $self->{DITHER_Z_AMP} * 3600;
-        if ((abs($y_amp - $guide_dither->{ampl_y}) > 0.1
-                 or abs($z_amp - $guide_dither->{ampl_p}) > 0.1)){
+        my $or_ampl_y = $self->{DITHER_Y_AMP} * 3600;
+        my $or_ampl_p = $self->{DITHER_Z_AMP} * 3600;
+        if ((abs($or_ampl_y - $guide_dither->{ampl_y}) > 0.1
+                 or abs($or_ampl_p - $guide_dither->{ampl_p}) > 0.1)){
             my $warn = sprintf("$alarm Dither amp. mismatch - OR: (Y %.1f, Z %.1f) "
                                    . "!= Backstop: (Y %.1f, Z %.1f)\n",
-                               $y_amp, $z_amp,
+                               $or_ampl_y, $or_ampl_p,
                                $guide_dither->{ampl_y}, $guide_dither->{ampl_p});
             push @{$self->{warn}}, $warn;
         }
@@ -802,29 +816,29 @@ sub check_dither {
 sub standard_dither{
 #############################################################################################
     my $dthr = shift;
-    my %standard_y_dither = (20 => 1087.0,
+    my %standard_dither_y = (20 => 1087.0,
                              8 => 1000.0);
-    my %standard_z_dither = (20 => 768.6,
+    my %standard_dither_p = (20 => 768.6,
                              8 => 707.1);
 
-    my $z_amp = int($dthr->{ampl_p} + 0.5);
-    my $y_amp = int($dthr->{ampl_y} + 0.5);
+    my $ampl_p = int($dthr->{ampl_p} + 0.5);
+    my $ampl_y = int($dthr->{ampl_y} + 0.5);
     # If the rounded amplitude is not in the standard set, return 0
-    if (not (grep $_ eq $z_amp, (keys %standard_z_dither))){
+    if (not (grep $_ eq $ampl_p, (keys %standard_dither_p))){
         return 0;
     }
-    if (not (grep $_ eq $y_amp, (keys %standard_y_dither))){
+    if (not (grep $_ eq $ampl_y, (keys %standard_dither_y))){
         return 0;
     }
     # If the period is not standard for the standard amplitudes return 0
-    if (abs($dthr->{period_p} - $standard_z_dither{$z_amp}) > 10){
+    if (abs($dthr->{period_p} - $standard_dither_p{$ampl_p}) > 10){
         return 0;
     }
-    if (abs($dthr->{period_y} - $standard_y_dither{$y_amp}) > 10){
+    if (abs($dthr->{period_y} - $standard_dither_y{$ampl_y}) > 10){
         return 0;
     }
     # If those tests passed, the dither is standard
-    return (($y_amp == 20) & ($z_amp == 20)) ? 'hrc' : 'acis';
+    return (($ampl_y == 20) & ($ampl_p == 20)) ? 'hrc' : 'acis';
 }
 
 
@@ -1158,23 +1172,6 @@ sub check_star_catalog {
     my $max_z = $z_ang_min;
     my $min_z = $z_ang_max;
 
-    my ($dither_acq_y, $dither_acq_z, $dither_guide_y, $dither_guide_z);
-    if (defined $self->{dither_acq}){
-	$dither_acq_y = $self->{dither_acq}->{ampl_y};
-        $dither_acq_z = $self->{dither_acq}->{ampl_p};
-    } else {
-	$dither_acq_y = 20.0;
-	$dither_acq_z = 20.0;
-    }
-
-    if (defined $self->{dither_guide}){
-	$dither_guide_y = $self->{dither_guide}->{ampl_y};
-        $dither_guide_z = $self->{dither_guide}->{ampl_p};
-    } else {
-	$dither_guide_y = 20.0;
-	$dither_guide_z = 20.0;
-    }
-
 
     my @warn = ();
     my @orange_warn = ();
@@ -1211,6 +1208,29 @@ sub check_star_catalog {
 	push @{$self->{warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). \n";		    
 	return;
     }
+
+    my ($dither_acq_y, $dither_acq_z, $dither_guide_y, $dither_guide_z);
+    if (defined $self->{dither_acq}){
+	$dither_acq_y = $self->{dither_acq}->{ampl_y};
+        $dither_acq_z = $self->{dither_acq}->{ampl_p};
+    } else {
+        push @{$self->{yellow_warn}},
+            "$alarm Acquisition dither could not be determined, using 20\"x20\" for checking.\n";
+	$dither_acq_y = 20.0;
+	$dither_acq_z = 20.0;
+    }
+
+    if (defined $self->{dither_guide}->{ampl_y_max}){
+	$dither_guide_y = $self->{dither_guide}->{ampl_y_max};
+        $dither_guide_z = $self->{dither_guide}->{ampl_p_max};
+    } else {
+        push @{$self->{yellow_warn}},
+            "$alarm Guide dither could not be determined, using 20\"x20\" for checking.\n";
+	$dither_guide_y = 20.0;
+	$dither_guide_z = 20.0;
+    }
+
+
     # Decrement minimum number of guide stars on ORs if a monitor window is commanded
     $min_guide -= @{$self->{mon}} if $is_science;
 
@@ -1919,7 +1939,9 @@ sub print_report {
     if ( ( defined $self->{ra} ) and (defined $self->{dec}) and (defined $self->{roll})){
 	$o .= sprintf "RA, Dec, Roll (deg): %12.6f %12.6f %12.6f\n", $self->{ra}, $self->{dec}, $self->{roll};
     }
-    if (defined $self->{dither_guide}){
+    # This 'defined' check has been changed to be a test on the amplitude.  It looks like for the undefined
+    # case such as replan, this {dither_guide} is set but is an empty hash ref.
+    if (defined $self->{dither_guide}->{ampl_y}){
         my $z_amp = int($self->{dither_guide}->{ampl_p} + .5);
         my $y_amp = int($self->{dither_guide}->{ampl_y} + .5);
         if ($self->{dither_guide}->{state} eq 'ENAB'){
