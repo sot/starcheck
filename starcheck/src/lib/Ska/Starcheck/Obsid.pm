@@ -1443,7 +1443,7 @@ sub check_star_catalog {
             # Margin for fid spoiling the acquisition star is the search box halfwidth
             # plus the uncertainty in fid position.  See starcheck #251 for justification
             # of the 25 arcsec value here.
-            $fid_spoil_margin = $halfw + 25.0
+            my $fid_spoil_margin = $halfw + 25.0;
 
             for my $fpos (@fid_positions){
                 if (abs($fpos->{y} - $yag) < $fid_spoil_margin and
