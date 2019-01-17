@@ -36,8 +36,6 @@ from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
 
 def _yagzag_to_pixels(yag, zag):
-    yag = float(yag)
-    zag = float(zag)
     row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
     return float(row), float(col)
 
