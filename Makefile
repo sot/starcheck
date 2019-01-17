@@ -7,7 +7,7 @@ SRC = starcheck/src
 
 RELATED_LIB = $(SRC)/StarcheckParser.pm
 BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
-LIB = $(SRC)/lib/Ska/Starcheck/Obsid.pm $(SRC)/lib/Ska/Starcheck/FigureOfMerit.pm \
+LIB = $(SRC)/lib/Ska/Starcheck/Obsid.pm \
 	$(SRC)/lib/Ska/Starcheck/Dark_Cal_Checker.pm $(SRC)/lib/Ska/Parse_CM_File.pm
 PYTHON_LIB = starcheck/calc_ccd_temps.py starcheck/pcad_att_check.py starcheck/plot.py \
              starcheck/version.py starcheck/__init__.py

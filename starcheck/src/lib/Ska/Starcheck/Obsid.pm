@@ -72,7 +72,7 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
 };
 
 
-use List::Util qw(max min);
+use List::Util qw(min max);
 use Quat;
 use Ska::ACACoordConvert;
 use File::Basename;
@@ -81,7 +81,6 @@ use English;
 use IO::All;
 use Ska::Convert qw(date2time time2date);
 
-use Ska::Starcheck::FigureOfMerit qw( make_figure_of_merit set_dynamic_mag_limits );
 use RDB;
 
 use SQL::Abstract;
@@ -2025,12 +2024,16 @@ sub print_report {
 		$idpad_n --;
 	    }
 
-
+            # Get a string for acquisition probability in the hover-over
             my $acq_prob = "";
             if ($c->{"TYPE$i"} =~ /BOT|ACQ/){
-                my $prob = $self->{acq_probs}->{$c->{"IMNUM${i}"}};
-                $acq_prob = sprintf("Prob Acq Success %5.3f", $prob);
-
+                # Fetch this slot's acq probability for the hover-over string,
+                # but if the probability is not defined (expected for weird cases such as
+                # replan/reopen) just leave $acq_prob as the initialized empty string.
+                if (defined $self->{acq_probs}->{$c->{"IMNUM${i}"}}){
+                    $acq_prob = sprintf("Prob Acq Success %5.3f",
+                                        $self->{acq_probs}->{$c->{"IMNUM${i}"}})
+                }
             }
             # Make the id a URL if there is star history or if star history could
             # not be checked (no db_handle)
@@ -2178,14 +2181,10 @@ sub print_report {
     $o .= "\n";
 
     if (exists $self->{figure_of_merit}) {
-	my @probs = @{ $self->{figure_of_merit}->{cum_prob}};
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
 	$o .= "$red_font_start" if $bad_FOM;
-	$o .= "Probability of acquiring 2,3, and 4 or fewer stars (10^x):\t";
-        # override formatting to match pre-JSON strings
-        foreach (2..4) {
-            $o .= substr(sprintf("%.4f", "$probs[$_]"), 0, 6) . "\t";
-        }
+	$o .= "Probability of acquiring 2 or fewer stars (10^-x):\t";
+        $o .= substr(sprintf("%.4f", $self->{figure_of_merit}->{P2}), 0, 6) . "\t";
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
 	$o .= sprintf("Acquisition Stars Expected  : %.2f\n",
@@ -2652,27 +2651,6 @@ sub count_guide_stars{
     return _guide_count(\@mags, $self->{ccd_temp});
 }
 
-###################################################################################
-sub check_big_box_stars{
-###################################################################################
-    my $self = shift;
-    my $c;
-    my $big_box_count = 0;
-    return unless ($c = find_command($self, 'MP_STARCAT'));
-    for my $i (1 .. 16){
-        my $type = $c->{"TYPE$i"};
-        my $hw = $c->{"HALFW$i"};
-        if ($type =~ /ACQ|BOT/){
-            if ($hw >= 160){
-                $big_box_count++;
-            }
-        }
-    }
-    if ($big_box_count < 3){
-        push @{$self->{warn}}, "$alarm Fewer than 3 ACQ stars with boxes >= 160 arcsec\n";
-    }
-}
-
 
 ###################################################################################
 sub set_ccd_temps{
@@ -2686,14 +2664,248 @@ sub set_ccd_temps{
         push @{$self->{warn}}, sprintf("$alarm Using %s (planning limit) for t_ccd for mag limits\n",
                                        $config{ccd_temp_red_limit});
         $self->{ccd_temp} = $config{ccd_temp_red_limit};
+        $self->{ccd_temp_acq} = $config{ccd_temp_red_limit};
         return;
     }
     # set the temperature to the value for the current obsid
     $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
+    $self->{ccd_temp_acq} = $obsid_temps->{$self->{obsid}}->{ccd_temp_acq};
     $self->{n100_warm_frac} = $obsid_temps->{$self->{obsid}}->{n100_warm_frac};
     # add warnings for limit violations
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
         push @{$self->{fyi}}, sprintf("$info CCD temperature exceeds %.1f C\n",
                                        $config{ccd_temp_red_limit});
     }
+    # Clip the acq ccd temperature to the calibrated range of the grid acq probability model
+    # and add a yellow warning to let the user know this has happened.
+    if (($self->{ccd_temp_acq} > -1.0) or ($self->{ccd_temp_acq} < -16.0)){
+        push @{$self->{yellow_warn}}, sprintf(
+            ">> WARNING: acq t_ccd %.2f outside range -16.0 to -1.0. Clipped.\n",
+            $self->{ccd_temp_acq});
+        $self->{ccd_temp_acq} = $self->{ccd_temp_acq}  >  -1.0  ? -1.0
+                              : $self->{ccd_temp_acq}  < -16.0  ? -16.0
+                              : $self->{ccd_temp_acq};
+    }
 }
+
+use Inline Python => q{
+
+from proseco.acq import get_acq_catalog
+
+def proseco_probs(kwargs):
+    """
+    Call proseco's get_acq_catalog with the parameters supplied in `kwargs` for a specific obsid catalog
+    and return the individual acq star probabilities, the P2 value for the catalog, and the expected
+    number of acq stars.
+
+    `kwargs` will be a Perl hash converted to dict (by Inline) of the expected keyword params. These keys
+    must be defined:
+
+    'q1', 'q2', 'q3', 'q4' = the target quaternion
+    'man_angle' the maneuver angle to the target quaternion in degrees.
+    'acq_ids' list of acq star ids
+    'halfwidths' list of acq star halfwidths in arcsecs
+    't_ccd_acq' acquisition temperature in deg C
+    'date' observation date (in Chandra.Time compatible format)
+    'detector' science detector
+    'sim_offset' SIM offset
+
+    As these values are from a Perl hash, bytestrings will be converted by de_bytestr early in this method.
+
+    :param kwargs: dict of expected keywords
+    :return tuple: (list of floats of star acq probabilties, float P2, float expected acq stars)
+
+    """
+
+    kw = de_bytestr(kwargs)
+    acq_cat = get_acq_catalog(obsid=0, att=Quaternion.normalize([kw['q1'], kw['q2'], kw['q3'], kw['q4']]),
+                             n_acq=len(kw['acq_ids']), man_angle=kw['man_angle'], t_ccd=kw['t_ccd_acq'],
+                             date=kw['date'], dither=(kw['dither_acq_y'], kw['dither_acq_z']),
+                             detector=kw['detector'], sim_offset=kw['offset'],
+                             include_ids=kw['acq_ids'], include_halfws=kw['halfwidths'])
+
+    # Assign the proseco probabilities back into an array.
+    p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq_id][0]) for acq_id in kw['acq_ids']]
+
+    return p_acqs, float(-np.log10(acq_cat.calc_p_safe())), float(np.sum(p_acqs))
+};
+
+
+###################################################################################
+sub proseco_args{
+###################################################################################
+# Build a hash that corresponds to reasonable arguments to use to call proseco get_acq_catalog
+# to calculate marginalized acquisition probabilities for a star catalog.
+# This routine also saves the guides and fids into lists, but those are not used
+# by get_acq_catalog.
+# If an observation does not have a target quaternion or a starcat, it is skipped and
+# an empty hash is returned with no warning.
+    my $self = shift;
+    my %proseco_args;
+    # For the target quaternion, use the -1 to get the last quaternion (there could be more than
+    # one for a segmented maneuver).
+    my $targ_cmd = find_command($self, "MP_TARGQUAT", -1);
+    my $cat_cmd = find_command($self, "MP_STARCAT");
+    # For observations without a target attitude, catalog, or defined obsid return an empty hash
+    if ((not $targ_cmd) or (not $cat_cmd) or ($self->{obsid} =~ /NONE(\d+)/)){
+        return \%proseco_args;
+    }
+    # Use a default SI and offset for ERs (no effect without fid lights)
+    my $is_OR = $self->{obsid} < $ER_MIN_OBSID;
+    my $si = $is_OR ? $self->{SI} : 'ACIS-S';
+    my $offset = $is_OR ? $self->{SIM_OFFSET_Z} : 0;
+
+    my @acq_ids;
+    my @acq_indexes;
+    my @gui_ids;
+    my @fid_ids;
+    my @halfwidths;
+    # Loop over the star catalog and assign the acq stars, guide stars, and fids to arrays.
+  IDX:
+    foreach my $i (1..16) {
+        (my $sid  = $cat_cmd->{"GS_ID$i"}) =~ s/[\s\*]//g;
+        # If there is no star there is nothing for proseco probs to do so skip it.
+        # But warn if it was a thing that should have had an id (BOT/ACQ/GUI).
+        if ($sid eq '---'){
+            if ($cat_cmd->{"TYPE$i"} =~ /BOT|ACQ|GUI/){
+                push @{$self->{warn}}, sprintf(
+                    ">> WARNING: [%2d] Could not calculate acq prob for star with no id.", $i);
+            }
+            next IDX;
+        }
+        $sid = int($sid);
+        # While assigning ACQ stars into a list, warn if outside the 60 to 180 range used by proseco
+        # and the grid acq model.
+        if ($cat_cmd->{"TYPE$i"} =~ /BOT|ACQ/){
+            push @acq_ids, $sid;;
+            my $hw = $cat_cmd->{"HALFW$i"};
+            if (($hw > 180) or ($hw < 60)){
+                push @{$self->{orange_warn}}, sprintf(
+                    ">> WARNING: [%2d] Halfwidth %d outside range 60 to 180. Will be clipped in proseco probs.\n",
+                    $i, $hw);
+            }
+            push @halfwidths, $hw;
+            push @acq_indexes, $i;
+        }
+        if ($cat_cmd->{"TYPE$i"} =~ /BOT|GUI/){
+            push @gui_ids, $sid;
+        }
+        if ($cat_cmd->{"TYPE$i"} =~ /FID/){
+            push @fid_ids, $sid;
+        }
+    }
+
+    # Build a hash of the arguments that could be used by proseco (get_aca_catalog or get_acq_catalog).
+    # Zeros are added to most of the numeric parameters as that seems to help "cast" them to floats or ints in
+    # Perl to some extent.  Also save the acquisition star catalog indexes to make it easier to assign back
+    # the probabilities without having to search again on the Perl side by agasc id.
+    %proseco_args = (
+        obsid => $self->{obsid},
+        date => $targ_cmd->{stop_date},
+        q1 => 0 + $targ_cmd->{q1}, q2 => 0 + $targ_cmd->{q2}, q3 => 0 + $targ_cmd->{q3}, q4 =>0 + $targ_cmd->{q4},
+        man_angle => 0 + $targ_cmd->{angle},
+        detector => $si, offset=> 0 + $offset,
+        dither_acq_y => $self->{dither_acq}->{ampl_y},
+        dither_acq_z => $self->{dither_acq}->{ampl_p},
+        dither_guide_y => $self->{dither_guide}->{ampl_y},
+        dither_guide_z => $self->{dither_guide}->{ampl_p},
+        t_ccd_acq => $self->{ccd_temp_acq},
+        t_ccd_guide => $self->{ccd_temp},
+        acq_ids => \@acq_ids,
+        halfwidths => \@halfwidths,
+        fid_ids => \@fid_ids,
+        guide_ids => \@gui_ids,
+        acq_indexes => \@acq_indexes);
+
+    return \%proseco_args
+
+}
+
+
+###################################################################################
+sub set_proseco_probs_and_check_P2{
+###################################################################################
+# For observations with a star catalog and which have valid parameters already determined
+# in $self->{proseco_args}, call the Python proseco_probs method to calculate the
+# marginalized probabilities, P2, and expected stars, and assign those values back
+# where expected in the data structure.
+# This assigns the individual acq star probabilites back into $self->{acq_probs} and
+# assigns the P2 and expected values into $self->{figure_of_merit}.
+    my $self = shift;
+    my $cat_cmd = find_command($self, "MP_STARCAT");
+    my $args = $self->{proseco_args};
+
+    if (not %{$args}){
+        return;
+    }
+    my ($p_acqs, $P2, $expected) = proseco_probs($args);
+
+    my @acq_indexes = @{$args->{acq_indexes}};
+
+    # Assign those p_acqs to a slot hash and the catalog P_ACQ by index
+    my %slot_probs;
+    for my $idx (0 .. $#acq_indexes) {
+        my $i = $acq_indexes[$idx];
+        $cat_cmd->{"P_ACQ$i"} = $p_acqs->[$idx];
+        $slot_probs{$cat_cmd->{"IMNUM$i"}} = $p_acqs->[$idx];
+    }
+    $self->{acq_probs} = \%slot_probs;
+
+    # Red and yellow warnings on acquisition safing probability.
+
+    # Set the P2 requirement to be 2.0 for ORs and 3.0 for ERs.  The higher limit for ER
+    # reflects a desire to minimize integrated mission risk for observations where the
+    # attitude can be selected freely.  Yellow warning for marginal catalog is set to a
+    # factor of 10 less risk than the red limit P2 probability for OR / ER respectively).
+    my $P2_red = $self->{obsid} < $ER_MIN_OBSID ? 2.0 : 3.0;
+    my $P2_yellow = $P2_red + 1.0;
+
+    # Create a structure that gets used for report generation only.
+    $self->{figure_of_merit} = {expected => substr($expected, 0, 4),
+                                P2 => $P2,
+                                cum_prob_bad => ($P2 < $P2_red)};
+
+    # Do the actual checks
+    if ($P2 < $P2_red){
+        push @{$self->{warn}},
+             ">> WARNING: -log10 probability of 2 or fewer stars < $P2_red\n";
+    }
+    elsif ($P2 < $P2_yellow){
+        push @{$self->{yellow_warn}},
+             ">> WARNING: -log10 probability of 2 or fewer stars < $P2_yellow\n";
+    }
+
+}
+
+
+
+use Inline Python => q{
+
+from chandra_aca.star_probs import mag_for_p_acq
+
+def _mag_for_p_acq(p_acq, date, t_ccd):
+    """
+    Call mag_for_p_acq, but cast p_acq and t_ccd as floats (may or may not be needed) and
+    convert date from a bytestring (from the Perl interface).
+    """
+    return mag_for_p_acq(float(p_acq), date.decode(), float(t_ccd))
+
+};
+
+
+
+sub set_dynamic_mag_limits{
+# Use the t_ccd at time of acquistion and time to set the mag limits corresponding to the the magnitude
+# for a 75% acquisition succes (yellow limit) and a 50% acquisition success (red limit)
+    my $c;
+    my $self = shift;
+    return unless ($c = $self->find_command("MP_STARCAT"));
+
+    my $date = $c->{date};
+    my $t_ccd = $self->{ccd_temp_acq};
+    # Dynamic mag limits based on 75% and 50% chance of successful star acq
+    # Maximum limits of 10.3 and 10.6
+    $self->{mag_faint_yellow} = min(10.3, _mag_for_p_acq(0.75, $date, $t_ccd));
+    $self->{mag_faint_red} = min(10.6, _mag_for_p_acq(0.5, $date, $t_ccd));
+}
+
