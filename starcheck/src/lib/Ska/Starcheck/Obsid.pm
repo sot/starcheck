@@ -2823,7 +2823,7 @@ sub proseco_args{
 
 
 ###################################################################################
-sub set_proseco_probs{
+sub set_proseco_probs_and_check_P2{
 ###################################################################################
 # For observations with a star catalog and which have valid parameters already determined
 # in $self->{proseco_args}, call the Python proseco_probs method to calculate the
@@ -2851,18 +2851,28 @@ sub set_proseco_probs{
     }
     $self->{acq_probs} = \%slot_probs;
 
-    # Set the P2 requirement to be 2.0 for ORs and 3.0 for ERs.
-    my $P2_required = $self->{obsid} < $ER_MIN_OBSID ? 2.0 : 3.0;
+    # Red and yellow warnings on acquisition safing probability.
+
+    # Set the P2 requirement to be 2.0 for ORs and 3.0 for ERs.  The higher limit for ER
+    # reflects a desire to minimize integrated mission risk for observations where the
+    # attitude can be selected freely.  Yellow warning for marginal catalog is set to a
+    # factor of 10 less risk than the red limit P2 probability for OR / ER respectively).
+    my $P2_red = $self->{obsid} < $ER_MIN_OBSID ? 2.0 : 3.0;
+    my $P2_yellow = $P2_red + 1.0;
+
+    # Create a structure that gets used for report generation only.
     $self->{figure_of_merit} = {expected => substr($expected, 0, 4),
                                 P2 => $P2,
-                                cum_prob_bad => ($P2 < $P2_required)};
-    if ($P2 < $P2_required){
-        push @{$self->{warn}}, ">> WARNING: -log10 probability of 2 or fewer stars < $P2_required\n";
+                                cum_prob_bad => ($P2 < $P2_red)};
+
+    # Do the actual checks
+    if ($P2 < $P2_red){
+        push @{$self->{warn}},
+             ">> WARNING: -log10 probability of 2 or fewer stars < $P2_red\n";
     }
-    # If OR and P2 less than 3.0, yellow_warn.  This probably doesn't need the check on OR/ER
-    # because if it is an ER and < 3.0 the if statement above was hit.
-    elsif (($self->{obsid} < $ER_MIN_OBSID) and ($P2 < 3.0)){
-        push @{$self->{yellow_warn}}, ">> WARNING: -log10 probability of 2 or fewer stars < 3.0\n";
+    elsif ($P2 < $P2_yellow){
+        push @{$self->{yellow_warn}},
+             ">> WARNING: -log10 probability of 2 or fewer stars < $P2_yellow\n";
     }
 
 }
