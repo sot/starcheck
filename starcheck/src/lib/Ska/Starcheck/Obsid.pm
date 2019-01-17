@@ -1355,10 +1355,10 @@ sub check_star_catalog {
     }
 
     # Seed smallest maximums and largest minimums for guide star box
-    my $max_y = 3000;
-    my $min_y = -3000;
-    my $max_z = 3000;
-    my $min_z = -3000;
+    my $max_y = -3000;
+    my $min_y = 3000;
+    my $max_z = -3000;
+    my $min_z = 3000;
 
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
