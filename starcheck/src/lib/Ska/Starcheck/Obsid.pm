@@ -1522,7 +1522,7 @@ sub check_star_catalog {
         # For acq stars, the distance to the row/col padded limits are also confirmed,
         # but code to track which boundary is exceeded (row or column) is not present.
         # Note from above that the pix_row_pad used for row_lim has 7 more pixels of padding
-        # than the pix_col_pad used to determine row_lim.
+        # than the pix_col_pad used to determine col_lim.
         my $acq_edge_delta = min(($row_lim - $dither_acq_y / $ang_per_pix) - abs($pixel_row),
                                  ($col_lim - $dither_acq_p / $ang_per_pix) - abs($pixel_col));
         if (($type =~ /BOT|ACQ/) and ($acq_edge_delta < (-1 * 12))){
