@@ -1507,19 +1507,19 @@ sub check_star_catalog {
                               'col' => ($pixel_col < 0) ? -1 : 1);
 
             if ($type =~ /BOT|GUI|FID/){
-                foreach my $lim ('row', 'col'){
-                    my $track_delta = abs($track_limits{$lim}) - abs($pixel{$lim});
+                foreach my $axis ('row', 'col'){
+                    my $track_delta = abs($track_limits{$axis}) - abs($pixel{$axis});
                     if ($track_delta < 0){
-                        push @warn, sprintf "$alarm [%2d] Off (padded) CCD $lim lim %.1f val %.1f delta %.1f\n",
-                            $i, $pixel_sign{$lim} * $track_limits{$lim}, $track_delta;
+                        push @warn, sprintf "$alarm [%2d] Off (padded) CCD $axis lim %.1f val %.1f delta %.1f\n",
+                            $i, $pixel_sign{$axis} * $track_limits{$axis}, $track_delta;
                     }
                     elsif ($track_delta < 3){
-                        push @orange_warn, sprintf "$alarm [%2d] Within 3 pix of CCD $lim lim %.1f val %.1f delta %.1f\n",
-                            $i, $pixel_sign{$lim} * $track_limits{$lim}, $pixel{$lim}, $track_delta;
+                        push @orange_warn, sprintf "$alarm [%2d] Within 3 pix of CCD $axis lim %.1f val %.1f delta %.1f\n",
+                            $i, $pixel_sign{$axis} * $track_limits{$axis}, $pixel{$axis}, $track_delta;
                     }
                     elsif ($track_delta < 6){
-                        push @yellow_warn, sprintf "$alarm [%2d] Within 6 pix of CCD $lim lim %.1f val %.1f delta %.1f\n",
-                            $i, $pixel_sign{$lim} * $track_limits{$lim}, $pixel{$lim}, $track_delta;
+                        push @yellow_warn, sprintf "$alarm [%2d] Within 6 pix of CCD $axis lim %.1f val %.1f delta %.1f\n",
+                            $i, $pixel_sign{$axis} * $track_limits{$axis}, $pixel{$axis}, $track_delta;
                     }
                 }
             }
