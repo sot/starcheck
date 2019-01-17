@@ -1340,7 +1340,7 @@ sub check_star_catalog {
             next IMPOSTER;
         }
         my $warn = sprintf(
-            "$alarm [%2d] Imposter mag %.1f centroid offset %.1f (row % 4d, col % 4d) star (% 4d, % 4d)\n",
+            "$alarm [%2d] Imposter mag %.1f centroid offset %.1f row, col (%4d, %4d) star (%4d, %4d)\n",
             $imposter->{idx}, $imposter->{bad2_mag}, $imposter->{offset},
             $imposter->{bad2_row}, $imposter->{bad2_col},
             $imposter->{entry_row}, $imposter->{entry_col});
