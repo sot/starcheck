@@ -23,13 +23,89 @@ use warnings;
 
 use Inline Python => q{
 import numpy as np
+from astropy.table import Table
+
+from mica.archive import aca_dark
 from chandra_aca.star_probs import guide_count
+from chandra_aca.transform import yagzag_to_pixels, count_rate_to_mag, mag_to_count_rate
 import Quaternion
 from Ska.quatutil import radec2yagzag
 import agasc
 
+from proseco.core import ACABox
+from proseco.guide import get_imposter_mags
+
 def _guide_count(mags, t_ccd):
     return float(guide_count(np.array(mags), t_ccd))
+
+def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z):
+    """
+    Return a list of info to make warnings on guide stars or fid lights with local dark map that gives an
+    'imposter_mag' that could perturb a centroid.  The potential worst-case offsets (ignoring effects
+    at the background pixels) are returned and checking against offset limits needs to be done
+    from calling code.
+
+    This fetches the dark current before the date of the observation and passes it to
+    proseco.get_imposter_mags with the star candidate positions to fetch the brightest
+    2x2 for each and calculates the mag for that region.  The worse case offset is then
+    added to an entry for the star index.
+
+    :param idxs: catalog indexes as list or array
+    :param yags: catalog yangs as list or array
+    :param zags: catalog zangs as list or array
+    :param mags: catalog mags (AGASC mags for stars estimated fid mags for fids) list or array
+    :param types: catalog TYPE (ACQ|BOT|FID|MON|GUI) as list or array
+    :param t_ccd: observation t_ccd in deg C (should be max t_ccd in guide phase)
+    :param date: observation date (bytestring via Inline)
+    :param dither_y: dither_y in arcsecs (guide dither)
+    :param dither_z: dither_z in arcsecs (guide dither)
+    :param yellow_lim: yellow limit centroid offset threshold limit (in arcsecs)
+    :param red_lim: red limit centroid offset threshold limit (in arcsecs)
+    :return imposters: list of dictionaries with keys that define the index, the imposter mag,
+             a 'status' key that has value 0 if the code to get the imposter mag ran successfully,
+             calculated centroid offset, and star or fid info to make a warning.
+    """
+
+    types = [t.decode('ascii') for t in types]
+    date = date.decode('ascii')
+
+    dark = aca_dark.get_dark_cal_image(date=date, t_ccd_ref=t_ccd, aca_image=True)
+
+
+    def imposter_offset(cand_mag, imposter_mag):
+        """
+        For a given candidate star and the pseudomagnitude of the brightest 2x2 imposter
+        calculate the max offset of the imposter counts are at the edge of the 6x6
+        (as if they were in one pixel).  This is somewhat the inverse of proseco.get_pixmag_for_offset
+        """
+        cand_counts = mag_to_count_rate(cand_mag)
+        spoil_counts = mag_to_count_rate(imposter_mag)
+        return spoil_counts * 3 * 5 / (spoil_counts + cand_counts)
+
+    imposters = []
+    for idx, yag, zag, mag, ctype in zip(idxs, yags, zags, mags, types):
+        if ctype in ['BOT', 'GUI', 'FID']:
+            if ctype in ['BOT', 'GUI']:
+                dither = ACABox((dither_y, dither_z))
+            else:
+                dither = ACABox((5.0, 5.0))
+            row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
+            # Handle any errors in get_imposter_mags with a try/except.  This doesn't
+            # try to pass back a message.  Most likely this will only fail if the star
+            # or fid is completely off the CCD and will have other warning.
+            try:
+                # get_imposter_mags takes a Table of candidates as its first argument, so construct
+                # a single-candidate table `entries`
+                entries = Table([{'idx': idx, 'row': row, 'col': col, 'mag': mag, 'type': ctype}])
+                imp_mags, imp_rows, imp_cols = get_imposter_mags(entries, dark, dither)
+                offset = imposter_offset(mag, imp_mags[0])
+                imposters.append({'idx': int(idx), 'status': int(0),
+                                  'entry_row': float(row), 'entry_col': float(col),
+                                  'bad2_row': float(imp_rows[0]), 'bad2_col': float(imp_cols[0]),
+                                  'bad2_mag': float(imp_mags[0]), 'offset': float(offset)})
+            except:
+                imposters.append({'idx': int(idx), 'status': int(1)})
+    return imposters
 
 
 def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
@@ -194,10 +270,8 @@ sub set_ACA_bad_pixels {
     my $pixel_file = shift;
     my @tmp = io($pixel_file)->slurp;
     my @lines = grep { /^\s+(\d|-)/ } @tmp;
-    splice(@lines, 0, 2); # the first two lines are quadrant boundaries
     foreach (@lines) {
 	my @line = split /;|,/, $_;
-	#cut out the quadrant boundaries
 	foreach my $i ($line[0]..$line[1]) {
 	    foreach my $j ($line[2]..$line[3]) {
 		my $pixel = {'row' => $i,
@@ -1257,6 +1331,45 @@ sub check_star_catalog {
 
     # store a list of the fid positions
     my @fid_positions = map {{'y' => $c->{"YANG$_"}, 'z' => $c->{"ZANG$_"}}} @{$self->{fid}};
+
+
+    # Make arrays of the items that we need for the hot pixel region check
+    my (@idxs, @yags, @zags, @mags, @types);
+    foreach my $i (1..16){
+        if ($c->{"TYPE$i"} =~ /BOT|GUI|FID/){
+            push @idxs, $i;
+            push @yags, $c->{"YANG$i"};
+            push @zags, $c->{"ZANG$i"};
+            # Add zero to get items that look more like float values in the arrays
+            push @mags, ($c->{"GS_MAG$i"} eq '---') ? 13.94 : $c->{"GS_MAG$i"} + 0.0;
+            push @types, $c->{"TYPE$i"};
+        }
+    }
+
+    # Run the hot pixel region check on the Python side on FID|GUI|BOT
+    my @imposters = check_hot_pix(\@idxs, \@yags, \@zags, \@mags, \@types,
+                                   $self->{ccd_temp}, $self->{date}, $dither_guide_y, $dither_guide_z);
+
+    # Assign warnings based on those hot pixel region checks
+  IMPOSTER:
+    for my $imposter (@imposters){
+        # If the check just fails on the Python side write out a warning and move on.
+        if ($imposter->{status} == 1){
+            push @warn, "$alarm [%d] Processing error when checking for hot pixels.\n";
+            next IMPOSTER;
+        }
+        my $warn = sprintf(
+            "$alarm [%2d] Imposter mag %.1f centroid offset %.1f row, col (%4d, %4d) star (%4d, %4d)\n",
+            $imposter->{idx}, $imposter->{bad2_mag}, $imposter->{offset},
+            $imposter->{bad2_row}, $imposter->{bad2_col},
+            $imposter->{entry_row}, $imposter->{entry_col});
+        if ($imposter->{offset} > 4.0){
+            push @warn, $warn;
+        }
+        elsif ($imposter->{offset} > 2.5){
+            push @orange_warn, $warn;
+        }
+    }
 
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
