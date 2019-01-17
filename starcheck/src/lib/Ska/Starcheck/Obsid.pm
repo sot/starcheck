@@ -2704,10 +2704,7 @@ sub star_image_map {
 		my $sid = $cat_star->{id};
 		my $yag = $cat_star->{yag};
 		my $zag = $cat_star->{zag};
-		my ($pix_row, $pix_col) = ('None', 'None');
-		eval{
-			($pix_row, $pix_col) = toPixels($yag, $zag);		
-		};
+		my ($pix_row, $pix_col) = _yagzag_to_pixels($yag, $zag);
 		my $image_x = 54 + ((2900 - $yag) * $pix_scale);
 		my $image_y = 39 + ((2900 - $zag) * $pix_scale);
 		my $star = '<area href="javascript:void(0);"' . "\n"
