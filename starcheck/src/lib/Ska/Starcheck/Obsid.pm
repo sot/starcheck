@@ -36,6 +36,15 @@ from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
 
 def _yagzag_to_pixels(yag, zag):
+    """
+    Call chandra_aca.transform.yagzag_to_pixels.
+    This wrapper is set to pass allow_bad=True, as exceptions from the Python side
+    in this case would not be helpful, and the boundary checks and such will work fine
+    on the Perl side even if the returned row/col is off the CCD.
+    :params yag: y-angle arcsecs (hopefully as a number from the Perl)
+    :params zag: z-angle arcsecs (hopefully as a number from the Perl)
+    :returns tuple: row, col as floats
+    """
     row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
     return float(row), float(col)
 
