@@ -1500,12 +1500,12 @@ sub check_star_catalog {
         if ($type =~ /BOT|GUI|FID/){
             foreach my $axis ('row', 'col'){
                 my $track_delta = abs($track_limits{$axis}) - abs($pixel{$axis});
-                if ($track_delta < 3){
-                    push @warn, sprintf "$alarm [%2d] Less than 3 pix edge margin $axis lim %.1f val %.1f delta %.1f\n",
+                if ($track_delta < 2.5){
+                    push @warn, sprintf "$alarm [%2d] Less than 2.5 pix edge margin $axis lim %.1f val %.1f delta %.1f\n",
                         $i, $pixel_sign{$axis} * $track_limits{$axis}, $pixel{$axis}, $track_delta;
                 }
-                elsif ($track_delta < 6){
-                    push @yellow_warn, sprintf "$alarm [%2d] Within 6 pix of CCD $axis lim %.1f val %.1f delta %.1f\n",
+                elsif ($track_delta < 5){
+                    push @orange_warn, sprintf "$alarm [%2d] Within 5 pix of CCD $axis lim %.1f val %.1f delta %.1f\n",
                         $i, $pixel_sign{$axis} * $track_limits{$axis}, $pixel{$axis}, $track_delta;
                 }
             }
