@@ -65,16 +65,15 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
              a 'status' key that has value 0 if the code to get the imposter mag ran successfully,
              calculated centroid offset, and star or fid info to make a warning.
     """
-
-    idxs = [int(idx) for idx in idxs]
-    yags = [float(yag) for yag in yags]
-    zags = [float(zag) for zag in zags]
-    mags = [float(mag) for mag in mags]
+    idxs = [idx for idx in idxs]
+    yags = [yag for yag in yags]
+    zags = [zag for zag in zags]
+    mags = [mag for mag in mags]
     types = [t.decode('ascii') for t in types]
-    t_ccd = float(t_ccd)
+    t_ccd = t_ccd
     date = date.decode('ascii')
-    dither_y = float(dither_y)
-    dither_z = float(dither_z)
+    dither_y = dither_y
+    dither_z = dither_z
 
     dark = aca_dark.get_dark_cal_image(date=date, t_ccd_ref=t_ccd, aca_image=True)
 
