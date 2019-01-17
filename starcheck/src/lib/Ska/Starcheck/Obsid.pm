@@ -1485,12 +1485,12 @@ sub check_star_catalog {
 	else{
             # Set "acq phase" dither to acq dither or 20.0 if undefined
             my $dither_acq_y = $self->{dither_acq}->{ampl_y} or 20.0;
-            my $dither_acq_p = $self->{dither_acq}->{ampl_y} or 20.0;
+            my $dither_acq_p = $self->{dither_acq}->{ampl_p} or 20.0;
 
             # Set "dither" for FID to be pseudodither of 5.0 to give 1 pix margin
             # Set "track phase" dither for BOT GUI to guide dither or 20.0 if undefined.
             my $dither_track_y = ($type eq 'FID') ? 5.0 : $self->{dither_guide}->{ampl_y} or 20.0;
-            my $dither_track_p = ($type eq 'FID') ? 5.0 : $self->{dither_guide}->{ampl_y} or 20.0;
+            my $dither_track_p = ($type eq 'FID') ? 5.0 : $self->{dither_guide}->{ampl_p} or 20.0;
 
             my $pix_window_pad = 7; # half image size + point uncertainty + ? + 1 pixel of margin
             my $pix_row_pad = 8;
