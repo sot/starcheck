@@ -1345,7 +1345,8 @@ sub check_star_catalog {
     for my $imposter (@imposters){
         # If the check just fails on the Python side write out a warning and move on.
         if ($imposter->{status} == 1){
-            push @warn, "$alarm [%d] Processing error when checking for hot pixels.\n";
+            push @warn, sprintf("$alarm [%2d] Processing error when checking for hot pixels.\n",
+                                $imposter->{idx});
             next IMPOSTER;
         }
         my $warn = sprintf(
