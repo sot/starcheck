@@ -35,6 +35,20 @@ import agasc
 from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
 
+def _yagzag_to_pixels(yag, zag):
+    """
+    Call chandra_aca.transform.yagzag_to_pixels.
+    This wrapper is set to pass allow_bad=True, as exceptions from the Python side
+    in this case would not be helpful, and the boundary checks and such will work fine
+    on the Perl side even if the returned row/col is off the CCD.
+    :params yag: y-angle arcsecs (hopefully as a number from the Perl)
+    :params zag: z-angle arcsecs (hopefully as a number from the Perl)
+    :returns tuple: row, col as floats
+    """
+    row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
+    return float(row), float(col)
+
+
 def _guide_count(mags, t_ccd):
     return float(guide_count(np.array(mags), t_ccd))
 
@@ -1183,26 +1197,7 @@ sub check_star_catalog {
     
     ########################################################################
     # Constants used in star catalog checks
-    my $y_ang_min    =-2410;	# CCD boundaries in arcsec
-    my $y_ang_max    = 2473;
-    my $z_ang_min    =-2504;
-    my $z_ang_max    = 2450;
 
-    # For boundary checks in pixel coordinates
-    # see /proj/sot/ska/acaflt/quad_limits_sausage.* for more info
-    my $ccd_row_min = -512.5;
-    my $ccd_row_max =  511.5;
-    my $ccd_col_min = -512.5;
-    my $ccd_col_max =  511.5;
-
-    my $pix_window_pad = 7; # half image size + point uncertainty + ? + 1 pixel of margin
-    my $pix_row_pad = 8; # min pad at row limits (pixels) [ACA requirement]
-    my $pix_col_pad = 1; # min pad at col limits (pixels) [because outer col is not full-sized]
-
-    my $row_min = $ccd_row_min + ($pix_row_pad + $pix_window_pad);
-    my $row_max = $ccd_row_max - ($pix_row_pad + $pix_window_pad);
-    my $col_min = $ccd_col_min + ($pix_col_pad + $pix_window_pad);
-    my $col_max = $ccd_col_max - ($pix_col_pad + $pix_window_pad);
 
     # Rough angle / pixel scale for dither
     my $ang_per_pix = 5;
@@ -1239,11 +1234,6 @@ sub check_star_catalog {
     my $min_fid      = 3;
     ########################################################################
 
-    # Set smallest maximums and largest minimums for rectangle edges
-    my $max_y = $y_ang_min;
-    my $min_y = $y_ang_max;
-    my $max_z = $z_ang_min;
-    my $min_z = $z_ang_max;
 
 
     my @warn = ();
@@ -1371,6 +1361,12 @@ sub check_star_catalog {
         }
     }
 
+    # Seed smallest maximums and largest minimums for guide star box
+    my $max_y = -3000;
+    my $min_y = 3000;
+    my $max_z = -3000;
+    my $min_z = 3000;
+
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
 	my $type = $c->{"TYPE$i"};
@@ -1485,39 +1481,55 @@ sub check_star_catalog {
 
 	# Star/fid outside of CCD boundaries
         # ACA-019 ACA-020 ACA-021
-	my ($pixel_row, $pixel_col);
-	eval{
-		($pixel_row, $pixel_col) = toPixels( $yag, $zag);
-	    };
-	
-	# toPixels throws exception if angle off the CCD altogether
-	# respond to that one and warn on all others
-	if ($@) {
-	    if ($@ =~ /.*Coordinate off of CCD.*/ ){
-		push @warn, sprintf "$alarm [%2d] Angle Off CCD.\n",$i;
-	    }
-	    else {
-		push @warn, sprintf "$alarm [%2d] Boundary Checks failed. toPixels() said: $@ \n",$i,$i;
-	    }
-	}
-	else{
-            my $guide_edge_delta = min(($row_max - $dither_guide_y / $ang_per_pix) - $pixel_row,
-                                       $pixel_row - ($row_min + $dither_guide_y / $ang_per_pix),
-                                       ($col_max - $dither_guide_z / $ang_per_pix) - $pixel_col,
-                                       $pixel_col - ($col_min + $dither_guide_z / $ang_per_pix));
-            my $acq_edge_delta = min(($row_max - $dither_acq_y / $ang_per_pix) - $pixel_row,
-                                     $pixel_row - ($row_min + $dither_acq_y / $ang_per_pix),
-                                     ($col_max - $dither_acq_z / $ang_per_pix) - $pixel_col,
-                                     $pixel_col - ($col_min + $dither_acq_z / $ang_per_pix));
-            if (($type =~ /BOT|GUI|FID/) and ($guide_edge_delta < 0)){
-                push @warn,sprintf "$alarm [%2d] Off (padded) CCD.\n",$i;
+	my ($pixel_row, $pixel_col) = _yagzag_to_pixels($yag, $zag);
+
+        # Set "acq phase" dither to acq dither or 20.0 if undefined
+        my $dither_acq_y = $self->{dither_acq}->{ampl_y} or 20.0;
+        my $dither_acq_p = $self->{dither_acq}->{ampl_p} or 20.0;
+
+        # Set "dither" for FID to be pseudodither of 5.0 to give 1 pix margin
+        # Set "track phase" dither for BOT GUI to max guide dither over interval or 20.0 if undefined.
+        my $dither_track_y = ($type eq 'FID') ? 5.0 : $self->{dither_guide}->{ampl_y_max} or 20.0;
+        my $dither_track_p = ($type eq 'FID') ? 5.0 : $self->{dither_guide}->{ampl_p_max} or 20.0;
+
+        my $pix_window_pad = 7; # half image size + point uncertainty + ? + 1 pixel of margin
+        my $pix_row_pad = 8;
+        my $pix_col_pad = 1;
+        my $row_lim = 512.0 - ($pix_row_pad + $pix_window_pad);
+        my $col_lim = 512.0 - ($pix_col_pad + $pix_window_pad);
+
+        my %track_limits = ('row' => $row_lim - $dither_track_y / $ang_per_pix,
+                            'col' => $col_lim - $dither_track_p / $ang_per_pix);
+        my %pixel = ('row' => $pixel_row,
+                     'col' => $pixel_col);
+        # Store the sign of the pixel row/col just to make it easier to print the corresponding limit
+        my %pixel_sign = ('row' => ($pixel_row < 0) ? -1 : 1,
+                          'col' => ($pixel_col < 0) ? -1 : 1);
+
+        if ($type =~ /BOT|GUI|FID/){
+            foreach my $axis ('row', 'col'){
+                my $track_delta = abs($track_limits{$axis}) - abs($pixel{$axis});
+                if ($track_delta < 2.5){
+                    push @warn, sprintf "$alarm [%2d] Less than 2.5 pix edge margin $axis lim %.1f val %.1f delta %.1f\n",
+                        $i, $pixel_sign{$axis} * $track_limits{$axis}, $pixel{$axis}, $track_delta;
+                }
+                elsif ($track_delta < 5){
+                    push @orange_warn, sprintf "$alarm [%2d] Within 5 pix of CCD $axis lim %.1f val %.1f delta %.1f\n",
+                        $i, $pixel_sign{$axis} * $track_limits{$axis}, $pixel{$axis}, $track_delta;
+                }
             }
-            elsif (($type eq 'ACQ') and ($acq_edge_delta < (-1 * 12))){
-                push @orange_warn,sprintf "$alarm [%2d] Off (padded) CCD by > 60 arcsec.\n",$i;
-            }
-            elsif (($type eq 'ACQ') and ($acq_edge_delta < 0)){
-                push @yellow_warn,sprintf "$alarm [%2d] Off (padded) CCD.\n",$i;
-            }
+        }
+        # For acq stars, the distance to the row/col padded limits are also confirmed,
+        # but code to track which boundary is exceeded (row or column) is not present.
+        # Note from above that the pix_row_pad used for row_lim has 7 more pixels of padding
+        # than the pix_col_pad used to determine col_lim.
+        my $acq_edge_delta = min(($row_lim - $dither_acq_y / $ang_per_pix) - abs($pixel_row),
+                                 ($col_lim - $dither_acq_p / $ang_per_pix) - abs($pixel_col));
+        if (($type =~ /BOT|ACQ/) and ($acq_edge_delta < (-1 * 12))){
+            push @orange_warn, sprintf "$alarm [%2d] Acq Off (padded) CCD by > 60 arcsec.\n",$i;
+        }
+        elsif (($type =~ /BOT|ACQ/) and ($acq_edge_delta < 0)){
+            push @{$self->{fyi}}, sprintf "$alarm [%2d] Acq Off (padded) CCD (P_ACQ should be < .5)\n",$i;
         }
 
 	# Faint and bright limits ~ACA-009 ACA-010
@@ -1637,7 +1649,7 @@ sub check_star_catalog {
 		my $dy = abs($yag-$pixel->{yag});
 		my $dz = abs($zag-$pixel->{zag});
 		my $dr = sqrt($dy**2 + $dz**2);
-		next unless ( $dz < $dither_guide_z+25 and $dy < $dither_guide_y+25 );
+		next unless ($dz < $self->{dither_guide}->{ampl_p} + 25 and $dy < $self->{dither_guide}->{ampl_y} + 25);
 		push @close_pixels, sprintf(" row, col (%d, %d), dy, dz (%d, %d) \n",
                                             $pixel->{row}, $pixel->{col}, $dy, $dz);
 		push @dr, $dr;
@@ -1667,7 +1679,8 @@ sub check_star_catalog {
 	    
 	    # Fid within $dither + 25 arcsec of a star (yellow) and within 4 mags (red) ACA-024
 	    if ($type eq 'FID'
-		and $dz < $dither_guide_z+25 and $dy < $dither_guide_y+25
+                and $dz < $self->{dither_guide}->{ampl_p} + 25
+                and $dy < $self->{dither_guide}->{ampl_y} + 25
 		and $dm > -5.0) {
 		my $warn = sprintf("$alarm [%2d] Fid spoiler.  %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
@@ -2698,10 +2711,7 @@ sub star_image_map {
 		my $sid = $cat_star->{id};
 		my $yag = $cat_star->{yag};
 		my $zag = $cat_star->{zag};
-		my ($pix_row, $pix_col) = ('None', 'None');
-		eval{
-			($pix_row, $pix_col) = toPixels($yag, $zag);		
-		};
+		my ($pix_row, $pix_col) = _yagzag_to_pixels($yag, $zag);
 		my $image_x = 54 + ((2900 - $yag) * $pix_scale);
 		my $image_y = 39 + ((2900 - $zag) * $pix_scale);
 		my $star = '<area href="javascript:void(0);"' . "\n"
