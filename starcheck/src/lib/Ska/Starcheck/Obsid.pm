@@ -2078,7 +2078,7 @@ sub print_report {
         my $z_amp = int($self->{dither_guide}->{ampl_p} + .5);
         my $y_amp = int($self->{dither_guide}->{ampl_y} + .5);
         if ($self->{dither_guide}->{state} eq 'ENAB'){
-            $o .= sprintf "Dither:  ON ";
+            $o .= sprintf "Dither: ON ";
             $o .= sprintf ("Y_amp=%4.1f  Z_amp=%4.1f  Y_period=%6.1f  Z_period=%6.1f \n",
                            $y_amp, $z_amp, $self->{dither_guide}->{period_y}, $self->{dither_guide}->{period_p});
         }
