@@ -3,12 +3,12 @@ Short Term Schedule: MAY0508A
 
 ------------  PROCESSING FILES  -----------------
 
-DATA = /home/jeanconn/git/starcheck/starcheck/data
 Using DOT file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/mps/md125_2310.dot
 Using OR file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/mps/or/MAY0508_A.or
-Using SOE file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/mps/soe/ms125_2324.soe
 Using TLR file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/CR125_2301.tlr
 Using acq_star_rdb file ${DATA}/bad_acq_stars.rdb
+Using agasc_file file /proj/sot/ska/data/agasc/agasc1p6.h5
+Using attitude file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/History/ATTITUDE.txt
 Using backstop file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/CR125_2301.backstop
 Using bad_pixel file ${DATA}/ACABadPixels
 Using banned_agasc file ${DATA}/agasc.bad
@@ -25,7 +25,6 @@ Using processing summary file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/mps/ms125_
 Using radmon file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/History/RADMON.txt
 Using simfocus file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/History/SIMFOCUS.txt
 Using simtrans file /data/mpcrit1/mplogs/2008/MAY0508/oflsa/History/SIMTRANS.txt
-Using ACABadPixel file from 2018002 Dark Cal 
 Using acquisition model for multiple star filter enabled
 
 ------------  CCD TEMPERATURE PREDICTION -----------------
@@ -34,50 +33,50 @@ Using acquisition model for multiple star filter enabled
 ------------  SUMMARY OF OBSIDS -----------------
 
          ------  2008:125:23:06:49.831   OBC Load Segment Begins     CL125:2301 
-OBSID =  9599 at 2008:125:23:09:55.831   7 clean ACQ | 4 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
-OBSID =  8961 at 2008:125:23:53:25.553   8 clean ACQ | 5 clean GUI | 
-OBSID =  9169 at 2008:126:03:48:25.930   8 clean ACQ | 5 clean GUI | 
-OBSID =  9560 at 2008:126:12:03:08.930   8 clean ACQ | 5 clean GUI | 
-OBSID =  9561 at 2008:126:16:34:00.930   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID =  9562 at 2008:126:20:48:25.930   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID =  9067 at 2008:127:01:02:50.930   8 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID =  9170 at 2008:127:02:54:10.930   8 clean ACQ | 5 clean GUI | 
+OBSID =  9599 at 2008:125:23:09:55.831   7.6 ACQ | 5.0 GUI | Caution: 3
+OBSID =  8961 at 2008:125:23:53:25.553   7.7 ACQ | 5.0 GUI | Caution: 2
+OBSID =  9169 at 2008:126:03:48:25.930   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9560 at 2008:126:12:03:08.930   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9561 at 2008:126:16:34:00.930   7.8 ACQ | 5.0 GUI | Caution: 2
+OBSID =  9562 at 2008:126:20:48:25.930   7.8 ACQ | 5.0 GUI | Caution: 2
+OBSID =  9067 at 2008:127:01:02:50.930   7.7 ACQ | 5.0 GUI | Caution: 2
+OBSID =  9170 at 2008:127:02:54:10.930   7.8 ACQ | 5.0 GUI | Caution: 1
          ------  2008:127:10:35:00.000   OBC Load Segment Begins     CL127:1001 
-OBSID =  9111 at 2008:127:10:55:21.930   8 clean ACQ | 5 clean GUI | 
-OBSID = 57827 at 2008:127:14:26:33.697   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID = 57826 at 2008:127:17:13:48.814   7 clean ACQ | 8 clean GUI | WARNINGS [ 1]
-OBSID = 57825 at 2008:127:23:52:22.243   7 clean ACQ | 8 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID =  9563 at 2008:128:06:07:33.697   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID =  9564 at 2008:128:10:42:30.697   8 clean ACQ | 5 clean GUI | 
-OBSID =  9505 at 2008:128:15:02:47.686   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
+OBSID =  9111 at 2008:127:10:55:21.930   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID = 57827 at 2008:127:14:26:33.697   7.5 ACQ | 8.0 GUI | Critical: 2 Caution: 2
+OBSID = 57826 at 2008:127:17:13:48.814   7.5 ACQ | 8.0 GUI | Critical: 1 Caution: 2
+OBSID = 57825 at 2008:127:23:52:22.243   7.2 ACQ | 8.0 GUI | Critical: 2 Warn: 1 Caution: 1
+OBSID =  9563 at 2008:128:06:07:33.697   7.8 ACQ | 5.0 GUI | Caution: 2
+OBSID =  9564 at 2008:128:10:42:30.697   7.8 ACQ | 5.0 GUI | Warn: 1 Caution: 1
+OBSID =  9505 at 2008:128:15:02:47.686   7.8 ACQ | 5.0 GUI | Caution: 2
          ------  2008:128:20:20:01.285   OBC Load Segment Begins     CL128:2001 
-OBSID =  9703 at 2008:129:20:42:50.686   8 clean ACQ | 5 clean GUI | 
+OBSID =  9703 at 2008:129:20:42:50.686   7.2 ACQ | 5.0 GUI | Caution: 2
          ------  2008:130:05:25:01.285   OBC Load Segment Begins     CL130:0501 
-OBSID = 57824 at 2008:130:06:12:49.463   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
-OBSID = 57823 at 2008:130:08:41:27.723   8 clean ACQ | 7 clean GUI | WARNINGS [ 1] 
-OBSID = 57822 at 2008:130:14:20:12.378   6 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 2]
-OBSID =  9565 at 2008:130:20:58:01.891   8 clean ACQ | 5 clean GUI | 
-OBSID =  9188 at 2008:131:01:48:20.303   8 clean ACQ | 5 clean GUI | 
-OBSID =  9171 at 2008:131:03:05:31.059   8 clean ACQ | 5 clean GUI | 
-OBSID =  9559 at 2008:131:11:21:42.059   8 clean ACQ | 5 clean GUI | 
+OBSID = 57824 at 2008:130:06:12:49.463   7.5 ACQ | 8.0 GUI | Critical: 2 Caution: 2
+OBSID = 57823 at 2008:130:08:41:27.723   7.6 ACQ | 8.0 GUI | Critical: 1 Caution: 1
+OBSID = 57822 at 2008:130:14:20:12.378   7.5 ACQ | 8.0 GUI | Critical: 2 Caution: 3
+OBSID =  9565 at 2008:130:20:58:01.891   7.7 ACQ | 5.0 GUI | Caution: 2
+OBSID =  9188 at 2008:131:01:48:20.303   7.6 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9171 at 2008:131:03:05:31.059   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9559 at 2008:131:11:21:42.059   7.8 ACQ | 5.0 GUI | Caution: 1
          ------  2008:131:15:53:33.059   OBC Load Segment Begins     CL131:1501 
-OBSID =  9030 at 2008:131:15:56:39.059   8 clean ACQ | 5 clean GUI | 
-OBSID =  9031 at 2008:131:17:31:55.096   8 clean ACQ | 5 clean GUI | 
-OBSID =  9032 at 2008:131:19:03:45.096   8 clean ACQ | 5 clean GUI | 
-OBSID =  9033 at 2008:131:20:35:35.096   8 clean ACQ | 5 clean GUI | 
-OBSID =  9034 at 2008:131:22:07:25.096   8 clean ACQ | 5 clean GUI | 
-OBSID =  9073 at 2008:131:23:39:15.096   8 clean ACQ | 5 clean GUI | 
-OBSID =  9074 at 2008:132:01:11:05.096   8 clean ACQ | 5 clean GUI | 
-OBSID =  9606 at 2008:132:02:42:55.096   7 clean ACQ | 5 clean GUI | WARNINGS [ 1]
-OBSID =  9172 at 2008:132:03:27:35.096   8 clean ACQ | 5 clean GUI | 
-OBSID =  9566 at 2008:132:11:39:32.096   8 clean ACQ | 5 clean GUI | 
-OBSID =  9567 at 2008:132:16:24:28.096   8 clean ACQ | 5 clean GUI | 
-OBSID =  9608 at 2008:132:20:52:57.096   8 clean ACQ | 5 clean GUI | 
-OBSID = 57821 at 2008:132:21:52:38.787   7 clean ACQ | 7 clean GUI | WARNINGS [ 1] WARNINGS [ 1]
+OBSID =  9030 at 2008:131:15:56:39.059   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9031 at 2008:131:17:31:55.096   6.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9032 at 2008:131:19:03:45.096   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9033 at 2008:131:20:35:35.096   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9034 at 2008:131:22:07:25.096   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9073 at 2008:131:23:39:15.096   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9074 at 2008:132:01:11:05.096   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9606 at 2008:132:02:42:55.096   7.6 ACQ | 5.0 GUI | Caution: 2
+OBSID =  9172 at 2008:132:03:27:35.096   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9566 at 2008:132:11:39:32.096   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9567 at 2008:132:16:24:28.096   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID =  9608 at 2008:132:20:52:57.096   7.8 ACQ | 5.0 GUI | Caution: 1
+OBSID = 57821 at 2008:132:21:52:38.787   7.5 ACQ | 8.0 GUI | Critical: 2 Caution: 2
 ==================================================================================== 
 OBSID: 9599   AX J144042-6001        HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   220.136842   -60.037667   357.078267
-Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+Dither:  ON Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:125:23:09:54.188 (VCDU count = 4506899)
@@ -91,28 +90,28 @@ MP_STARCAT at 2008:125:23:09:55.831 (VCDU count = 4506906)
 [ 1]  0           7   FID  8x8     ---   7.000   8.000   -776  -1306   1   1   25          
 [ 2]  1           8   FID  8x8     ---   7.000   8.000    836  -1308   1   1   25          
 [ 3]  2          10   FID  8x8     ---   7.000   8.000   1266    995   1   1   25          
-[ 4]  3  1139148408   BOT  6x6   0.985   8.080   9.578  -2199   1922  20   1  120          
-[ 5]  4  1139171176   BOT  6x6   0.985   8.498  10.000  -1322    909  20   1  120          
-[ 6]  5  1139280104   BOT  6x6   0.985   7.518   9.016   -178   1023  20   1  120          
-[ 7]  6  1180604328   BOT  6x6   0.931   9.624  11.125   1413   -261  20   1  120  a2g2    
-[ 8]  7  1180612104   GUI  6x6     ---   8.972  10.469    753  -2104   1   1   25    g2    
-[ 9]  7  1139171312   ACQ  6x6   0.985   9.431  10.938   -440   1642  20   1  120    a2    
-[10]  0  1139171352   ACQ  6x6   0.985   9.480  10.984  -1142   2060  20   1  120    a2    
-[11]  1  1139279528   ACQ  6x6   0.879  10.210  11.719    219    357  20   1  120    a2    
-[12]  2  1139279048   ACQ  6x6   0.893   9.785  11.281   2209   1088  20   1  120    a2    
+[ 4]  3  1139148408   BOT  6x6   0.975   8.080   9.578  -2199   1922  20   1  120         C
+[ 5]  4  1139171176   BOT  6x6   0.977   8.498  10.000  -1322    909  20   1  120          
+[ 6]  5  1139280104   BOT  6x6   0.980   7.518   9.016   -178   1023  20   1  120          
+[ 7]  6  1180604328   BOT  6x6   0.931   9.624  11.125   1413   -261  20   1  120  a2g2   C
+[ 8]  7  1180612104   GUI  6x6     ---   8.972  10.469    753  -2104   1   1   25    g2   C
+[ 9]  7  1139171312   ACQ  6x6   0.950   9.431  10.938   -440   1642  20   1  120    a2    
+[10]  0  1139171352   ACQ  6x6   0.946   9.480  10.984  -1142   2060  20   1  120    a2    
+[11]  1  1139279528   ACQ  6x6   0.875  10.210  11.719    219    357  20   1  120    a2    
+[12]  2  1139279048   ACQ  6x6   0.974   9.785  11.281   2209   1088  20   1  120    a2   C
 
->> WARNING: [ 8] Nearby ACA bad pixel. Y,Z,Radial seps:  28,  26,  38
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [11] Search spoiler. 1139280088: Y,Z,Radial,Mag seps: 166 120 205 -0.9
 >> WARNING: [11] Search spoiler. 1139279224: Y,Z,Radial,Mag seps:  94  12  95 -0.9
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.442	-5.542	-3.886	
-Acquisition Stars Expected  : 7.62
+Probability of acquiring 2 or fewer stars (10^-x):	3.0001	
+Acquisition Stars Expected  : 7.60
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 8961   NGC 6528               ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   271.217607   -30.076238    84.147439
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:125:23:53:23.910 (VCDU count = 4517084)
@@ -126,25 +125,28 @@ MP_STARCAT at 2008:125:23:53:25.553 (VCDU count = 4517090)
 [ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
-[ 4]  3   898389680   BOT  6x6   0.985   8.345   9.844   1758   1869  20   1  120          
-[ 5]  4   898398352   BOT  6x6   0.985   7.211   8.719    666   1061  20   1  120          
-[ 6]  5   968768856   BOT  6x6   0.985   8.401   9.906  -2193  -1777  20   1  120          
-[ 7]  6   898384672   GUI  6x6     ---   7.516   9.016   2349  -1781   1   1   25          
+[ 4]  3   898389680   BOT  6x6   0.975   8.345   9.844   1758   1869  20   1  120          
+[ 5]  4   898398352   BOT  6x6   0.978   7.211   8.719    666   1061  20   1  120          
+[ 6]  5   968768856   BOT  6x6   0.974   8.401   9.906  -2193  -1777  20   1  120          
+[ 7]  6   898384672   GUI  6x6     ---   7.516   9.016   2349  -1781   1   1   25         C
 [ 8]  7   968772168   GUI  6x6     ---   8.145   9.656  -2011  -1018   1   1   25          
-[ 9]  6   968771304   ACQ  6x6   0.985   9.052  10.562  -1915  -1278  12   1   80          
-[10]  7   968770792   ACQ  6x6   0.985   9.003  10.500  -1257  -2251  14   1   90          
-[11]  0   898398632   ACQ  6x6   0.985   9.321  10.828    654   -784  20   1  120          
-[12]  1   968765144   ACQ  6x6   0.985   7.614   9.109  -1743   -143  20   1  120          
-[13]  2   968755000   ACQ  6x6   0.985   8.913  10.422   -529   -164  20   1  120          
+[ 9]  6   968771304   ACQ  6x6   0.952   9.052  10.562  -1915  -1278  12   1   80          
+[10]  7   968770792   ACQ  6x6   0.962   9.003  10.500  -1257  -2251  14   1   90          
+[11]  0   898398632   ACQ  6x6   0.955   9.321  10.828    654   -784  20   1  120          
+[12]  1   968765144   ACQ  6x6   0.976   7.614   9.109  -1743   -143  20   1  120         C
+[13]  2   968755000   ACQ  6x6   0.971   8.913  10.422   -529   -164  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+>> WARNING: -log10 probability of 2 or fewer stars < 3
+
+Probability of acquiring 2 or fewer stars (10^-x):	2.3984	
+Acquisition Stars Expected  : 7.74
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9169   Sgr A*                 ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.426970   -29.025329    81.505000
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:126:03:48:24.287 (VCDU count = 4572109)
@@ -158,25 +160,27 @@ MP_STARCAT at 2008:126:03:48:25.930 (VCDU count = 4572116)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   896533888   BOT  6x6   0.985   6.988   8.484  -1198   -938  20   1  120          
-[ 5]  4   896534664   BOT  6x6   0.985   8.155   9.656   2189    395  20   1  120          
-[ 6]  5   896537776   BOT  6x6   0.985   7.634   9.141  -2174  -1048  20   1  120          
+[ 4]  3   896533888   BOT  6x6   0.981   6.988   8.484  -1198   -938  20   1  120         C
+[ 5]  4   896534664   BOT  6x6   0.980   8.155   9.656   2189    395  20   1  120          
+[ 6]  5   896537776   BOT  6x6   0.979   7.634   9.141  -2174  -1048  20   1  120         C
 [ 7]  6   896403224   GUI  6x6     ---   8.219   9.719  -1858   2303   1   1   25          
-[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   2431    775   1   1   25          
-[ 9]  6   896541360   ACQ  6x6   0.985   7.611   9.109  -1406  -1026  20   1  120          
-[10]  7   896537176   ACQ  6x6   0.985   7.929   9.438   1268    -38  20   1  120          
-[11]  0   896541576   ACQ  6x6   0.985   8.251   9.750   1220  -1809  20   1  120          
-[12]  1   896538208   ACQ  6x6   0.985   8.431   9.938   1602  -2155  20   1  120          
-[13]  2   896532680   ACQ  6x6   0.985   8.767  10.266   1844    545  20   1  120          
+[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   2431    775   1   1   25         C
+[ 9]  6   896541360   ACQ  6x6   0.979   7.611   9.109  -1406  -1026  20   1  120         C
+[10]  7   896537176   ACQ  6x6   0.977   7.929   9.438   1268    -38  20   1  120         C
+[11]  0   896541576   ACQ  6x6   0.979   8.251   9.750   1220  -1809  20   1  120          
+[12]  1   896538208   ACQ  6x6   0.971   8.431   9.938   1602  -2155  20   1  120         C
+[13]  2   896532680   ACQ  6x6   0.976   8.767  10.266   1844    545  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.5209	
+Acquisition Stars Expected  : 7.82
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9560   GBW14                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.887142   -29.457991    85.505767
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:126:12:03:07.287 (VCDU count = 4687946)
@@ -190,23 +194,25 @@ MP_STARCAT at 2008:126:12:03:08.930 (VCDU count = 4687952)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   896533888   BOT  6x6   0.985   6.988   8.484    179    708  20   1  120          
-[ 5]  4   896536400   BOT  6x6   0.985   8.564  10.062    182  -1470  20   1  120          
-[ 6]  5   896538920   BOT  6x6   0.985   8.770  10.281    973   1995  20   1  120          
-[ 7]  6   896540528   BOT  6x6   0.985   8.270   9.781    629  -1465  20   1  120          
-[ 8]  7   896541168   BOT  6x6   0.985   8.182   9.688  -1552   1654  20   1  120          
-[ 9]  0   896541360   ACQ  6x6   0.985   7.611   9.109    -34    634  20   1  120          
-[10]  1   896537776   ACQ  6x6   0.985   7.634   9.141   -802    663  20   1  120          
-[11]  2   896534128   ACQ  6x6   0.985   8.830  10.328   1257   1308  20   1  120          
+[ 4]  3   896533888   BOT  6x6   0.981   6.988   8.484    179    708  20   1  120         C
+[ 5]  4   896536400   BOT  6x6   0.977   8.564  10.062    182  -1470  20   1  120          
+[ 6]  5   896538920   BOT  6x6   0.962   8.770  10.281    973   1995  20   1  120         C
+[ 7]  6   896540528   BOT  6x6   0.979   8.270   9.781    629  -1465  20   1  120          
+[ 8]  7   896541168   BOT  6x6   0.980   8.182   9.688  -1552   1654  20   1  120          
+[ 9]  0   896541360   ACQ  6x6   0.979   7.611   9.109    -34    634  20   1  120         C
+[10]  1   896537776   ACQ  6x6   0.979   7.634   9.141   -802    663  20   1  120         C
+[11]  2   896534128   ACQ  6x6   0.975   8.830  10.328   1257   1308  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.4116	
+Acquisition Stars Expected  : 7.81
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9561   GBW15                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   267.081736   -29.555602    85.505790
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:126:16:33:59.287 (VCDU count = 4751368)
@@ -220,25 +226,26 @@ MP_STARCAT at 2008:126:16:34:00.930 (VCDU count = 4751374)
 [ 1]  0           2   FID  8x8     ---   7.000   8.000   -774   -850   1   1   25          
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2140   1055   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
-[ 4]  3   896536400   BOT  6x6   0.985   8.564  10.062    486   -834  20   1  120          
-[ 5]  4   896540528   BOT  6x6   0.985   8.270   9.781    933   -829  20   1  120          
-[ 6]  5   896541168   BOT  6x6   0.985   8.182   9.688  -1253   2287  20   1  120          
-[ 7]  6   896541360   BOT  6x6   0.985   7.611   9.109    265   1270  20   1  120          
-[ 8]  7   896542048   BOT  6x6   0.985   9.323  10.828   1677  -1953  20   1  120          
-[ 9]  0   896533888   ACQ  6x6   0.985   6.988   8.484    480   1344  20   1  120          
-[10]  1   896537776   ACQ  6x6   0.985   7.634   9.141   -501   1297  20   1  120          
-[11]  2   896543792   ACQ  6x6   0.985   9.188  10.688  -1427   -319  20   1  120          
+[ 4]  3   896536400   BOT  6x6   0.977   8.564  10.062    486   -834  20   1  120          
+[ 5]  4   896540528   BOT  6x6   0.979   8.270   9.781    933   -829  20   1  120          
+[ 6]  5   896541168   BOT  6x6   0.980   8.182   9.688  -1253   2287  20   1  120          
+[ 7]  6   896541360   BOT  6x6   0.979   7.611   9.109    265   1270  20   1  120         C
+[ 8]  7   896542048   BOT  6x6   0.959   9.323  10.828   1677  -1953  20   1  120          
+[ 9]  0   896533888   ACQ  6x6   0.981   6.988   8.484    480   1344  20   1  120         C
+[10]  1   896537776   ACQ  6x6   0.979   7.634   9.141   -501   1297  20   1  120         C
+[11]  2   896543792   ACQ  6x6   0.966   9.188  10.688  -1427   -319  20   1  120          
 
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [11] Bad Acquisition Star. 896543792 has  5 failed out of  8 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+Probability of acquiring 2 or fewer stars (10^-x):	8.2780	
+Acquisition Stars Expected  : 7.80
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9562   GBW16                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   267.277998   -29.658296    85.505815
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:126:20:48:24.287 (VCDU count = 4810939)
@@ -252,27 +259,28 @@ MP_STARCAT at 2008:126:20:48:25.930 (VCDU count = 4810945)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   896533888   BOT  6x6   0.985   6.988   8.484    797   1986  20   1  120          
-[ 5]  4   896540528   BOT  6x6   0.985   8.270   9.781   1255   -185  20   1  120          
-[ 6]  5   898248800   BOT  6x6   0.985   8.409  10.109   -816  -2253  20   1  120          
-[ 7]  6   898250872   GUI  6x6     ---   8.677  10.188    270  -2327   1   1   25          
+[ 4]  3   896533888   BOT  6x6   0.981   6.988   8.484    797   1986  20   1  120         C
+[ 5]  4   896540528   BOT  6x6   0.979   8.270   9.781   1255   -185  20   1  120          
+[ 6]  5   898248800   BOT  6x6   0.971   8.409  10.109   -816  -2253  20   1  120         C
+[ 7]  6   898250872   GUI  6x6     ---   8.677  10.188    270  -2327   1   1   25         C
 [ 8]  7   966926496   GUI  6x6     ---   8.061   9.562  -2342    341   1   1   25          
-[ 9]  6   896541360   ACQ  6x6   0.985   7.611   9.109    583   1912  20   1  120          
-[10]  7   896537776   ACQ  6x6   0.985   7.634   9.141   -184   1938  20   1  120          
-[11]  0   896536400   ACQ  6x6   0.985   8.564  10.062    807   -191  20   1  120          
-[12]  1   966923896   ACQ  6x6   0.985   8.987  10.484  -2054    624  20   1  120          
-[13]  2   896543792   ACQ  6x6   0.985   9.188  10.688  -1107    319  20   1  120          
+[ 9]  6   896541360   ACQ  6x6   0.979   7.611   9.109    583   1912  20   1  120         C
+[10]  7   896537776   ACQ  6x6   0.979   7.634   9.141   -184   1938  20   1  120         C
+[11]  0   896536400   ACQ  6x6   0.977   8.564  10.062    807   -191  20   1  120          
+[12]  1   966923896   ACQ  6x6   0.974   8.987  10.484  -2054    624  20   1  120          
+[13]  2   896543792   ACQ  6x6   0.966   9.188  10.688  -1107    319  20   1  120          
 
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [13] Bad Acquisition Star. 896543792 has  5 failed out of  8 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+Probability of acquiring 2 or fewer stars (10^-x):	8.3269	
+Acquisition Stars Expected  : 7.80
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9067   IGR J18173-2509        ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   274.341893   -25.167097    90.070883
-Dither: ON  Y_amp=16.0  Z_amp=16.0  Y_period=2000.0  Z_period=1414.8
+Dither:  ON Y_amp=16.0  Z_amp=16.0  Y_period=2000.0  Z_period=1414.8 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:127:01:02:49.287 (VCDU count = 4870509)
@@ -286,25 +294,26 @@ MP_STARCAT at 2008:127:01:02:50.930 (VCDU count = 4870516)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           2   FID  8x8     ---   7.000   8.000   -774   -850   1   1   25          
 [ 3]  2           4   FID  8x8     ---   7.000   8.000   2140   1055   1   1   25          
-[ 4]  3   897459792   BOT  6x6   0.985   8.422   9.922   2159   2270  20   1  120          
-[ 5]  4   897463832   BOT  6x6   0.985   8.182   9.688  -1958   1141  20   1  120          
-[ 6]  5   897598640   BOT  6x6   0.985   8.574  10.078   2095   -625  20   1  120          
-[ 7]  6   897607664   BOT  6x6   0.985   8.993  10.500   -583  -1372  20   1  120          
-[ 8]  7   897612528   BOT  6x6   0.985   7.234   8.734   -629   -189  20   1  120          
-[ 9]  0   897616624   ACQ  6x6   0.985   6.094   7.594  -1578  -1076  20   1  120    a2    
-[10]  1   897469264   ACQ  6x6   0.985   7.215   8.719  -2240   1764  20   1  120    a2    
-[11]  2   897598080   ACQ  6x6   0.955   9.478  11.562    532  -1240  20   1  120    a2    
+[ 4]  3   897459792   BOT  6x6   0.978   8.422   9.922   2159   2270  20   1  120          
+[ 5]  4   897463832   BOT  6x6   0.980   8.182   9.688  -1958   1141  20   1  120          
+[ 6]  5   897598640   BOT  6x6   0.968   8.574  10.078   2095   -625  20   1  120         C
+[ 7]  6   897607664   BOT  6x6   0.974   8.993  10.500   -583  -1372  20   1  120          
+[ 8]  7   897612528   BOT  6x6   0.981   7.234   8.734   -629   -189  20   1  120         C
+[ 9]  0   897616624   ACQ  6x6   0.983   6.094   7.594  -1578  -1076  20   1  120    a2    
+[10]  1   897469264   ACQ  6x6   0.981   7.215   8.719  -2240   1764  20   1  120    a2   C
+[11]  2   897598080   ACQ  6x6   0.864   9.478  11.562    532  -1240  20   1  120    a2   C
 
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: Non-standard dither
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.106	-7.033	-5.169	
-Acquisition Stars Expected  : 7.84
+Probability of acquiring 2 or fewer stars (10^-x):	7.8313	
+Acquisition Stars Expected  : 7.70
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9170   Sgr A*                 ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.426970   -29.025329    81.505000
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:127:02:54:09.287 (VCDU count = 4896578)
@@ -318,25 +327,27 @@ MP_STARCAT at 2008:127:02:54:10.930 (VCDU count = 4896584)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   896533888   BOT  6x6   0.985   6.988   8.484  -1198   -938  20   1  120          
-[ 5]  4   896534664   BOT  6x6   0.985   8.155   9.656   2189    395  20   1  120          
-[ 6]  5   896537776   BOT  6x6   0.985   7.634   9.141  -2174  -1048  20   1  120          
+[ 4]  3   896533888   BOT  6x6   0.981   6.988   8.484  -1198   -938  20   1  120         C
+[ 5]  4   896534664   BOT  6x6   0.980   8.155   9.656   2189    395  20   1  120          
+[ 6]  5   896537776   BOT  6x6   0.979   7.634   9.141  -2174  -1048  20   1  120         C
 [ 7]  6   896403224   GUI  6x6     ---   8.219   9.719  -1858   2303   1   1   25          
-[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   2431    775   1   1   25          
-[ 9]  6   896541360   ACQ  6x6   0.985   7.611   9.109  -1406  -1026  20   1  120          
-[10]  7   896537176   ACQ  6x6   0.985   7.929   9.438   1268    -38  20   1  120          
-[11]  0   896541576   ACQ  6x6   0.985   8.251   9.750   1220  -1809  20   1  120          
-[12]  1   896538208   ACQ  6x6   0.985   8.431   9.938   1602  -2155  20   1  120          
-[13]  2   896532680   ACQ  6x6   0.985   8.767  10.266   1844    545  20   1  120          
+[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   2431    775   1   1   25         C
+[ 9]  6   896541360   ACQ  6x6   0.979   7.611   9.109  -1406  -1026  20   1  120         C
+[10]  7   896537176   ACQ  6x6   0.977   7.929   9.438   1268    -38  20   1  120         C
+[11]  0   896541576   ACQ  6x6   0.979   8.251   9.750   1220  -1809  20   1  120          
+[12]  1   896538208   ACQ  6x6   0.971   8.431   9.938   1602  -2155  20   1  120         C
+[13]  2   896532680   ACQ  6x6   0.976   8.767  10.266   1844    545  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.4725	
+Acquisition Stars Expected  : 7.82
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9111   AX J1731.7-3115        ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   262.940549   -31.266515    76.960359
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:127:10:55:20.287 (VCDU count = 5009245)
@@ -350,22 +361,25 @@ MP_STARCAT at 2008:127:10:55:21.930 (VCDU count = 5009251)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   966656080   BOT  6x6   0.985   7.756   9.266  -2150   -385  20   1  120          
-[ 5]  4   966663720   BOT  6x6   0.985   7.803   9.312   -955   2209  20   1  120          
-[ 6]  5   966787448   BOT  6x6   0.985   8.573  10.078    878  -1066  20   1  120          
-[ 7]  6   966787712   BOT  6x6   0.985   8.418   9.922   1108  -1612  20   1  120          
-[ 8]  7   966788616   BOT  6x6   0.985   8.851  10.359    340  -1633  20   1  120          
-[ 9]  0   966659496   ACQ  6x6   0.985   7.439   8.938  -1385   1684  20   1  120          
-[10]  1   966663392   ACQ  6x6   0.985   8.049   9.547   -929   -495  20   1  120          
-[11]  2   966662640   ACQ  6x6   0.985   8.773  10.281  -1788    821  20   1  120          
+[ 4]  3   966656080   BOT  6x6   0.979   7.756   9.266  -2150   -385  20   1  120         C
+[ 5]  4   966663720   BOT  6x6   0.981   7.803   9.312   -955   2209  20   1  120          
+[ 6]  5   966787448   BOT  6x6   0.977   8.573  10.078    878  -1066  20   1  120          
+[ 7]  6   966787712   BOT  6x6   0.978   8.418   9.922   1108  -1612  20   1  120          
+[ 8]  7   966788616   BOT  6x6   0.959   8.851  10.359    340  -1633  20   1  120         C
+[ 9]  0   966659496   ACQ  6x6   0.981   7.439   8.938  -1385   1684  20   1  120          
+[10]  1   966663392   ACQ  6x6   0.980   8.049   9.547   -929   -495  20   1  120          
+[11]  2   966662640   ACQ  6x6   0.974   8.773  10.281  -1788    821  20   1  120         C
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.3803	
+Acquisition Stars Expected  : 7.81
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 57827  
 RA, Dec, Roll (deg):   226.000000     7.300000   174.973029
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:127:14:26:32.054 (VCDU count = 5058696)
@@ -376,26 +390,29 @@ MP_STARCAT at 2008:127:14:26:33.697 (VCDU count = 5058702)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0    45356200   BOT  8x8   0.985   9.571  11.078   1084   1166  20   1  120  a2g2    
-[ 2]  1    45356736   BOT  8x8   0.984   9.709  11.219  -1275   -107  20   1  120  a2g2    
-[ 3]  2    45357808   BOT  8x8   0.973   9.969  11.469  -1096   2049  20   1  120  a2g3    
-[ 4]  3   120466360   BOT  8x8   0.967  10.047  11.547  -2061  -1657  20   1  120  a2g3    
-[ 5]  4   120466888   BOT  8x8   0.985   8.543  10.047   1241  -2102  20   1  120          
-[ 6]  5   120467432   BOT  8x8   0.910   9.393  10.891   -569  -1022  20   1  120    a2    
-[ 7]  6   120467800   BOT  8x8   0.985   9.615  11.125   -337  -1843  20   1  120  a2g2    
+[ 1]  0    45356200   BOT  8x8   0.935   9.571  11.078   1084   1166  20   1  120  a2g2    
+[ 2]  1    45356736   BOT  8x8   0.925   9.709  11.219  -1275   -107  20   1  120  a2g2    
+[ 3]  2    45357808   BOT  8x8   0.919   9.969  11.469  -1096   2049  20   1  120  a2g3    
+[ 4]  3   120466360   BOT  8x8   0.915  10.047  11.547  -2061  -1657  20   1  120  a2g3    
+[ 5]  4   120466888   BOT  8x8   0.972   8.543  10.047   1241  -2102  20   1  120          
+[ 6]  5   120467432   BOT  8x8   0.948   9.393  10.891   -569  -1022  20   1  120    a2    
+[ 7]  6   120467800   BOT  8x8   0.932   9.615  11.125   -337  -1843  20   1  120  a2g2    
 [ 8]  7   120466880   GUI  8x8     ---  10.093  11.594   -639  -1100   1   1   25    g3    
-[ 9]  7   120466352   ACQ  8x8   0.971   9.992  11.500    722   -887  20   1  120    a2    
+[ 9]  7   120466352   ACQ  8x8   0.919   9.992  11.500    722   -887  20   1  120    a2    
 
+>> WARNING: -log10 probability of 2 or fewer stars < 3
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [ 6] Search spoiler.  120466880: Y,Z,Radial,Mag seps:  70  78 104 -0.7
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.145	-6.204	-4.483	
-Acquisition Stars Expected  : 7.76
+Probability of acquiring 2 or fewer stars (10^-x):	2.2224	
+Acquisition Stars Expected  : 7.46
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 57826  
 RA, Dec, Roll (deg):   228.000000   -41.000000     9.253677
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:127:17:13:47.171 (VCDU count = 5097857)
@@ -406,29 +423,32 @@ MP_STARCAT at 2008:127:17:13:48.814 (VCDU count = 5097864)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0  1025657712   BOT  8x8   0.985   7.988   9.484  -2213    522  20   1  120          
-[ 2]  1  1025792160   BOT  8x8   0.985   7.954   9.453  -1434   -424  20   1  120          
-[ 3]  2  1026316032   BOT  8x8   0.985   8.101   9.609    814  -1936  20   1  120          
-[ 4]  3  1025647280   GUI  8x8     ---   8.600  10.109  -1742   -364   1   1   25          
+[ 1]  0  1025657712   BOT  8x8   0.973   7.988   9.484  -2213    522  20   1  120          
+[ 2]  1  1025792160   BOT  8x8   0.973   7.954   9.453  -1434   -424  20   1  120          
+[ 3]  2  1026316032   BOT  8x8   0.972   8.101   9.609    814  -1936  20   1  120          
+[ 4]  3  1025647280   GUI  8x8     ---   8.600  10.109  -1742   -364   1   1   25         C
 [ 5]  4  1025786744   GUI  8x8     ---   8.791  10.297   1496   1123   1   1   25          
-[ 6]  5  1025772384   GUI  8x8     ---   9.042  10.547   2279    716   1   1   25          
+[ 6]  5  1025772384   GUI  8x8     ---   9.042  10.547   2279    716   1   1   25         C
 [ 7]  6  1025787480   GUI  8x8     ---   9.198  10.703   2390   -396   1   1   25          
 [ 8]  7  1025794112   GUI  8x8     ---   8.782  10.281  -1223    179   1   1   25          
-[ 9]  3  1026307128   ACQ  8x8   0.980   9.221  10.781     74  -1006  20   1  120    a2    
-[10]  4  1026313880   ACQ  8x8   0.985   9.296  10.797    132  -2030  20   1  120    a2    
-[11]  5  1026309080   ACQ  8x8   0.947   9.528  11.031   1584  -1443  20   1  120    a2    
-[12]  6  1026187312   ACQ  8x8   0.910   9.544  11.047  -1860  -1343  20   1  120    a2    
-[13]  7  1025793440   ACQ  8x8   0.985   9.576  11.078   2119  -1214  20   1  120    a2    
+[ 9]  3  1026307128   ACQ  8x8   0.823   9.221  10.781     74  -1006  20   1  120    a2   C
+[10]  4  1026313880   ACQ  8x8   0.948   9.296  10.797    132  -2030  20   1  120    a2    
+[11]  5  1026309080   ACQ  8x8   0.900   9.528  11.031   1584  -1443  20   1  120    a2   C
+[12]  6  1026187312   ACQ  8x8   0.934   9.544  11.047  -1860  -1343  20   1  120    a2    
+[13]  7  1025793440   ACQ  8x8   0.933   9.576  11.078   2119  -1214  20   1  120    a2    
 
+>> WARNING: -log10 probability of 2 or fewer stars < 3
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [12] Search spoiler. 1026185568: Y,Z,Radial,Mag seps: 147 144 206 -0.7
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.289	-6.309	-4.550	
-Acquisition Stars Expected  : 7.76
+Probability of acquiring 2 or fewer stars (10^-x):	2.0978	
+Acquisition Stars Expected  : 7.45
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 57825  
 RA, Dec, Roll (deg):   248.700000   -25.100000    74.850912
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:127:23:52:20.600 (VCDU count = 5191178)
@@ -439,27 +459,29 @@ MP_STARCAT at 2008:127:23:52:22.243 (VCDU count = 5191184)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   891158840   BOT  8x8   0.943   9.555  11.062   -648  -1402  20   1  120  a2g2    
-[ 2]  1   891160624   BOT  8x8   0.985   9.347  10.844  -1974  -1718  20   1  120          
-[ 3]  2   891162424   BOT  8x8   0.966  10.064  11.562  -1413  -1541  20   1  120  a2g3    
-[ 4]  3   891163024   BOT  8x8   0.948   9.932  11.438  -2312   -599   7   1   55  a2g3    
-[ 5]  4   891163384   BOT  8x8   0.958   9.452  10.953  -1214   -189  20   1  120  a2g3    
-[ 6]  5   891163512   BOT  8x8   0.985   9.547  11.047   -467   1323  20   1  120  a2g2    
-[ 7]  6   891305328   BOT  8x8   0.985   9.535  11.047   -411  -1665  20   1  120  a2g2    
+[ 1]  0   891158840   BOT  8x8   0.902   9.555  11.062   -648  -1402  20   1  120  a2g2   C
+[ 2]  1   891160624   BOT  8x8   0.956   9.347  10.844  -1974  -1718  20   1  120          
+[ 3]  2   891162424   BOT  8x8   0.918  10.064  11.562  -1413  -1541  20   1  120  a2g3    
+[ 4]  3   891163024   BOT  8x8   0.856   9.932  11.438  -2312   -599   7   1   55  a2g3   C
+[ 5]  4   891163384   BOT  8x8   0.917   9.452  10.953  -1214   -189  20   1  120  a2g3   C
+[ 6]  5   891163512   BOT  8x8   0.942   9.547  11.047   -467   1323  20   1  120  a2g2    
+[ 7]  6   891305328   BOT  8x8   0.942   9.535  11.047   -411  -1665  20   1  120  a2g2    
 [ 8]  7   891164616   GUI  8x8     ---  10.299  11.797  -1647   -111   1   1   25    g3    
-[ 9]  7   891297472   ACQ  8x8   0.680  10.283  11.875  -1657  -2089  20   1  120    a3   C
+[ 9]  7   891297472   ACQ  8x8   0.746  10.283  11.875  -1657  -2089  20   1  120    a3   C
 
+>> WARNING: -log10 probability of 2 or fewer stars < 3
 >> WARNING: 0 star(s) brighter than 9 mag. Perigee requires at least 3
->> WARNING: [ 9] Marginal star. B-V = 1.500, Mag_Err = 0.46, Pos_Err = 0.11
+>> WARNING: [ 4] Halfwidth 55 outside range 60 to 180. Will be clipped in proseco probs.
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-6.817	-5.025	-3.474	
-Acquisition Stars Expected  : 7.45
+Probability of acquiring 2 or fewer stars (10^-x):	2.9944	
+Acquisition Stars Expected  : 7.17
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9563   GBW17                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   267.468427   -29.762019    85.505839
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:128:06:07:32.054 (VCDU count = 5279028)
@@ -473,26 +495,27 @@ MP_STARCAT at 2008:128:06:07:33.697 (VCDU count = 5279034)
 [ 1]  0           2   FID  8x8     ---   7.000   8.000   -774   -850   1   1   25          
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2140   1055   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   896536400   BOT  6x6   0.985   8.564  10.062   1133    432  20   1  120          
-[ 5]  4   896540528   BOT  6x6   0.985   8.270   9.781   1580    439  20   1  120          
-[ 6]  5   898248800   BOT  6x6   0.985   8.409  10.109   -488  -1631  18   1  110          
-[ 7]  6   966926496   BOT  6x6   0.985   8.061   9.562  -2018    961  20   1  120          
+[ 4]  3   896536400   BOT  6x6   0.977   8.564  10.062   1133    432  20   1  120          
+[ 5]  4   896540528   BOT  6x6   0.979   8.270   9.781   1580    439  20   1  120          
+[ 6]  5   898248800   BOT  6x6   0.972   8.409  10.109   -488  -1631  18   1  110         C
+[ 7]  6   966926496   BOT  6x6   0.980   8.061   9.562  -2018    961  20   1  120          
 [ 8]  7   896542048   GUI  6x6     ---   9.323  10.828   2327   -682   1   1   25          
-[ 9]  7   896543792   ACQ  6x6   0.985   9.188  10.688   -782    940  20   1  120          
-[10]  0   898250872   ACQ  6x6   0.985   8.677  10.188    599  -1703  20   1  120          
-[11]  1   966923896   ACQ  6x6   0.985   8.987  10.484  -1730   1243  20   1  120          
-[12]  2   967056000   ACQ  6x6   0.985   9.362  10.859  -1784  -1456  20   1  120          
+[ 9]  7   896543792   ACQ  6x6   0.966   9.188  10.688   -782    940  20   1  120          
+[10]  0   898250872   ACQ  6x6   0.965   8.677  10.188    599  -1703  20   1  120         C
+[11]  1   966923896   ACQ  6x6   0.974   8.987  10.484  -1730   1243  20   1  120          
+[12]  2   967056000   ACQ  6x6   0.956   9.362  10.859  -1784  -1456  20   1  120          
 
+>> WARNING: acq t_ccd -19.69 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [ 9] Bad Acquisition Star. 896543792 has  6 failed out of 10 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+Probability of acquiring 2 or fewer stars (10^-x):	7.8866	
+Acquisition Stars Expected  : 7.77
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9564   GBW33                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   265.300377   -28.596491    85.505567
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:128:10:42:29.054 (VCDU count = 5343406)
@@ -506,23 +529,26 @@ MP_STARCAT at 2008:128:10:42:30.697 (VCDU count = 5343413)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2140   1055   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
-[ 4]  3   896402272   BOT  6x6   0.985   7.557   9.062   1099   -984  20   1  120          
-[ 5]  4   896402656   BOT  6x6   0.985   8.485   9.984   1419  -1284  20   1  120          
-[ 6]  5   896402976   BOT  6x6   0.985   7.539   9.047  -1222    539  20   1  120          
-[ 7]  6   896404568   BOT  6x6   0.985   7.641   9.250    687  -1174  20   1  120          
-[ 8]  7   896405616   BOT  6x6   0.985   7.855   9.359    519   1780  20   1  120          
-[ 9]  0   896405976   ACQ  6x6   0.982   9.189  10.688   -198   2084  20   1  120          
-[10]  1   896404784   ACQ  6x6   0.985   9.304  10.812  -1734   -738  20   1  120          
-[11]  2   896403520   ACQ  6x6   0.985   9.030  10.531   -467  -1069   7   1   55          
+[ 4]  3   896402272   BOT  6x6   0.980   7.557   9.062   1099   -984  20   1  120         C
+[ 5]  4   896402656   BOT  6x6   0.970   8.485   9.984   1419  -1284  20   1  120         C
+[ 6]  5   896402976   BOT  6x6   0.981   7.539   9.047  -1222    539  20   1  120          
+[ 7]  6   896404568   BOT  6x6   0.979   7.641   9.250    687  -1174  20   1  120         C
+[ 8]  7   896405616   BOT  6x6   0.981   7.855   9.359    519   1780  20   1  120          
+[ 9]  0   896405976   ACQ  6x6   0.940   9.189  10.688   -198   2084  20   1  120         C
+[10]  1   896404784   ACQ  6x6   0.960   9.304  10.812  -1734   -738  20   1  120          
+[11]  2   896403520   ACQ  6x6   0.973   9.030  10.531   -467  -1069   7   1   55          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.439	-7.330	-5.425	
-Acquisition Stars Expected  : 7.87
+>> WARNING: [11] Halfwidth 55 outside range 60 to 180. Will be clipped in proseco probs.
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	7.9148	
+Acquisition Stars Expected  : 7.76
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9505   1.5deg_window          ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   267.869484   -29.596646    82.019825
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:128:15:02:46.043 (VCDU count = 5404350)
@@ -536,26 +562,27 @@ MP_STARCAT at 2008:128:15:02:47.686 (VCDU count = 5404357)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2140   1055   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
-[ 4]  3   896536400   BOT  6x6   0.985   8.564  10.062    337   1663  20   1  120          
-[ 5]  4   896540528   BOT  6x6   0.985   8.270   9.781    783   1698  20   1  120          
-[ 6]  5   898247688   BOT  6x6   0.985   8.658  10.156   2323  -1445  20   1  120          
-[ 7]  6   898248800   BOT  6x6   0.985   8.409  10.109  -1147   -501  20   1  120          
+[ 4]  3   896536400   BOT  6x6   0.977   8.564  10.062    337   1663  20   1  120          
+[ 5]  4   896540528   BOT  6x6   0.979   8.270   9.781    783   1698  20   1  120          
+[ 6]  5   898247688   BOT  6x6   0.977   8.658  10.156   2323  -1445  20   1  120          
+[ 7]  6   898248800   BOT  6x6   0.971   8.409  10.109  -1147   -501  20   1  120         C
 [ 8]  7   967053960   GUI  6x6     ---   9.259  10.766  -1628  -1222   1   1   25          
-[ 9]  7   898250872   ACQ  6x6   0.985   8.677  10.188    -58   -503  17   1  105          
-[10]  0   896534000   ACQ  6x6   0.985   9.185  10.688   1058   1957  18   1  110          
-[11]  1   896543792   ACQ  6x6   0.985   9.188  10.688  -1607   2046  20   1  120          
-[12]  2   896542048   ACQ  6x6   0.985   9.323  10.828   1601    626  20   1  120          
+[ 9]  7   898250872   ACQ  6x6   0.966   8.677  10.188    -58   -503  17   1  105         C
+[10]  0   896534000   ACQ  6x6   0.967   9.185  10.688   1058   1957  18   1  110          
+[11]  1   896543792   ACQ  6x6   0.966   9.188  10.688  -1607   2046  20   1  120          
+[12]  2   896542048   ACQ  6x6   0.959   9.323  10.828   1601    626  20   1  120          
 
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [11] Bad Acquisition Star. 896543792 has  6 failed out of 10 attempts
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+Probability of acquiring 2 or fewer stars (10^-x):	7.7818	
+Acquisition Stars Expected  : 7.76
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9703   3C273                  ACIS-S SIM Z offset:-1336 (-3.36mm) Grating: HETG 
 RA, Dec, Roll (deg):   187.277018     2.074866   241.543611
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:129:20:42:49.043 (VCDU count = 5821143)
@@ -569,23 +596,27 @@ MP_STARCAT at 2008:129:20:42:50.686 (VCDU count = 5821149)
 [ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1811   1   1   25          
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2140     97   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826     91   1   1   25          
-[ 4]  3    36965296   BOT  6x6   0.985   9.141  10.641   1352   -702  20   1  120          
-[ 5]  4    36965816   BOT  6x6   0.970   9.344  10.844   1738   -914  20   1  120  a2g2    
-[ 6]  5    37356352   BOT  6x6   0.985   8.547  10.047  -1989   -436  20   1  120          
-[ 7]  6    37883040   BOT  6x6   0.985   9.936  11.438   2002   2307  12   1   80  a2g3    
+[ 4]  3    36965296   BOT  6x6   0.961   9.141  10.641   1352   -702  20   1  120          
+[ 5]  4    36965816   BOT  6x6   0.922   9.344  10.844   1738   -914  20   1  120  a2g2   C
+[ 6]  5    37356352   BOT  6x6   0.970   8.547  10.047  -1989   -436  20   1  120          
+[ 7]  6    37883040   BOT  6x6   0.889   9.936  11.438   2002   2307  12   1   80  a2g3    
 [ 8]  7    36965896   GUI  6x6     ---   9.818  11.328   1660    395   1   1   25    g2    
-[ 9]  7    36965616   ACQ  6x6   0.985  10.040  11.547   1518    460  12   1   80    a2    
-[10]  0    36968408   ACQ  6x6   0.975  10.060  11.562   2303   1490  17   1  105    a2    
-[11]  1    36963960   ACQ  6x6   0.976   9.903  11.406   1975  -1645  20   1  120    a2    
-[12]  2    36963696   ACQ  6x6   0.878   9.839  11.344   1170   -616  20   1  120    a2    
+[ 9]  7    36965616   ACQ  6x6   0.830  10.040  11.547   1518    460  12   1   80    a2    
+[10]  0    36968408   ACQ  6x6   0.896  10.060  11.562   2303   1490  17   1  105    a2    
+[11]  1    36963960   ACQ  6x6   0.919   9.903  11.406   1975  -1645  20   1  120    a2    
+[12]  2    36963696   ACQ  6x6   0.765   9.839  11.344   1170   -616  20   1  120    a2   C
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.154	-6.197	-4.460	
-Acquisition Stars Expected  : 7.73
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+>> WARNING: -log10 probability of 2 or fewer stars < 3
+
+Probability of acquiring 2 or fewer stars (10^-x):	2.0898	
+Acquisition Stars Expected  : 7.15
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 57824  
 RA, Dec, Roll (deg):   226.000000     7.300000   181.005433
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:130:06:12:47.820 (VCDU count = 5954601)
@@ -596,27 +627,30 @@ MP_STARCAT at 2008:130:06:12:49.463 (VCDU count = 5954608)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0    45356200   BOT  8x8   0.985   9.571  11.078   1200   1045  20   1  120  a2g2    
-[ 2]  1    45356736   BOT  8x8   0.984   9.709  11.219  -1280     26  20   1  120  a2g2    
-[ 3]  2   120466360   BOT  8x8   0.967  10.047  11.547  -2223  -1431  20   1  120  a2g3    
-[ 4]  3   120466888   BOT  8x8   0.985   8.543  10.047   1014  -2220  20   1  120          
-[ 5]  4   120467432   BOT  8x8   0.910   9.393  10.891   -674   -956  20   1  120    a2    
-[ 6]  5   120467800   BOT  8x8   0.985   9.615  11.125   -529  -1797  20   1  120  a2g2    
+[ 1]  0    45356200   BOT  8x8   0.937   9.571  11.078   1200   1045  20   1  120  a2g2    
+[ 2]  1    45356736   BOT  8x8   0.927   9.709  11.219  -1280     26  20   1  120  a2g2    
+[ 3]  2   120466360   BOT  8x8   0.917  10.047  11.547  -2223  -1431  20   1  120  a2g3    
+[ 4]  3   120466888   BOT  8x8   0.974   8.543  10.047   1014  -2220  20   1  120          
+[ 5]  4   120467432   BOT  8x8   0.950   9.393  10.891   -674   -956  20   1  120    a2    
+[ 6]  5   120467800   BOT  8x8   0.934   9.615  11.125   -529  -1797  20   1  120  a2g2    
 [ 7]  6    45353072   GUI  8x8     ---   9.326  10.828   2374   2327   1   1   25    g2    
 [ 8]  7    45358040   GUI  8x8     ---   9.751  11.250   1838   2294   1   1   25    g3    
-[ 9]  6    45357808   ACQ  8x8   0.973   9.969  11.469   -874   2153  20   1  120    a2    
-[10]  7   120466352   ACQ  8x8   0.971   9.992  11.500    625   -958  20   1  120    a2    
+[ 9]  6    45357808   ACQ  8x8   0.922   9.969  11.469   -874   2153  20   1  120    a2    
+[10]  7   120466352   ACQ  8x8   0.921   9.992  11.500    625   -958  20   1  120    a2    
 
+>> WARNING: -log10 probability of 2 or fewer stars < 3
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [ 5] Search spoiler.  120466880: Y,Z,Radial,Mag seps:  77  70 104 -0.7
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.144	-6.203	-4.482	
-Acquisition Stars Expected  : 7.76
+Probability of acquiring 2 or fewer stars (10^-x):	2.3983	
+Acquisition Stars Expected  : 7.48
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 57823  
 RA, Dec, Roll (deg):   237.000000   -40.000000    24.825437
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:130:08:41:26.080 (VCDU count = 5989404)
@@ -627,27 +661,29 @@ MP_STARCAT at 2008:130:08:41:27.723 (VCDU count = 5989411)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0  1027737232   BOT  8x8   0.985   8.954  10.453   -712  -1931  16   1  100          
-[ 2]  1  1027740208   BOT  8x8   0.985   9.126  10.625  -1968   -954  20   1  120  a2g2    
-[ 3]  2  1027741784   BOT  8x8   0.985   9.178  10.688  -1227   1713  20   1  120          
-[ 4]  3  1027743752   BOT  8x8   0.985   8.673  10.172  -1332   1507  20   1  120          
-[ 5]  4  1027870336   BOT  8x8   0.985   8.959  10.469   1957   -346  20   1  120          
+[ 1]  0  1027737232   BOT  8x8   0.959   8.954  10.453   -712  -1931  16   1  100          
+[ 2]  1  1027740208   BOT  8x8   0.937   9.126  10.625  -1968   -954  20   1  120  a2g2   C
+[ 3]  2  1027741784   BOT  8x8   0.928   9.178  10.688  -1227   1713  20   1  120          
+[ 4]  3  1027743752   BOT  8x8   0.969   8.673  10.172  -1332   1507  20   1  120          
+[ 5]  4  1027870336   BOT  8x8   0.966   8.959  10.469   1957   -346  20   1  120          
 [ 6]  5  1027736656   GUI  8x8     ---   9.316  10.812  -1847  -2224   1   1   25          
 [ 7]  6  1027742736   GUI  8x8     ---   9.505  11.016  -1825  -2122   1   1   25    g2    
 [ 8]  7  1027871152   GUI  8x8     ---   9.753  11.250   1138  -1742   1   1   25    g2    
-[ 9]  5  1027740112   ACQ  8x8   0.985   6.346   7.844   -653   -468  20   1  120    a2    
-[10]  6  1027743776   ACQ  8x8   0.980   9.211  10.797   -963   -920  20   1  120    a2    
-[11]  7  1027740656   ACQ  8x8   0.985   9.599  11.109    369   -536  20   1  120    a2    
+[ 9]  5  1027740112   ACQ  8x8   0.975   6.346   7.844   -653   -468  20   1  120    a2    
+[10]  6  1027743776   ACQ  8x8   0.931   9.211  10.797   -963   -920  20   1  120    a2   C
+[11]  7  1027740656   ACQ  8x8   0.932   9.599  11.109    369   -536  20   1  120    a2    
 
->> WARNING: [ 7] Nearby ACA bad pixel. Y,Z,Radial seps:   2,  23,  23
+>> WARNING: -log10 probability of 2 or fewer stars < 3
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.414	-7.309	-5.408	
-Acquisition Stars Expected  : 7.87
+Probability of acquiring 2 or fewer stars (10^-x):	2.0978	
+Acquisition Stars Expected  : 7.59
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 57822  
 RA, Dec, Roll (deg):   226.000000     8.000000   180.000000
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:130:14:20:10.735 (VCDU count = 6068720)
@@ -658,28 +694,30 @@ MP_STARCAT at 2008:130:14:20:12.378 (VCDU count = 6068726)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0   120464880   BOT  8x8   0.985   8.235   9.734   -827  -2015  20   1  120          
-[ 2]  1   120466352   BOT  8x8   0.971   9.992  11.500    642   1572  20   1  120  a2g3    
-[ 3]  2   120466360   BOT  8x8   0.967  10.047  11.547  -2198   1049  20   1  120  a2g3    
-[ 4]  3   120466704   BOT  8x8   0.985   9.079  10.578   -492   -638  20   1  120          
-[ 5]  4   120466888   BOT  8x8   0.985   8.543  10.047   1052    317  20   1  120          
-[ 6]  5   120467432   BOT  8x8   0.910   9.393  10.891   -657   1551  20   1  120    a2    
-[ 7]  6   120467800   BOT  8x8   0.985   9.615  11.125   -497    713  20   1  120  a2g2    
+[ 1]  0   120464880   BOT  8x8   0.967   8.235   9.734   -827  -2015  20   1  120         C
+[ 2]  1   120466352   BOT  8x8   0.918   9.992  11.500    642   1572  20   1  120  a2g3    
+[ 3]  2   120466360   BOT  8x8   0.913  10.047  11.547  -2198   1049  20   1  120  a2g3    
+[ 4]  3   120466704   BOT  8x8   0.941   9.079  10.578   -492   -638  20   1  120         C
+[ 5]  4   120466888   BOT  8x8   0.970   8.543  10.047   1052    317  20   1  120          
+[ 6]  5   120467432   BOT  8x8   0.947   9.393  10.891   -657   1551  20   1  120    a2    
+[ 7]  6   120467800   BOT  8x8   0.930   9.615  11.125   -497    713  20   1  120  a2g2    
 [ 8]  7   120460808   GUI  8x8     ---   9.197  10.703   1919  -2463   1   1   25          
-[ 9]  7   120466376   ACQ  8x8   0.934  10.329  11.828   1735    215  20   1  120    a3    
+[ 9]  7   120466376   ACQ  8x8   0.873  10.329  11.828   1735    215  20   1  120    a3    
 
+>> WARNING: -log10 probability of 2 or fewer stars < 3
 >> WARNING: 2 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [ 6] Search spoiler.  120466880: Y,Z,Radial,Mag seps:  76  71 104 -0.7
->> WARNING: [ 9] Magnitude.  10.329
+>> WARNING: [ 9] Magnitude. Acq star 10.329
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.834	-5.927	-4.248	
-Acquisition Stars Expected  : 7.72
+Probability of acquiring 2 or fewer stars (10^-x):	2.0977	
+Acquisition Stars Expected  : 7.45
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9565   GBW34                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   265.489556   -28.702269    85.505591
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:130:20:58:00.248 (VCDU count = 6161869)
@@ -693,25 +731,28 @@ MP_STARCAT at 2008:130:20:58:01.891 (VCDU count = 6161876)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   896402656   BOT  6x6   0.985   8.485   9.984   1753   -656  20   1  120          
-[ 5]  4   896402976   BOT  6x6   0.985   7.539   9.047   -891   1163  20   1  120          
-[ 6]  5   896540808   BOT  6x6   0.985   8.224   9.734  -2057  -1723  20   1  120          
+[ 4]  3   896402656   BOT  6x6   0.964   8.485   9.984   1753   -656  20   1  120         C
+[ 5]  4   896402976   BOT  6x6   0.975   7.539   9.047   -891   1163  20   1  120          
+[ 6]  5   896540808   BOT  6x6   0.969   8.224   9.734  -2057  -1723  20   1  120         C
 [ 7]  6   896405616   GUI  6x6     ---   7.855   9.359    849   2407   1   1   25          
-[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   1544  -2449   1   1   25          
-[ 9]  6   896404784   ACQ  6x6   0.985   9.304  10.812  -1400   -115  20   1  120          
-[10]  7   896402272   ACQ  6x6   0.985   7.557   9.062   1432   -356  20   1  120          
-[11]  0   896404568   ACQ  6x6   0.985   7.641   9.250   1021   -547  20   1  120          
-[12]  1   896538248   ACQ  6x6   0.985   8.979  10.484   1837  -2237  20   1  120          
-[13]  2   896539744   ACQ  6x6   0.985   8.536  10.047   2041  -1955  20   1  120    a2    
+[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   1544  -2449   1   1   25         C
+[ 9]  6   896404784   ACQ  6x6   0.954   9.304  10.812  -1400   -115  20   1  120          
+[10]  7   896402272   ACQ  6x6   0.974   7.557   9.062   1432   -356  20   1  120         C
+[11]  0   896404568   ACQ  6x6   0.973   7.641   9.250   1021   -547  20   1  120         C
+[12]  1   896538248   ACQ  6x6   0.968   8.979  10.484   1837  -2237  20   1  120          
+[13]  2   896539744   ACQ  6x6   0.948   8.536  10.047   2041  -1955  20   1  120    a2    
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+>> WARNING: -log10 probability of 2 or fewer stars < 3
+
+Probability of acquiring 2 or fewer stars (10^-x):	2.2224	
+Acquisition Stars Expected  : 7.72
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9188   S05                    ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   316.233135    -7.217624   107.386804
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:131:01:48:18.660 (VCDU count = 6229844)
@@ -725,23 +766,25 @@ MP_STARCAT at 2008:131:01:48:20.303 (VCDU count = 6229850)
 [ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
-[ 4]  3   682100904   BOT  6x6   0.985   8.381   9.891    169   1794  20   1  120          
-[ 5]  4   682102360   BOT  6x6   0.985   9.024  10.531   -530  -1852  20   1  120          
-[ 6]  5   682102776   BOT  6x6   0.981   9.194  10.703  -1105  -1271  20   1  120          
-[ 7]  6   682103112   BOT  6x6   0.985   8.137   9.641    719    262  16   1  100          
-[ 8]  7   756296152   BOT  6x6   0.985   9.238  10.750  -1516   2102  20   1  120          
-[ 9]  0   682099640   ACQ  6x6   0.985   9.571  11.078   1615   -482  20   1  120    a2    
-[10]  1   682103072   ACQ  6x6   0.985   9.686  11.188   -502  -2040  20   1  120    a2    
-[11]  2   682103904   ACQ  6x6   0.885   9.814  11.312   -513   1703  20   1  120    a2    
+[ 4]  3   682100904   BOT  6x6   0.978   8.381   9.891    169   1794  20   1  120          
+[ 5]  4   682102360   BOT  6x6   0.971   9.024  10.531   -530  -1852  20   1  120          
+[ 6]  5   682102776   BOT  6x6   0.968   9.194  10.703  -1105  -1271  20   1  120         C
+[ 7]  6   682103112   BOT  6x6   0.977   8.137   9.641    719    262  16   1  100          
+[ 8]  7   756296152   BOT  6x6   0.964   9.238  10.750  -1516   2102  20   1  120          
+[ 9]  0   682099640   ACQ  6x6   0.940   9.571  11.078   1615   -482  20   1  120    a2    
+[10]  1   682103072   ACQ  6x6   0.929   9.686  11.188   -502  -2040  20   1  120    a2    
+[11]  2   682103904   ACQ  6x6   0.918   9.814  11.312   -513   1703  20   1  120    a2   C
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.655	-6.615	-4.791	
-Acquisition Stars Expected  : 7.77
+>> WARNING: acq t_ccd -19.69 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	3.0000	
+Acquisition Stars Expected  : 7.64
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9171   Sgr A*                 ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.426970   -29.025329    81.505000
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:131:03:05:29.416 (VCDU count = 6247915)
@@ -755,25 +798,27 @@ MP_STARCAT at 2008:131:03:05:31.059 (VCDU count = 6247921)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   896533888   BOT  6x6   0.985   6.988   8.484  -1198   -938  20   1  120          
-[ 5]  4   896534664   BOT  6x6   0.985   8.155   9.656   2189    395  20   1  120          
-[ 6]  5   896537776   BOT  6x6   0.985   7.634   9.141  -2174  -1048  20   1  120          
+[ 4]  3   896533888   BOT  6x6   0.980   6.988   8.484  -1198   -938  20   1  120         C
+[ 5]  4   896534664   BOT  6x6   0.979   8.155   9.656   2189    395  20   1  120          
+[ 6]  5   896537776   BOT  6x6   0.978   7.634   9.141  -2174  -1048  20   1  120         C
 [ 7]  6   896403224   GUI  6x6     ---   8.219   9.719  -1858   2303   1   1   25          
-[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   2431    775   1   1   25          
-[ 9]  6   896541360   ACQ  6x6   0.985   7.611   9.109  -1406  -1026  20   1  120          
-[10]  7   896537176   ACQ  6x6   0.985   7.929   9.438   1268    -38  20   1  120          
-[11]  0   896541576   ACQ  6x6   0.985   8.251   9.750   1220  -1809  20   1  120          
-[12]  1   896538208   ACQ  6x6   0.985   8.431   9.938   1602  -2155  20   1  120          
-[13]  2   896532680   ACQ  6x6   0.985   8.767  10.266   1844    545  20   1  120          
+[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   2431    775   1   1   25         C
+[ 9]  6   896541360   ACQ  6x6   0.974   7.611   9.109  -1406  -1026  20   1  120         C
+[10]  7   896537176   ACQ  6x6   0.976   7.929   9.438   1268    -38  20   1  120         C
+[11]  0   896541576   ACQ  6x6   0.978   8.251   9.750   1220  -1809  20   1  120          
+[12]  1   896538208   ACQ  6x6   0.970   8.431   9.938   1602  -2155  20   1  120         C
+[13]  2   896532680   ACQ  6x6   0.975   8.767  10.266   1844    545  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	3.0001	
+Acquisition Stars Expected  : 7.81
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9559   GBW13                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.690045   -29.349380    85.505742
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:131:11:21:40.416 (VCDU count = 6364094)
@@ -787,24 +832,26 @@ MP_STARCAT at 2008:131:11:21:42.059 (VCDU count = 6364101)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           2   FID  8x8     ---   7.000   8.000   -774   -850   1   1   25          
 [ 3]  2           4   FID  8x8     ---   7.000   8.000   2140   1055   1   1   25          
-[ 4]  3   896533888   BOT  6x6   0.985   6.988   8.484   -161     61  20   1  120          
-[ 5]  4   896540528   BOT  6x6   0.985   8.270   9.781    284  -2113  20   1  120          
-[ 6]  5   896541168   BOT  6x6   0.985   8.182   9.688  -1892   1010  20   1  120          
-[ 7]  6   896541576   BOT  6x6   0.985   8.251   9.750   2192   -970  20   1  120          
-[ 8]  7   896537176   GUI  6x6     ---   7.929   9.438   2360    793   1   1   25          
-[ 9]  7   896541360   ACQ  6x6   0.985   7.611   9.109   -375    -11  20   1  120          
-[10]  0   896537776   ACQ  6x6   0.985   7.634   9.141  -1143     18  20   1  120          
-[11]  1   896536400   ACQ  6x6   0.985   8.564  10.062   -162  -2116  20   1  120          
-[12]  2   896538920   ACQ  6x6   0.985   8.770  10.281    635   1347  20   1  120          
+[ 4]  3   896533888   BOT  6x6   0.981   6.988   8.484   -161     61  20   1  120         C
+[ 5]  4   896540528   BOT  6x6   0.979   8.270   9.781    284  -2113  20   1  120          
+[ 6]  5   896541168   BOT  6x6   0.980   8.182   9.688  -1892   1010  20   1  120          
+[ 7]  6   896541576   BOT  6x6   0.979   8.251   9.750   2192   -970  20   1  120          
+[ 8]  7   896537176   GUI  6x6     ---   7.929   9.438   2360    793   1   1   25         C
+[ 9]  7   896541360   ACQ  6x6   0.979   7.611   9.109   -375    -11  20   1  120         C
+[10]  0   896537776   ACQ  6x6   0.979   7.634   9.141  -1143     18  20   1  120         C
+[11]  1   896536400   ACQ  6x6   0.977   8.564  10.062   -162  -2116  20   1  120          
+[12]  2   896538920   ACQ  6x6   0.962   8.770  10.281    635   1347  20   1  120         C
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.4679	
+Acquisition Stars Expected  : 7.81
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9030   GC-1                   HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.678356   -28.668712    81.006807
-Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+Dither:  ON Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:131:15:56:37.416 (VCDU count = 6428473)
@@ -818,25 +865,27 @@ MP_STARCAT at 2008:131:15:56:39.059 (VCDU count = 6428479)
 [ 1]  0           7   FID  8x8     ---   7.000   8.000   -776  -1306   1   1   25          
 [ 2]  1           8   FID  8x8     ---   7.000   8.000    836  -1308   1   1   25          
 [ 3]  2           9   FID  8x8     ---   7.000   8.000  -1204    998   1   1   25          
-[ 4]  3   896538696   BOT  6x6   0.985   7.467   8.969   1030   1381  20   1  120          
-[ 5]  4   896538920   BOT  6x6   0.985   8.770  10.281  -1887    973  20   1  120          
-[ 6]  5   896540888   BOT  6x6   0.985   7.964   9.469   1763  -1435  20   1  120          
+[ 4]  3   896538696   BOT  6x6   0.980   7.467   8.969   1030   1381  20   1  120         C
+[ 5]  4   896538920   BOT  6x6   0.962   8.770  10.281  -1887    973  20   1  120         C
+[ 6]  5   896540888   BOT  6x6   0.980   7.964   9.469   1763  -1435  20   1  120          
 [ 7]  6   896534000   GUI  6x6     ---   9.185  10.688  -1692  -2242   1   1   25          
-[ 8]  7   896532608   GUI  6x6     ---   8.806  10.312   2317  -2286   1   1   25          
-[ 9]  6   896537176   ACQ  6x6   0.985   7.929   9.438   -123    556  20   1  120          
-[10]  7   896534664   ACQ  6x6   0.985   8.155   9.656    792   1000  20   1  120          
-[11]  0   896541576   ACQ  6x6   0.985   8.251   9.750   -152  -1214  20   1  120          
-[12]  1   896538208   ACQ  6x6   0.985   8.431   9.938    232  -1557  20   1  120          
-[13]  2   896532680   ACQ  6x6   0.985   8.767  10.266    445   1146  20   1  120          
+[ 8]  7   896532608   GUI  6x6     ---   8.806  10.312   2317  -2286   1   1   25         C
+[ 9]  6   896537176   ACQ  6x6   0.977   7.929   9.438   -123    556  20   1  120         C
+[10]  7   896534664   ACQ  6x6   0.980   8.155   9.656    792   1000  20   1  120          
+[11]  0   896541576   ACQ  6x6   0.979   8.251   9.750   -152  -1214  20   1  120          
+[12]  1   896538208   ACQ  6x6   0.971   8.431   9.938    232  -1557  20   1  120         C
+[13]  2   896532680   ACQ  6x6   0.976   8.767  10.266    445   1146  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.3078	
+Acquisition Stars Expected  : 7.80
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9031   GC-3                   HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.876737   -29.017712    81.006906
-Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+Dither:  ON Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:131:17:31:53.453 (VCDU count = 6450779)
@@ -850,24 +899,26 @@ MP_STARCAT at 2008:131:17:31:55.096 (VCDU count = 6450786)
 [ 1]  0           7   FID  8x8     ---   7.000   8.000   -776  -1306   1   1   25          
 [ 2]  1           8   FID  8x8     ---   7.000   8.000    836  -1308   1   1   25          
 [ 3]  2           9   FID  8x8     ---   7.000   8.000  -1204    998   1   1   25          
-[ 4]  3   896534664   BOT  6x6   0.985   8.155   9.656   1933   1816  20   1  120          
-[ 5]  4   896536400   BOT  6x6   0.985   8.564  10.062  -1263  -1731  20   1  120          
-[ 6]  5   896538208   BOT  6x6   0.985   8.431   9.938   1377   -742  20   1  120          
-[ 7]  6   896538696   BOT  6x6   0.985   7.467   8.969   2170   2199  20   1  120          
-[ 8]  7   896533888   GUI  6x6     ---   6.988   8.484  -1437    440   1   1   25          
-[ 9]  7   896541360   ACQ  6x6   0.985   7.611   9.109  -1645    350  20   1  120          
-[10]  0   896537176   ACQ  6x6   0.985   7.929   9.438   1018   1371  20   1  120          
-[11]  1   896541576   ACQ  6x6   0.985   8.251   9.750    991   -399  20   1  120          
-[12]  2   896538920   ACQ  6x6   0.985   8.770  10.281   -746   1785  20   1  120          
+[ 4]  3   896534664   BOT  6x6   0.000   8.155   9.656   1933   1816  20   1  120          
+[ 5]  4   896536400   BOT  6x6   0.977   8.564  10.062  -1263  -1731  20   1  120          
+[ 6]  5   896538208   BOT  6x6   0.971   8.431   9.938   1377   -742  20   1  120         C
+[ 7]  6   896538696   BOT  6x6   0.980   7.467   8.969   2170   2199  20   1  120         C
+[ 8]  7   896533888   GUI  6x6     ---   6.988   8.484  -1437    440   1   1   25         C
+[ 9]  7   896541360   ACQ  6x6   0.979   7.611   9.109  -1645    350  20   1  120         C
+[10]  0   896537176   ACQ  6x6   0.977   7.929   9.438   1018   1371  20   1  120         C
+[11]  1   896541576   ACQ  6x6   0.979   8.251   9.750    991   -399  20   1  120          
+[12]  2   896538920   ACQ  6x6   0.962   8.770  10.281   -746   1785  20   1  120         C
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	6.7634	
+Acquisition Stars Expected  : 6.82
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9032   GC-4                   HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.230440   -28.672962    81.006808
-Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+Dither:  ON Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:131:19:03:43.453 (VCDU count = 6472282)
@@ -881,24 +932,26 @@ MP_STARCAT at 2008:131:19:03:45.096 (VCDU count = 6472288)
 [ 1]  0           7   FID  8x8     ---   7.000   8.000   -776  -1306   1   1   25          
 [ 2]  1           9   FID  8x8     ---   7.000   8.000  -1204    998   1   1   25          
 [ 3]  2          10   FID  8x8     ---   7.000   8.000   1266    995   1   1   25          
-[ 4]  3   896402272   BOT  6x6   0.985   7.557   9.062    980   2058  20   1  120          
-[ 5]  4   896402656   BOT  6x6   0.985   8.485   9.984   1325   1787  20   1  120          
-[ 6]  5   896404568   BOT  6x6   0.985   7.641   9.250    587   1834  20   1  120          
-[ 7]  6   896534664   BOT  6x6   0.985   8.155   9.656   1030   -398  20   1  120          
-[ 8]  7   896533888   GUI  6x6     ---   6.988   8.484  -2348  -1756   1   1   25          
-[ 9]  7   896538696   ACQ  6x6   0.985   7.467   8.969   1268    -17  20   1  120          
-[10]  0   896537176   ACQ  6x6   0.985   7.929   9.438    112   -838  20   1  120          
-[11]  1   896532680   ACQ  6x6   0.985   8.767  10.266    683   -251  20   1  120          
-[12]  2   896538920   ACQ  6x6   0.985   8.770  10.281  -1649   -414  20   1  120          
+[ 4]  3   896402272   BOT  6x6   0.980   7.557   9.062    980   2058  20   1  120         C
+[ 5]  4   896402656   BOT  6x6   0.970   8.485   9.984   1325   1787  20   1  120         C
+[ 6]  5   896404568   BOT  6x6   0.979   7.641   9.250    587   1834  20   1  120         C
+[ 7]  6   896534664   BOT  6x6   0.980   8.155   9.656   1030   -398  20   1  120          
+[ 8]  7   896533888   GUI  6x6     ---   6.988   8.484  -2348  -1756   1   1   25         C
+[ 9]  7   896538696   ACQ  6x6   0.980   7.467   8.969   1268    -17  20   1  120         C
+[10]  0   896537176   ACQ  6x6   0.977   7.929   9.438    112   -838  20   1  120         C
+[11]  1   896532680   ACQ  6x6   0.976   8.767  10.266    683   -251  20   1  120          
+[12]  2   896538920   ACQ  6x6   0.962   8.770  10.281  -1649   -414  20   1  120         C
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.2845	
+Acquisition Stars Expected  : 7.80
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9033   GC-5                   HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   265.981321   -29.028045    81.006909
-Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+Dither:  ON Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:131:20:35:33.453 (VCDU count = 6493784)
@@ -912,26 +965,28 @@ MP_STARCAT at 2008:131:20:35:35.096 (VCDU count = 6493791)
 [ 1]  0           7   FID  8x8     ---   7.000   8.000   -776  -1306   1   1   25          
 [ 2]  1           8   FID  8x8     ---   7.000   8.000    836  -1308   1   1   25          
 [ 3]  2           9   FID  8x8     ---   7.000   8.000  -1204    998   1   1   25          
-[ 4]  3   896403224   BOT  6x6   0.985   8.219   9.719  -1643    909  20   1  120          
-[ 5]  4   896404568   BOT  6x6   0.985   7.641   9.250   1976   1255  20   1  120          
-[ 6]  5   896402272   GUI  6x6     ---   7.557   9.062   2370   1479   1   1   25          
-[ 7]  6   896537776   GUI  6x6     ---   7.634   9.141  -1943  -2443   1   1   25          
-[ 8]  7   896533888   GUI  6x6     ---   6.988   8.484   -967  -2328   1   1   25          
-[ 9]  5   896404784   ACQ  6x6   0.985   9.304  10.812   -474   1485  20   1  120          
-[10]  6   896540808   ACQ  6x6   0.985   8.224   9.734   -995   -170  20   1  120          
-[11]  7   896538920   ACQ  6x6   0.985   8.770  10.281   -265   -988  20   1  120          
-[12]  0   896532680   ACQ  6x6   0.985   8.767  10.266   2067   -830  20   1  120          
-[13]  1   896537176   ACQ  6x6   0.985   7.929   9.438   1495  -1416  20   1  120          
-[14]  2   896534128   ACQ  6x6   0.985   8.830  10.328     65  -1653  20   1  120          
+[ 4]  3   896403224   BOT  6x6   0.979   8.219   9.719  -1643    909  20   1  120          
+[ 5]  4   896404568   BOT  6x6   0.979   7.641   9.250   1976   1255  20   1  120         C
+[ 6]  5   896402272   GUI  6x6     ---   7.557   9.062   2370   1479   1   1   25         C
+[ 7]  6   896537776   GUI  6x6     ---   7.634   9.141  -1943  -2443   1   1   25         C
+[ 8]  7   896533888   GUI  6x6     ---   6.988   8.484   -967  -2328   1   1   25         C
+[ 9]  5   896404784   ACQ  6x6   0.960   9.304  10.812   -474   1485  20   1  120          
+[10]  6   896540808   ACQ  6x6   0.975   8.224   9.734   -995   -170  20   1  120         C
+[11]  7   896538920   ACQ  6x6   0.962   8.770  10.281   -265   -988  20   1  120         C
+[12]  0   896532680   ACQ  6x6   0.976   8.767  10.266   2067   -830  20   1  120          
+[13]  1   896537176   ACQ  6x6   0.977   7.929   9.438   1495  -1416  20   1  120         C
+[14]  2   896534128   ACQ  6x6   0.975   8.830  10.328     65  -1653  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.0422	
+Acquisition Stars Expected  : 7.78
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9034   GC-7                   HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.181787   -29.380045    81.007009
-Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+Dither:  ON Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:131:22:07:23.453 (VCDU count = 6515287)
@@ -945,25 +1000,27 @@ MP_STARCAT at 2008:131:22:07:25.096 (VCDU count = 6515293)
 [ 1]  0           7   FID  8x8     ---   7.000   8.000   -776  -1306   1   1   25          
 [ 2]  1           8   FID  8x8     ---   7.000   8.000    836  -1308   1   1   25          
 [ 3]  2           9   FID  8x8     ---   7.000   8.000  -1204    998   1   1   25          
-[ 4]  3   896403224   BOT  6x6   0.985   8.219   9.719   -492   1728  20   1  120          
-[ 5]  4   896533888   BOT  6x6   0.985   6.988   8.484    189  -1509  20   1  120          
-[ 6]  5   896541168   BOT  6x6   0.985   8.182   9.688  -1606   -690  20   1  120          
+[ 4]  3   896403224   BOT  6x6   0.979   8.219   9.719   -492   1728  20   1  120          
+[ 5]  4   896533888   BOT  6x6   0.981   6.988   8.484    189  -1509  20   1  120         C
+[ 6]  5   896541168   BOT  6x6   0.980   8.182   9.688  -1606   -690  20   1  120          
 [ 7]  6   896403520   GUI  6x6     ---   9.030  10.531   1966   2085   1   1   25          
 [ 8]  7   896532952   GUI  6x6     ---   9.026  10.531   2205   -295   1   1   25          
-[ 9]  6   896541360   ACQ  6x6   0.985   7.611   9.109    -19  -1598  20   1  120          
-[10]  7   896537776   ACQ  6x6   0.985   7.634   9.141   -786  -1625  20   1  120          
-[11]  0   896540808   ACQ  6x6   0.985   8.224   9.734    157    649  20   1  120          
-[12]  1   896538920   ACQ  6x6   0.985   8.770  10.281    888   -167  20   1  120          
-[13]  2   896534128   ACQ  6x6   0.985   8.830  10.328   1220   -832  20   1  120          
+[ 9]  6   896541360   ACQ  6x6   0.979   7.611   9.109    -19  -1598  20   1  120         C
+[10]  7   896537776   ACQ  6x6   0.979   7.634   9.141   -786  -1625  20   1  120         C
+[11]  0   896540808   ACQ  6x6   0.975   8.224   9.734    157    649  20   1  120         C
+[12]  1   896538920   ACQ  6x6   0.962   8.770  10.281    888   -167  20   1  120         C
+[13]  2   896534128   ACQ  6x6   0.975   8.830  10.328   1220   -832  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.3786	
+Acquisition Stars Expected  : 7.81
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9073   GC-2                   HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.430905   -29.024601    81.006908
-Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+Dither:  ON Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:131:23:39:13.453 (VCDU count = 6536789)
@@ -977,25 +1034,27 @@ MP_STARCAT at 2008:131:23:39:15.096 (VCDU count = 6536795)
 [ 1]  0           7   FID  8x8     ---   7.000   8.000   -776  -1306   1   1   25          
 [ 2]  1           8   FID  8x8     ---   7.000   8.000    836  -1308   1   1   25          
 [ 3]  2           9   FID  8x8     ---   7.000   8.000  -1204    998   1   1   25          
-[ 4]  3   896534664   BOT  6x6   0.985   8.155   9.656   2181    426  20   1  120          
-[ 5]  4   896537776   BOT  6x6   0.985   7.634   9.141  -2170  -1055  20   1  120          
-[ 6]  5   896541576   BOT  6x6   0.985   8.251   9.750   1231  -1786  20   1  120          
+[ 4]  3   896534664   BOT  6x6   0.980   8.155   9.656   2181    426  20   1  120          
+[ 5]  4   896537776   BOT  6x6   0.979   7.634   9.141  -2170  -1055  20   1  120         C
+[ 6]  5   896541576   BOT  6x6   0.979   8.251   9.750   1231  -1786  20   1  120          
 [ 7]  6   896403224   GUI  6x6     ---   8.219   9.719  -1883   2298   1   1   25          
-[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   2419    808   1   1   25          
-[ 9]  6   896533888   ACQ  6x6   0.985   6.988   8.484  -1194   -936  20   1  120          
-[10]  7   896541360   ACQ  6x6   0.985   7.611   9.109  -1402  -1026  20   1  120          
-[11]  0   896537176   ACQ  6x6   0.985   7.929   9.438   1264    -15  20   1  120          
-[12]  1   896538208   ACQ  6x6   0.985   8.431   9.938   1616  -2130  20   1  120          
-[13]  2   896532680   ACQ  6x6   0.985   8.767  10.266   1834    573  20   1  120          
+[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   2419    808   1   1   25         C
+[ 9]  6   896533888   ACQ  6x6   0.981   6.988   8.484  -1194   -936  20   1  120         C
+[10]  7   896541360   ACQ  6x6   0.979   7.611   9.109  -1402  -1026  20   1  120         C
+[11]  0   896537176   ACQ  6x6   0.977   7.929   9.438   1264    -15  20   1  120         C
+[12]  1   896538208   ACQ  6x6   0.971   8.431   9.938   1616  -2130  20   1  120         C
+[13]  2   896532680   ACQ  6x6   0.976   8.767  10.266   1834    573  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.5209	
+Acquisition Stars Expected  : 7.82
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9074   GC-6                   HRC-I  SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.629286   -29.373962    81.007008
-Dither: ON  Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6
+Dither:  ON Y_amp=20.0  Z_amp=20.0  Y_period=1087.0  Z_period= 768.6 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:132:01:11:03.453 (VCDU count = 6558291)
@@ -1009,24 +1068,26 @@ MP_STARCAT at 2008:132:01:11:05.096 (VCDU count = 6558298)
 [ 1]  0           7   FID  8x8     ---   7.000   8.000   -776  -1306   1   1   25          
 [ 2]  1           8   FID  8x8     ---   7.000   8.000    836  -1308   1   1   25          
 [ 3]  2           9   FID  8x8     ---   7.000   8.000  -1204    998   1   1   25          
-[ 4]  3   896533888   BOT  6x6   0.985   6.988   8.484    -48   -125  20   1  120          
-[ 5]  4   896540528   BOT  6x6   0.985   8.270   9.781    565  -2259  20   1  120          
-[ 6]  5   896540808   BOT  6x6   0.985   8.224   9.734    -88   2032  20   1  120          
-[ 7]  6   896541168   BOT  6x6   0.985   8.182   9.688  -1847    685  20   1  120          
-[ 8]  7   896537176   GUI  6x6     ---   7.929   9.438   2408    800   1   1   25          
-[ 9]  7   896541360   ACQ  6x6   0.985   7.611   9.109   -256   -215  20   1  120          
-[10]  0   896537776   ACQ  6x6   0.985   7.634   9.141  -1024   -245  20   1  120          
-[11]  1   896538920   ACQ  6x6   0.985   8.770  10.281    645   1218  20   1  120          
-[12]  2   896534128   ACQ  6x6   0.985   8.830  10.328    980    554  20   1  120          
+[ 4]  3   896533888   BOT  6x6   0.981   6.988   8.484    -48   -125  20   1  120         C
+[ 5]  4   896540528   BOT  6x6   0.979   8.270   9.781    565  -2259  20   1  120          
+[ 6]  5   896540808   BOT  6x6   0.975   8.224   9.734    -88   2032  20   1  120         C
+[ 7]  6   896541168   BOT  6x6   0.980   8.182   9.688  -1847    685  20   1  120          
+[ 8]  7   896537176   GUI  6x6     ---   7.929   9.438   2408    800   1   1   25         C
+[ 9]  7   896541360   ACQ  6x6   0.979   7.611   9.109   -256   -215  20   1  120         C
+[10]  0   896537776   ACQ  6x6   0.979   7.634   9.141  -1024   -245  20   1  120         C
+[11]  1   896538920   ACQ  6x6   0.962   8.770  10.281    645   1218  20   1  120         C
+[12]  2   896534128   ACQ  6x6   0.975   8.830  10.328    980    554  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.3745	
+Acquisition Stars Expected  : 7.81
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9606   AX J170536-4038        ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   256.400744   -40.669434    55.051084
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:132:02:42:53.453 (VCDU count = 6579794)
@@ -1040,26 +1101,27 @@ MP_STARCAT at 2008:132:02:42:55.096 (VCDU count = 6579800)
 [ 1]  0           2   FID  8x8     ---   7.000   8.000   -773  -1741   1   1   25          
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
-[ 4]  3  1031930240   BOT  6x6   0.985   8.302   9.812    645  -2073  20   1  120          
-[ 5]  4  1031937520   BOT  6x6   0.985   8.171   9.672  -1388   -748  20   1  120          
-[ 6]  5  1031938144   BOT  6x6   0.985   8.517  10.016  -1826   1071  20   1  120          
-[ 7]  6  1031938400   BOT  6x6   0.985   8.560  10.062   1603   1634  20   1  120          
-[ 8]  7  1031930528   GUI  6x6     ---   9.049  10.594   2336   -659   1   1   25    g2    
-[ 9]  7  1031930696   ACQ  6x6   0.985   6.991   8.500     -8  -2230  20   1  120          
-[10]  0  1031929904   ACQ  6x6   0.985   9.448  10.953    538   -874  20   1  120    a2    
-[11]  1  1031930768   ACQ  6x6   0.918   9.683  11.188    626   -467  20   1  120    a2    
-[12]  2  1031940992   ACQ  6x6   0.816   9.821  11.328  -1658   1605  20   1  120    a2    
+[ 4]  3  1031930240   BOT  6x6   0.978   8.302   9.812    645  -2073  20   1  120          
+[ 5]  4  1031937520   BOT  6x6   0.979   8.171   9.672  -1388   -748  20   1  120          
+[ 6]  5  1031938144   BOT  6x6   0.977   8.517  10.016  -1826   1071  20   1  120          
+[ 7]  6  1031938400   BOT  6x6   0.976   8.560  10.062   1603   1634  20   1  120          
+[ 8]  7  1031930528   GUI  6x6     ---   9.049  10.594   2336   -659   1   1   25    g2   C
+[ 9]  7  1031930696   ACQ  6x6   0.981   6.991   8.500     -8  -2230  20   1  120          
+[10]  0  1031929904   ACQ  6x6   0.949   9.448  10.953    538   -874  20   1  120    a2    
+[11]  1  1031930768   ACQ  6x6   0.886   9.683  11.188    626   -467  20   1  120    a2   C
+[12]  2  1031940992   ACQ  6x6   0.917   9.821  11.328  -1658   1605  20   1  120    a2   C
 
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [12] Search spoiler. 1031938576: Y,Z,Radial,Mag seps:  44  54  70 -1.0
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-7.913	-5.936	-4.189	
+Probability of acquiring 2 or fewer stars (10^-x):	3.0001	
 Acquisition Stars Expected  : 7.64
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9172   Sgr A*                 ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   266.426970   -29.025329    81.505000
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:132:03:27:33.453 (VCDU count = 6590252)
@@ -1073,25 +1135,27 @@ MP_STARCAT at 2008:132:03:27:35.096 (VCDU count = 6590259)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   896533888   BOT  6x6   0.985   6.988   8.484  -1198   -938  20   1  120          
-[ 5]  4   896534664   BOT  6x6   0.985   8.155   9.656   2189    395  20   1  120          
-[ 6]  5   896537776   BOT  6x6   0.985   7.634   9.141  -2174  -1048  20   1  120          
+[ 4]  3   896533888   BOT  6x6   0.980   6.988   8.484  -1198   -938  20   1  120         C
+[ 5]  4   896534664   BOT  6x6   0.979   8.155   9.656   2189    395  20   1  120          
+[ 6]  5   896537776   BOT  6x6   0.978   7.634   9.141  -2174  -1048  20   1  120         C
 [ 7]  6   896403224   GUI  6x6     ---   8.219   9.719  -1858   2303   1   1   25          
-[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   2431    775   1   1   25          
-[ 9]  6   896541360   ACQ  6x6   0.985   7.611   9.109  -1406  -1026  20   1  120          
-[10]  7   896537176   ACQ  6x6   0.985   7.929   9.438   1268    -38  20   1  120          
-[11]  0   896541576   ACQ  6x6   0.985   8.251   9.750   1220  -1809  20   1  120          
-[12]  1   896538208   ACQ  6x6   0.985   8.431   9.938   1602  -2155  20   1  120          
-[13]  2   896532680   ACQ  6x6   0.985   8.767  10.266   1844    545  20   1  120          
+[ 8]  7   896538696   GUI  6x6     ---   7.467   8.969   2431    775   1   1   25         C
+[ 9]  6   896541360   ACQ  6x6   0.976   7.611   9.109  -1406  -1026  20   1  120         C
+[10]  7   896537176   ACQ  6x6   0.976   7.929   9.438   1268    -38  20   1  120         C
+[11]  0   896541576   ACQ  6x6   0.978   8.251   9.750   1220  -1809  20   1  120          
+[12]  1   896538208   ACQ  6x6   0.970   8.431   9.938   1602  -2155  20   1  120         C
+[13]  2   896532680   ACQ  6x6   0.975   8.767  10.266   1844    545  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	3.0001	
+Acquisition Stars Expected  : 7.81
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9566   GBW35                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   265.685818   -28.806463    85.505615
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:132:11:39:30.453 (VCDU count = 6705441)
@@ -1105,24 +1169,26 @@ MP_STARCAT at 2008:132:11:39:32.096 (VCDU count = 6705447)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   896402272   BOT  6x6   0.985   7.557   9.062   1758    292  20   1  120          
-[ 5]  4   896402976   BOT  6x6   0.985   7.539   9.047   -568   1808  20   1  120          
-[ 6]  5   896538696   BOT  6x6   0.985   7.467   8.969   1873  -1800  20   1  120          
-[ 7]  6   896540808   BOT  6x6   0.985   8.224   9.734  -1729  -1079  20   1  120          
+[ 4]  3   896402272   BOT  6x6   0.980   7.557   9.062   1758    292  20   1  120         C
+[ 5]  4   896402976   BOT  6x6   0.981   7.539   9.047   -568   1808  20   1  120          
+[ 6]  5   896538696   BOT  6x6   0.980   7.467   8.969   1873  -1800  20   1  120         C
+[ 7]  6   896540808   BOT  6x6   0.975   8.224   9.734  -1729  -1079  20   1  120         C
 [ 8]  7   896403224   GUI  6x6     ---   8.219   9.719  -2287     49   1   1   25          
-[ 9]  7   896404568   ACQ  6x6   0.985   7.641   9.250   1347    101  20   1  120          
-[10]  0   896534664   ACQ  6x6   0.985   8.155   9.656   1603  -2160  20   1  120          
-[11]  1   896402656   ACQ  6x6   0.985   8.485   9.984   2079     -6  20   1  120          
-[12]  2   896532680   ACQ  6x6   0.985   8.767  10.266   1270  -1984  20   1  120          
+[ 9]  7   896404568   ACQ  6x6   0.979   7.641   9.250   1347    101  20   1  120         C
+[10]  0   896534664   ACQ  6x6   0.980   8.155   9.656   1603  -2160  20   1  120          
+[11]  1   896402656   ACQ  6x6   0.970   8.485   9.984   2079     -6  20   1  120         C
+[12]  2   896532680   ACQ  6x6   0.976   8.767  10.266   1270  -1984  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.4812	
+Acquisition Stars Expected  : 7.82
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9567   GBW36                  ACIS-I SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   265.872079   -28.909630    85.505639
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:132:16:24:26.453 (VCDU count = 6772157)
@@ -1136,23 +1202,25 @@ MP_STARCAT at 2008:132:16:24:28.096 (VCDU count = 6772163)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    919   -844   1   1   25          
 [ 2]  1           5   FID  8x8     ---   7.000   8.000  -1828   1053   1   1   25          
 [ 3]  2           6   FID  8x8     ---   7.000   8.000    385   1697   1   1   25          
-[ 4]  3   896402272   BOT  6x6   0.985   7.557   9.062   2081    910  20   1  120          
-[ 5]  4   896403224   BOT  6x6   0.985   8.219   9.719  -1964    660  20   1  120          
-[ 6]  5   896534664   BOT  6x6   0.985   8.155   9.656   1930  -1542  20   1  120          
-[ 7]  6   896538696   BOT  6x6   0.985   7.467   8.969   2199  -1182  20   1  120          
-[ 8]  7   896540808   BOT  6x6   0.985   8.224   9.734  -1404   -467  20   1  120          
-[ 9]  0   896404568   ACQ  6x6   0.985   7.641   9.250   1671    718  20   1  120          
-[10]  1   896537176   ACQ  6x6   0.985   7.929   9.438    980  -1906  20   1  120          
-[11]  2   896532680   ACQ  6x6   0.985   8.767  10.266   1597  -1367  20   1  120          
+[ 4]  3   896402272   BOT  6x6   0.980   7.557   9.062   2081    910  20   1  120         C
+[ 5]  4   896403224   BOT  6x6   0.979   8.219   9.719  -1964    660  20   1  120          
+[ 6]  5   896534664   BOT  6x6   0.980   8.155   9.656   1930  -1542  20   1  120          
+[ 7]  6   896538696   BOT  6x6   0.980   7.467   8.969   2199  -1182  20   1  120         C
+[ 8]  7   896540808   BOT  6x6   0.975   8.224   9.734  -1404   -467  20   1  120         C
+[ 9]  0   896404568   ACQ  6x6   0.979   7.641   9.250   1671    718  20   1  120         C
+[10]  1   896537176   ACQ  6x6   0.977   7.929   9.438    980  -1906  20   1  120         C
+[11]  2   896532680   ACQ  6x6   0.976   8.767  10.266   1597  -1367  20   1  120          
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	8.5499	
+Acquisition Stars Expected  : 7.82
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 9608   AX J181033-1917        ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE 
 RA, Dec, Roll (deg):   272.653331   -19.311092    95.716566
-Dither: ON  Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:132:20:52:55.453 (VCDU count = 6835021)
@@ -1166,24 +1234,27 @@ MP_STARCAT at 2008:132:20:52:57.096 (VCDU count = 6835028)
 [ 1]  0           1   FID  8x8     ---   7.000   8.000    922  -1737   1   1   25          
 [ 2]  1           4   FID  8x8     ---   7.000   8.000   2140    166   1   1   25          
 [ 3]  2           5   FID  8x8     ---   7.000   8.000  -1826    160   1   1   25          
-[ 4]  3   822088160   BOT  6x6   0.985   7.226   8.734   1555   -415  20   1  120          
-[ 5]  4   822098064   BOT  6x6   0.985   8.414   9.922  -1754  -1801  20   1  120          
-[ 6]  5   822100176   BOT  6x6   0.985   8.574  10.078  -1818   2021  20   1  120          
-[ 7]  6   822091704   GUI  6x6     ---   7.959   9.469   1461   1336   1   1   25          
+[ 4]  3   822088160   BOT  6x6   0.981   7.226   8.734   1555   -415  20   1  120         C
+[ 5]  4   822098064   BOT  6x6   0.978   8.414   9.922  -1754  -1801  20   1  120          
+[ 6]  5   822100176   BOT  6x6   0.977   8.574  10.078  -1818   2021  20   1  120          
+[ 7]  6   822091704   GUI  6x6     ---   7.959   9.469   1461   1336   1   1   25         C
 [ 8]  7   822098736   GUI  6x6     ---   8.461   9.969  -1892   1496   1   1   25          
-[ 9]  6   821572840   ACQ  6x6   0.985   8.828  10.328   2302   1023  19   1  115          
-[10]  7   822090992   ACQ  6x6   0.985   8.749  10.250    -82    863  20   1  120          
-[11]  0   822096760   ACQ  6x6   0.985   7.959   9.469   -517   -552  20   1  120          
-[12]  1   822088144   ACQ  6x6   0.985   9.117  10.625    302   -699  20   1  120          
-[13]  2   822094768   ACQ  6x6   0.985   8.843  10.344  -1503  -2028  20   1  120          
+[ 9]  6   821572840   ACQ  6x6   0.975   8.828  10.328   2302   1023  19   1  115          
+[10]  7   822090992   ACQ  6x6   0.976   8.749  10.250    -82    863  20   1  120          
+[11]  0   822096760   ACQ  6x6   0.977   7.959   9.469   -517   -552  20   1  120         C
+[12]  1   822088144   ACQ  6x6   0.945   9.117  10.625    302   -699  20   1  120         C
+[13]  2   822094768   ACQ  6x6   0.960   8.843  10.344  -1503  -2028  20   1  120         C
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-9.507	-7.387	-5.471	
-Acquisition Stars Expected  : 7.88
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
+
+Probability of acquiring 2 or fewer stars (10^-x):	7.9437	
+Acquisition Stars Expected  : 7.76
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
 OBSID: 57821  
 RA, Dec, Roll (deg):   226.000000     7.300000   186.689046
+Dither:  ON Y_amp= 8.0  Z_amp= 8.0  Y_period=1000.0  Z_period= 707.1 
 BACKSTOP GUIDE_SUMM OR MANVR DOT MAKE_STARS TLR 
 
 MP_TARGQUAT at 2008:132:21:52:37.144 (VCDU count = 6848999)
@@ -1194,21 +1265,23 @@ MP_STARCAT at 2008:132:21:52:38.787 (VCDU count = 6849005)
 ---------------------------------------------------------------------------------------------
  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
 ---------------------------------------------------------------------------------------------
-[ 1]  0    45356200   BOT  8x8   0.985   9.571  11.078   1298    921  20   1  120  a2g2    
-[ 2]  1    45356736   BOT  8x8   0.984   9.709  11.219  -1271    153  20   1  120  a2g2    
-[ 3]  2    45357808   BOT  8x8   0.973   9.969  11.469   -657   2229  20   1  120  a2g3    
-[ 4]  3    45358040   BOT  8x8   0.983   9.751  11.250   2056   2101  20   1  120  a2g3    
-[ 5]  4   120466888   BOT  8x8   0.985   8.543  10.047    789  -2310  20   1  120          
-[ 6]  5   120467432   BOT  8x8   0.910   9.393  10.891   -765   -885  20   1  120    a2    
-[ 7]  6   120467800   BOT  8x8   0.985   9.615  11.125   -704  -1736  19   1  115  a2g2    
+[ 1]  0    45356200   BOT  8x8   0.935   9.571  11.078   1298    921  20   1  120  a2g2    
+[ 2]  1    45356736   BOT  8x8   0.925   9.709  11.219  -1271    153  20   1  120  a2g2    
+[ 3]  2    45357808   BOT  8x8   0.920   9.969  11.469   -657   2229  20   1  120  a2g3    
+[ 4]  3    45358040   BOT  8x8   0.922   9.751  11.250   2056   2101  20   1  120  a2g3    
+[ 5]  4   120466888   BOT  8x8   0.972   8.543  10.047    789  -2310  20   1  120          
+[ 6]  5   120467432   BOT  8x8   0.948   9.393  10.891   -765   -885  20   1  120    a2    
+[ 7]  6   120467800   BOT  8x8   0.932   9.615  11.125   -704  -1736  19   1  115  a2g2    
 [ 8]  7   120466360   GUI  8x8     ---  10.047  11.547  -2354  -1204   1   1   25    g3    
-[ 9]  7   120466352   ACQ  8x8   0.971   9.992  11.500    527  -1015  20   1  120    a2    
+[ 9]  7   120466352   ACQ  8x8   0.919   9.992  11.500    527  -1015  20   1  120    a2    
 
+>> WARNING: -log10 probability of 2 or fewer stars < 3
 >> WARNING: 1 star(s) brighter than 9 mag. Perigee requires at least 3
+>> WARNING: acq t_ccd -19.58 outside range -16.0 to -1.0. Clipped.
 >> WARNING: [ 6] Search spoiler.  120466880: Y,Z,Radial,Mag seps:  84  62 104 -0.7
 
-Probability of acquiring 2,3, and 4 or fewer stars (10^x):	-8.357	-6.381	-4.622	
-Acquisition Stars Expected  : 7.77
+Probability of acquiring 2 or fewer stars (10^-x):	2.2224	
+Acquisition Stars Expected  : 7.47
 Predicted Max CCD temperature: -19.6 C 	 N100 Warm Pix Frac 0.051
 Dynamic Mag Limits: Yellow 10.30 	 Red 10.60
 ==================================================================================== 
