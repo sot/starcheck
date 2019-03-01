@@ -1603,16 +1603,6 @@ sub check_star_catalog {
 	    push @warn, sprintf "$alarm [%2d] Search Box Size. Search Box Too Large. \n",$i;
 	}
 
-        # Double check that 180 and 160 boxes are only applied to bright stars
-        if (($type =~ /BOT|ACQ/) and ($c->{"HALFW$i"} > 160)
-            and (($mag + $c->{"GS_MAGERR$i"} * 3 / 100) > 9.2)){
-            push @warn, sprintf "$alarm [%2d] Search Box Size. Star too faint for > 160 box. \n",$i;
-        }
-        if (($type =~ /BOT|ACQ/) and ($c->{"HALFW$i"} > 120)
-            and (($mag + $c->{"GS_MAGERR$i"} * 1 / 100) > 10.2)){
-            push @warn, sprintf "$alarm [%2d] Search Box Size. Star too faint for > 120 box. \n",$i;
-        }
-
 	# Check that readout sizes are all 6x6 for science observations ACA-027
 	if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6"){
 	  if (($c->{"SIZE$i"} eq "8x8") and ($or->{HAS_MON}) and ($c->{"IMNUM$i"} == 7 )){
