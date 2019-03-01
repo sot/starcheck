@@ -1603,11 +1603,6 @@ sub check_star_catalog {
 	    push @warn, sprintf "$alarm [%2d] Search Box Size. Search Box Too Large. \n",$i;
 	}
 
-	# ACQ/BOTH search box smaller than slew error ACA-015
-	if (($type =~ /BOT|ACQ/) and $c->{"HALFW$i"} < $slew_err) {
-	    push @warn, sprintf "$alarm [%2d] Search Box Size. Search Box smaller than slew error \n",$i;
-	}
-
         # Double check that 180 and 160 boxes are only applied to bright stars
         if (($type =~ /BOT|ACQ/) and ($c->{"HALFW$i"} > 160)
             and (($mag + $c->{"GS_MAGERR$i"} * 3 / 100) > 9.2)){
