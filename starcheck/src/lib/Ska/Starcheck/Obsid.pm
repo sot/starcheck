@@ -1678,7 +1678,7 @@ sub check_star_catalog {
 	    if ($type ne 'MON' and $dz < $halfw + $search_err and $dy < $halfw + $search_err and $dm > -1.0) {
 		my $warn = sprintf("$alarm [%2d] Search spoiler. %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
-		if ($dm > -0.2)  { push @warn, $warn } # ACA-022 ACA-023
+		if ($dm > -0.2)  { push @orange_warn, $warn }
 		else { push @yellow_warn, $warn }
 	    }
 	    # Common column: dz within limit, spoiler is $col_sep_mag brighter than star,
