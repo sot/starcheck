@@ -1675,10 +1675,7 @@ sub check_star_catalog {
 	    }
 
             # Spoiler star in track box ACA-022
-            if (($type =~ /BOT|GUI/)
-                    and ($dz < $self->{dither_guide}->{ampl_p} + 25)
-                    and ($dy < $self->{dither_guide}->{ampl_y} + 25)
-                    and ($dm > -1.0)){
+            if (($type =~ /BOT|GUI/) and ($dz < 25) and ($dy < 25) and ($dm > -1.0)){
 		my $warn = sprintf("$alarm [%2d] Spoiler. %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
 		if ($dm > -0.2)  { push @warn, $warn }
