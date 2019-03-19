@@ -1674,13 +1674,24 @@ sub check_star_catalog {
 		else { push @yellow_warn, $warn }
 	    }
 
-	    # Star within search box + search error and within 1.0 mags 
-	    if ($type ne 'MON' and $dz < $halfw + $search_err and $dy < $halfw + $search_err and $dm > -1.0) {
+            # Spoiler star in track box ACA-022
+            if (($type =~ /BOT|GUI/)
+                    and ($dz < $self->{dither_guide}->{ampl_p} + 25)
+                    and ($dy < $self->{dither_guide}->{ampl_y} + 25)
+                    and ($dm > -1.0)){
+		my $warn = sprintf("$alarm [%2d] Spoiler. %10d: " .
+				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
+		if ($dm > -0.2)  { push @warn, $warn }
+		else { push @yellow_warn, $warn }
+            }
+	    # Search box spoiler - star within search box + search error and within 1.0 mags ACA-023
+	    if ($type =~ /BOT|ACQ/ and $dz < $halfw + $search_err and $dy < $halfw + $search_err and $dm > -1.0) {
 		my $warn = sprintf("$alarm [%2d] Search spoiler. %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
 		if ($dm > -0.2)  { push @orange_warn, $warn }
 		else { push @yellow_warn, $warn }
 	    }
+
 	    # Common column: dz within limit, spoiler is $col_sep_mag brighter than star,
 	    # and spoiler is located between star and readout ACA-026
 	    if ($type ne 'MON'
