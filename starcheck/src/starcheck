@@ -8,7 +8,7 @@
 # Unset PYTHONPATH because custom PYTHONPATH should never be allowed
 # for flight starcheck
 unset PYTHONPATH
-export PYTHONHOME=$SKA_ARCH_OS
+export PYTHONHOME=$SKA
 PERL_INLINE_DIRECTORY=`/bin/mktemp -d -t starcheck_inline.XXXXXX` || exit 1
 export PERL_INLINE_DIRECTORY
 STARCHECK=`python -c 'import starcheck; print(starcheck.__path__[0])'`
