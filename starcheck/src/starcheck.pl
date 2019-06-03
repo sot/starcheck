@@ -126,6 +126,7 @@ my %par = (dir  => '.',
 		   html => 1,
 		   text => 1,
 		   yaml => 1,
+                   maude => 0,
                    agasc_file => "${SKA}/data/agasc/agasc1p7.h5",
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
@@ -137,6 +138,7 @@ GetOptions( \%par,
 			'dir=s',
 			'out=s',
 			'plot!',
+                        'maude!',
 			'html!',
 			'text!',
 			'yaml!',
@@ -596,6 +598,7 @@ $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                       model_spec => "$Starcheck_Data/aca_spec.json",
                                       char_file => "$Starcheck_Data/characteristics.yaml",
                                       orlist => $or_file,
+                                      use_maude => $par{maude},
                                   });
 # convert back from JSON outside
 $obsid_temps = JSON::from_json($json_obsid_temps);
@@ -1311,11 +1314,13 @@ Specify file name of the fid characteristics file to use.  This must be in the S
 
 Specify directory which contains starcheck data files including agasc.bad and fid characteristics.  Default is SKA/data/starcheck.
 
-Specify YAML configuration file in starcheck data directory.  Default is SKA/data/starcheck/characteristics.yaml
-
 =item B<-config_file <config file>>
 
 Specify YAML configuration file in starcheck data directory.  Default is SKA/data/starcheck/characteristics.yaml
+
+=item B<-maude>
+
+Set to use MAUDE (instead of CXC Eng Archive) to fetch recent AACCCDPT data for ACA thermal model run
 
 =back
 
