@@ -100,7 +100,7 @@ def get_options():
 
 def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=sys.stdin,
-                  model_spec=None, char_file=None, orlist=None, use_maude=0,
+                  model_spec=None, char_file=None, orlist=None,
                   verbose=1, **kwargs):
     """
     Using the cmds and cmd_states sybase databases, available telemetry, and
@@ -112,30 +112,23 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param json_obsids: file-like object or string containing JSON of
                         starcheck Obsid objects
     :param model_spec: xija ACA model specification
-    :param use_maude: if 1, use maude to fetch recent AACCCDPT data
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
-    if use_maude == 1:
-        fetch.data_source.set('maude allow_subset=False')
-
     config_logging(outdir, verbose)
 
     # Store info relevant to processing for use in outputs
     proc = {'run_user': os.environ['USER'],
             'run_time': time.ctime(),
-            'errors': [],
-            'use_maude': use_maude,
-            }
+            'errors': []}
     logger.info('##############################'
                 '#######################################')
     logger.info('# %s run at %s by %s'
                 % (TASK_NAME, proc['run_time'], proc['run_user']))
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
-    logger.info('# Fetch data sources set to {}'.format(fetch.data_source.sources()))
     logger.info('###############################'
                 '######################################\n')
 
@@ -160,10 +153,10 @@ def get_ccd_temps(oflsdir, outdir='out',
     proc['datestart'] = DateTime(tstart).date
     proc['datestop'] = DateTime(tstop).date
 
-    # Get temperature telemetry for 7 days prior to min(tstart, NOW)
+    # Get temperature telemetry for 30 days prior to min(tstart, NOW)
     tlm = get_telem_values(min(tstart, tnow),
-                           ['aacccdpt'],
-                           days=7)
+                           ['aacccdpt', 'pitch'],
+                           days=30)
 
     states = get_week_states(tstart, tstop, bs_cmds, tlm)
     # if the last obsid interval extends over the end of states
@@ -375,7 +368,8 @@ def mock_telem_predict(states):
 
     tlm = fetch.MSIDset(['aacccdpt'],
                         states[0]['tstart'],
-                        states[-1]['tstart'])
+                        states[-1]['tstart'],
+                        stat='5min')
     temps = {'aca': tlm['aacccdpt'].vals}
     return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
 
@@ -410,7 +404,7 @@ def get_telem_values(tstart, msids, days=7, name_map={}):
     start = DateTime(tstart - days * 86400).date
     stop = DateTime(tstart).date
     logger.info('Fetching telemetry between %s and %s' % (start, stop))
-    msidset = fetch.MSIDset(msids, start, stop)
+    msidset = fetch.MSIDset(msids, start, stop, stat='5min')
     start = max(x.times[0] for x in msidset.values())
     stop = min(x.times[-1] for x in msidset.values())
     msidset.interpolate(328.0, start, stop + 1)  # 328 for '5min' stat
