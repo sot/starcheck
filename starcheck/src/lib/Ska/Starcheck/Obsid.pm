@@ -33,6 +33,7 @@ from Ska.quatutil import radec2yagzag
 import agasc
 
 from proseco.core import ACABox
+from proseco.catalog import get_effective_t_ccd
 from proseco.guide import get_imposter_mags
 
 def _yagzag_to_pixels(yag, zag):
@@ -50,7 +51,8 @@ def _yagzag_to_pixels(yag, zag):
 
 
 def _guide_count(mags, t_ccd):
-    return float(guide_count(np.array(mags), t_ccd))
+    eff_t_ccd = get_effective_t_ccd(t_ccd)
+    return float(guide_count(np.array(mags), eff_t_ccd))
 
 def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z):
     """
@@ -82,8 +84,9 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
 
     types = [t.decode('ascii') for t in types]
     date = date.decode('ascii')
+    eff_t_ccd = get_effective_t_ccd(t_ccd)
 
-    dark = aca_dark.get_dark_cal_image(date=date, t_ccd_ref=t_ccd, aca_image=True)
+    dark = aca_dark.get_dark_cal_image(date=date, t_ccd_ref=eff_t_ccd, aca_image=True)
 
 
     def imposter_offset(cand_mag, imposter_mag):
@@ -2795,10 +2798,21 @@ sub set_ccd_temps{
     $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
     $self->{ccd_temp_acq} = $obsid_temps->{$self->{obsid}}->{ccd_temp_acq};
     $self->{n100_warm_frac} = $obsid_temps->{$self->{obsid}}->{n100_warm_frac};
-    # add warnings for limit violations
+    # Add info statement for limit violations
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
         push @{$self->{fyi}}, sprintf("$info CCD temperature exceeds %.1f C\n",
                                        $config{ccd_temp_red_limit});
+    }
+    # Add info for having a penalty temperature too
+    if ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}){
+        push @{$self->{fyi}}, sprintf("$info Effective guide temperature %.1f C\n",
+                                      get_effective_t_ccd($self->{ccd_temp}));
+
+    }
+    if ($self->{ccd_temp_acq} > $config{ccd_temp_yellow_limit}){
+        push @{$self->{fyi}}, sprintf("$info Effective acq temperature %.1f C\n",
+                                      get_effective_t_ccd($self->{ccd_temp_acq}));
+
     }
     # Clip the acq ccd temperature to the calibrated range of the grid acq probability model
     # and add a yellow warning to let the user know this has happened.
@@ -2842,6 +2856,7 @@ def proseco_probs(kwargs):
     """
 
     kw = de_bytestr(kwargs)
+    kw['t_ccd_acq'] = get_effective_t_ccd(kw['t_ccd_acq'])
     acq_cat = get_acq_catalog(obsid=0, att=Quaternion.normalize([kw['q1'], kw['q2'], kw['q3'], kw['q4']]),
                              n_acq=len(kw['acq_ids']), man_angle=kw['man_angle'], t_ccd=kw['t_ccd_acq'],
                              date=kw['date'], dither=(kw['dither_acq_y'], kw['dither_acq_z']),
@@ -3012,7 +3027,8 @@ def _mag_for_p_acq(p_acq, date, t_ccd):
     Call mag_for_p_acq, but cast p_acq and t_ccd as floats (may or may not be needed) and
     convert date from a bytestring (from the Perl interface).
     """
-    return mag_for_p_acq(float(p_acq), date.decode(), float(t_ccd))
+    eff_t_ccd = get_effective_t_ccd(t_ccd)
+    return mag_for_p_acq(float(p_acq), date.decode(), float(eff_t_ccd))
 
 };
 
