@@ -637,6 +637,12 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_dither($dither);
     # Get the args that proseco would want
     $obs{$obsid}->{'proseco_args'} = $obs{$obsid}->proseco_args();
+    my $json_proseco_args = JSON::to_json(force_numbers($obs{$obsid}->{'proseco_args'}),
+                                          {pretty => 1});
+    open(my $OBS_PARGS, "> ${STARCHECK}/proseco_args_$obs{$obsid}->{obsid}.json")
+        or die "Could't open ${STARCHECK}/proseco_args_$obs{$obsid}->{obsid}.json\n";
+    print $OBS_PARGS $json_proseco_args;
+    close($OBS_PARGS);
     $obs{$obsid}->set_proseco_probs_and_check_P2();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
