@@ -2828,7 +2828,8 @@ sub set_ccd_temps{
 
 use Inline Python => q{
 
-from proseco.acq import get_acq_catalog
+from proseco.catalog import get_aca_catalog
+
 
 def proseco_probs(kwargs):
     """
@@ -2856,15 +2857,24 @@ def proseco_probs(kwargs):
     """
 
     kw = de_bytestr(kwargs)
-    kw['t_ccd_acq'] = get_effective_t_ccd(kw['t_ccd_acq'])
-    acq_cat = get_acq_catalog(obsid=0, att=Quaternion.normalize([kw['q1'], kw['q2'], kw['q3'], kw['q4']]),
-                             n_acq=len(kw['acq_ids']), man_angle=kw['man_angle'], t_ccd=kw['t_ccd_acq'],
-                             date=kw['date'], dither=(kw['dither_acq_y'], kw['dither_acq_z']),
-                             detector=kw['detector'], sim_offset=kw['offset'],
-                             include_ids=kw['acq_ids'], include_halfws=kw['halfwidths'])
+    args = dict(obsid=0,
+                att=Quaternion.normalize(kw['att']),
+                date=kw['date'],
+                n_acq=kw['n_acq'],
+                man_angle=kw['man_angle'],
+                t_ccd_acq=kw['t_ccd_acq'],
+                t_ccd_guide=kw['t_ccd_guide'],
+                dither_acq=ACABox(kw['dither_acq']),
+                dither_guide=ACABox(kw['dither_guide']),
+                include_ids_acq=kw['include_ids_acq'],
+                include_halfws_acq=kw['include_halfws_acq'],
+                detector=kw['detector'], sim_offset=kw['sim_offset'],
+                n_fid=0, n_guide=0, focus_offset=0)
+    aca = get_aca_catalog(**args)
+    acq_cat = aca.acqs
 
     # Assign the proseco probabilities back into an array.
-    p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq_id][0]) for acq_id in kw['acq_ids']]
+    p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq_id][0]) for acq_id in kw['include_ids_acq']]
 
     return p_acqs, float(-np.log10(acq_cat.calc_p_safe())), float(np.sum(p_acqs))
 };
