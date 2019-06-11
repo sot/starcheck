@@ -24,8 +24,7 @@ sub new{
 
     # Set Defaults
     my $SKA = $ENV{SKA} || '/proj/sot/ska';
-    my $DarkCal_Data = "$ENV{SKA_DATA}/starcheck" || "$SKA/data/starcheck";
-    my $DarkCal_Share = "$ENV{SKA_SHARE}/starcheck" || "$SKA/share/starcheck";
+    my $DarkCal_Data = "${SKA}/data/starcheck";
 
     my %par = (
 			   dir => '.',
