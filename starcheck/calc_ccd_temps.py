@@ -13,7 +13,6 @@ import sys
 import os
 import glob
 import logging
-from pprint import pformat
 import time
 import shutil
 import numpy as np
@@ -68,7 +67,7 @@ def get_options():
         description="Get CCD temps from xija model for starcheck")
     parser.set_defaults()
     parser.add_argument("oflsdir",
-                       help="Load products OFLS directory")
+                        help="Load products OFLS directory")
     parser.add_argument("--outdir",
                         default='out',
                         help="Output directory")
@@ -161,13 +160,13 @@ def get_ccd_temps(oflsdir, outdir='out',
     states = get_week_states(tstart, tstop, bs_cmds, tlm)
     # if the last obsid interval extends over the end of states
     # extend the state / predictions
-    if ((states[-1]['obsid'] == sc_obsids[-1]['obsid'])
-        & (sc_obsids[-1]['obs_tstop'] > states[-1]['tstop'])):
+    if ((states[-1]['obsid'] == sc_obsids[-1]['obsid']) &
+            (sc_obsids[-1]['obs_tstop'] > states[-1]['tstop'])):
         tstop = sc_obsids[-1]['obs_tstop']
         states[-1]['tstop'] = sc_obsids[-1]['obs_tstop']
         states[-1]['datestop'] = DateTime(sc_obsids[-1]['obs_tstop']).date
 
-    if tstart >  DateTime(MODEL_VALID_FROM).secs:
+    if tstart > DateTime(MODEL_VALID_FROM).secs:
         times, ccd_temp = make_week_predict(model_spec, states, tstop)
     else:
         times, ccd_temp = mock_telem_predict(states)
@@ -178,7 +177,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     obsreqs = None if orlist is None else {obs['obsid']: obs for obs in read_or_list(orlist)}
     obstemps = get_interval_data(intervals, times, ccd_temp, obsreqs)
     return json.dumps(obstemps, sort_keys=True, indent=4,
-	                  cls=NumpyAwareJSONEncoder)
+                      cls=NumpyAwareJSONEncoder)
 
 
 def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
@@ -214,8 +213,8 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
         obs['n100_warm_frac'] = dark_model.get_warm_fracs(
             100, interval['tstart'], np.max(ok_temps))
         # If we have an OR list, the obsid is in that list, and the OR list has zero-offset keys
-        if (obsreqs is not None and interval['obsid'] in obsreqs
-                and 'chip_id' in obsreqs[interval['obsid']]):
+        if (obsreqs is not None and interval['obsid'] in obsreqs and
+                'chip_id' in obsreqs[interval['obsid']]):
             obsreq = obsreqs[interval['obsid']]
             ddy, ddz = get_aca_offsets(obsreq['detector'],
                                        obsreq['chip_id'],
@@ -242,8 +241,8 @@ def get_obs_intervals(sc_obsids):
     for idx, obs in enumerate(sc_obsids):
         # if the range is undefined, just don't make
         # an entry / interval for the obsid
-        if (('obs_tstart' not in obs)
-            or 'obs_tstop' not in obs):
+        if (('obs_tstart' not in obs) or
+                'obs_tstop' not in obs):
             continue
         interval = {'obsid': obs['obsid'],
                     'tstart': obs['obs_tstart'],
@@ -299,15 +298,15 @@ def get_week_states(tstart, tstop, bs_cmds, tlm):
                                                       'q1', 'q2', 'q3', 'q4']))
     # Get the last state at least 3 days before tstart and at least one hour
     # before the last available telemetry
-    cstate0 = cstates[(cstates['tstart'] < (DateTime(tstart) - 3).secs)
-                      & (cstates['tstart'] < (tlm[-1]['date'] - 3600))][-1]
+    cstate0 = cstates[(cstates['tstart'] < (DateTime(tstart) - 3).secs) &
+                      (cstates['tstart'] < (tlm[-1]['date'] - 3600))][-1]
     # get temperature data in a range around that initial state
     ok = ((tlm['date'] >= cstate0['tstart'] - 700) &
           (tlm['date'] <= cstate0['tstart'] + 700))
     init_aacccdpt = np.mean(tlm['aacccdpt'][ok])
 
-    pre_bs_states = cstates[(cstates['tstart'] >= cstate0['tstart'])
-                            & (cstates['tstart'] < tstart)]
+    pre_bs_states = cstates[(cstates['tstart'] >= cstate0['tstart']) &
+                            (cstates['tstart'] < tstart)]
     # cmd_states.get_states needs an initial state dictionary, so
     # construct one from the last pre-backstop state
     last_pre_bs_state = {col: pre_bs_states[-1][col]
@@ -370,9 +369,8 @@ def mock_telem_predict(states):
                         states[0]['tstart'],
                         states[-1]['tstart'],
                         stat='5min')
-    temps = {'aca': tlm['aacccdpt'].vals}
-    return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
 
+    return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
 
 
 def get_bs_cmds(oflsdir):
@@ -383,7 +381,7 @@ def get_bs_cmds(oflsdir):
     logger.info('Using backstop file %s' % backstop_file)
     bs_cmds = Ska.ParseCM.read_backstop(backstop_file)
     logger.info('Found %d backstop commands between %s and %s' %
-                  (len(bs_cmds), bs_cmds[0]['date'], bs_cmds[-1]['date']))
+                (len(bs_cmds), bs_cmds[0]['date'], bs_cmds[-1]['date']))
 
     return bs_cmds
 
