@@ -73,7 +73,12 @@ def de_bytestr(data):
     return data
 
 def ccd_temp_wrapper(kwargs):
-    return get_ccd_temps(**de_bytestr(kwargs))
+    try:
+        return get_ccd_temps(**de_bytestr(kwargs))
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        raise
 
 def plot_cat_wrapper(kwargs):
     try:
