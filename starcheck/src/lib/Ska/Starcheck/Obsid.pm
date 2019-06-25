@@ -2281,29 +2281,29 @@ sub print_report {
 
     if (@{$self->{warn}}) {
 	$o .= "${red_font_start}";
-	foreach (@{$self->{warn}}) {
-	    $o .= ">> CRITICAL:" . $_;
+	foreach (sort(@{$self->{warn}})) {
+	    $o .= ">> CRITICAL: " . $_;
 	}
 	$o .= "${font_stop}";
     }
     if (@{$self->{orange_warn}}) {
 	$o .= "${orange_font_start}";
-	foreach (@{$self->{orange_warn}}) {
-	    $o .= ">> WARNING :" . $_;
+	foreach (sort(@{$self->{orange_warn}})) {
+	    $o .= ">> WARNING : " . $_;
 	}
 	$o .= "${font_stop}";
     }
     if (@{$self->{yellow_warn}}) {
 	$o .= "${yellow_font_start}";
-	foreach (@{$self->{yellow_warn}}) {
-	    $o .= ">> CAUTION :" . $_;
+	foreach (sort(@{$self->{yellow_warn}})) {
+	    $o .= ">> CAUTION : " . $_;
 	}
 	$o .= "${font_stop}";
     }
     if (@{$self->{fyi}}) {
 	$o .= "${blue_font_start}";
-	foreach (@{$self->{fyi}}) {
-	    $o .= ">> INFO    :" . $_;
+	foreach (sort(@{$self->{fyi}})) {
+	    $o .= ">> INFO    : " . $_;
 	}
 	$o .= "${font_stop}";
     }
