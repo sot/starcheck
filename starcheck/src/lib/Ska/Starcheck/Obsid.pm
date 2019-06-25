@@ -187,8 +187,6 @@ my $ER_MIN_OBSID = 38000;
 my $ACA_MANERR_PAD = 20;		# Maneuver error pad for ACA effects (arcsec)
 my $r2a = 3600. * 180. / 3.14159265;
 my $faint_plot_mag = 11.0;
-my $alarm = ">> WARNING:";
-my $info  = ">> INFO   :";
 my %Default_SIM_Z = ('ACIS-I' => 92905,
 		     'ACIS-S' => 75620,
 		     'HRC-I'  => -50505,
@@ -387,7 +385,7 @@ sub set_obsid {
     $bs_obsid = $mp_obsid_cmd->{ID} if $mp_obsid_cmd;
     $self->{obsid} = $bs_obsid || $gs_obsid || $oflsid;
     if (defined $bs_obsid and defined $gs_obsid and $bs_obsid != $gs_obsid) {
-        push @{$self->{warn}}, sprintf("$alarm Obsid mismatch: guide summary %d != backstop %d\n",
+        push @{$self->{warn}}, sprintf("Obsid mismatch: guide summary %d != backstop %d\n",
                                       $gs_obsid, $bs_obsid);
     }
 }
@@ -502,7 +500,7 @@ sub set_maneuver {
 		my $q4_obc = sqrt(abs(1.0 - $c->{Q1}**2 - $c->{Q2}**2 - $c->{Q3}**2));
 		my $norm = sqrt($c->{Q1}**2 + $c->{Q2}**2 + $c->{Q3}**2 + $q4_obc**2);
 		if (abs(1.0 - $norm) > 1e-6){
-		   push @{$self->{warn}}, sprintf("$alarm Uplink quaternion norm value $norm is too far from 1.0\n");
+		   push @{$self->{warn}}, sprintf("Uplink quaternion norm value $norm is too far from 1.0\n");
 		}
 		my @c_quat_norm = ($c->{Q1} / $norm,
 	                       $c->{Q2} / $norm,
@@ -516,7 +514,7 @@ sub set_maneuver {
 		my $q_diff = $q_man->divide($q_obc);
 		    
 		if (abs($q_diff->{ra0}*3600) > 1.0 || abs($q_diff->{dec}*3600) > 1.0 || abs($q_diff->{roll0}*3600) > 10.0) {
-		    push @{$self->{warn}}, sprintf("$alarm Target uplink precision problem for MP_TARGQUAT at $c->{date}\n" 
+		    push @{$self->{warn}}, sprintf("Target uplink precision problem for MP_TARGQUAT at $c->{date}\n" 
 						   . "   Error is yaw, pitch, roll (arcsec) = %.2f  %.2f  %.2f\n"
 						   . "   Use Q1,Q2,Q3,Q4 = %.12f %.12f %.12f %.12f\n",
 						   $q_diff->{ra0}*3600, $q_diff->{dec}*3600, $q_diff->{roll0}*3600,
@@ -526,7 +524,7 @@ sub set_maneuver {
 	
 	    
 	}
-	push @{$self->{yellow_warn}}, sprintf("$alarm Did not find match in MAN summary for MP_TARGQUAT at $c->{date}\n")
+	push @{$self->{yellow_warn}}, sprintf("Did not find match in MAN summary for MP_TARGQUAT at $c->{date}\n")
 	    unless ($found);
 	
     }
@@ -558,7 +556,7 @@ sub set_manerr {
 		    $c->{man_err} = $me->{MaxErrYZ} + $ACA_MANERR_PAD;
 		    $c->{man_err_data} = $me; # Save the whole record just in case
 		} else {
-		    push @{$self->{yellow_warn}}, sprintf("$alarm Mismatch in target quaternion ($c->{date}) and maneuver error file\n");
+		    push @{$self->{yellow_warn}}, sprintf("Mismatch in target quaternion ($c->{date}) and maneuver error file\n");
 		}
 	    }
 	}
@@ -597,7 +595,7 @@ sub set_ps_times{
 	}
     }
     if (not defined $or_er_start or not defined $or_er_stop){
-        push @{$self->{warn}}, "$alarm Could not find obsid $obsid in processing summary\n";
+        push @{$self->{warn}}, "Could not find obsid $obsid in processing summary\n";
         $self->{or_er_start} = undef;
         $self->{or_er_stop} = undef;
     }
@@ -644,7 +642,7 @@ sub set_npm_times{
             # just use next obsid start time
             my $next_cmd_obsid = find_command($self->{next}, "MP_OBSID", -1);
             if ( (defined $next_cmd_obsid) and ( $self->{obsid} != $next_cmd_obsid->{ID}) ){
-		push @{$self->{fyi}}, "$info Next obsid has no manvr; using next obs start date for checks (dither, momentum)\n";
+		push @{$self->{fyi}}, "Next obsid has no manvr; using next obs start date for checks (dither, momentum)\n";
                 $obs_tstop = $next_cmd_obsid->{time};
                 $self->{no_following_manvr} = 1;
             }
@@ -655,7 +653,7 @@ sub set_npm_times{
     }
 
     if (not defined $obs_tstart or not defined $obs_tstop){
-        push @{$self->{warn}}, "$alarm Could not determine obsid start and stop times for checks (dither, momentum)\n";
+        push @{$self->{warn}}, "Could not determine obsid start and stop times for checks (dither, momentum)\n";
     }
     else{
         $self->{obs_tstart} = $obs_tstart;
@@ -776,7 +774,7 @@ sub check_dither {
     }
 
     unless (defined $dthr){
-      push @{$self->{warn}}, "$alarm Dither states unavailable. Dither not checked\n";
+      push @{$self->{warn}}, "Dither states unavailable. Dither not checked\n";
       return;
     }
 
@@ -785,7 +783,7 @@ sub check_dither {
     my $obs_tstop = $self->{obs_tstop};
 
     unless (defined $obs_tstart){
-        push @{$self->{warn}}, "$alarm Cannot determine obs start time for dither, not checking.\n";
+        push @{$self->{warn}}, "Cannot determine obs start time for dither, not checking.\n";
         return;
     }
 
@@ -816,11 +814,11 @@ sub check_dither {
     # Check for standard dither
     if ($guide_dither->{state} eq 'ENAB'){
         if ((not standard_dither($guide_dither)) or not standard_dither($acq_dither)){
-            push @{$self->{yellow_warn}}, "$alarm Non-standard dither\n";
+            push @{$self->{yellow_warn}}, "Non-standard dither\n";
         }
         if (($guide_dither->{ampl_p} != $acq_dither->{ampl_p})
                 or ($guide_dither->{ampl_y} != $acq_dither->{ampl_y})){
-            push @{$self->{fyi}}, sprintf("$info Reviewed with ACQ dither Y=%.1f Z=%.1f \n",
+            push @{$self->{fyi}}, sprintf("Reviewed with ACQ dither Y=%.1f Z=%.1f \n",
                                           $acq_dither->{ampl_y}, $acq_dither->{ampl_p});
         }
     }
@@ -841,7 +839,7 @@ sub check_dither {
     # ACA-003
     if (not defined $obs_tstop ){
         push @{$self->{warn}},
-            "$alarm Unable to determine obs tstop; could not check for dither changes during obs\n";
+            "Unable to determine obs tstop; could not check for dither changes during obs\n";
     }
     else{
         foreach my $dither (reverse @{$dthr}) {
@@ -851,7 +849,7 @@ sub check_dither {
             }
             if ($dither->{time} > ($obs_tstart + $obs_beg_pad)
                     && $dither->{time} <= $obs_tstop - $obs_end_pad) {
-                push @{$self->{warn}}, "$alarm Dither commanding at $dither->{time}.  During observation.\n";
+                push @{$self->{warn}}, "Dither commanding at $dither->{time}.  During observation.\n";
             }
             if ($dither->{time} < $obs_tstart){
                 last;
@@ -861,7 +859,7 @@ sub check_dither {
 
     if (($self->{dither_guide}->{ampl_y_max} != $self->{dither_guide}->{ampl_y})
             or ($self->{dither_guide}->{ampl_p_max} != $self->{dither_guide}->{ampl_p})){
-        push @{$self->{fyi}}, sprintf("$info Max Y Z ampl during guide used for checking Y=%.1f Z=%.1f \n",
+        push @{$self->{fyi}}, sprintf("Max Y Z ampl during guide used for checking Y=%.1f Z=%.1f \n",
                                       $self->{dither_guide}->{ampl_y_max} + 0.0,
                                       $self->{dither_guide}->{ampl_p_max} + 0.0);
     }
@@ -877,12 +875,12 @@ sub check_dither {
     if (defined $self->{DITHER_ON}){
         $or_val = ($self->{DITHER_ON} eq 'ON') ? 'ENAB' : 'DISA';
         # ACA-002
-        push @{$self->{warn}}, "$alarm Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
+        push @{$self->{warn}}, "Dither mismatch - OR: $or_val != Backstop: $bs_val\n"
             if ($or_val ne $bs_val);
     }
     else{
         push @{$self->{warn}},
-            "$alarm Unable to determine dither from OR list\n";
+            "Unable to determine dither from OR list\n";
     }
 
     # If dither is enabled according to the OR, check that parameters match OR vs Backstop
@@ -891,7 +889,7 @@ sub check_dither {
         my $or_ampl_p = $self->{DITHER_Z_AMP} * 3600;
         if ((abs($or_ampl_y - $guide_dither->{ampl_y}) > 0.1
                  or abs($or_ampl_p - $guide_dither->{ampl_p}) > 0.1)){
-            my $warn = sprintf("$alarm Dither amp. mismatch - OR: (Y %.1f, Z %.1f) "
+            my $warn = sprintf("Dither amp. mismatch - OR: (Y %.1f, Z %.1f) "
                                    . "!= Backstop: (Y %.1f, Z %.1f)\n",
                                $or_ampl_y, $or_ampl_p,
                                $guide_dither->{ampl_y}, $guide_dither->{ampl_p});
@@ -961,7 +959,7 @@ sub large_dither_checks {
     # Is the large dither command enabled 5 minutes after EOM?
     if (abs($dither_state->{time} - $obs_tstart - 300) > $time_tol){
         push @{$self->{warn}},
-            sprintf("$alarm Large Dither not enabled 5 min after EOM (%s)\n",
+            sprintf("Large Dither not enabled 5 min after EOM (%s)\n",
                     time2date($obs_tstart));
     }
     # What's the dither state at EOM?
@@ -977,7 +975,7 @@ sub large_dither_checks {
     # Is dither nominal for detector at EOM
     if ($det ne standard_dither($obs_start_dither)){
         push @{$self->{warn}},
-            sprintf("$alarm Dither should be detector nominal 1 min before obs start for Large Dither\n");
+            sprintf("Dither should be detector nominal 1 min before obs start for Large Dither\n");
     }
 
 
@@ -993,18 +991,18 @@ sub large_dither_checks {
     # the end (within time_tol) .  obs_tstop appears not corrected by 10s so use 310 instead of 300
     if ((abs($obs_tstop - $obs_stop_dither->{time} - 310) > $time_tol)){
         push @{$self->{warn}},
-            sprintf("$alarm Last dither state for Large Dither should start 5 minutes before obs end.\n");
+            sprintf("Last dither state for Large Dither should start 5 minutes before obs end.\n");
     }
     # Check that the dither state at the end of the observation is standard
     if (not standard_dither($obs_stop_dither)){
         push @{$self->{warn}},
-            sprintf("$alarm Dither parameters not set to standard values before obs end\n");
+            sprintf("Dither parameters not set to standard values before obs end\n");
     }
 
     # If the number of warnings has not changed during this routine, it passed all checks
     if (scalar(@{$self->{warn}}) == $n_warn){
         push @{$self->{fyi}},
-            sprintf("$info Observation passes 'big dither' checks\n");
+            sprintf("Observation passes 'big dither' checks\n");
     }
 }
 
@@ -1025,7 +1023,7 @@ sub check_bright_perigee{
 
     # if radmon is undefined, warn and return
     if (not defined $radmon){
-      push @{$self->{warn}}, "$alarm Perigee bright stars not being checked, no rad zone info available\n";
+      push @{$self->{warn}}, "Perigee bright stars not being checked, no rad zone info available\n";
 	return;
     }
 
@@ -1035,7 +1033,7 @@ sub check_bright_perigee{
 
     # if observation stop time is undefined, warn and return
     if (not defined $obs_tstop){
-        push @{$self->{warn}}, "$alarm Perigee bright stars not being checked, no obs tstop available\n";
+        push @{$self->{warn}}, "Perigee bright stars not being checked, no obs tstop available\n";
 	return;
     }
 
@@ -1064,11 +1062,11 @@ sub check_bright_perigee{
     my $bright_count = scalar(@bright_stars);
     if ($bright_count < $min_n_stars){
         if ($self->{special_case_er} == 1){
-            push @{$self->{fyi}}, "$info Only $bright_count star(s) brighter than $min_mag mag. "
+            push @{$self->{fyi}}, "Only $bright_count star(s) brighter than $min_mag mag. "
                 . "Acceptable for Special Case ER\n";
         }
         else{
-            push @{$self->{warn}}, "$alarm $bright_count star(s) brighter than $min_mag mag. "
+            push @{$self->{warn}}, "$bright_count star(s) brighter than $min_mag mag. "
                 . "Perigee requires at least $min_n_stars\n";
         }
 
@@ -1085,14 +1083,14 @@ sub check_momentum_unload{
     my $obs_tstop = $self->{obs_tstop};
     
     if (not defined $obs_tstart or not defined $obs_tstop){
-        push @{$self->{warn}}, "$alarm Momentum Unloads not checked.\n";
+        push @{$self->{warn}}, "Momentum Unloads not checked.\n";
         return;
     }
     for my $entry (@{$backstop}){
         if ((defined $entry->{command}) and (defined $entry->{command}->{TLMSID})){
             if ($entry->{command}->{TLMSID} =~ /AOMUNLGR/){
                 if (($entry->{time} >= $obs_tstart) and ($entry->{time} <= $obs_tstop )){
-                    push @{$self->{fyi}}, "$info Momentum Unload (AOMUNLGR) in NPM at " . $entry->{date} . "\n";
+                    push @{$self->{fyi}}, "Momentum Unload (AOMUNLGR) in NPM at " . $entry->{date} . "\n";
                 }
             }
         }
@@ -1122,11 +1120,11 @@ sub check_for_special_case_er{
         and abs($self->{roll} - $self->{prev}->{roll}) < 0.001){
         if (($self->{obs_tstop} - $self->{obs_tstart}) < 10*60){
             $self->{special_case_er} = 1;
-            push @{$self->{fyi}}, "$info Special Case ER\n";
+            push @{$self->{fyi}}, "Special Case ER\n";
         }
         else{
             push @{$self->{fyi}},
-            sprintf("$info Same attitude as last obsid but too long (%.1f min) for Special Case ER\n", ($self->{obs_tstop} - $self->{obs_tstart})/60.);
+            sprintf("Same attitude as last obsid but too long (%.1f min) for Special Case ER\n", ($self->{obs_tstop} - $self->{obs_tstart})/60.);
         }
     }
 }
@@ -1140,7 +1138,7 @@ sub check_sim_position {
     
     return unless (exists $self->{SIM_OFFSET_Z});
     unless ($manvr = find_command($self, "MP_TARGQUAT", -1)) {
-	push @{$self->{warn}}, "$alarm Missing MP_TARGQUAT cmd\n";
+	push @{$self->{warn}}, "Missing MP_TARGQUAT cmd\n";
 	return;
     }
 
@@ -1160,7 +1158,7 @@ sub check_sim_position {
 #		print STDERR " sim_offset_z = $self->{SIM_OFFSET_Z}   SI = $self->{SI}\n";
 #		print STDERR " st->{POS} = $par{POS}   sim_z = $sim_z   delta = ", $par{POS}-$sim_z,"\n";
                     # ACA-001
-		    push @{$self->{warn}}, "$alarm SIM position mismatch:  OR=$sim_z  BACKSTOP=$par{POS}\n";
+		    push @{$self->{warn}}, "SIM position mismatch:  OR=$sim_z  BACKSTOP=$par{POS}\n";
 		}
 		last;
 	    }
@@ -1256,10 +1254,10 @@ sub check_star_catalog {
     else{
 	# if no target quaternion, warn and continue
 	if (defined $ok_no_starcat){
-	  push @{$self->{fyi}}, "$info No target/maneuver for obsid $obsid ($oflsid). OK for '$ok_no_starcat' ER. \n";
+	  push @{$self->{fyi}}, "No target/maneuver for obsid $obsid ($oflsid). OK for '$ok_no_starcat' ER. \n";
 	}
 	else{
-	  push @{$self->{warn}}, "$alarm No target/maneuver for obsid $obsid ($oflsid). \n";		    
+	  push @{$self->{warn}}, "No target/maneuver for obsid $obsid ($oflsid). \n";		    
 	}
     }
     $slew_err = 120 if not defined $slew_err;
@@ -1268,10 +1266,10 @@ sub check_star_catalog {
     # if no starcat, warn and quit this subroutine
     unless ($c = find_command($self, "MP_STARCAT")) {
 	if (defined $ok_no_starcat){
-	    push @{$self->{fyi}}, "$info No star catalog for obsid $obsid ($oflsid). OK for '$ok_no_starcat' ER. \n";
+	    push @{$self->{fyi}}, "No star catalog for obsid $obsid ($oflsid). OK for '$ok_no_starcat' ER. \n";
 	    return;
 	}
-	push @{$self->{warn}}, "$alarm No star catalog for obsid $obsid ($oflsid). \n";		    
+	push @{$self->{warn}}, "No star catalog for obsid $obsid ($oflsid). \n";		    
 	return;
     }
 
@@ -1281,7 +1279,7 @@ sub check_star_catalog {
         $dither_acq_z = $self->{dither_acq}->{ampl_p};
     } else {
         push @{$self->{yellow_warn}},
-            "$alarm Acquisition dither could not be determined, using 20\"x20\" for checking.\n";
+            "Acquisition dither could not be determined, using 20\"x20\" for checking.\n";
 	$dither_acq_y = 20.0;
 	$dither_acq_z = 20.0;
     }
@@ -1291,7 +1289,7 @@ sub check_star_catalog {
         $dither_guide_z = $self->{dither_guide}->{ampl_p_max};
     } else {
         push @{$self->{yellow_warn}},
-            "$alarm Guide dither could not be determined, using 20\"x20\" for checking.\n";
+            "Guide dither could not be determined, using 20\"x20\" for checking.\n";
 	$dither_guide_y = 20.0;
 	$dither_guide_z = 20.0;
     }
@@ -1305,16 +1303,16 @@ sub check_star_catalog {
     # Global checks on star/fid numbers
     # ACA-005 ACA-006 ACA-007 ACA-008 ACA-044
     
-    push @warn,"$alarm Too Few Fid Lights\n" if (@{$self->{fid}} < $min_fid && $is_science);
-    push @warn,"$alarm Too Many Fid Lights\n" if ( (@{$self->{fid}} > 0 && $is_er) ||
+    push @warn,"Too Few Fid Lights\n" if (@{$self->{fid}} < $min_fid && $is_science);
+    push @warn,"Too Many Fid Lights\n" if ( (@{$self->{fid}} > 0 && $is_er) ||
 						   (@{$self->{fid}} > $min_fid && $is_science) ) ;
-    push @warn,"$alarm Too Few Acquisition Stars\n" if (@{$self->{acq}} < $min_acq);
+    push @warn,"Too Few Acquisition Stars\n" if (@{$self->{acq}} < $min_acq);
     # Red warn if fewer than the minimum number of guide stars
     my $n_gui = @{$self->{gui}};
-    push @warn,"$alarm Only $n_gui Guide Stars ($min_guide required)\n" if ($n_gui < $min_guide);
-    push @warn,"$alarm Too Many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} + @{$self->{mon}} > 8);
-    push @warn,"$alarm Too Many Acquisition Stars\n" if (@{$self->{acq}} > 8);
-    push @warn,"$alarm Too many MON\n" if ((@{$self->{mon}} > 1 && $is_science) ||
+    push @warn,"Only $n_gui Guide Stars ($min_guide required)\n" if ($n_gui < $min_guide);
+    push @warn,"Too Many GUIDE + FID\n" if (@{$self->{gui}} + @{$self->{fid}} + @{$self->{mon}} > 8);
+    push @warn,"Too Many Acquisition Stars\n" if (@{$self->{acq}} > 8);
+    push @warn,"Too many MON\n" if ((@{$self->{mon}} > 1 && $is_science) ||
                                                (@{$self->{mon}} > 2 && $is_er));
     
     # Match positions of fids in star catalog with expected, and verify a one to one 
@@ -1348,12 +1346,12 @@ sub check_star_catalog {
     for my $imposter (@imposters){
         # If the check just fails on the Python side write out a warning and move on.
         if ($imposter->{status} == 1){
-            push @warn, sprintf("$alarm [%2d] Processing error when checking for hot pixels.\n",
+            push @warn, sprintf("[%2d] Processing error when checking for hot pixels.\n",
                                 $imposter->{idx});
             next IMPOSTER;
         }
         my $warn = sprintf(
-            "$alarm [%2d] Imposter mag %.1f centroid offset %.1f row, col (%4d, %4d) star (%4d, %4d)\n",
+            "[%2d] Imposter mag %.1f centroid offset %.1f row, col (%4d, %4d) star (%4d, %4d)\n",
             $imposter->{idx}, $imposter->{bad2_mag}, $imposter->{offset},
             $imposter->{bad2_row}, $imposter->{bad2_col},
             $imposter->{entry_row}, $imposter->{entry_col});
@@ -1395,14 +1393,14 @@ sub check_star_catalog {
 
        # Warn if star not identified ACA-042
 	if ( $type =~ /BOT|GUI|ACQ/ and not defined $c->{"GS_IDENTIFIED$i"}) {
-	    push @warn, sprintf("$alarm [%2d] Missing Star. No AGASC star near search center \n", $i);
+	    push @warn, sprintf("[%2d] Missing Star. No AGASC star near search center \n", $i);
 	}
 
 	# Warn if ASPQ1 is too large for nominal ACQ or GUI selection
         if (($type =~ /BOT|ACQ|GUI/) and (defined $c->{"GS_ASPQ$i"})){
             if ((($type =~ /BOT|GUI/) and ($c->{"GS_ASPQ$i"} > 20)) or
                     (($type =~ /BOT|ACQ/) && ($c->{"GS_ASPQ$i"} > 40))){
-                push @orange_warn, sprintf "$alarm [%2d] Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n", 
+                push @orange_warn, sprintf "[%2d] Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n", 
             }
         }
 
@@ -1418,7 +1416,7 @@ sub check_star_catalog {
 	    }
 	    if ($n_noids && $n_obs > $obs_min_cnt && $n_noids/$n_obs > $obs_bad_frac){
 	        push @yellow_warn, sprintf 
-		"$alarm [%2d] Bad Acquisition Star. %s has %2d failed out of %2d attempts\n",
+		"[%2d] Bad Acquisition Star. %s has %2d failed out of %2d attempts\n",
 		$i, $sid, $n_noids, $n_obs;
 	    }
 	}
@@ -1433,15 +1431,15 @@ sub check_star_catalog {
 	    }
 	    if ($n_nbad && $n_obs > $obs_min_cnt && $n_nbad/$n_obs > $obs_bad_frac){
 	        push @warn, sprintf
-		"$alarm [%2d] Bad Guide Star. %s has bad data %2d of %2d attempts\n",
+		"[%2d] Bad Guide Star. %s has bad data %2d of %2d attempts\n",
 		$i, $sid, $n_nbad, $n_obs;
 	    }
 	}
-	    
+
 	# Bad AGASC ID ACA-031
-	push @yellow_warn,sprintf "$alarm [%2d] Non-numeric AGASC ID.  %s\n",$i,$sid if ($sid ne '---' && $sid =~ /\D/);
+	push @yellow_warn,sprintf "[%2d] Non-numeric AGASC ID.  %s\n",$i,$sid if ($sid ne '---' && $sid =~ /\D/);
 	if (($type =~ /BOT|GUI|ACQ/) and (defined $bad_id{$sid})){
-            push @warn, sprintf "$alarm [%2d] Bad AGASC ID.  %s\n",$i,$sid;
+            push @warn, sprintf "[%2d] Bad AGASC ID.  %s\n",$i,$sid;
 	}
 	# Set NOTES variable for marginal or bad star based on AGASC info
 	$c->{"GS_NOTES$i"} = '';
@@ -1461,7 +1459,7 @@ sub check_star_catalog {
             if ($c->{"GS_NOTES$i"} =~ /[cmp]/){
                 $note = sprintf("B-V = %.3f, Mag_Err = %.2f, Pos_Err = %.2f",
                                 $c->{"GS_BV$i"}, ($c->{"GS_MAGERR$i"})/100, ($c->{"GS_POSERR$i"})/1000);
-                $marginal_note = sprintf("$alarm [%2d] Marginal star. %s\n",$i,$note);
+                $marginal_note = sprintf("[%2d] Marginal star. %s\n",$i,$note);
             }
             # Assign orange warnings to catalog stars with B-V = 0.7 .
             # Assign yellow warnings to catalog stars with other issues (example B-V = 1.5).
@@ -1476,10 +1474,10 @@ sub check_star_catalog {
             # Print bad star warning on catalog stars with bad class.
             if ($c->{"GS_CLASS$i"} != 0){
                 if ($type =~ /BOT|GUI|ACQ/ ){
-                    push @warn, sprintf("$alarm [%2d] Bad star.  Class = %s %s\n", $i,$c->{"GS_CLASS$i"},$note);
+                    push @warn, sprintf("[%2d] Bad star.  Class = %s %s\n", $i,$c->{"GS_CLASS$i"},$note);
                 }
                 elsif ($type eq 'MON'){
-                    push @{$self->{fyi}}, sprintf("$info [%2d] MON class= %s %s (do not convert to GUI)\n", $i,$c->{"GS_CLASS$i"},$note);
+                    push @{$self->{fyi}}, sprintf("[%2d] MON class= %s %s (do not convert to GUI)\n", $i,$c->{"GS_CLASS$i"},$note);
                 }
             }
 	}
@@ -1515,11 +1513,11 @@ sub check_star_catalog {
             foreach my $axis ('row', 'col'){
                 my $track_delta = abs($track_limits{$axis}) - abs($pixel{$axis});
                 if ($track_delta < 2.5){
-                    push @warn, sprintf "$alarm [%2d] Less than 2.5 pix edge margin $axis lim %.1f val %.1f delta %.1f\n",
+                    push @warn, sprintf "[%2d] Less than 2.5 pix edge margin $axis lim %.1f val %.1f delta %.1f\n",
                         $i, $pixel_sign{$axis} * $track_limits{$axis}, $pixel{$axis}, $track_delta;
                 }
                 elsif ($track_delta < 5){
-                    push @orange_warn, sprintf "$alarm [%2d] Within 5 pix of CCD $axis lim %.1f val %.1f delta %.1f\n",
+                    push @orange_warn, sprintf "[%2d] Within 5 pix of CCD $axis lim %.1f val %.1f delta %.1f\n",
                         $i, $pixel_sign{$axis} * $track_limits{$axis}, $pixel{$axis}, $track_delta;
                 }
             }
@@ -1531,22 +1529,22 @@ sub check_star_catalog {
         my $acq_edge_delta = min(($row_lim - $dither_acq_y / $ang_per_pix) - abs($pixel_row),
                                  ($col_lim - $dither_acq_p / $ang_per_pix) - abs($pixel_col));
         if (($type =~ /BOT|ACQ/) and ($acq_edge_delta < (-1 * 12))){
-            push @orange_warn, sprintf "$alarm [%2d] Acq Off (padded) CCD by > 60 arcsec.\n",$i;
+            push @orange_warn, sprintf "[%2d] Acq Off (padded) CCD by > 60 arcsec.\n",$i;
         }
         elsif (($type =~ /BOT|ACQ/) and ($acq_edge_delta < 0)){
-            push @{$self->{fyi}}, sprintf "$alarm [%2d] Acq Off (padded) CCD (P_ACQ should be < .5)\n",$i;
+            push @{$self->{fyi}}, sprintf "[%2d] Acq Off (padded) CCD (P_ACQ should be < .5)\n",$i;
         }
 
 	# Faint and bright limits ~ACA-009 ACA-010
 	if ($mag ne '---') {
             if ($type eq 'GUI' or $type eq 'BOT'){
-                my $guide_mag_warn = sprintf "$alarm [%2d] Magnitude. Guide star %6.3f\n", $i, $mag;
+                my $guide_mag_warn = sprintf "[%2d] Magnitude. Guide star %6.3f\n", $i, $mag;
                 if (($mag > 10.3) or ($mag < 6.0)){
                     push @warn, $guide_mag_warn;
                 }
             }
             if ($type eq 'BOT' or $type eq 'ACQ'){
-                my $acq_mag_warn = sprintf "$alarm [%2d] Magnitude. Acq star %6.3f\n", $i, $mag;
+                my $acq_mag_warn = sprintf "[%2d] Magnitude. Acq star %6.3f\n", $i, $mag;
                 if ($mag < 5.8){
                     push @warn, $acq_mag_warn;
                 }
@@ -1562,7 +1560,7 @@ sub check_star_catalog {
 	# FID magnitude limits ACA-011
 	if ($type eq 'FID') {
 	    if ($mag =~ /---/ or $mag < $fid_bright or $mag > $fid_faint) {
-		push @warn, sprintf "$alarm [%2d] Magnitude.  %6.3f\n",$i, $mag =~ /---/ ? 0 : $mag;
+		push @warn, sprintf "[%2d] Magnitude.  %6.3f\n",$i, $mag =~ /---/ ? 0 : $mag;
 	    } 
 	}
 
@@ -1579,10 +1577,10 @@ sub check_star_catalog {
                 if (abs($fpos->{y} - $yag) < $fid_spoil_margin and
                         abs($fpos->{z} - $zag) < $fid_spoil_margin){
                     if ($type =~ /ACQ/){
-                        push @yellow_warn, sprintf "$alarm [%2d] Fid light in search box\n", $i;
+                        push @yellow_warn, sprintf "[%2d] Fid light in search box\n", $i;
                     }
                     else{
-                        push @warn, sprintf "$alarm [%2d] Fid light in search box\n", $i;
+                        push @warn, sprintf "[%2d] Fid light in search box\n", $i;
                     }
                 }
             }
@@ -1591,12 +1589,12 @@ sub check_star_catalog {
         # ACA-041
 	if ($type =~ /BOT|GUI|ACQ/){
 	    if (( $maxmag =~ /---/) or ($mag =~ /---/)){
-		push @warn, sprintf "$alarm [%2d] Magnitude.  MAG or MAGMAX not defined \n",$i;		
+		push @warn, sprintf "[%2d] Magnitude.  MAG or MAGMAX not defined \n",$i;
 	    }
 	    else{
 		if (($maxmag - $mag) < $mag_faint_slot_diff){
 		    my $slot_diff = $maxmag - $mag;
-		    push @warn, sprintf "$alarm [%2d] Magnitude.  MAXMAG - MAG = %1.2f < $mag_faint_slot_diff \n",$i,$slot_diff;
+		    push @warn, sprintf "[%2d] Magnitude.  MAXMAG - MAG = %1.2f < $mag_faint_slot_diff \n",$i,$slot_diff;
 		}
 	    }
 	}
@@ -1604,30 +1602,30 @@ sub check_star_catalog {
 
 	# Search box too large ACA-018
 	if ($type ne 'MON' and $c->{"HALFW$i"} > 200) {
-	    push @warn, sprintf "$alarm [%2d] Search Box Size. Search Box Too Large. \n",$i;
+	    push @warn, sprintf "[%2d] Search Box Size. Search Box Too Large. \n",$i;
 	}
 
 	# Check that readout sizes are all 6x6 for science observations ACA-027
 	if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6"){
 	  if (($c->{"SIZE$i"} eq "8x8") and ($or->{HAS_MON}) and ($c->{"IMNUM$i"} == 7 )){
-	    push @{$self->{fyi}}, sprintf("$info [%2d] Readout Size. 8x8 Stealth MON?", $i);
+	    push @{$self->{fyi}}, sprintf("[%2d] Readout Size. 8x8 Stealth MON?", $i);
 	  }
 	  else{
-	    push @warn, sprintf("$alarm [%2d] Readout Size. %s Should be 6x6\n", $i, $c->{"SIZE$i"});
+	    push @warn, sprintf("[%2d] Readout Size. %s Should be 6x6\n", $i, $c->{"SIZE$i"});
 	  }
 	}
 
 	# Check that readout sizes are all 8x8 for engineering observations ACA-028
 	if ($is_er && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "8x8"){
-	    push @warn, sprintf("$alarm [%2d] Readout Size.  %s Should be 8x8\n", $i, $c->{"SIZE$i"});
+	    push @warn, sprintf("[%2d] Readout Size.  %s Should be 8x8\n", $i, $c->{"SIZE$i"});
 	}
 	
 	# Check that readout sizes are all 8x8 for FID lights ACA-029
-	push @warn, sprintf("$alarm [%2d] Readout Size.  %s Should be 8x8\n", $i, $c->{"SIZE$i"})
+	push @warn, sprintf("[%2d] Readout Size.  %s Should be 8x8\n", $i, $c->{"SIZE$i"})
 	    if ($type =~ /FID/  && $c->{"SIZE$i"} ne "8x8");
 
 	# Check that readout size is 8x8 for monitor windows ACA-030
-	push @warn, sprintf("$alarm [%2d] Readout Size. %s Should be 8x8\n", $i, $c->{"SIZE$i"})
+	push @warn, sprintf("[%2d] Readout Size. %s Should be 8x8\n", $i, $c->{"SIZE$i"})
 	    if ($type =~ /MON/  && $c->{"SIZE$i"} ne "8x8");
 	
 
@@ -1646,7 +1644,7 @@ sub check_star_catalog {
 	    }   
 	    if ( @close_pixels > 0 ) {
 		my ($closest) = sort { $dr[$a] <=> $dr[$b] } (0 .. $#dr);
-		my $warn = sprintf("$alarm [%2d] Nearby ACA bad pixel. "
+		my $warn = sprintf("[%2d] Nearby ACA bad pixel. "
 				   . $close_pixels[$closest],
 				   $i); #Only warn for the closest pixel
 		push @warn, $warn;
@@ -1672,7 +1670,7 @@ sub check_star_catalog {
                 and $dz < $self->{dither_guide}->{ampl_p} + 25
                 and $dy < $self->{dither_guide}->{ampl_y} + 25
 		and $dm > -5.0) {
-		my $warn = sprintf("$alarm [%2d] Fid spoiler.  %10d: " .
+		my $warn = sprintf("[%2d] Fid spoiler.  %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
 		if ($dm > -4.0)  { push @warn, $warn } 
 		else { push @yellow_warn, $warn }
@@ -1680,14 +1678,14 @@ sub check_star_catalog {
 
             # Spoiler star in track box ACA-022
             if (($type =~ /BOT|GUI/) and ($dz < 25) and ($dy < 25) and ($dm > -1.0)){
-		my $warn = sprintf("$alarm [%2d] Spoiler. %10d: " .
+		my $warn = sprintf("[%2d] Spoiler. %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
 		if ($dm > -0.2)  { push @warn, $warn }
 		else { push @yellow_warn, $warn }
             }
 	    # Search box spoiler - star within search box + search error and within 1.0 mags ACA-023
 	    if ($type =~ /BOT|ACQ/ and $dz < $halfw + $search_err and $dy < $halfw + $search_err and $dm > -1.0) {
-		my $warn = sprintf("$alarm [%2d] Search spoiler. %10d: " .
+		my $warn = sprintf("[%2d] Search spoiler. %10d: " .
 				   "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",$i,$star->{id},$dy,$dz,$dr,$dm_string);
 		if ($dm > -0.2)  { push @orange_warn, $warn }
 		else { push @yellow_warn, $warn }
@@ -1700,7 +1698,7 @@ sub check_star_catalog {
 		and $dm > $col_sep_mag
 		and ($star->{yag}/$yag) > 1.0 
 		and abs($star->{yag}) < 2500) {
-		push @warn,sprintf("$alarm [%2d] Common Column. %10d " .
+		push @warn,sprintf("[%2d] Common Column. %10d " .
 				   "at Y,Z,Mag: %5d %5d %5.2f\n",$i,$star->{id},$star->{yag},$star->{zag},$star->{mag_aca});
 	    }
 	}
@@ -1711,7 +1709,7 @@ sub check_star_catalog {
 # Find the smallest rectangle size that all acq stars fit in
     my $y_side = sprintf( "%.0f", $max_y - $min_y );
     my $z_side = sprintf( "%.0f", $max_z - $min_z );
-    push @yellow_warn, "$alarm Guide stars fit in $y_side x $z_side square arc-second box\n"
+    push @yellow_warn, "Guide stars fit in $y_side x $z_side square arc-second box\n"
 	if $y_side < $min_y_side && $z_side < $min_z_side;
 
     # Collect warnings
@@ -1738,17 +1736,17 @@ sub check_flick_pix_mon {
 
     for my $mon_star (@mon_stars){
 
-	push @{$self->{fyi}}, sprintf("$info Obsid contains flickering pixel MON\n");
+	push @{$self->{fyi}}, sprintf("Obsid contains flickering pixel MON\n");
 
 
-	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Size is not 8x8\n", $mon_star)
+	push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. Size is not 8x8\n", $mon_star)
 	    unless $c->{"SIZE${mon_star}"} eq "8x8";
 	
-	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window RESTRK should be 0\n", $mon_star) 
+	push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. Monitor Window RESTRK should be 0\n", $mon_star) 
 	    unless $c->{"RESTRK${mon_star}"} == 0;
 	
         # Verify the DTS is set to self
-	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. DTS should be set to self\n", $mon_star)
+	push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. DTS should be set to self\n", $mon_star)
 	    unless $c->{"DIMDTS${mon_star}"} == $c->{"IMNUM${mon_star}"};
 
     }	
@@ -1797,7 +1795,7 @@ sub check_monitor_commanding {
     my $stealth_mon = 0;
 
     if (($found_mon) and (not $or_has_mon)){ 
-      push @{$self->{warn}}, sprintf("$alarm MON not in OR, but in catalog. Position not checked.\n");    
+      push @{$self->{warn}}, sprintf("MON not in OR, but in catalog. Position not checked.\n");    
     }
     
     # Where is the requested OR?
@@ -1833,19 +1831,19 @@ sub check_monitor_commanding {
 	# if this is a plain commanded MON
 	if ($idx_hash{type} =~ /MON/ ){
 	  # if it doesn't match the requested location ACA-037
-	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is %6.2f arc-seconds off of OR specification\n"
+	  push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. Monitor Window is %6.2f arc-seconds off of OR specification\n"
 					 , $idx_hash{idx}, $idx_hash{sep}) 
 	    if $idx_hash{sep} > 2.5;
 	# if it isn't 8x8
-	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Size is not 8x8\n", $idx_hash{idx})
+	  push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. Size is not 8x8\n", $idx_hash{idx})
 	    unless $idx_hash{size} eq "8x8";
 
 	# if it isn't in slot 7 ACA-036
-	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is in slot %2d and should be in slot 7.\n"
+	  push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. Monitor Window is in slot %2d and should be in slot 7.\n"
 					 , $idx_hash{idx}, $idx_hash{imnum}) 
 	    if $idx_hash{imnum} != 7;
 	# ACA-038
-	push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Monitor Window is set to Convert-to-Track\n", $idx_hash{idx}) 
+	push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. Monitor Window is set to Convert-to-Track\n", $idx_hash{idx}) 
 	  if $idx_hash{restrk} == 1;
 	  
 
@@ -1857,7 +1855,7 @@ sub check_monitor_commanding {
 	    $dts_type = $c->{"TYPE$dts_index"};
 	    last;
 	  }
-	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. DTS for [%2d] is set to slot %2d which does not contain a guide star.\n", 
+	  push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. DTS for [%2d] is set to slot %2d which does not contain a guide star.\n", 
 					 $idx_hash{idx}, $idx_hash{idx}, $dts_slot) 
 	    if $dts_type =~ /NULL/;
 	  next IDX;
@@ -1865,10 +1863,10 @@ sub check_monitor_commanding {
 	
 	if (($idx_hash{type} =~ /GUI|BOT/) and ($idx_hash{size} eq '8x8') and ($idx_hash{imnum} == 7)){
 	  $stealth_mon = 1;
-	  push @{$self->{fyi}}, sprintf("$info [%2d] Appears to be MON used as GUI/BOT.  Has Magnitude been checked?\n",
+	  push @{$self->{fyi}}, sprintf("[%2d] Appears to be MON used as GUI/BOT.  Has Magnitude been checked?\n",
 					$idx);
 	  # if it doesn't match the requested location
-	  push @{$self->{warn}}, sprintf("$alarm [%2d] Monitor Commanding. Guide star as MON %6.2f arc-seconds off OR specification\n"
+	  push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. Guide star as MON %6.2f arc-seconds off OR specification\n"
 					 , $idx_hash{idx}, $idx_hash{sep}) 
 	    if $idx_hash{sep} > 2.5;
 	  
@@ -1876,7 +1874,7 @@ sub check_monitor_commanding {
 	}
 	if ((not $found_mon) and ($idx_hash{sep} < 2.5)){
 	  # if there *should* be one there...
-	  push @{$self->{fyi}}, sprintf("$info [%2d] Commanded at intended OR MON position; but not configured for MON\n",
+	  push @{$self->{fyi}}, sprintf("[%2d] Commanded at intended OR MON position; but not configured for MON\n",
 					$idx);
 	}
 	
@@ -1884,7 +1882,7 @@ sub check_monitor_commanding {
 
 
     # if I don't have a plain MON or a "stealth" MON, throw a warning
-    push @{$self->{warn}}, sprintf("$alarm MON requested in OR, but none found in catalog\n")
+    push @{$self->{warn}}, sprintf("MON requested in OR, but none found in catalog\n")
       unless ( $found_mon or $stealth_mon );
 
     # if we're using a guide star, we don't need the rest of the dither setup
@@ -1896,7 +1894,7 @@ sub check_monitor_commanding {
     # exact time of the end of maneuver
     my $manv;
     unless ($manv = find_command($self, "MP_TARGQUAT", -1)) {
-      push @{$self->{warn}}, sprintf("$alarm Cannot find maneuver for checking monitor commanding\n");
+      push @{$self->{warn}}, sprintf("Cannot find maneuver for checking monitor commanding\n");
       return;
     }
 
@@ -1927,13 +1925,13 @@ sub check_monitor_commanding {
     foreach $cmd (qw (AODSDITH AOACRSET AOENDITH)) {
 	next if ($cnt{$cmd} == 1);
 	$cnt{$cmd} = 'no' if ($cnt{$cmd} == 0);
-	push @{$self->{warn}}, "$alarm Found $cnt{$cmd} $cmd commands near " . time2date($t_manv+$dt{$cmd}) . "\n";
+	push @{$self->{warn}}, "Found $cnt{$cmd} $cmd commands near " . time2date($t_manv+$dt{$cmd}) . "\n";
     }
 
     # If the number of warnings has not changed during this routine, it passed all checks
     if (scalar(@{$self->{warn}}) == $n_warn){
         push @{$self->{fyi}},
-            sprintf("$info Monitor window special commanding meets requirements\n");
+            sprintf("Monitor window special commanding meets requirements\n");
     }
 }
 
@@ -1953,11 +1951,11 @@ sub check_fids {
 
     # Make sure we have SI and SIM_OFFSET_Z to be able to calculate fid yang and zang
     unless (defined $self->{SI}) {
-	push @{$warn}, "$alarm Unable to check fids because SI undefined\n";
+	push @{$warn}, "Unable to check fids because SI undefined\n";
 	return;
     }
     unless (defined $self->{SIM_OFFSET_Z}){
-	push @{$warn}, "$alarm Unable to check fids because SIM_OFFSET_Z undefined\n";
+	push @{$warn}, "Unable to check fids because SIM_OFFSET_Z undefined\n";
 	return;
     }
 
@@ -1970,7 +1968,7 @@ sub check_fids {
 	my ($yag, $zag, $error) = calc_fid_ang($fid, $self->{SI}, $self->{SIM_OFFSET_Z}, $self->{obsid});
 
 	if ($error) {
-	    push @{$warn}, "$alarm $error\n";
+	    push @{$warn}, "$error\n";
 	    next;
 	}
 	my $fidsel_ok = 0;
@@ -1988,13 +1986,13 @@ sub check_fids {
 	}
 
         # ACA-034
-	push @{$warn}, sprintf("$alarm Fid $self->{SI} FIDSEL $fid not found within 10 arcsec of (%.1f, %.1f)\n",
+	push @{$warn}, sprintf("Fid $self->{SI} FIDSEL $fid not found within 10 arcsec of (%.1f, %.1f)\n",
 			       $yag, $zag)
 	    unless ($fidsel_ok);
     }
     # ACA-035
     for $i_fid (0 .. $#fid_ok) {
-	push @{$warn}, "$alarm Fid with IDX=\[$self->{fid}[$i_fid]\] is in star catalog but is not turned on via FIDSEL\n"
+	push @{$warn}, "Fid with IDX=\[$self->{fid}[$i_fid]\] is in star catalog but is not turned on via FIDSEL\n"
 	    unless ($fid_ok[$i_fid]);
     }
 }
@@ -2448,7 +2446,7 @@ sub get_agasc_stars {
     foreach my $star (values %{$self->{agasc_hash}}) {
 	if ($star->{'mag_aca'} < -10 or $star->{'mag_aca_err'} < -10) {
 	    push @{$self->{warn}}, sprintf(
-                "$alarm Star with bad mag %.1f or magerr %.1f at (yag,zag)=%.1f,%.1f\n",
+                "Star with bad mag %.1f or magerr %.1f at (yag,zag)=%.1f,%.1f\n",
                 $star->{'mag_aca'}, $star->{'mag_aca_err'}, $star->{'yag'}, $star->{'zag'});
 	}
     }
@@ -2484,7 +2482,7 @@ sub identify_stars {
 	# agasc hash for this ra and dec, throw a warning
 	unless ((defined $self->{agasc_hash}{$gs_id}) or ($gs_id eq '---')){
 	    push @{$self->{warn}}, 
-	          sprintf("$alarm [%2d] Star $gs_id is not in retrieved AGASC region by RA and DEC! \n", $i);
+	          sprintf("[%2d] Star $gs_id is not in retrieved AGASC region by RA and DEC! \n", $i);
 	}
 
 
@@ -2499,7 +2497,7 @@ sub identify_stars {
             my $dmag = abs($star->{mag_aca} - $gs_mag);
             if ($dmag > 0.01){
                 push @{$self->{warn}},
-                    sprintf("$alarm [%d] Guide sum mag diff from agasc mag %9.5f\n", $i, $dmag);
+                    sprintf("[%d] Guide sum mag diff from agasc mag %9.5f\n", $i, $dmag);
             }
 	    # let's still confirm that the backstop yag zag is what we expect
 	    # from agasc and ra,dec,roll ACA-043
@@ -2512,11 +2510,11 @@ sub identify_stars {
 		if (abs($star->{yag} - $yag) > (2 * $ID_DIST_LIMIT) ||
 		    abs($star->{zag} - $zag) > (2 * $ID_DIST_LIMIT)){
 		    push @{$self->{warn}}, 
-		         sprintf("$alarm [%2d] Backstop YAG,ZAG differs from AGASC by > 3 arcsec: dyag = %2.2f dzag = %2.2f \n", $i, $dyag, $dzag);
+		         sprintf("[%2d] Backstop YAG,ZAG differs from AGASC by > 3 arcsec: dyag = %2.2f dzag = %2.2f \n", $i, $dyag, $dzag);
 		}
 		else{
 		    push @{$self->{yellow_warn}}, 
-		         sprintf("$alarm [%2d] Backstop YAG,ZAG differs from AGASC by > 1.5 arcsec: dyag = %2.2f dzag = %2.2f \n", $i, $dyag, $dzag);
+		         sprintf("[%2d] Backstop YAG,ZAG differs from AGASC by > 1.5 arcsec: dyag = %2.2f dzag = %2.2f \n", $i, $dyag, $dzag);
 		}
 	    }
 	    
@@ -2788,8 +2786,8 @@ sub set_ccd_temps{
     # if no temperature data, just return
     if ((not defined $obsid_temps->{$self->{obsid}})
         or (not defined $obsid_temps->{$self->{obsid}}->{ccd_temp})){
-        push @{$self->{warn}}, "$alarm No CCD temperature prediction for obsid\n";
-        push @{$self->{warn}}, sprintf("$alarm Using %s (planning limit) for t_ccd for mag limits\n",
+        push @{$self->{warn}}, "No CCD temperature prediction for obsid\n";
+        push @{$self->{warn}}, sprintf("Using %s (planning limit) for t_ccd for mag limits\n",
                                        $config{ccd_temp_red_limit});
         $self->{ccd_temp} = $config{ccd_temp_red_limit};
         $self->{ccd_temp_acq} = $config{ccd_temp_red_limit};
@@ -2801,17 +2799,17 @@ sub set_ccd_temps{
     $self->{n100_warm_frac} = $obsid_temps->{$self->{obsid}}->{n100_warm_frac};
     # Add info statement for limit violations
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
-        push @{$self->{fyi}}, sprintf("$info CCD temperature exceeds %.1f C\n",
+        push @{$self->{fyi}}, sprintf("CCD temperature exceeds %.1f C\n",
                                        $config{ccd_temp_red_limit});
     }
     # Add info for having a penalty temperature too
     if ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}){
-        push @{$self->{fyi}}, sprintf("$info Effective guide temperature %.1f C\n",
+        push @{$self->{fyi}}, sprintf("Effective guide temperature %.1f C\n",
                                       get_effective_t_ccd($self->{ccd_temp}));
 
     }
     if ($self->{ccd_temp_acq} > $config{ccd_temp_yellow_limit}){
-        push @{$self->{fyi}}, sprintf("$info Effective acq temperature %.1f C\n",
+        push @{$self->{fyi}}, sprintf("Effective acq temperature %.1f C\n",
                                       get_effective_t_ccd($self->{ccd_temp_acq}));
 
     }
