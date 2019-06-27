@@ -1440,8 +1440,9 @@ sub check_star_catalog {
 	    
 	# Bad AGASC ID ACA-031
 	push @yellow_warn,sprintf "$alarm [%2d] Non-numeric AGASC ID.  %s\n",$i,$sid if ($sid ne '---' && $sid =~ /\D/);
-	push @warn,sprintf "$alarm [%2d] Bad AGASC ID.  %s\n",$i,$sid if ($bad_id{$sid});
-	
+	if (($type =~ /BOT|GUI|ACQ/) and (defined $bad_id{$sid})){
+            push @warn, sprintf "$alarm [%2d] Bad AGASC ID.  %s\n",$i,$sid;
+	}
 	# Set NOTES variable for marginal or bad star based on AGASC info
 	$c->{"GS_NOTES$i"} = '';
 	my $note = '';
