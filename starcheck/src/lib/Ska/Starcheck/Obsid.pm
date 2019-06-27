@@ -2682,12 +2682,9 @@ use Inline Python => q{
 from proseco.catalog import get_aca_catalog
 
 
-def proseco_probs(kwargs):
+def make_proseco_catalog(kwargs):
     """
-    Call proseco's get_acq_catalog with the parameters supplied in `kwargs` for a specific obsid catalog
-    and return the individual acq star probabilities, the P2 value for the catalog, and the expected
-    number of acq stars.
-
+    Call proseco's get_acq_catalog with the parameters supplied in `kwargs` for a specific obsid catalog.
     `kwargs` will be a Perl hash converted to dict (by Inline) of the expected keyword params. These keys
     must be defined:
 
@@ -2708,10 +2705,11 @@ def proseco_probs(kwargs):
     """
 
     kw = de_bytestr(kwargs)
-    args = dict(obsid=0,
+    args = dict(obsid=int(kw['obsid']),
                 att=Quaternion.normalize(kw['att']),
                 date=kw['date'],
                 n_acq=kw['n_acq'],
+                n_guide=kw['n_guide'],
                 man_angle=kw['man_angle'],
                 t_ccd_acq=kw['t_ccd_acq'],
                 t_ccd_guide=kw['t_ccd_guide'],
@@ -2720,14 +2718,31 @@ def proseco_probs(kwargs):
                 include_ids_acq=kw['include_ids_acq'],
                 include_halfws_acq=kw['include_halfws_acq'],
                 detector=kw['detector'], sim_offset=kw['sim_offset'],
-                n_fid=0, n_guide=0, focus_offset=0)
+                include_ids_guide=kw['include_ids_guide'],
+                n_fid=0, focus_offset=0)
     aca = get_aca_catalog(**args)
+    return aca
+
+
+def proseco_probs(aca, include_ids_acq):
     acq_cat = aca.acqs
 
     # Assign the proseco probabilities back into an array.
-    p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq_id][0]) for acq_id in kw['include_ids_acq']]
+    p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq_id][0]) for acq_id in include_ids_acq]
 
     return p_acqs, float(-np.log10(acq_cat.calc_p_safe())), float(np.sum(p_acqs))
+
+
+def run_sparkles(aca):
+    acar = aca.get_review_table()
+    acar.run_aca_review()
+    return {'critical': [w['text'] for w in acar.messages == 'critical'],
+            'caution': [w['text'] for w in acar.messages == 'caution'],
+            'warning': [w['text'] for w in acar.messages == 'warning'],
+            'fyi': [w['text'] for w in acar.messages == 'info']}
+
+
+
 };
 
 
@@ -2840,7 +2855,22 @@ sub set_proseco_probs_and_check_P2{
     if (not %{$args}){
         return;
     }
-    my ($p_acqs, $P2, $expected) = proseco_probs($args);
+    my $proseco_catalog = make_proseco_catalog($args);
+    my ($p_acqs, $P2, $expected) = proseco_probs($proseco_catalog, $args->{include_ids_acq});
+    my $sparkles = run_sparkles($proseco_catalog);
+    for my $warn_type (keys %{$sparkles}){
+        for my $warn (@{$sparkles->{$warn_type}}){
+            # Skip one type of warning that doesn't apply yet
+            if ($warn =~ 'OR requested 0 fids'){
+                next;
+            }
+            # Skip warnings about imposters as handled in starcheck
+            if ($warn =~ 'imposter offset'){
+                next;
+            }
+            push @{$self->{$warn_type}}, $warn;
+        }
+    }
 
     my @acq_indexes = @{$args->{acq_indexes}};
 
