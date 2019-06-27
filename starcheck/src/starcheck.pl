@@ -503,10 +503,10 @@ foreach my $oflsid (@obsid_id){
 		if (defined $obs{$oflsid}->{ok_no_starcat}){
 			my $ofls_string = $obs{$oflsid}->{ok_no_starcat};
 			push @{$obs{$oflsid}->{fyi}}, 
-			sprintf(">> INFO   : No Guide Star Summary for obsid $obsid ($oflsid). OK for '$ofls_string' ER. \n");
+			sprintf("No Guide Star Summary for obsid $obsid ($oflsid). OK for '$ofls_string' ER. \n");
 			next HAS_GUIDE;
 		}
-		push @{$obs{$oflsid}->{warn}}, sprintf(">> WARNING: No Guide Star Summary for obsid $obsid ($oflsid). \n");			
+		push @{$obs{$oflsid}->{warn}}, sprintf("No Guide Star Summary for obsid $obsid ($oflsid). \n");
     }
 	
 }
