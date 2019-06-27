@@ -155,6 +155,15 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     states = get_week_states(tstart, tstop, bs_cmds, tlm)
 
+    # If running standalone it is possible to forget to ska_sync and have an out
+    # of date kadi/cmds.h5.  Do a sanity check for states that are too long (from
+    # 2019 forward, dwells > 150 ksec are rare or non-existent).
+    if np.any(states['tstop'] - states['tstart'] > 150000):
+        logger.info('')
+        logger.info('WARNING: state(s) exceeding 150 ksec duration, kadi.commands '
+                    'could be stale.')
+        logger.info('')
+
     # If the last obsid interval extends over the end of states
     # extend the state / predictions
     if ((states[-1]['obsid'] == sc_obsids[-1]['obsid']) &
