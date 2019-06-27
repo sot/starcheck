@@ -330,7 +330,7 @@ Checks
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
 |       |                  |X|X|                                           |    |AS: Possible    |
 |       |                  | | |                                           |    |Bright Star     |
-|ACA-041|Magnitude         | | |Slot MAXMAG (faint limit) - star MAG >= 1.4|n/a |Hold, GS:       |
+|ACA-041|Magnitude         | | |Slot MAXMAG (faint limit) - star MAG >= 0.3|n/a |Hold, GS:       |
 |       |                  | | |                                           |    |Reduced aspect  |
 |       |                  | | |                                           |    |quality         |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
