@@ -1,5 +1,8 @@
-#!/usr/bin/env
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
+
+"""
+Parser of starcheck text output.  Formally lived in mica/starcheck/starcheck_parser.py
+"""
 
 import re
 from itertools import count
