@@ -1593,17 +1593,18 @@ sub check_star_catalog {
                 if (($maxmag - $mag) < 0.3){
                     push @warn, sprintf "[%2d] Magnitude.  MAXMAG - MAG < 0.3\n", $i;
                 }
-                # And this is a sanity check on the current maxmag clipping at 11.2.
+                # This is a check that maxmag for each slot is as-expected.
+                # Note that for stars with large mag err (like color 1.5 stars) this will throw
+                # a warning.
                 my $rounded_maxmag = sprintf("%.2f", $maxmag);
                 my $expected_maxmag = min($mag + 1.5, 11.2);
 		if (abs($expected_maxmag - $rounded_maxmag) > 0.1){
-                    push @orange_warn,
+                    push @yellow_warn,
                         sprintf "[%2d] Magnitude.  MAXMAG %.2f not within 0.1 mag of %.2f \n",
                     $i, $rounded_maxmag, $expected_maxmag;
 		}
 	    }
 	}
-	
 
 	# Search box too large ACA-018
 	if ($type ne 'MON' and $c->{"HALFW$i"} > 200) {
