@@ -1600,8 +1600,8 @@ sub check_star_catalog {
                 my $expected_maxmag = min($mag + 1.5, 11.2);
 		if (abs($expected_maxmag - $rounded_maxmag) > 0.1){
                     push @yellow_warn,
-                        sprintf "[%2d] Magnitude.  MAXMAG %.2f not within 0.1 mag of %.2f \n",
-                    $i, $rounded_maxmag, $expected_maxmag;
+                        sprintf "[%2d] Magnitude.  MAXMAG %.2f not within 0.1 mag of %.2f. (MAXMAG-MAG=%.2f) \n",
+                    $i, $rounded_maxmag, $expected_maxmag, $maxmag - $mag;
 		}
 	    }
 	}
