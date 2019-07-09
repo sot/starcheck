@@ -330,7 +330,7 @@ Checks
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
 |       |                  |X|X|                                           |    |AS: Reduced     |
 |       |                  | | |                                           |    |acq probability |
-|       |                  | | |                                           |    |on the star     |
+|       |                  | | |                                           |    |of star     |
 |ACA-041|Magnitude         | | |Slot MAXMAG (faint limit) - star MAG >= 0.3|n/a |GS: Increased   |
 |       |                  | | |                                           |    |risk of loss of |
 |       |                  | | |                                           |    |track of star   |
