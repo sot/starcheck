@@ -328,11 +328,12 @@ Checks
 |ACA-040|Monitor commanding|X|X|Dither is disabled and enabled with correct|n/a |Failure to track|
 |       |                  | | |timing                                     |    |                |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
-|       |                  |X|X|                                           |    |AS: Possible    |
-|       |                  | | |                                           |    |Bright Star     |
-|ACA-041|Magnitude         | | |Slot MAXMAG (faint limit) - star MAG >= 1.4|n/a |Hold, GS:       |
-|       |                  | | |                                           |    |Reduced aspect  |
-|       |                  | | |                                           |    |quality         |
+|       |                  |X|X|                                           |    |AS: Reduced     |
+|       |                  | | |                                           |    |acq probability |
+|       |                  | | |                                           |    |of star     |
+|ACA-041|Magnitude         | | |Slot MAXMAG (faint limit) - star MAG >= 0.3|n/a |GS: Increased   |
+|       |                  | | |                                           |    |risk of loss of |
+|       |                  | | |                                           |    |track of star   |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
 |ACA-042|AGASC requirements|X|X|An AGASC star exists within ID_DIST_LIMIT  |n/a |Failure to track|
 |       |                  | | |(1.5as) of the center of each search box   |    |star            |

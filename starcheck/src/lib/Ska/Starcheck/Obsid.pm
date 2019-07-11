@@ -1214,8 +1214,6 @@ sub check_star_catalog {
     my $col_sep_dist = 50;	# Common column pixel separation
     my $col_sep_mag  = 4.5;	# Common column mag separation (from ODB_MIN_COL_MAG_G)
 
-    my $mag_faint_slot_diff = 1.4; # used in slot test like:
-                                   # $c->{"MAXMAG$i"} - $c->{"GS_MAG$i"} >= $mag_faint_slot_diff
 
     my $fid_faint = 7.2;
     my $fid_bright = 6.8;
@@ -1586,19 +1584,27 @@ sub check_star_catalog {
             }
         }
 
-        # ACA-041
 	if ($type =~ /BOT|GUI|ACQ/){
 	    if (( $maxmag =~ /---/) or ($mag =~ /---/)){
 		push @warn, sprintf "[%2d] Magnitude.  MAG or MAGMAX not defined \n",$i;
 	    }
 	    else{
-		if (($maxmag - $mag) < $mag_faint_slot_diff){
-		    my $slot_diff = $maxmag - $mag;
-		    push @warn, sprintf "[%2d] Magnitude.  MAXMAG - MAG = %1.2f < $mag_faint_slot_diff \n",$i,$slot_diff;
+                # This is an explicit check of ACA-041
+                if (($maxmag - $mag) < 0.3){
+                    push @warn, sprintf "[%2d] Magnitude.  MAXMAG - MAG < 0.3\n", $i;
+                }
+                # This is a check that maxmag for each slot is as-expected.
+                # Note that for stars with large mag err (like color 1.5 stars) this will throw
+                # a warning.
+                my $rounded_maxmag = sprintf("%.2f", $maxmag);
+                my $expected_maxmag = min($mag + 1.5, 11.2);
+		if (abs($expected_maxmag - $rounded_maxmag) > 0.1){
+                    push @yellow_warn,
+                        sprintf "[%2d] Magnitude.  MAXMAG %.2f not within 0.1 mag of %.2f. (MAXMAG-MAG=%.2f) \n",
+                    $i, $rounded_maxmag, $expected_maxmag, $maxmag - $mag;
 		}
 	    }
 	}
-	
 
 	# Search box too large ACA-018
 	if ($type ne 'MON' and $c->{"HALFW$i"} > 200) {
