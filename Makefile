@@ -67,7 +67,6 @@ regress: $(DATA_FILES)
 
 checklist:
 ifdef DOC_RST
-	mkdir -p $(INSTALL_DOC)
 	if [ -r $(DOC_HTML) ] ; then rm $(DOC_HTML); fi
 	rst2html.py $(DOC_RST) > $(DOC_HTML)
 endif
