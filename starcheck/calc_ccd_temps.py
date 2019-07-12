@@ -157,12 +157,13 @@ def get_ccd_temps(oflsdir, outdir='out',
     proc['datestart'] = DateTime(tstart).date
     proc['datestop'] = DateTime(tstop).date
 
-    # Get temperature telemetry for 30 days prior to
-    # min(tstart, NOW, run_start_time) where run_start_time is basically
-    # a mock NOW for regression testing.
-    tlm = get_telem_values(min(tstart, tnow, run_start_time.secs),
+    # Get temperature telemetry for 1 days prior to
+    # min(last available telem, backstop tstart, NOW, run_start_time)
+    # where run_start_time is basically a mock NOW for regression testing.
+    msid_range = fetch.get_time_range('aacccdpt', format='secs')
+    tlm = get_telem_values(min(msid_range[1], tstart, DateTime().secs, run_start_time.secs),
                            ['aacccdpt'],
-                           days=30)
+                           days=1)
 
     states = get_week_states(tstart, tstop, bs_cmds, tlm)
 
