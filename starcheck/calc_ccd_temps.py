@@ -101,6 +101,7 @@ def get_options():
 def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=sys.stdin,
                   model_spec=None, char_file=None, orlist=None,
+                  run_start_time=None,
                   verbose=1, **kwargs):
     """
     Using the cmds and cmd_states sybase databases, available telemetry, and
@@ -118,16 +119,19 @@ def get_ccd_temps(oflsdir, outdir='out',
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
+    run_start_time = DateTime(run_start_time)
     config_logging(outdir, verbose)
 
     # Store info relevant to processing for use in outputs
     proc = {'run_user': os.environ['USER'],
-            'run_time': time.ctime(),
+            'actual_run_time': time.ctime(),
+            'run_start_time': run_start_time,
             'errors': []}
     logger.info('##############################'
                 '#######################################')
     logger.info('# %s run at %s by %s'
-                % (TASK_NAME, proc['run_time'], proc['run_user']))
+                % (TASK_NAME, proc['actual_run_time'], proc['run_user']))
+    logger.info("# Using {} as run_start_time".format(run_start_time.date))
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
     logger.info('###############################'
                 '######################################\n')
@@ -153,8 +157,11 @@ def get_ccd_temps(oflsdir, outdir='out',
     proc['datestart'] = DateTime(tstart).date
     proc['datestop'] = DateTime(tstop).date
 
-    # Get temperature telemetry for 30 days prior to min(tstart, NOW)
-    tlm = get_telem_values(min(tstart, tnow),
+
+    # Get temperature telemetry for 30 days prior to
+    # min(tstart, NOW, run_start_time) where run_start_time is basically
+    # a mock NOW for regression testing.
+    tlm = get_telem_values(min(tstart, tnow, run_start_time.secs),
                            ['aacccdpt', 'pitch'],
                            days=30)
 
@@ -292,22 +299,22 @@ def get_week_states(tstart, tstop, bs_cmds, tlm):
     :param tlm: available pitch and aacccdpt telemetry recarray from fetch
     :returns: numpy recarray of states
     """
-    cstates = Table(get_cmd_states.fetch_states(DateTime(tstart) - 30,
+
+    # Get temperature data at the end of available telemetry
+    ok = tlm['date'] > tlm['date'][-1] - 1400
+    init_aacccdpt = np.mean(tlm['aacccdpt'][ok])
+    init_tlm_time = np.mean(tlm['date'][ok])
+
+    # Get states at and after that time
+    cstates = Table(get_cmd_states.fetch_states(init_tlm_time,
                                                 tstop,
                                                 vals=['obsid',
                                                       'pitch',
                                                       'q1', 'q2', 'q3', 'q4']))
-    # Get the last state at least 3 days before tstart and at least one hour
-    # before the last available telemetry
-    cstate0 = cstates[(cstates['tstart'] < (DateTime(tstart) - 3).secs)
-                      & (cstates['tstart'] < (tlm[-1]['date'] - 3600))][-1]
-    # get temperature data in a range around that initial state
-    ok = ((tlm['date'] >= cstate0['tstart'] - 700) &
-          (tlm['date'] <= cstate0['tstart'] + 700))
-    init_aacccdpt = np.mean(tlm['aacccdpt'][ok])
+    cstate0 = cstates[0]
+    pre_bs_states = cstates[(cstates['tstart'] >= cstate0['tstart']) &
+                            (cstates['tstart'] < tstart)]
 
-    pre_bs_states = cstates[(cstates['tstart'] >= cstate0['tstart'])
-                            & (cstates['tstart'] < tstart)]
     # cmd_states.get_states needs an initial state dictionary, so
     # construct one from the last pre-backstop state
     last_pre_bs_state = {col: pre_bs_states[-1][col]

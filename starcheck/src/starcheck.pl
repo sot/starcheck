@@ -48,6 +48,9 @@ $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 use Inline Python => q{
 
 import os
+import datetime
+import traceback
+from dateutil import tz
 
 from Chandra.Time import DateTime
 from chandra_aca.star_probs import set_acq_model_ms_filter
@@ -108,6 +111,16 @@ def get_dither_kadi_state(date):
     return state
 
 
+def get_now_time():
+    return DateTime().date
+
+
+def date_for_printing(date):
+    date = date.decode('ascii')
+    dt = datetime.datetime.fromtimestamp(DateTime(date).unix)
+    dt = dt.astimezone(tz.tzlocal())
+    return dt.strftime("%a %b %d %H:%M:%S %Z %Y");
+
 };
 
 
@@ -145,12 +158,13 @@ GetOptions( \%par,
 			'sc_data=s',
 			'fid_char=s',
 			'config_file=s',
+                        'run_start_time=s',
 			) ||
     exit( 1 );
 
 
 my $Starcheck_Data = $par{sc_data} || get_data_dir();
-
+my $RUN_START_TIME = $par{run_start_time} || get_now_time();
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
 
@@ -596,6 +610,7 @@ $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                       model_spec => "$Starcheck_Data/aca_spec.json",
                                       char_file => "$Starcheck_Data/characteristics.yaml",
                                       orlist => $or_file,
+                                      run_start_time => $RUN_START_TIME,
                                   });
 # convert back from JSON outside
 $obsid_temps = JSON::from_json($json_obsid_temps);
@@ -659,8 +674,7 @@ close($JSON_OUT);
 my %save_hash;
 
 my $out = '<TABLE><TD><PRE> ';
-my $date = `date`;
-chomp $date;
+my $date = date_for_printing($RUN_START_TIME);
 
 my $hostname = hostname;
 $save_hash{run}{date} = $date;
