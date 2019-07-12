@@ -6,9 +6,9 @@ ACA Load Review Checklist
    file in the starcheck git project
 
 
-Date: 2018-Apr-3
+Date: 2019-Jul-12
 
-Version: 3.5
+Version: 3.6
 
 Author: E. Martin, S. Bucher, T. Aldcroft, J. Connelly
 
