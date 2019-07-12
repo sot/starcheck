@@ -224,7 +224,7 @@ Checks
 |       |                  | | |                    |      |     |    |    |    |Possible Bright |
 |       |                  | | +--------------------+------+-----+----+----+    |Star Hold       |
 |ACA-044|Star catalog      | | |Requirements        |  0   | >=4 |>=4 |<=1 |n/a |                |
-|       |                  | | +--------------------+------+-----+----+----+    |GS:             |                
+|       |                  | | +--------------------+------+-----+----+----+    |GS:             |
 |       |                  | | |Standard            |  0   | 5-8 |6-8 | 0  |    |                |
 |       |                  | | |configuration       |      |     |    |    |    |Reduced aspect  |
 |       |                  | | +--------------------+------+-----+----+----+    |quality         |
@@ -330,7 +330,7 @@ Checks
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
 |       |                  |X|X|                                           |    |AS: Reduced     |
 |       |                  | | |                                           |    |acq probability |
-|       |                  | | |                                           |    |of star     |
+|       |                  | | |                                           |    |of star         |
 |ACA-041|Magnitude         | | |Slot MAXMAG (faint limit) - star MAG >= 0.3|n/a |GS: Increased   |
 |       |                  | | |                                           |    |risk of loss of |
 |       |                  | | |                                           |    |track of star   |
