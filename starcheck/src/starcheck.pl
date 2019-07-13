@@ -116,7 +116,7 @@ def get_now_time():
 
 
 def date_for_printing(date):
-    date = date.decode('ascii')
+    date = de_bytestr(date)
     dt = datetime.datetime.fromtimestamp(DateTime(date).unix)
     dt = dt.astimezone(tz.tzlocal())
     return dt.strftime("%a %b %d %H:%M:%S %Z %Y");
