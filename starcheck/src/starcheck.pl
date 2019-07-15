@@ -115,12 +115,6 @@ def get_now_time():
     return DateTime().date
 
 
-def date_for_printing(date):
-    date = de_bytestr(date)
-    dt = datetime.datetime.fromtimestamp(DateTime(date).unix)
-    dt = dt.astimezone(tz.tzlocal())
-    return dt.strftime("%a %b %d %H:%M:%S %Z %Y");
-
 };
 
 
@@ -674,7 +668,8 @@ close($JSON_OUT);
 my %save_hash;
 
 my $out = '<TABLE><TD><PRE> ';
-my $date = date_for_printing($RUN_START_TIME);
+my $date = `date`;
+chomp $date;
 
 my $hostname = hostname;
 $save_hash{run}{date} = $date;
