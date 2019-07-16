@@ -113,6 +113,10 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param json_obsids: file-like object or string containing JSON of
                         starcheck Obsid objects
     :param model_spec: xija ACA model specification
+    :param run_start_time: Chandra.Time date used as a reference time to determine initial
+                     seed state with temperature telemetry.  The initial seed state will
+                     be at the end of available telemetry that is also before run_start_time,
+                     before the beginning of backstop cmds, and before "now".
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
