@@ -137,7 +137,7 @@ def get_run_start_time(run_start_time, backstop_start):
     # time to be a time run_start_time days back from backstop start
     try:
         run_start_time = float(run_start_time)
-    except TypeError:
+    except ValueError:
         ref_time = DateTime(run_start_time)
     else:
         if run_start_time < 0:
