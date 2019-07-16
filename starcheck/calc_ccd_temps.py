@@ -124,14 +124,14 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     # Store info relevant to processing for use in outputs
     proc = {'run_user': os.environ['USER'],
-            'actual_run_time': time.ctime(),
+            'execution_time': time.ctime(),
             'run_start_time': run_start_time,
             'errors': []}
     logger.info('##############################'
                 '#######################################')
     logger.info('# %s run at %s by %s'
-                % (TASK_NAME, proc['actual_run_time'], proc['run_user']))
-    logger.info("# Using {} as run_start_time".format(run_start_time.date))
+                % (TASK_NAME, proc['execution_time'], proc['run_user']))
+    logger.info("# Continuity run_start_time = {}".format(run_start_time.date))
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
     logger.info('###############################'
                 '######################################\n')
