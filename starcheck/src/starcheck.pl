@@ -145,8 +145,6 @@ def run_start_time(run_start, backstop_start):
             ref_time = DateTime(backstop_datetime + run_start)
     except:
         pass
-    print(ref_time.date)
-    print(backstop_datetime.date)
     return ref_time.date
 
 
