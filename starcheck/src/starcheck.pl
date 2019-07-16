@@ -112,7 +112,44 @@ def get_dither_kadi_state(date):
 
 
 def get_now_time():
+    """
+    Return the current time in YYYY:DOY format
+    """
     return DateTime().date
+
+
+def run_start_time(run_start, backstop_start):
+    """
+    Determine a reasonable reference run start time based on the supplied
+    run start time and the time of the first backstop command.  This
+    code uses a small hack so that a negative number is interpreted
+    as the desired "days back" from the backstop start time.  All other
+    Chandra.Time compatible formats for run start are used as absolute
+    times (which will then be passed to the thermal model code as the
+    time before which telemetry should be found for an initial state.
+
+    :param run_start: supplied run start time in a Chandra.Time format,
+                      negative numbers interpreted as "days back" relative
+                      to first backstop command
+    :param backstop_start: time of first backstop command
+    :returns: YYYY:DOY string of reference run start time
+    """
+
+    run_start = de_bytestr(run_start)
+    ref_time = DateTime(run_start)
+    # For the special case where run_start casts as a float
+    # check to see if it is negative and if so, override the reference
+    # time with a time run_start days back from backstop start
+    try:
+        run_start = float(run_start)
+        if run_start < 0:
+            backstop_datetime = DateTime(de_bytestr(backstop_start))
+            ref_time = DateTime(backstop_datetime + run_start)
+    except:
+        pass
+    print(ref_time.date)
+    print(backstop_datetime.date)
+    return ref_time.date
 
 
 };
@@ -158,7 +195,6 @@ GetOptions( \%par,
 
 
 my $Starcheck_Data = $par{sc_data} || get_data_dir();
-my $RUN_START_TIME = $par{run_start_time} || get_now_time();
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
 
@@ -274,6 +310,7 @@ foreach my $bs (@bs) {
     $i++;
 #    print STDERR "BS TIME = $bs->{time} \n";
 }
+
 
 # Read DOT, which is used to figure out the Obsid for each command
 my ($dot_ref, $dot_touched_by_sausage) = Ska::Parse_CM_File::DOT($dot_file) if ($dot_file);
@@ -595,6 +632,11 @@ sub json_obsids{
 }
 
 
+# Set the thermal model run start time to be either the supplied
+# run_start_time or now.
+my $run_start_time = run_start_time($par{run_start_time}, $bs[0]->{date}) || get_now_time();
+
+
 my $json_text = json_obsids();
 my $obsid_temps;
 my $json_obsid_temps;
@@ -604,7 +646,7 @@ $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                       model_spec => "$Starcheck_Data/aca_spec.json",
                                       char_file => "$Starcheck_Data/characteristics.yaml",
                                       orlist => $or_file,
-                                      run_start_time => $RUN_START_TIME,
+                                      run_start_time => $run_start_time,
                                   });
 # convert back from JSON outside
 $obsid_temps = JSON::from_json($json_obsid_temps);
