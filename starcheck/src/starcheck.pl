@@ -48,6 +48,7 @@ $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 use Inline Python => q{
 
 import os
+import traceback
 
 from Chandra.Time import DateTime
 from chandra_aca.star_probs import set_acq_model_ms_filter
@@ -108,6 +109,44 @@ def get_dither_kadi_state(date):
     return state
 
 
+def get_run_start_time(run_start_time, backstop_start):
+    """
+    Determine a reasonable reference run start time based on the supplied
+    run start time and the time of the first backstop command.  This
+    code uses a small hack so that a negative number is interpreted
+    as the desired "days back" from the backstop start time.  All other
+    Chandra.Time compatible formats for run start are used as absolute
+    times (which will then be passed to the thermal model code as the
+    time before which telemetry should be found for an initial state).
+    Note that the logic to determine the initial state will not allow
+    that state to be after backstop start time.
+
+    :param run_start_time: supplied run start time in a Chandra.Time format,
+                      empty string interpreted as "now" as expected,
+                      negative numbers special cased to be interpreted as
+                      "days back" relative to first backstop command.
+    :param backstop_start: time of first backstop command
+    :returns: YYYY:DOY string of reference run start time
+    """
+
+    run_start_time = de_bytestr(run_start_time)
+    backstop_start = de_bytestr(backstop_start)
+
+    # For the special case where run_start_time casts as a float
+    # check to see if it is negative and if so, set the reference
+    # time to be a time run_start_time days back from backstop start
+    try:
+        run_start_time = float(run_start_time)
+    except ValueError:
+        ref_time = DateTime(run_start_time)
+    else:
+        if run_start_time < 0:
+            ref_time = DateTime(backstop_start) + run_start_time
+        else:
+            raise ValueError("Float run_start_time should be negative")
+    return ref_time.date
+
+
 };
 
 
@@ -145,12 +184,12 @@ GetOptions( \%par,
 			'sc_data=s',
 			'fid_char=s',
 			'config_file=s',
+                        'run_start_time=s',
 			) ||
     exit( 1 );
 
 
 my $Starcheck_Data = $par{sc_data} || get_data_dir();
-
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
 
@@ -587,6 +626,10 @@ sub json_obsids{
 }
 
 
+# Set the thermal model run start time to be either the supplied
+# run_start_time or now.
+my $run_start_time = get_run_start_time($par{run_start_time}, $bs[0]->{date});
+
 my $json_text = json_obsids();
 my $obsid_temps;
 my $json_obsid_temps;
@@ -596,6 +639,7 @@ $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                       model_spec => "$Starcheck_Data/aca_spec.json",
                                       char_file => "$Starcheck_Data/characteristics.yaml",
                                       orlist => $or_file,
+                                      run_start_time => $run_start_time,
                                   });
 # convert back from JSON outside
 $obsid_temps = JSON::from_json($json_obsid_temps);
@@ -1316,6 +1360,12 @@ Specify YAML configuration file in starcheck data directory.  Default is SKA/dat
 =item B<-config_file <config file>>
 
 Specify YAML configuration file in starcheck data directory.  Default is SKA/data/starcheck/characteristics.yaml
+
+=item B<-run_start_time> <string for Chandra.Time compatible time or negative float>>
+
+Specify a time used as a reference time when regression testing.  This will be passed to the thermal model code
+as an explicit time before which telemetry should be found for an initial / seed state.  A float is special-cased
+such that a negative value -N is interpreted as N days before the first backstop command.
 
 =back
 
