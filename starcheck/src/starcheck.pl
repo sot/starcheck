@@ -48,9 +48,7 @@ $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 use Inline Python => q{
 
 import os
-import datetime
 import traceback
-from dateutil import tz
 
 from Chandra.Time import DateTime
 from chandra_aca.star_probs import set_acq_model_ms_filter
