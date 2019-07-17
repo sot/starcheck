@@ -1614,7 +1614,7 @@ sub check_star_catalog {
 	# Check that readout sizes are all 6x6 for science observations ACA-027
 	if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6"){
 	  if (($c->{"SIZE$i"} eq "8x8") and ($or->{HAS_MON}) and ($c->{"IMNUM$i"} == 7 )){
-	    push @{$self->{fyi}}, sprintf("[%2d] Readout Size. 8x8 Stealth MON?", $i);
+	    push @{$self->{fyi}}, sprintf("[%2d] Readout Size. 8x8 Stealth MON?\n", $i);
 	  }
 	  else{
 	    push @warn, sprintf("[%2d] Readout Size. %s Should be 6x6\n", $i, $c->{"SIZE$i"});
