@@ -160,8 +160,8 @@ def get_ccd_temps(oflsdir, outdir='out',
     # Get temperature telemetry for 1 days prior to
     # min(last available telem, backstop tstart, run_start_time)
     # where run_start_time is for regression testing.
-    msid_range = fetch.get_time_range('aacccdpt', format='secs')
-    tlm = get_telem_values(min(msid_range[1], tstart, run_start_time.secs),
+    end_time = fetch.get_time_range('aacccdpt', format='secs')[1]
+    tlm = get_telem_values(min(end_time, tstart, run_start_time.secs),
                            ['aacccdpt'],
                            days=1)
 
