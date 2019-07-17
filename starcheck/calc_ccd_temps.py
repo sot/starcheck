@@ -113,8 +113,8 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param model_spec: xija ACA model specification
     :param run_start_time: Chandra.Time date used as a reference time to determine initial
                      seed state with temperature telemetry.  The initial seed state will
-                     be at the end of available telemetry that is also before run_start_time,
-                     before the beginning of backstop cmds, and before "now".
+                     be at the end of available telemetry that is also before run_start_time
+                     and before the beginning of backstop cmds.
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
@@ -158,10 +158,10 @@ def get_ccd_temps(oflsdir, outdir='out',
     proc['datestop'] = DateTime(tstop).date
 
     # Get temperature telemetry for 1 days prior to
-    # min(last available telem, backstop tstart, NOW, run_start_time)
-    # where run_start_time is basically a mock NOW for regression testing.
+    # min(last available telem, backstop tstart, run_start_time)
+    # where run_start_time is for regression testing.
     msid_range = fetch.get_time_range('aacccdpt', format='secs')
-    tlm = get_telem_values(min(msid_range[1], tstart, DateTime().secs, run_start_time.secs),
+    tlm = get_telem_values(min(msid_range[1], tstart, run_start_time.secs),
                            ['aacccdpt'],
                            days=1)
 
