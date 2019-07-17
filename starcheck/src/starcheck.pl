@@ -73,7 +73,12 @@ def de_bytestr(data):
     return data
 
 def ccd_temp_wrapper(kwargs):
-    return get_ccd_temps(**de_bytestr(kwargs))
+    try:
+        return get_ccd_temps(**de_bytestr(kwargs))
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        raise
 
 def plot_cat_wrapper(kwargs):
     try:
@@ -137,7 +142,8 @@ def get_run_start_time(run_start_time, backstop_start):
     # time to be a time run_start_time days back from backstop start
     try:
         run_start_time = float(run_start_time)
-    except ValueError:
+    # Handle nominal errors if run_start_time None or non-float Chandra.Time OK string.
+    except (TypeError, ValueError):
         ref_time = DateTime(run_start_time)
     else:
         if run_start_time < 0:

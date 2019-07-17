@@ -13,7 +13,6 @@ import sys
 import os
 import glob
 import logging
-from pprint import pformat
 import time
 import shutil
 import numpy as np
@@ -27,16 +26,15 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.patches
 
-from astropy.table import vstack, Table
+from astropy.table import Table
 import Ska.Matplotlib
 from Ska.Matplotlib import cxctime2plotdate as cxc2pd
 from Ska.Matplotlib import lineid_plot
 import Ska.DBI
-import Ska.Numpy
 import Ska.engarchive.fetch_sci as fetch
 from Chandra.Time import DateTime
-import Chandra.cmd_states as cmd_states
-from Chandra.cmd_states import get_cmd_states
+import kadi.commands
+import kadi.commands.states as kadi_states
 import xija
 from chandra_aca import dark_model
 from parse_cm import read_or_list
@@ -58,7 +56,7 @@ plt.rc("ytick", labelsize=10)
 
 try:
     VERSION = str(version)
-except:
+except Exception:
     VERSION = 'dev'
 
 
@@ -68,7 +66,7 @@ def get_options():
         description="Get CCD temps from xija model for starcheck")
     parser.set_defaults()
     parser.add_argument("oflsdir",
-                       help="Load products OFLS directory")
+                        help="Load products OFLS directory")
     parser.add_argument("--outdir",
                         default='out',
                         help="Output directory")
@@ -115,8 +113,8 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param model_spec: xija ACA model specification
     :param run_start_time: Chandra.Time date used as a reference time to determine initial
                      seed state with temperature telemetry.  The initial seed state will
-                     be at the end of available telemetry that is also before run_start_time,
-                     before the beginning of backstop cmds, and before "now".
+                     be at the end of available telemetry that is also before run_start_time
+                     and before the beginning of backstop cmds.
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
@@ -152,33 +150,32 @@ def get_ccd_temps(oflsdir, outdir='out',
     except TypeError:
         sc_obsids = json.load(json_obsids)
 
-    tnow = DateTime().secs
-
     # Get tstart, tstop, commands from backstop file in opt.oflsdir
     bs_cmds = get_bs_cmds(oflsdir)
-    tstart = bs_cmds[0]['time']
-    tstop = bs_cmds[-1]['time']
+    tstart = DateTime(bs_cmds[0]['date']).secs
+    tstop = DateTime(bs_cmds[-1]['date']).secs
     proc['datestart'] = DateTime(tstart).date
     proc['datestop'] = DateTime(tstop).date
 
-
-    # Get temperature telemetry for 30 days prior to
-    # min(tstart, NOW, run_start_time) where run_start_time is basically
-    # a mock NOW for regression testing.
-    tlm = get_telem_values(min(tstart, tnow, run_start_time.secs),
-                           ['aacccdpt', 'pitch'],
-                           days=30)
+    # Get temperature telemetry for 1 days prior to
+    # min(last available telem, backstop tstart, run_start_time)
+    # where run_start_time is for regression testing.
+    end_time = fetch.get_time_range('aacccdpt', format='secs')[1]
+    tlm = get_telem_values(min(end_time, tstart, run_start_time.secs),
+                           ['aacccdpt'],
+                           days=1)
 
     states = get_week_states(tstart, tstop, bs_cmds, tlm)
-    # if the last obsid interval extends over the end of states
+
+    # If the last obsid interval extends over the end of states
     # extend the state / predictions
-    if ((states[-1]['obsid'] == sc_obsids[-1]['obsid'])
-        & (sc_obsids[-1]['obs_tstop'] > states[-1]['tstop'])):
+    if ((states[-1]['obsid'] == sc_obsids[-1]['obsid']) &
+            (sc_obsids[-1]['obs_tstop'] > states[-1]['tstop'])):
         tstop = sc_obsids[-1]['obs_tstop']
         states[-1]['tstop'] = sc_obsids[-1]['obs_tstop']
         states[-1]['datestop'] = DateTime(sc_obsids[-1]['obs_tstop']).date
 
-    if tstart >  DateTime(MODEL_VALID_FROM).secs:
+    if tstart > DateTime(MODEL_VALID_FROM).secs:
         times, ccd_temp = make_week_predict(model_spec, states, tstop)
     else:
         times, ccd_temp = mock_telem_predict(states)
@@ -189,7 +186,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     obsreqs = None if orlist is None else {obs['obsid']: obs for obs in read_or_list(orlist)}
     obstemps = get_interval_data(intervals, times, ccd_temp, obsreqs)
     return json.dumps(obstemps, sort_keys=True, indent=4,
-	                  cls=NumpyAwareJSONEncoder)
+                      cls=NumpyAwareJSONEncoder)
 
 
 def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
@@ -225,8 +222,8 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
         obs['n100_warm_frac'] = dark_model.get_warm_fracs(
             100, interval['tstart'], np.max(ok_temps))
         # If we have an OR list, the obsid is in that list, and the OR list has zero-offset keys
-        if (obsreqs is not None and interval['obsid'] in obsreqs
-                and 'chip_id' in obsreqs[interval['obsid']]):
+        if (obsreqs is not None and interval['obsid'] in obsreqs and
+                'chip_id' in obsreqs[interval['obsid']]):
             obsreq = obsreqs[interval['obsid']]
             ddy, ddz = get_aca_offsets(obsreq['detector'],
                                        obsreq['chip_id'],
@@ -253,8 +250,8 @@ def get_obs_intervals(sc_obsids):
     for idx, obs in enumerate(sc_obsids):
         # if the range is undefined, just don't make
         # an entry / interval for the obsid
-        if (('obs_tstart' not in obs)
-            or 'obs_tstop' not in obs):
+        if (('obs_tstart' not in obs) or
+                'obs_tstop' not in obs):
             continue
         interval = {'obsid': obs['obsid'],
                     'tstart': obs['obs_tstart'],
@@ -285,7 +282,7 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
                               model_spec=model_spec)
     times = np.array([states['tstart'], states['tstop']])
     model.comp['pitch'].set_data(states['pitch'], times)
-    model.comp['eclipse'].set_data(False)
+    model.comp['eclipse'].set_data(states['eclipse'] != 'DAY', times)
     model.comp['aca0'].set_data(aacccdpt, aacccdpt_times)
     model.comp['aacccdpt'].set_data(aacccdpt, aacccdpt_times)
     model.make()
@@ -303,41 +300,31 @@ def get_week_states(tstart, tstop, bs_cmds, tlm):
     :param tlm: available pitch and aacccdpt telemetry recarray from fetch
     :returns: numpy recarray of states
     """
-
     # Get temperature data at the end of available telemetry
-    ok = tlm['date'] > tlm['date'][-1] - 1400
+    ok = tlm['time'] > tlm['time'][-1] - 1400
     init_aacccdpt = np.mean(tlm['aacccdpt'][ok])
-    init_tlm_time = np.mean(tlm['date'][ok])
+    init_tlm_time = np.mean(tlm['time'][ok])
 
-    # Get states at and after that time
-    cstates = Table(get_cmd_states.fetch_states(init_tlm_time,
-                                                tstop,
-                                                vals=['obsid',
-                                                      'pitch',
-                                                      'q1', 'q2', 'q3', 'q4']))
-    cstate0 = cstates[0]
-    pre_bs_states = cstates[(cstates['tstart'] >= cstate0['tstart']) &
-                            (cstates['tstart'] < tstart)]
+    # Get commands from last telemetry up to (but not including)
+    # first backstop command.
+    cmds = kadi.commands.get_cmds(init_tlm_time, tstart)
 
-    # cmd_states.get_states needs an initial state dictionary, so
-    # construct one from the last pre-backstop state
-    last_pre_bs_state = {col: pre_bs_states[-1][col]
-                         for col in pre_bs_states[-1].colnames}
-    # Get the commanded states from last cmd_state through the end of backstop commands
-    states = Table(cmd_states.get_states(last_pre_bs_state, bs_cmds))
-    states[-1]['datestop'] = bs_cmds[-1]['date']
-    states[-1]['tstop'] = bs_cmds[-1]['time']
-    # Truncate the last pre_bs_state at the new states start
-    pre_bs_states[-1]['datestop'] = states[0]['datestart']
-    pre_bs_states[-1]['tstop'] = states[0]['tstart']
-    logger.info('Constructed %d commanded states from %s to %s' %
-                (len(states), states[0]['datestart'], states[-1]['datestop']))
-    # Combine the pre-backstop states with the commanded states
-    all_states = vstack([pre_bs_states, states])
-    # Add a column for temperature and pre-fill all to be the initial temperature
-    # (the first state temperature is the only one used anyway)
-    all_states['aacccdpt'] = init_aacccdpt
-    return all_states
+    # Add in the backstop commands
+    cmds = cmds.add_cmds(bs_cmds)
+
+    # Get the states for available commands.  This automatically gets continuity.
+    state_keys = ['obsid', 'pitch', 'q1', 'q2', 'q3', 'q4', 'eclipse']
+    states = kadi_states.get_states(cmds=cmds, state_keys=state_keys,
+                                    merge_identical=True)
+
+    states['tstart'] = DateTime(states['datestart']).secs
+    states['tstop'] = DateTime(states['datestop']).secs
+
+    # Add a state column for temperature and pre-fill to be initial temperature
+    # (the first state temperature is the only one used anyway).
+    states['aacccdpt'] = init_aacccdpt
+
+    return states
 
 
 def make_week_predict(model_spec, states, tstop):
@@ -354,7 +341,7 @@ def make_week_predict(model_spec, states, tstop):
     # Create array of times at which to calculate ACA temps, then do it.
     logger.info('Calculating ACA thermal model')
     logger.info('Propagation initial time and ACA: {} {:.2f}'.format(
-            DateTime(state0['tstart']).date, state0['aacccdpt']))
+        DateTime(state0['tstart']).date, state0['aacccdpt']))
 
     model = calc_model(model_spec, states, state0['tstart'], tstop,
                        state0['aacccdpt'], state0['tstart'])
@@ -381,54 +368,48 @@ def mock_telem_predict(states):
                         states[0]['tstart'],
                         states[-1]['tstart'],
                         stat='5min')
-    temps = {'aca': tlm['aacccdpt'].vals}
-    return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
 
+    return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
 
 
 def get_bs_cmds(oflsdir):
     """Return commands for the backstop file in opt.oflsdir.
     """
-    import Ska.ParseCM
     backstop_file = globfile(os.path.join(oflsdir, 'CR*.backstop'))
     logger.info('Using backstop file %s' % backstop_file)
-    bs_cmds = Ska.ParseCM.read_backstop(backstop_file)
+    bs_cmds = kadi.commands.get_cmds_from_backstop(backstop_file)
     logger.info('Found %d backstop commands between %s and %s' %
-                  (len(bs_cmds), bs_cmds[0]['date'], bs_cmds[-1]['date']))
+                (len(bs_cmds), bs_cmds[0]['date'], bs_cmds[-1]['date']))
 
     return bs_cmds
 
 
-def get_telem_values(tstart, msids, days=7, name_map={}):
+def get_telem_values(tstop, msids, days=7):
     """
     Fetch last ``days`` of available ``msids`` telemetry values before
-    time ``tstart``.
+    time ``tstop``.
 
-    :param tstart: start time for telemetry (secs)
+    :param tstop: start time for telemetry (secs)
     :param msids: fetch msids list
-    :param days: length of telemetry request before ``tstart``
-    :param dt: sample time (secs)
-    :param name_map: dict mapping msid to recarray col name
-    :returns: np recarray of requested telemetry values from fetch
+    :param days: length of telemetry request before ``tstop``
+
+    :returns: astropy Table of requested telemetry values from fetch
     """
-    tstart = DateTime(tstart).secs
-    start = DateTime(tstart - days * 86400).date
-    stop = DateTime(tstart).date
+    tstop = DateTime(tstop).secs
+    start = DateTime(tstop - days * 86400).date
+    stop = DateTime(tstop).date
     logger.info('Fetching telemetry between %s and %s' % (start, stop))
+
     msidset = fetch.MSIDset(msids, start, stop, stat='5min')
-    start = max(x.times[0] for x in msidset.values())
-    stop = min(x.times[-1] for x in msidset.values())
-    msidset.interpolate(328.0, start, stop + 1)  # 328 for '5min' stat
+    msidset.interpolate(328.0)  # 328 for '5min' stat
 
     # Finished when we found at least 4 good records (20 mins)
     if len(msidset.times) < 4:
-        raise ValueError('Found no telemetry within %d days of %s'
-                         % (days, str(tstart)))
+        raise ValueError(f'Found no telemetry within {days} days of {stop}')
 
-    outnames = ['date'] + [name_map.get(x, x) for x in msids]
-    vals = {name_map.get(x, x): msidset[x].vals for x in msids}
-    vals['date'] = msidset.times
-    out = Ska.Numpy.structured_array(vals, colnames=outnames)
+    vals = {msid: msidset[msid].vals for msid in msids}
+    vals['time'] = msidset.times
+    out = Table(vals)
 
     return out
 
