@@ -1614,7 +1614,7 @@ sub check_star_catalog {
 	# Check that readout sizes are all 6x6 for science observations ACA-027
 	if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6"){
 	  if (($c->{"SIZE$i"} eq "8x8") and ($or->{HAS_MON}) and ($c->{"IMNUM$i"} == 7 )){
-	    push @{$self->{fyi}}, sprintf("[%2d] Readout Size. 8x8 Stealth MON?", $i);
+	    push @{$self->{fyi}}, sprintf("[%2d] Readout Size. 8x8 Stealth MON?\n", $i);
 	  }
 	  else{
 	    push @warn, sprintf("[%2d] Readout Size. %s Should be 6x6\n", $i, $c->{"SIZE$i"});
@@ -2428,7 +2428,7 @@ sub add_guide_summ {
     # if the position of an item didn't match, warn that the guide summary does not match
     # the backstop commanded catalog
     if ($bad_idx_match == 1){
-	push @{$self->{warn}}, ">> WARNING: Guide summary does not match commanded catalog.\n";
+	push @{$self->{warn}}, "Guide summary does not match commanded catalog.\n";
     }
 }
 
@@ -2823,7 +2823,7 @@ sub set_ccd_temps{
     # and add a yellow warning to let the user know this has happened.
     if (($self->{ccd_temp_acq} > -1.0) or ($self->{ccd_temp_acq} < -16.0)){
         push @{$self->{yellow_warn}}, sprintf(
-            ">> WARNING: acq t_ccd %.2f outside range -16.0 to -1.0. Clipped.\n",
+            "acq t_ccd %.1f outside range -16.0 to -1.0. Clipped.\n",
             $self->{ccd_temp_acq});
         $self->{ccd_temp_acq} = $self->{ccd_temp_acq}  >  -1.0  ? -1.0
                               : $self->{ccd_temp_acq}  < -16.0  ? -16.0
@@ -2923,7 +2923,7 @@ sub proseco_args{
         if ($sid eq '---'){
             if ($cat_cmd->{"TYPE$i"} =~ /BOT|ACQ|GUI/){
                 push @{$self->{warn}}, sprintf(
-                    ">> WARNING: [%2d] Could not calculate acq prob for star with no id.", $i);
+                    "[%2d] Could not calculate acq prob for star with no id.", $i);
             }
             next IDX;
         }
@@ -2935,7 +2935,7 @@ sub proseco_args{
             my $hw = $cat_cmd->{"HALFW$i"};
             if (($hw > 180) or ($hw < 60)){
                 push @{$self->{orange_warn}}, sprintf(
-                    ">> WARNING: [%2d] Halfwidth %d outside range 60 to 180. Will be clipped in proseco probs.\n",
+                    "[%2d] Halfwidth %d outside range 60 to 180. Will be clipped in proseco probs.\n",
                     $i, $hw);
             }
             push @halfwidths, $hw;
@@ -3024,11 +3024,11 @@ sub set_proseco_probs_and_check_P2{
     # Do the actual checks
     if ($P2 < $P2_red){
         push @{$self->{warn}},
-             ">> WARNING: -log10 probability of 2 or fewer stars < $P2_red\n";
+             "-log10 probability of 2 or fewer stars < $P2_red\n";
     }
     elsif ($P2 < $P2_yellow){
         push @{$self->{yellow_warn}},
-             ">> WARNING: -log10 probability of 2 or fewer stars < $P2_yellow\n";
+             "-log10 probability of 2 or fewer stars < $P2_yellow\n";
     }
 
 }
