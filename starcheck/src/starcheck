@@ -9,6 +9,23 @@
 # for flight starcheck
 unset PYTHONPATH
 export PYTHONHOME=$SKA
+
+# Check for skare3 perl
+if [[ ! -f ${PYTHONHOME}/bin/perl ]];
+then
+    echo "skare3 perl not installed. conda install perl perl-core-deps perl-ska-classic"
+    exit 1
+fi
+# Check for perl deps
+perl -e "use IO::All; use Time::DayOfYear;"
+if [[ $? -ne 0 ]];
+then
+    echo "****"
+    echo "Missing starcheck ska3 perl dependencies.  Please 'conda install perl perl-core-deps perl-ska-classic'"
+    echo "****"
+    exit 1
+fi
+
 PERL_INLINE_DIRECTORY=`mktemp -d -t starcheck_inline.XXXXXX` || exit 1
 export PERL_INLINE_DIRECTORY
 STARCHECK=`python -c 'import starcheck; print(starcheck.__path__[0])'`
