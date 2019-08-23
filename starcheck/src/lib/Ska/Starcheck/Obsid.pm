@@ -2140,7 +2140,7 @@ sub print_report {
 	}
     }
 
-    my $acq_stat_lookup = "$config{paths}->{acq_stat_query}?id=";
+    my $star_stat_lookup = "http://kadi.cfa.harvard.edu/star_hist/?agasc_id=";
 
 
     my $table;
@@ -2204,8 +2204,8 @@ sub print_report {
             # Make the id a URL if there is star history or if star history could
             # not be checked (no db_handle)
             my $star_link;
-            if ((not defined $db_handle) or (($db_stats->{acq} or $db_stats->{gui}))){
-                $star_link = sprintf("HREF=\"%s%s\"",$acq_stat_lookup, $c->{"GS_ID${i}"});
+            if ($db_stats->{acq} or $db_stats->{gui}){
+                $star_link = sprintf("HREF=\"%s%s\"",$star_stat_lookup, $c->{"GS_ID${i}"});
             }
             else{
                 $star_link = sprintf("A=\"star\"");
