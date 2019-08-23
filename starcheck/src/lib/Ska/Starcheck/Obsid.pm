@@ -36,6 +36,13 @@ from proseco.core import ACABox
 from proseco.catalog import get_effective_t_ccd
 from proseco.guide import get_imposter_mags
 
+import mica.stats.acq_stats
+import mica.stats.guide_stats
+
+ACQS = mica.stats.acq_stats.get_stats()
+GUIDES = mica.stats.guide_stats.get_stats()
+
+
 def _yagzag_to_pixels(yag, zag):
     """
     Call chandra_aca.transform.yagzag_to_pixels.
@@ -163,17 +170,24 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
     return stars_dict
 
 
-import numpy as np
-import mica.stats.acq_stats
-import mica.stats.guide_stats
-
-ACQS = mica.stats.acq_stats.get_stats()
-GUIDES = mica.stats.guide_stats.get_stats()
-
-
 def get_mica_star_stats(agasc_id, time):
+    """
+    Get the acq and guide star statistics for a star before a given time.
+    The time filter is just there to make this play well when run in regression.
+    The mica acq and guide stats are fetched into globals ACQS and GUIDES
+    and this method just filters for the relevant ones for a star and returns
+    a dictionary of summarized statistics.
+
+    :param agasc_id: agasc id of star
+    :param time: time used as end of range to retrieve statistics.
+
+    :return: dictionary of stats for the observed history of the star
+    """
+
+    # Cast the inputs
     time = float(time)
     agasc_id = int(agasc_id)
+
     acqs = Table(ACQS[(ACQS['agasc_id'] == agasc_id)
                  & (ACQS['guide_tstart'] < time)])
     ok = acqs['img_func'] == 'star'
