@@ -221,8 +221,6 @@ use Ska::Convert qw(date2time time2date);
 
 use RDB;
 
-use SQL::Abstract;
-use Ska::DatabaseUtil qw( sql_fetchall_array_of_hashref );
 use Carp;
 
 # Constants
