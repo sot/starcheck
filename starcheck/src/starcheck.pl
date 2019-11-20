@@ -347,20 +347,6 @@ if ($OS eq 'SunOS'){
 }
 
 
-# See if we have database access
-my $db_handle;
-eval{
-    eval 'use Ska::DatabaseUtil';
-    $db_handle = Ska::DatabaseUtil::sql_connect( 'sybase-aca-aca_read' );
-
-};
-if (($@) or (not defined $db_handle)){
-    warning("Unable to connect to Sybase server; links generated for all AGASC ids by default \n");
-}
-else{
-    Ska::Starcheck::Obsid::set_db_handle($db_handle);
-  }
-
 # Dark Cal Checker Section
 use Ska::Starcheck::Dark_Cal_Checker;
 my $dark_cal_checker;

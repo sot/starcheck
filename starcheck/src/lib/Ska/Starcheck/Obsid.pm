@@ -36,6 +36,13 @@ from proseco.core import ACABox
 from proseco.catalog import get_effective_t_ccd
 from proseco.guide import get_imposter_mags
 
+import mica.stats.acq_stats
+import mica.stats.guide_stats
+
+ACQS = mica.stats.acq_stats.get_stats()
+GUIDES = mica.stats.guide_stats.get_stats()
+
+
 def _yagzag_to_pixels(yag, zag):
     """
     Call chandra_aca.transform.yagzag_to_pixels.
@@ -162,6 +169,44 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
 
     return stars_dict
 
+
+def get_mica_star_stats(agasc_id, time):
+    """
+    Get the acq and guide star statistics for a star before a given time.
+    The time filter is just there to make this play well when run in regression.
+    The mica acq and guide stats are fetched into globals ACQS and GUIDES
+    and this method just filters for the relevant ones for a star and returns
+    a dictionary of summarized statistics.
+
+    :param agasc_id: agasc id of star
+    :param time: time used as end of range to retrieve statistics.
+
+    :return: dictionary of stats for the observed history of the star
+    """
+
+    # Cast the inputs
+    time = float(time)
+    agasc_id = int(agasc_id)
+
+    acqs = Table(ACQS[(ACQS['agasc_id'] == agasc_id)
+                 & (ACQS['guide_tstart'] < time)])
+    ok = acqs['img_func'] == 'star'
+    guides = Table(GUIDES[(GUIDES['agasc_id'] == agasc_id)
+                  & (GUIDES['kalman_tstart'] < time)])
+    mags = np.concatenate(
+               [acqs['mag_obs'][acqs['mag_obs'] != 0],
+                guides['aoacmag_mean'][guides['aoacmag_mean'] != 0]])
+
+    avg_mag = float(np.mean(mags)) if (len(mags) > 0) else float(13.94)
+    stats = {'acq': len(acqs),
+             'acq_noid': int(np.count_nonzero(~ok)),
+             'gui' : len(guides),
+             'gui_bad': int(np.count_nonzero(guides['f_track'] < .95)),
+             'gui_fail': int(np.count_nonzero(guides['f_track'] < .01)),
+             'gui_obc_bad': int(np.count_nonzero(guides['f_obc_bad'] > .05)),
+             'avg_mag': avg_mag}
+    return stats
+
 };
 
 
@@ -176,8 +221,6 @@ use Ska::Convert qw(date2time time2date);
 
 use RDB;
 
-use SQL::Abstract;
-use Ska::DatabaseUtil qw( sql_fetchall_array_of_hashref );
 use Carp;
 
 # Constants
@@ -2109,7 +2152,7 @@ sub print_report {
 	}
     }
 
-    my $acq_stat_lookup = "$config{paths}->{acq_stat_query}?id=";
+    my $star_stat_lookup = "http://kadi.cfa.harvard.edu/star_hist/?agasc_id=";
 
 
     my $table;
@@ -2173,8 +2216,8 @@ sub print_report {
             # Make the id a URL if there is star history or if star history could
             # not be checked (no db_handle)
             my $star_link;
-            if ((not defined $db_handle) or (($db_stats->{acq} or $db_stats->{gui}))){
-                $star_link = sprintf("HREF=\"%s%s\"",$acq_stat_lookup, $c->{"GS_ID${i}"});
+            if ($db_stats->{acq} or $db_stats->{gui}){
+                $star_link = sprintf("HREF=\"%s%s\"",$star_stat_lookup, $c->{"GS_ID${i}"});
             }
             else{
                 $star_link = sprintf("A=\"star\"");
@@ -2572,103 +2615,7 @@ sub star_dbhist {
 
     my $obs_tstart_minus_day = $obs_tstart - 86400;
 
-    return undef if (not defined $db_handle);
-
-    my %stats  =  ( 
-		   'agasc_id' => $star_id,
-		   'acq' => 0,
-		   'acq_noid' => 0,
-		   'gui' => 0,
-		   'gui_bad' => 0,
-		   'gui_fail' => 0,
-		   'gui_obc_bad' => 0,
-		   'avg_mag' => 13.9375,
-		  );
-    
-
-
-    eval{
-	# acq_stats_data
-	my $sql = SQL::Abstract->new();
-	my %acq_where =  ( 'agasc_id' => $star_id,
-                           'type' =>  { '!=' => 'FID'},
-                           'tstart' => { '<' => $obs_tstart_minus_day }
-			   );
-
-	my ($acq_all_stmt, @acq_all_bind ) = $sql->select('acq_stats_data', 
-							  '*',
-							  \%acq_where );
-
-	my @acq_all = sql_fetchall_array_of_hashref( $db_handle, $acq_all_stmt, @acq_all_bind );
-	my @mags;
-
-	if (scalar(@acq_all)){
-	    my $noid = 0;
-	    for my $attempt (@acq_all){
-		if ($attempt->{'obc_id'} =~ 'NOID'){
-		    $noid++;
-		}
-		else{
-		  push @mags, $attempt->{'mag_obs'};
-		}
-	    }
-	    $stats{'acq'} = scalar(@acq_all);
-	    $stats{'acq_noid'} = $noid;
-	}
-
-	# guide_stats_view
-	$sql = SQL::Abstract->new();
-	my %gui_where = ( 'id' => $star_id,
-			  'type' => { '!=' => 'FID' },
-			  'kalman_tstart' => { '<' => $obs_tstart_minus_day });
-
-	my ($gui_all_stmt, @gui_all_bind ) = $sql->select('guide_stats_view', 
-							  '*',
-							  \%gui_where );
-
-	my @gui_all = sql_fetchall_array_of_hashref( $db_handle, $gui_all_stmt, @gui_all_bind );
-
-
-	if (scalar(@gui_all)){
-	    my $bad = 0;
-	    my $fail = 0;
-	    my $obc_bad = 0;
-	    for my $attempt (@gui_all){
-		if ($attempt->{'percent_not_tracking'} >= 5){
-		    $bad++;
-		}
-		if ($attempt->{'percent_not_tracking'} == 100){
-		    $fail++;
-		}
-		else{
-		  if ((defined $attempt->{'mag_obs_mean'}) and ($attempt->{'mag_obs_mean'} < 13.9 )){
-		    push @mags, $attempt->{'mag_obs_mean'};
-		  }
-		}
-		if ($attempt->{'percent_obc_bad_status'} >= 5){
-		    $obc_bad++;
-		}
-	    }
-	    $stats{'gui'} = scalar(@gui_all);
-	    $stats{'gui_bad'} = $bad;
-	    $stats{'gui_fail'} = $fail;
-	    $stats{'gui_obc_bad'} = $obc_bad;
-	}
-
-	my $mag_sum = 0;
-	if (scalar(@mags)){
-	  map { $mag_sum += $_ } @mags;
-	  $stats{'avg_mag'} = $mag_sum / scalar(@mags);
-	}
-    };
-    if ($@){
-      # if we get db errors, just print and move on
-      print STDERR $@;
-
-    }
-
-    return \%stats;
-
+    return get_mica_star_stats($star_id, $obs_tstart_minus_day);
 
 }
 

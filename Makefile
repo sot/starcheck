@@ -3,7 +3,6 @@ FLIGHT_ENV = SKA
 
 SRC = starcheck/src
 
-#include $(SKA)/include/Makefile.FLIGHT
 
 RELATED_LIB = $(SRC)/StarcheckParser.pm
 BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
@@ -15,7 +14,7 @@ DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
 
 
-TEST_DATA_TGZ = $(ROOT_FLIGHT)/data/starcheck/JUL0918A_test_data.tar.gz
+TEST_DATA_TGZ = ${SKA}/data/starcheck/JUL0918A_test_data.tar.gz
 # starcheck_characteristics tarball should be installed from
 # separate starcheck_characteristics project
 # with "make install_dist" from that project
