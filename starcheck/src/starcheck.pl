@@ -171,7 +171,7 @@ my %par = (dir  => '.',
 		   html => 1,
 		   text => 1,
 		   yaml => 1,
-                   agasc_file => "${SKA}/data/agasc/agasc1p7.h5",
+                   agasc_file => "${SKA}/data/agasc/proseco_agasc_1p7.h5",
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
 		   );
