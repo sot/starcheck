@@ -40,7 +40,7 @@ from chandra_aca import dark_model
 from parse_cm import read_or_list
 from chandra_aca.drift import get_aca_offsets
 
-from starcheck.version import version
+from starcheck import __version__ as version
 
 MSID = {'aca': 'AACCCDPT'}
 TASK_DATA = os.path.dirname(__file__)
