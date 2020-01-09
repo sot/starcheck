@@ -55,7 +55,7 @@ from chandra_aca.star_probs import set_acq_model_ms_filter
 import starcheck
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
-from starcheck.version import version
+from starcheck import __version__ as version
 from kadi.commands import states
 
 # Borrowed from https://stackoverflow.com/a/33160507
