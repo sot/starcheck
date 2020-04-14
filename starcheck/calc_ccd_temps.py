@@ -152,8 +152,19 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     # Get tstart, tstop, commands from backstop file in opt.oflsdir
     bs_cmds = get_bs_cmds(oflsdir)
-    tstart = DateTime(bs_cmds[0]['date']).secs
-    tstop = DateTime(bs_cmds[-1]['date']).secs
+
+    # Use RLTT and SCHEDULED_STOP_TIME if available
+    rltt = bs_cmds['event_type'] == 'RUNNING_LOAD_TERMINATION_TIME'
+    if np.any(rltt):
+        tstart = DateTime(bs_cmds['date'][rltt][0]).secs
+    else:
+        tstart = DateTime(bs_cmds[0]['date']).secs
+    sched_stop = bs_cmds['event_type'] == 'SCHEDULED_STOP_TIME'
+    if np.any(sched_stop):
+        tstop = DateTime(bs_cmds['date'][sched_stop][0]).secs
+    else:
+        tstop = DateTime(bs_cmds[-1]['date']).secs
+
     proc['datestart'] = DateTime(tstart).date
     proc['datestop'] = DateTime(tstop).date
 
@@ -294,8 +305,8 @@ def get_week_states(tstart, tstop, bs_cmds, tlm):
     """
     Make states from last available telemetry through the end of the backstop commands
 
-    :param tstart: start time from first backstop command
-    :param tstop: stop time from last backstop command
+    :param tstart: start time from RLTT if available else first backstop command
+    :param tstop: stop time from SCHEDULED_STOP_TIME if available else last backstop command
     :param bs_cmds: backstop commands for products under review
     :param tlm: available pitch and aacccdpt telemetry recarray from fetch
     :returns: numpy recarray of states
@@ -306,7 +317,7 @@ def get_week_states(tstart, tstop, bs_cmds, tlm):
     init_tlm_time = np.mean(tlm['time'][ok])
 
     # Get commands from last telemetry up to (but not including)
-    # first backstop command.
+    # commands at tstart (RLTT if present else first backstop cmd)
     cmds = kadi.commands.get_cmds(init_tlm_time, tstart)
 
     # Add in the backstop commands
