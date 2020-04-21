@@ -154,16 +154,20 @@ def get_ccd_temps(oflsdir, outdir='out',
     bs_cmds = get_bs_cmds(oflsdir)
 
     # Use RLTT and SCHEDULED_STOP_TIME if available
-    rltt = bs_cmds['event_type'] == 'RUNNING_LOAD_TERMINATION_TIME'
-    if np.any(rltt):
-        tstart = DateTime(bs_cmds['date'][rltt][0]).secs
+    ok = bs_cmds['event_type'] == 'RUNNING_LOAD_TERMINATION_TIME'
+    if np.any(ok):
+
+        # The RLTT is defined so that running commands at exactly the RLTT are
+        # included in propagation. However get_cmds() uses the convention of
+        # getting commands date_start <= cmd_date < date_stop, so add 0.001 to RLTT.
+        tstart = DateTime(bs_cmds['date'][ok][0]).secs + 0.001
     else:
-        tstart = DateTime(bs_cmds[0]['date']).secs
-    sched_stop = bs_cmds['event_type'] == 'SCHEDULED_STOP_TIME'
-    if np.any(sched_stop):
-        tstop = DateTime(bs_cmds['date'][sched_stop][0]).secs
+        tstart = DateTime(bs_cmds['date'][0]).secs
+    ok = bs_cmds['event_type'] == 'SCHEDULED_STOP_TIME'
+    if np.any(ok):
+        tstop = DateTime(bs_cmds['date'][ok][0]).secs
     else:
-        tstop = DateTime(bs_cmds[-1]['date']).secs
+        tstop = DateTime(bs_cmds['date'][0]).secs
 
     proc['datestart'] = DateTime(tstart).date
     proc['datestop'] = DateTime(tstop).date
