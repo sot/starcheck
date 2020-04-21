@@ -403,7 +403,13 @@ if ($manerr_file) {
 } else { warning("Could not find Maneuver Error file in output/ directory\n") };
 
 
+# Get an initial dither state from kadi.  Dither states are then built from backstop commands
+# after this time.  If the running loads will be terminated in advance of new commands in the loads
+# in review, and the RUNNING_LOAD_TERMINATION_TIME backstop "pseudo" command is available, that
+# command will be the first command ($bs[0]) and the kadi dither state will be fetched at that time.
+# This is expected and appropriate.
 my $kadi_dither = get_dither_kadi_state($bs[0]->{date});
+
 # Read DITHER history file and backstop to determine expected dither state
 my ($dither_error, $dither) = Ska::Parse_CM_File::dither($dither_file, \@bs, $kadi_dither);
 
