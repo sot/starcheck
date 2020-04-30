@@ -77,8 +77,10 @@ def get_options():
                         default=sys.stdout,
                         help="output destination for temperature JSON, file or stdout")
     parser.add_argument("--model-spec",
+                        default="starcheck/data/aca_spec.json",
                         help="xija ACA model specification file")
     parser.add_argument("--char-file",
+                        default="starcheck/data/characteristics.yaml",
                         help="starcheck characteristics file")
     parser.add_argument("--orlist",
                         help="OR list")
@@ -123,7 +125,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     config_logging(outdir, verbose)
 
     # Store info relevant to processing for use in outputs
-    proc = {'run_user': os.environ['USER'],
+    proc = {'run_user': os.environ.get('USER'),
             'execution_time': time.ctime(),
             'run_start_time': run_start_time,
             'errors': []}
@@ -179,7 +181,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     tlm_end_time = min(fetch.get_time_range('aacccdpt', format='secs')[1],
                        bs_start.secs, run_start_time.secs)
     tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1)
-
+    print(DateTime(tlm_end_time).date)
     states = get_week_states(rltt, sched_stop, bs_cmds, tlm)
 
     # If the last obsid interval extends over the end of states then
