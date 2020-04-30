@@ -110,11 +110,9 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param outdir: output directory for plots
     :param json_obsids: file-like object or string containing JSON of
                         starcheck Obsid objects
-    :param model_spec: xija ACA model specification
-    :param run_start_time: Chandra.Time date used as a reference time to determine initial
-                     seed state with temperature telemetry.  The initial seed state will
-                     be at the end of available telemetry that is also before run_start_time
-                     and before the beginning of backstop cmds.
+    :param model_spec: xija ACA model specification file name
+    :param run_start_time: Chandra.Time date, clock time when starcheck was run,
+                     or a user-provided value (usually for regression testing).
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
@@ -147,59 +145,68 @@ def get_ccd_temps(oflsdir, outdir='out',
     # json_obsids can be either a string or a file-like object.  Try those options in order.
     try:
         sc_obsids = json.loads(json_obsids)
+        with open('test_obsids.json', 'w') as fh:
+            fh.write(json_obsids)
     except TypeError:
         sc_obsids = json.load(json_obsids)
 
-    # Get tstart, tstop, commands from backstop file in opt.oflsdir
+    # Get commands from backstop file in oflsdir
     bs_cmds = get_bs_cmds(oflsdir)
+    bs_dates = bs_cmds['date']
 
-    # Use RLTT and SCHEDULED_STOP_TIME if available
+    # Running loads termination time is the last time of "current running loads"
+    # (or in the case of a safing action, "current approved load commands" in
+    # kadi commands) which should be included in propagation. Starting from
+    # around 2020-April this is included as a commmand in the loads, while prior
+    # to that we just use the first command in the backstop loads.
     ok = bs_cmds['event_type'] == 'RUNNING_LOAD_TERMINATION_TIME'
-    if np.any(ok):
+    rltt = DateTime(bs_dates[ok][0] if np.any(ok) else bs_dates[0])
 
-        # The RLTT is defined so that running commands at exactly the RLTT are
-        # included in propagation. However get_cmds() uses the convention of
-        # getting commands date_start <= cmd_date < date_stop, so add 0.001 to RLTT.
-        tstart = DateTime(bs_cmds['date'][ok][0]).secs + 0.001
-    else:
-        tstart = DateTime(bs_cmds['date'][0]).secs
+    # First actual command in backstop loads (all the NOT-RLTT commands)
+    bs_start = DateTime(bs_dates[~ok][0])
+
+    # Scheduled stop time is the end of propagation, either the explicit
+    # time as a pseudo-command in the loads or the last backstop command time.
     ok = bs_cmds['event_type'] == 'SCHEDULED_STOP_TIME'
-    if np.any(ok):
-        tstop = DateTime(bs_cmds['date'][ok][0]).secs
-    else:
-        tstop = DateTime(bs_cmds['date'][0]).secs
+    sched_stop = DateTime(bs_dates[ok][0] if np.any(ok) else bs_dates[-1])
 
-    proc['datestart'] = DateTime(tstart).date
-    proc['datestop'] = DateTime(tstop).date
+    proc['datestart'] = bs_start.date
+    proc['datestop'] = sched_stop.date
 
-    # Get temperature telemetry for 1 days prior to
-    # min(last available telem, backstop tstart, run_start_time)
-    # where run_start_time is for regression testing.
-    end_time = fetch.get_time_range('aacccdpt', format='secs')[1]
-    tlm = get_telem_values(min(end_time, tstart, run_start_time.secs),
-                           ['aacccdpt'],
-                           days=1)
+    # Get temperature telemetry for 1 day prior to min(last available telem,
+    # backstop start, run_start_time) where run_start_time is for regression
+    # testing.
+    tlm_end_time = min(fetch.get_time_range('aacccdpt', format='secs')[1],
+                       bs_start.secs, run_start_time.secs)
+    tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1)
 
-    states = get_week_states(tstart, tstop, bs_cmds, tlm)
+    states = get_week_states(rltt, sched_stop, bs_cmds, tlm)
 
-    # If the last obsid interval extends over the end of states
+    # If the last obsid interval extends over the end of states then
     # extend the state / predictions
-    if ((states[-1]['obsid'] == sc_obsids[-1]['obsid']) &
-            (sc_obsids[-1]['obs_tstop'] > states[-1]['tstop'])):
-        tstop = sc_obsids[-1]['obs_tstop']
-        states[-1]['tstop'] = sc_obsids[-1]['obs_tstop']
-        states[-1]['datestop'] = DateTime(sc_obsids[-1]['obs_tstop']).date
+    last_state = states[-1]
+    last_sc_obsid = sc_obsids[-1]
+    if ((last_state['obsid'] == last_sc_obsid['obsid']) &
+            (last_sc_obsid['obs_tstop'] > last_state['tstop'])):
+        obs_tstop = last_sc_obsid['obs_tstop']
+        last_state['tstop'] = obs_tstop
+        last_state['datestop'] = DateTime(obs_tstop).date
 
-    if tstart > DateTime(MODEL_VALID_FROM).secs:
-        times, ccd_temp = make_week_predict(model_spec, states, tstop)
+    # Extend last state to reflect scheduled stop time
+    if last_state['datestop'] < sched_stop.date:
+        last_state['tstop'] = sched_stop.secs
+        last_state['datestop'] = sched_stop.date
+
+    if rltt.date > DateTime(MODEL_VALID_FROM).date:
+        ccd_times, ccd_temps = make_week_predict(model_spec, states, sched_stop)
     else:
-        times, ccd_temp = mock_telem_predict(states)
+        ccd_times, ccd_temps = mock_telem_predict(states)
 
-    make_check_plots(outdir, states, times,
-                     ccd_temp, tstart, tstop, char=char)
+    make_check_plots(outdir, states, ccd_times, ccd_temps,
+                     tstart=bs_start.secs, tstop=sched_stop.secs, char=char)
     intervals = get_obs_intervals(sc_obsids)
     obsreqs = None if orlist is None else {obs['obsid']: obs for obs in read_or_list(orlist)}
-    obstemps = get_interval_data(intervals, times, ccd_temp, obsreqs)
+    obstemps = get_interval_data(intervals, ccd_times, ccd_temps, obsreqs)
     return json.dumps(obstemps, sort_keys=True, indent=4,
                       cls=NumpyAwareJSONEncoder)
 
@@ -305,24 +312,25 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
     return model
 
 
-def get_week_states(tstart, tstop, bs_cmds, tlm):
+def get_week_states(rltt, sched_stop, bs_cmds, tlm):
     """
-    Make states from last available telemetry through the end of the backstop commands
+    Make states from last available telemetry through the end of the schedule
 
-    :param tstart: start time from RLTT if available else first backstop command
-    :param tstop: stop time from SCHEDULED_STOP_TIME if available else last backstop command
+    :param rltt: running load termination time (discard running load commands after rltt)
+    :param sched_stop: create states out through scheduled stop time
     :param bs_cmds: backstop commands for products under review
     :param tlm: available pitch and aacccdpt telemetry recarray from fetch
     :returns: numpy recarray of states
     """
     # Get temperature data at the end of available telemetry
-    ok = tlm['time'] > tlm['time'][-1] - 1400
-    init_aacccdpt = np.mean(tlm['aacccdpt'][ok])
-    init_tlm_time = np.mean(tlm['time'][ok])
+    times = tlm['time']
+    i0 = np.searchsorted(times, times[-1] - 1400)
+    init_aacccdpt = np.mean(tlm['aacccdpt'][i0:])
+    init_tlm_time = np.mean(tlm['time'][i0:])
 
-    # Get commands from last telemetry up to (but not including)
-    # commands at tstart (RLTT if present else first backstop cmd)
-    cmds = kadi.commands.get_cmds(init_tlm_time, tstart)
+    # Get currently running (or approved) commands from last telemetry up to
+    # and including commands at RLTT
+    cmds = kadi.commands.get_cmds(init_tlm_time, rltt, inclusive_stop=True)
 
     # Add in the backstop commands
     cmds = cmds.add_cmds(bs_cmds)
@@ -522,7 +530,8 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
     :param states: commanded states
     :param times: time stamps (sec) for temperature arrays
     :param temps: dict of temperatures
-    :param tstart: load start time
+    :param tstart: load start time (secs)
+    :param tstop: schedule stop time (secs)
     :rtype: dict of review information including plot file names
     """
     plots = {}
