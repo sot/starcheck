@@ -18,6 +18,7 @@ import shutil
 import numpy as np
 import json
 import yaml
+from pathlib import Path
 
 # Matplotlib setup
 # Use Agg backend for command-line (non-interactive) operation
@@ -33,6 +34,7 @@ from Ska.Matplotlib import lineid_plot
 import Ska.DBI
 import Ska.engarchive.fetch_sci as fetch
 from Chandra.Time import DateTime
+import kadi
 import kadi.commands
 import kadi.commands.states as kadi_states
 import xija
@@ -77,10 +79,8 @@ def get_options():
                         default=sys.stdout,
                         help="output destination for temperature JSON, file or stdout")
     parser.add_argument("--model-spec",
-                        default="starcheck/data/aca_spec.json",
                         help="xija ACA model specification file")
     parser.add_argument("--char-file",
-                        default="starcheck/data/characteristics.yaml",
                         help="starcheck characteristics file")
     parser.add_argument("--orlist",
                         help="OR list")
@@ -99,7 +99,7 @@ def get_options():
 
 
 def get_ccd_temps(oflsdir, outdir='out',
-                  json_obsids=sys.stdin,
+                  json_obsids=None,
                   model_spec=None, char_file=None, orlist=None,
                   run_start_time=None,
                   verbose=1, **kwargs):
@@ -111,15 +111,28 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param oflsdir: products directory
     :param outdir: output directory for plots
     :param json_obsids: file-like object or string containing JSON of
-                        starcheck Obsid objects
-    :param model_spec: xija ACA model specification file name
+                        starcheck Obsid objects (default='<oflsdir>/starcheck/obsids.json')
+    :param model_spec: xija ACA model spec file (default=package aca_spec.json)
+    :param char_file: starcheck characteristics file (default=package characteristics.yaml)
     :param run_start_time: Chandra.Time date, clock time when starcheck was run,
                      or a user-provided value (usually for regression testing).
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
+    :param kwargs: extra args, including test_rltt and test_sched_stop for testing
+
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
     if not os.path.exists(outdir):
         os.mkdir(outdir)
+
+    module_dir = Path(__file__).parent
+    if model_spec is None:
+        model_spec = str(module_dir / 'data' / 'aca_spec.json')
+    if char_file is None:
+        char_file = str(module_dir / 'data' / 'characteristics.yaml')
+
+    if json_obsids is None:
+        # Only happens in testing, so use existing obsids file in OFLS dir
+        json_obsids = Path(oflsdir, 'starcheck', 'obsids.json').read_text()
 
     run_start_time = DateTime(run_start_time)
     config_logging(outdir, verbose)
@@ -135,6 +148,7 @@ def get_ccd_temps(oflsdir, outdir='out',
                 % (TASK_NAME, proc['execution_time'], proc['run_user']))
     logger.info("# Continuity run_start_time = {}".format(run_start_time.date))
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
+    logger.info(f'# kadi version = {kadi.__version__}')
     logger.info('###############################'
                 '######################################\n')
 
@@ -147,8 +161,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     # json_obsids can be either a string or a file-like object.  Try those options in order.
     try:
         sc_obsids = json.loads(json_obsids)
-        with open('test_obsids.json', 'w') as fh:
-            fh.write(json_obsids)
     except TypeError:
         sc_obsids = json.load(json_obsids)
 
@@ -172,6 +184,14 @@ def get_ccd_temps(oflsdir, outdir='out',
     ok = bs_cmds['event_type'] == 'SCHEDULED_STOP_TIME'
     sched_stop = DateTime(bs_dates[ok][0] if np.any(ok) else bs_dates[-1])
 
+    if 'test_rltt' in kwargs:
+        rltt = DateTime(kwargs['test_rltt'])
+    if 'test_sched_stop' in kwargs:
+        sched_stop = DateTime(kwargs['test_sched_stop'])
+
+    logger.info(f'RLTT = {rltt.date}')
+    logger.info(f'sched_stop = {sched_stop.date}')
+
     proc['datestart'] = bs_start.date
     proc['datestop'] = sched_stop.date
 
@@ -181,11 +201,10 @@ def get_ccd_temps(oflsdir, outdir='out',
     tlm_end_time = min(fetch.get_time_range('aacccdpt', format='secs')[1],
                        bs_start.secs, run_start_time.secs)
     tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1)
-    print(DateTime(tlm_end_time).date)
     states = get_week_states(rltt, sched_stop, bs_cmds, tlm)
 
     # If the last obsid interval extends over the end of states then
-    # extend the state / predictions
+    # extend the state / predictions.
     last_state = states[-1]
     last_sc_obsid = sc_obsids[-1]
     if ((last_state['obsid'] == last_sc_obsid['obsid']) &
@@ -193,11 +212,6 @@ def get_ccd_temps(oflsdir, outdir='out',
         obs_tstop = last_sc_obsid['obs_tstop']
         last_state['tstop'] = obs_tstop
         last_state['datestop'] = DateTime(obs_tstop).date
-
-    # Extend last state to reflect scheduled stop time
-    if last_state['datestop'] < sched_stop.date:
-        last_state['tstop'] = sched_stop.secs
-        last_state['datestop'] = sched_stop.date
 
     if rltt.date > DateTime(MODEL_VALID_FROM).date:
         ccd_times, ccd_temps = make_week_predict(model_spec, states, sched_stop)
@@ -339,8 +353,8 @@ def get_week_states(rltt, sched_stop, bs_cmds, tlm):
 
     # Get the states for available commands.  This automatically gets continuity.
     state_keys = ['obsid', 'pitch', 'q1', 'q2', 'q3', 'q4', 'eclipse']
-    states = kadi_states.get_states(cmds=cmds, state_keys=state_keys,
-                                    merge_identical=True)
+    states = kadi_states.get_states(cmds=cmds, start=init_tlm_time, stop=sched_stop,
+                                    state_keys=state_keys, merge_identical=True)
 
     states['tstart'] = DateTime(states['datestart']).secs
     states['tstop'] = DateTime(states['datestop']).secs
@@ -459,6 +473,10 @@ def config_logging(outdir, verbose):
 
     logger = logging.getLogger(TASK_NAME)
     logger.setLevel(loglevel)
+
+    # Remove existing handlers if calc_ccd_temps is called multiple times
+    for handler in list(logger.handlers):
+        logger.removeHandler(handler)
 
     formatter = logging.Formatter('%(message)s')
 
