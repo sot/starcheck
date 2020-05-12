@@ -203,8 +203,13 @@ def get_ccd_temps(oflsdir, outdir='out',
     tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1)
     states = get_week_states(rltt, sched_stop, bs_cmds, tlm)
 
-    # If the last obsid interval extends over the end of states then
-    # extend the state / predictions.
+    # If the last obsid interval extends over the end of states then extend the
+    # state / predictions. In the absence of something useful like
+    # SCHEDULED_STOP, if the schedule ends in NPNT (and has no maneuver in
+    # backstop to define end time), the obsid stop time for the last observation
+    # in the schedule might be set from the stop time listed in the processing
+    # summary. Going forward from backstop 6.9 this clause is likely not being
+    # run.
     last_state = states[-1]
     last_sc_obsid = sc_obsids[-1]
     if ((last_state['obsid'] == last_sc_obsid['obsid']) &
