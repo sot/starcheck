@@ -57,9 +57,9 @@ def _yagzag_to_pixels(yag, zag):
     return float(row), float(col)
 
 
-def _guide_count(mags, t_ccd):
+def _guide_count(mags, t_ccd, count_9th=False):
     eff_t_ccd = get_effective_t_ccd(t_ccd)
-    return float(guide_count(np.array(mags), eff_t_ccd))
+    return float(guide_count(np.array(mags), eff_t_ccd, count_9th))
 
 def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z):
     """
@@ -1058,7 +1058,6 @@ sub check_bright_perigee{
 #############################################################################################
     my $self = shift;
     my $radmon = shift;
-    my $min_mag = 9.0;
     my $min_n_stars = 3;
 
     # if this is an OR, just return
@@ -1098,18 +1097,23 @@ sub check_bright_perigee{
     my $c = find_command($self, 'MP_STARCAT');
     return if (not defined $c);
 
-    # check for at least N bright stars
-    my @bright_stars = grep { (defined $c->{"TYPE$_"})
-                              and ($c->{"TYPE$_"} =~ /BOT|GUI/)
-                              and ($c->{"GS_MAG$_"} < $min_mag) } (0 .. 16);
-    my $bright_count = scalar(@bright_stars);
+    my @mags = ();
+    for my $i (1 .. 16){
+	if ($c->{"TYPE$i"} =~ /GUI|BOT/){
+            my $mag = $c->{"GS_MAG$i"};
+            push @mags, $mag;
+	}
+    }
+
+    # Pass 1 to _guide_count as third arg to use the count_9th mode
+    my $bright_count = _guide_count(\@mags, $self->{ccd_temp}, 1);
     if ($bright_count < $min_n_stars){
         if ($self->{special_case_er} == 1){
-            push @{$self->{fyi}}, "Only $bright_count star(s) brighter than $min_mag mag. "
+            push @{$self->{fyi}}, "Only $bright_count star(s) brighter than scaled 9th mag. "
                 . "Acceptable for Special Case ER\n";
         }
         else{
-            push @{$self->{warn}}, "$bright_count star(s) brighter than $min_mag mag. "
+            push @{$self->{warn}}, "$bright_count star(s) brighter than scaled 9th mag. "
                 . "Perigee requires at least $min_n_stars\n";
         }
 
