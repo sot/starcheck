@@ -48,6 +48,7 @@ $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 use Inline Python => q{
 
 import os
+import json
 import traceback
 
 from Chandra.Time import DateTime
@@ -113,6 +114,9 @@ def get_dither_kadi_state(date):
     state['time'] = float(np.max([DateTime(state['__dates__'][key]).secs for key in cols]))
     return state
 
+def dither_from_json(file):
+    return json.load(open(file, 'r'))
+
 
 def get_run_start_time(run_start_time, backstop_start):
     """
@@ -174,6 +178,7 @@ my %par = (dir  => '.',
                    agasc_file => "${SKA}/data/agasc/proseco_agasc_1p7.h5",
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
+                   dith_state_file => "",
 		   );
 
 
@@ -191,6 +196,7 @@ GetOptions( \%par,
 			'fid_char=s',
 			'config_file=s',
                         'run_start_time=s',
+                        'dith_state_file=s',
 			) ||
     exit( 1 );
 
@@ -408,7 +414,19 @@ if ($manerr_file) {
 # in review, and the RUNNING_LOAD_TERMINATION_TIME backstop "pseudo" command is available, that
 # command will be the first command ($bs[0]) and the kadi dither state will be fetched at that time.
 # This is expected and appropriate.
-my $kadi_dither = get_dither_kadi_state($bs[0]->{date});
+my $kadi_dither;
+if ($par{dith_state_file} ne ''){
+    # Use get_file to add the file to the logs
+    get_file("$par{dith_state_file}", 'dith state (override)', 'required');
+    $kadi_dither = dither_from_json($par{dith_state_file});
+    use Data::Dumper;
+    print STDERR "Overriding kadi cmd state dither with:\n";
+    print STDERR Dumper $kadi_dither;
+}
+else{
+    $kadi_dither = get_dither_kadi_state($bs[0]->{date});
+}
+
 
 # Read DITHER history file and backstop to determine expected dither state
 my ($dither_error, $dither) = Ska::Parse_CM_File::dither($dither_file, \@bs, $kadi_dither);
