@@ -8,12 +8,15 @@
 # Unset PYTHONPATH because custom PYTHONPATH should never be allowed
 # for flight starcheck
 unset PYTHONPATH
-export PYTHONHOME=$SKA
+
+PYTHON_EXE=`which python`
+PYTHON_DIR=`dirname $PYTHON_EXE`
+export PYTHONHOME=`dirname $PYTHON_DIR`
 
 # Check for skare3 perl
 if [[ ! -f ${PYTHONHOME}/bin/perl ]];
 then
-    echo "skare3 perl not installed. conda install perl perl-core-deps perl-ska-classic"
+    echo "skare3 perl not installed. conda install perl perl-ska-convert"
     exit 1
 fi
 # Check for perl deps
