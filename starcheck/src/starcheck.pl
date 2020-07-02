@@ -253,22 +253,6 @@ if ($OS eq 'SunOS'){
     warning("uname == SunOS; starcheck is only approved on Linux \n");
 }
 
-
-# Dark Cal Checker Section
-use Ska::Starcheck::Dark_Cal_Checker;
-my $dark_cal_checker;
-eval{
-    $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir},
-                                                                app_data => $Starcheck_Data});
-};
-if ($@){
-	unless ($@ =~ /No ACA commanding found/){
-		warning("Dark Cal Checker Failed $@ \n");
-	}
-}
-
-
-
 # Now that global_warn exists, if the DOT wasn't made/modified by SAUSAGE
 # throw an error
 if ($dot_touched_by_sausage == 0 ){
@@ -288,16 +272,7 @@ Ska::Starcheck::Obsid::set_odb(%odb);
 
 
 Ska::Starcheck::Obsid::set_config($config_ref);
-# If there is a dark current, add the obsids of the dark cal replicas
-# (which have keys beginning with "DC_T") to the set of obsids/oflsids
-# that are "ok" to not have star catalogs
-if ($dark_cal_checker->{dark_cal_present}){
-    foreach my $key (keys %{$dark_cal_checker->{dc_oflsid}}){
-        if ($key =~ /DC_T/){
-            push @{$config_ref->{no_starcat_oflsid}}, $dark_cal_checker->{dc_oflsid}->{$key};
-        }
-    }
-}
+
 
 # Set the multple star filter disabled in the model if after this date
 my $MSF_ENABLED = $bs[0]->{date} lt '2016:102:00:00:00.000';
@@ -708,18 +683,6 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($ATT_CHECK_AFTER))){
             }
         }
     }
-}
-
-# Dark Cal Checker
-if ($dark_cal_checker->{dark_cal_present}){
-    $out .= "------------  DARK CURRENT CALIBRATION CHECKS  -----------------\n\n";
-    # Add a link to the comm summary if we've figured out a mission planning week name for these products
-    if ($mp_top_link){
-        my $url = sprintf("https://occweb.cfa.harvard.edu/occweb/FOT/mission_planning/Backstop/%s/output/%s_CommSum.html", $mp_top_link->{week}, $mp_top_link->{week});
-        $out .= sprintf("<A HREF=\"%s\">Comm Summary: %s</A>\n\n", $url, $mp_top_link->{week});
-    }
-    $out .= dark_cal_print($dark_cal_checker, $STARCHECK);
-    $out .= "\n";
 }
 
 # CCD temperature plot
