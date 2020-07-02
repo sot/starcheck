@@ -14,9 +14,6 @@ use strict;
 use warnings; 
 use POSIX qw( ceil);
 
-use Time::JulianDay;
-use Time::DayOfYear;
-use Time::Local;
 use IO::All;
 use Carp;
 

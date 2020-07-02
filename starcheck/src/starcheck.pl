@@ -21,9 +21,6 @@ use File::Basename;
 use File::Copy;
 use Scalar::Util qw(looks_like_number);
 
-use Time::JulianDay;
-use Time::DayOfYear;
-use Time::Local;
 use PoorTextFormat;
 
 #use lib '/proj/axaf/simul/lib/perl';
