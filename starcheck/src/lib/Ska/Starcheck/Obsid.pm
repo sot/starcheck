@@ -28,7 +28,8 @@ from astropy.table import Table
 from starcheck.utils import time2date, date2time, de_bytestr
 from mica.archive import aca_dark
 from chandra_aca.star_probs import guide_count
-from chandra_aca.transform import yagzag_to_pixels, count_rate_to_mag, mag_to_count_rate
+from chandra_aca.transform import (yagzag_to_pixels, pixels_to_yagzag,
+                                   count_rate_to_mag, mag_to_count_rate)
 import Quaternion
 from Ska.quatutil import radec2yagzag
 import agasc
@@ -42,6 +43,20 @@ import mica.stats.guide_stats
 
 ACQS = mica.stats.acq_stats.get_stats()
 GUIDES = mica.stats.guide_stats.get_stats()
+
+
+def _pixels_to_yagzag(i, j):
+    """
+    Call chandra_aca.transform.pixels_to_yagzag.
+    This wrapper is set to pass allow_bad=True, as exceptions from the Python side
+    in this case would not be helpful, and the very small bad pixel list should be
+    on the CCD.
+    :params i: pixel row / i
+    :params j: pixel col / j
+    :returns tuple: yag, zag as floats
+    """
+    yag, zag = pixels_to_yagzag(i, j, allow_bad=True)
+    return float(yag), float(zag)
 
 
 def _yagzag_to_pixels(yag, zag):
@@ -213,7 +228,6 @@ def get_mica_star_stats(agasc_id, time):
 
 use List::Util qw(min max);
 use Quat;
-use Ska::ACACoordConvert;
 use File::Basename;
 use POSIX qw(floor);
 use English;
@@ -334,7 +348,7 @@ sub set_ACA_bad_pixels {
 	    foreach my $j ($line[2]..$line[3]) {
 		my $pixel = {'row' => $i,
                              'col' => $j};
-		my ($yag,$zag) = Ska::ACACoordConvert::toAngle($i,$j);
+		my ($yag,$zag) = _pixels_to_yagzag($i, $j);
 		$pixel->{yag} = $yag;
 		$pixel->{zag} = $zag;
 		push @bad_pixels, $pixel;
