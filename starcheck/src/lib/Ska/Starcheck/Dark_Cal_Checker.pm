@@ -6,13 +6,19 @@ use strict;
 use warnings;
 use Carp;
 use IO::All;
-use Ska::Convert qw(date2time time2date);
 use Quat;
 use Config::General qw( ParseConfig );
 use Math::Trig;
 use Data::Dumper;
 
 use Ska::Parse_CM_File;
+
+use Inline Python => q{
+
+from starcheck.utils import date2time, time2date
+
+};
+
 
 # Add a module-wide hash to store a mapping of Obsid/OFLSIDs to dark cal
 # labels (DFC_?/DC_T?)
@@ -1894,8 +1900,12 @@ package TLREntry;
 
 use strict;
 use Carp;
-use Ska::Convert qw(date2time);
 
+use Inline Python => q{
+
+from starcheck.utils import date2time, time2date
+
+};
 
 use Class::MakeMethods::Standard::Hash  (
 					 scalar => [ (qw(

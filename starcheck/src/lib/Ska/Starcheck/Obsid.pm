@@ -25,6 +25,7 @@ use Inline Python => q{
 import numpy as np
 from astropy.table import Table
 
+from starcheck.utils import time2date, date2time, de_bytestr
 from mica.archive import aca_dark
 from chandra_aca.star_probs import guide_count
 from chandra_aca.transform import yagzag_to_pixels, count_rate_to_mag, mag_to_count_rate
@@ -217,7 +218,6 @@ use File::Basename;
 use POSIX qw(floor);
 use English;
 use IO::All;
-use Ska::Convert qw(date2time time2date);
 
 use RDB;
 
