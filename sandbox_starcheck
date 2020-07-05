@@ -14,7 +14,7 @@ then
     exit 1
 fi
 # Check for perl deps
-perl -e "use IO::All; use Time::DayOfYear;"
+perl -e "use IO::All;"
 if [[ $? -ne 0 ]];
 then
     echo "****"
