@@ -1,5 +1,4 @@
 import os
-import traceback
 import numpy as np
 
 from Chandra.Time import DateTime
@@ -10,6 +9,7 @@ from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_char
 from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck import __version__ as version
 from kadi.commands import states
+
 
 # Borrowed from https://stackoverflow.com/a/33160507
 def de_bytestr(data):
@@ -25,8 +25,10 @@ def de_bytestr(data):
         return set(map(de_bytestr, data))
     return data
 
+
 def date2time(date):
     return pydate2secs(de_bytestr(date))
+
 
 def ccd_temp_wrapper(kwargs):
     try:
@@ -36,6 +38,7 @@ def ccd_temp_wrapper(kwargs):
         traceback.print_exc()
         raise
 
+
 def plot_cat_wrapper(kwargs):
     try:
         from starcheck.plot import make_plots_for_obsid
@@ -44,26 +47,31 @@ def plot_cat_wrapper(kwargs):
         perl.warning("Error with Inline::Python imports {}\n".format(err))
     return make_plots_for_obsid(**de_bytestr(kwargs))
 
+
 def starcheck_version():
     return version
+
 
 def get_data_dir():
     sc_data = os.path.join(os.path.dirname(starcheck.__file__), 'data')
     return sc_data if os.path.exists(sc_data) else ""
 
+
 def _make_pcad_attitude_check_report(kwargs):
     try:
-       return make_pcad_attitude_check_report(**de_bytestr(kwargs))
+        return make_pcad_attitude_check_report(**de_bytestr(kwargs))
     except Exception as err:
-       perl.warning("Error running dynamic attitude checks {}\n".format(err))
+        perl.warning("Error running dynamic attitude checks {}\n".format(err))
 
 
 def get_dither_kadi_state(date):
     date = date.decode('ascii')
-    cols = ['dither', 'dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw']
+    cols = ['dither', 'dither_ampl_pitch', 'dither_ampl_yaw',
+            'dither_period_pitch', 'dither_period_yaw']
     state = states.get_continuity(date, cols)
     # Cast the numpy floats as plain floats
-    for key in ['dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw']:
+    for key in ['dither_ampl_pitch', 'dither_ampl_yaw',
+                'dither_period_pitch', 'dither_period_yaw']:
         state[key] = float(state[key])
     # get most recent change time
     state['time'] = float(np.max([DateTime(state['__dates__'][key]).secs for key in cols]))
