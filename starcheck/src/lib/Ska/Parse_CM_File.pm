@@ -31,7 +31,6 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
 require Exporter;
 
-
 our @ISA = qw(Exporter);
 our @EXPORT = qw();
 our @EXPORT_OK = qw( );
@@ -43,8 +42,6 @@ sub rel_date2time{
     my ($sec, $min, $hr, $doy) = reverse split ":", $date;
     return ($doy*86400 + $hr*3600 + $min*60 + $sec);
 }
-
-
 ###############################################################
 sub TLR_load_segments{
 ###############################################################
