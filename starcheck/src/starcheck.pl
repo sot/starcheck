@@ -21,14 +21,7 @@ use File::Basename;
 use File::Copy;
 use Scalar::Util qw(looks_like_number);
 
-use Time::JulianDay;
-use Time::DayOfYear;
-use Time::Local;
 use PoorTextFormat;
-
-#use lib '/proj/axaf/simul/lib/perl';
-#use GrabEnv qw( grabenv );
-#use Shell::GetEnv;
 
 use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
@@ -36,7 +29,6 @@ use Carp;
 use YAML;
 use JSON ();
 
-use Ska::Convert qw( date2time );
 use Cwd qw( abs_path );
 
 use HTML::TableExtract;
@@ -50,117 +42,21 @@ use Inline Python => q{
 import os
 import traceback
 
-from Chandra.Time import DateTime
 from chandra_aca.star_probs import set_acq_model_ms_filter
-import starcheck
-from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
-from starcheck.calc_ccd_temps import get_ccd_temps
-from starcheck import __version__ as version
-from kadi.commands import states
-
-# Borrowed from https://stackoverflow.com/a/33160507
-def de_bytestr(data):
-    if isinstance(data, bytes):
-        return data.decode()
-    if isinstance(data, dict):
-        return dict(map(de_bytestr, data.items()))
-    if isinstance(data, tuple):
-        return tuple(map(de_bytestr, data))
-    if isinstance(data, list):
-        return list(map(de_bytestr, data))
-    if isinstance(data, set):
-        return set(map(de_bytestr, data))
-    return data
-
-def ccd_temp_wrapper(kwargs):
-    try:
-        return get_ccd_temps(**de_bytestr(kwargs))
-    except Exception:
-        import traceback
-        traceback.print_exc()
-        raise
-
-def plot_cat_wrapper(kwargs):
-    try:
-        from starcheck.plot import make_plots_for_obsid
-    except ImportError as err:
-        # write errors to starcheck's global warnings and STDERR
-        perl.warning("Error with Inline::Python imports {}\n".format(err))
-    return make_plots_for_obsid(**de_bytestr(kwargs))
-
-def starcheck_version():
-    return version
-
-def get_data_dir():
-    sc_data = os.path.join(os.path.dirname(starcheck.__file__), 'data')
-    return sc_data if os.path.exists(sc_data) else ""
-
-def _make_pcad_attitude_check_report(kwargs):
-    try:
-       return make_pcad_attitude_check_report(**de_bytestr(kwargs))
-    except Exception as err:
-       perl.warning("Error running dynamic attitude checks {}\n".format(err))
-
-
-def get_dither_kadi_state(date):
-    date = date.decode('ascii')
-    cols = ['dither', 'dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw']
-    state = states.get_continuity(date, cols)
-    # Cast the numpy floats as plain floats
-    for key in ['dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw']:
-        state[key] = float(state[key])
-    # get most recent change time
-    state['time'] = float(np.max([DateTime(state['__dates__'][key]).secs for key in cols]))
-    return state
-
-
-def get_run_start_time(run_start_time, backstop_start):
-    """
-    Determine a reasonable reference run start time based on the supplied
-    run start time and the time of the first backstop command.  This
-    code uses a small hack so that a negative number is interpreted
-    as the desired "days back" from the backstop start time.  All other
-    Chandra.Time compatible formats for run start are used as absolute
-    times (which will then be passed to the thermal model code as the
-    time before which telemetry should be found for an initial state).
-    Note that the logic to determine the initial state will not allow
-    that state to be after backstop start time.
-
-    :param run_start_time: supplied run start time in a Chandra.Time format,
-                      empty string interpreted as "now" as expected,
-                      negative numbers special cased to be interpreted as
-                      "days back" relative to first backstop command.
-    :param backstop_start: time of first backstop command
-    :returns: YYYY:DOY string of reference run start time
-    """
-
-    run_start_time = de_bytestr(run_start_time)
-    backstop_start = de_bytestr(backstop_start)
-
-    # For the special case where run_start_time casts as a float
-    # check to see if it is negative and if so, set the reference
-    # time to be a time run_start_time days back from backstop start
-    try:
-        run_start_time = float(run_start_time)
-    # Handle nominal errors if run_start_time None or non-float Chandra.Time OK string.
-    except (TypeError, ValueError):
-        ref_time = DateTime(run_start_time)
-    else:
-        if run_start_time < 0:
-            ref_time = DateTime(backstop_start) + run_start_time
-        else:
-            raise ValueError("Float run_start_time should be negative")
-    return ref_time.date
+from starcheck.pcad_att_check import check_characteristics_date
+from starcheck.utils import (_make_pcad_attitude_check_report,
+                             plot_cat_wrapper,
+                             date2time, time2date,
+                             ccd_temp_wrapper,
+                             starcheck_version, get_data_dir,
+                             get_dither_kadi_state,
+                             get_run_start_time)
 
 
 };
 
 
 my $version = starcheck_version();
-
-# cheat to get the OS (major)
-my $OS = `uname`;
-chomp($OS);
 
 
 # Set some global vars with directory locations
@@ -341,26 +237,6 @@ my %or = Ska::Parse_CM_File::OR($or_file) if ($or_file);
 my ($fid_time_violation, $error, $fidsel) = Ska::Parse_CM_File::fidsel($fidsel_file, \@bs) ;
 map { warning("$_\n") } @{$error};
 
-## Warn if we are on Solaris
-if ($OS eq 'SunOS'){
-    warning("uname == SunOS; starcheck is only approved on Linux \n");
-}
-
-
-# Dark Cal Checker Section
-use Ska::Starcheck::Dark_Cal_Checker;
-my $dark_cal_checker;
-eval{
-    $dark_cal_checker = Ska::Starcheck::Dark_Cal_Checker->new({ dir => $par{dir},
-                                                                app_data => $Starcheck_Data});
-};
-if ($@){
-	unless ($@ =~ /No ACA commanding found/){
-		warning("Dark Cal Checker Failed $@ \n");
-	}
-}
-
-
 
 # Now that global_warn exists, if the DOT wasn't made/modified by SAUSAGE
 # throw an error
@@ -381,16 +257,6 @@ Ska::Starcheck::Obsid::set_odb(%odb);
 
 
 Ska::Starcheck::Obsid::set_config($config_ref);
-# If there is a dark current, add the obsids of the dark cal replicas
-# (which have keys beginning with "DC_T") to the set of obsids/oflsids
-# that are "ok" to not have star catalogs
-if ($dark_cal_checker->{dark_cal_present}){
-    foreach my $key (keys %{$dark_cal_checker->{dc_oflsid}}){
-        if ($key =~ /DC_T/){
-            push @{$config_ref->{no_starcat_oflsid}}, $dark_cal_checker->{dc_oflsid}->{$key};
-        }
-    }
-}
 
 # Set the multple star filter disabled in the model if after this date
 my $MSF_ENABLED = $bs[0]->{date} lt '2016:102:00:00:00.000';
@@ -803,18 +669,6 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($ATT_CHECK_AFTER))){
     }
 }
 
-# Dark Cal Checker
-if ($dark_cal_checker->{dark_cal_present}){
-    $out .= "------------  DARK CURRENT CALIBRATION CHECKS  -----------------\n\n";
-    # Add a link to the comm summary if we've figured out a mission planning week name for these products
-    if ($mp_top_link){
-        my $url = sprintf("https://occweb.cfa.harvard.edu/occweb/FOT/mission_planning/Backstop/%s/output/%s_CommSum.html", $mp_top_link->{week}, $mp_top_link->{week});
-        $out .= sprintf("<A HREF=\"%s\">Comm Summary: %s</A>\n\n", $url, $mp_top_link->{week});
-    }
-    $out .= dark_cal_print($dark_cal_checker, $STARCHECK);
-    $out .= "\n";
-}
-
 # CCD temperature plot
 if ($obsid_temps){
     $out .= "------------  CCD TEMPERATURE PREDICTION -----------------\n\n";
@@ -1025,35 +879,7 @@ if ($par{text}) {
     print STDERR "Wrote text report to $STARCHECK.txt\n";
 
 }
-
   
-##***************************************************************************
-sub dark_cal_print{
-##***************************************************************************
-
-    my $dark_cal_checker = shift;
-    my $out_dir = shift;
-
-    io("${out_dir}/dark_cal_verbose.html")->print($dark_cal_checker->print({ verbose => 1,
-																			 criteria => 0,
-																			 html_standalone => 1}));
-
-
-    io("${out_dir}/dark_cal_super_verbose.html")->print($dark_cal_checker->print({verbose => 1,
-																				  criteria => 1,
-																				  html_standalone => 1}));
-
-    my $out;
-    $out .= "<A HREF=\"${out_dir}/dark_cal_verbose.html\">VERBOSE</A> ";
-    $out .= "<A HREF=\"${out_dir}/dark_cal_super_verbose.html\">SUPERVERBOSE</A>\n";
-    $out .= $dark_cal_checker->print({verbose => 0,
-									  criteria => 0,
-									  html => 0,
-									  link_to => "${out_dir}/dark_cal_super_verbose.html",
-								  });
-
-    return $out;
-}
 
 ##***************************************************************************
 sub guess_mp_toplevel{

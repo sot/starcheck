@@ -7,9 +7,9 @@ SRC = starcheck/src
 RELATED_LIB = $(SRC)/StarcheckParser.pm
 BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
 LIB = $(SRC)/lib/Ska/Starcheck/Obsid.pm \
-	$(SRC)/lib/Ska/Starcheck/Dark_Cal_Checker.pm $(SRC)/lib/Ska/Parse_CM_File.pm
+	$(SRC)/lib/Ska/Parse_CM_File.pm
 PYTHON_LIB = starcheck/calc_ccd_temps.py starcheck/pcad_att_check.py starcheck/plot.py \
-             starcheck/version.py starcheck/__init__.py
+	     starcheck/utils.py starcheck/__init__.py
 DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
 
@@ -23,7 +23,6 @@ TEST_BACKSTOP = JUL0918A/CR190_0603.backstop
 DATA_FILES = starcheck/data/aca_spec.json starcheck/data/ACABadPixels starcheck/data/agasc.bad \
 	starcheck/data/fid_CHARACTERIS_JUL01 starcheck/data/fid_CHARACTERIS_FEB07 \
 	starcheck/data/fid_CHARACTERISTICS starcheck/data/characteristics.yaml \
-	starcheck/data/A.tlr starcheck/data/B.tlr starcheck/data/tlr.cfg \
 	starcheck/data/overlib.js starcheck/data/up.gif starcheck/data/down.gif \
 
 SHA_FILES = ${SKA_ARCH_OS}/bin/ska_version $(BIN) $(LIB) \

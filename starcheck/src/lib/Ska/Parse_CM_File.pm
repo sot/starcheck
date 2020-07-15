@@ -13,13 +13,16 @@ package Ska::Parse_CM_File;
 use strict;
 use warnings; 
 use POSIX qw( ceil);
-use Ska::Convert qw(date2time time2date);
 
-use Time::JulianDay;
-use Time::DayOfYear;
-use Time::Local;
 use IO::All;
 use Carp;
+
+
+use Inline Python => q{
+
+from starcheck.utils import date2time, time2date
+
+};
 
 my $VERSION = '$Id$';  # '
 1;
@@ -33,6 +36,19 @@ our @EXPORT = qw();
 our @EXPORT_OK = qw( );
 %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
+###############################################################
+sub rel_date2time{
+###############################################################
+
+    # Return seconds when suppled a "relative datetime" of the
+    # format 000:00:00:00.000 (DOY:HH:MM:SS.sss).
+    my $date = shift;
+
+    # The old code here uses reverse to just ignore a year if
+    # included in the string.
+    my ($sec, $min, $hr, $doy) = reverse split ":", $date;
+    return ($doy*86400 + $hr*3600 + $min*60 + $sec);
+}
 
 ###############################################################
 sub TLR_load_segments{
@@ -479,8 +495,11 @@ sub DOT {
 
     foreach (keys %command) {
         %{$dot{$_}} = parse_params($command{$_});
-        $dot{$_}{time}  = date2time($dot{$_}{TIME})     if ($dot{$_}{TIME});
-        $dot{$_}{time} += date2time($dot{$_}{MANSTART}) if ($dot{$_}{TIME} && $dot{$_}{MANSTART});
+        $dot{$_}{time}  = date2time($dot{$_}{TIME}) if ($dot{$_}{TIME});
+
+	# MANSTART is in the dot as a "relative" time like "000:00:00:00.000", so just pass it
+	# to the rel_date2time routine designed to handle that.
+        $dot{$_}{time} += rel_date2time($dot{$_}{MANSTART}) if ($dot{$_}{TIME} && $dot{$_}{MANSTART});
         $dot{$_}{cmd_identifier} = "$dot{$_}{anon_param1}_$dot{$_}{anon_param2}"
             if ($dot{$_}{anon_param1} and $dot{$_}{anon_param2});
         $dot{$_}{linenum} = $linenum{$_};
@@ -956,31 +975,6 @@ sub odb {
     return (%odb);
 }		
 
-
-##***************************************************************************
-sub local_date2time {
-##***************************************************************************
-# Date format:  1999:260:03:30:01.542
-    
-    my $date = shift;
-    my ($sec, $min, $hr, $doy, $yr) = reverse split ":", $date;
-
-    return ($doy*86400 + $hr*3600 + $min*60 + $sec) unless ($yr);
-
-    my ($mon, $day) = ydoy2md($yr, $doy);
-    $sec =~ s/\..+//; 
-
-    return timegm($sec,$min,$hr,$day,$mon-1,$yr);
-}
-
-##***************************************************************************
-sub rel_date2time {
-##***************************************************************************
-# Date format:  1999:260:03:30:01.542
-    
-    my $date = shift;
-    my ($yr, $doy, $hr, $min, $sec) = split ":", $date;
-}
 
 
 ##***************************************************************************
