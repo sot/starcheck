@@ -23,10 +23,6 @@ use Scalar::Util qw(looks_like_number);
 
 use PoorTextFormat;
 
-#use lib '/proj/axaf/simul/lib/perl';
-#use GrabEnv qw( grabenv );
-#use Shell::GetEnv;
-
 use Ska::Starcheck::Obsid;
 use Ska::Parse_CM_File;
 use Carp;
@@ -61,10 +57,6 @@ from starcheck.utils import (_make_pcad_attitude_check_report,
 
 
 my $version = starcheck_version();
-
-# cheat to get the OS (major)
-my $OS = `uname`;
-chomp($OS);
 
 
 # Set some global vars with directory locations
@@ -245,10 +237,6 @@ my %or = Ska::Parse_CM_File::OR($or_file) if ($or_file);
 my ($fid_time_violation, $error, $fidsel) = Ska::Parse_CM_File::fidsel($fidsel_file, \@bs) ;
 map { warning("$_\n") } @{$error};
 
-## Warn if we are on Solaris
-if ($OS eq 'SunOS'){
-    warning("uname == SunOS; starcheck is only approved on Linux \n");
-}
 
 # Now that global_warn exists, if the DOT wasn't made/modified by SAUSAGE
 # throw an error
