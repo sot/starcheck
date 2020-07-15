@@ -36,12 +36,20 @@ our @EXPORT = qw();
 our @EXPORT_OK = qw( );
 %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
-
+###############################################################
 sub rel_date2time{
+###############################################################
+
+    # Return seconds when suppled a "relative datetime" of the
+    # format 000:00:00:00.000 (DOY:HH:MM:SS.sss).
     my $date = shift;
+
+    # The old code here uses reverse to just ignore a year if
+    # included in the string.
     my ($sec, $min, $hr, $doy) = reverse split ":", $date;
     return ($doy*86400 + $hr*3600 + $min*60 + $sec);
 }
+
 ###############################################################
 sub TLR_load_segments{
 ###############################################################
@@ -488,6 +496,9 @@ sub DOT {
     foreach (keys %command) {
         %{$dot{$_}} = parse_params($command{$_});
         $dot{$_}{time}  = date2time($dot{$_}{TIME}) if ($dot{$_}{TIME});
+
+	# MANSTART is in the dot as a "relative" time like "000:00:00:00.000", so just pass it
+	# to the rel_date2time routine designed to handle that.
         $dot{$_}{time} += rel_date2time($dot{$_}{MANSTART}) if ($dot{$_}{TIME} && $dot{$_}{MANSTART});
         $dot{$_}{cmd_identifier} = "$dot{$_}{anon_param1}_$dot{$_}{anon_param2}"
             if ($dot{$_}{anon_param1} and $dot{$_}{anon_param2});
