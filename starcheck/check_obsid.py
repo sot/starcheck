@@ -210,17 +210,24 @@ from proseco.catalog import get_aca_catalog
 
 def make_proseco_catalog(kwargs):
     """
-    Call proseco's get_acq_catalog with the parameters supplied in
+    Call proseco's get_aca_catalog with the parameters supplied in
     `kwargs` for a specific obsid catalog.  `kwargs` will be a Perl
     hash converted to dict (by Inline) of the expected keyword
     params. These keys must be defined:
 
-    'q1', 'q2', 'q3', 'q4' = the target quaternion
-    'man_angle' the maneuver angle to the target quaternion in degrees.
-    'acq_ids' list of acq star ids
-    'halfwidths' list of acq star halfwidths in arcsecs
-    't_ccd_acq' acquisition temperature in deg C
+    'obsid' obsid
+    'att' the target quaternion
     'date' observation date (in Chandra.Time compatible format)
+    'n_acq' number of acquisition stars
+    'n_guide' number of guide stars
+    'man_angle' the maneuver angle to the target quaternion in degrees.
+    'include_ids_acq' list of acq star ids
+    'include_ids_guide' list of guide star ids
+    'include_halfws_acq' list of acq star halfwidths in arcsecs
+    'dither_acq' acquisition dither
+    'dither_guide' guide dither
+    't_ccd_acq' acquisition temperature in deg C
+    't_ccd_guide' guide temperature in dec C
     'detector' science detector
     'sim_offset' SIM offset
 
