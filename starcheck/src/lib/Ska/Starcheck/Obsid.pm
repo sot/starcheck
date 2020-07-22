@@ -1088,12 +1088,6 @@ sub check_star_catalog {
         }
     }
 
-    # Seed smallest maximums and largest minimums for guide star box
-    my $max_y = -3000;
-    my $min_y = 3000;
-    my $max_z = -3000;
-    my $min_z = 3000;
-
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
 	my $type = $c->{"TYPE$i"};
@@ -1107,13 +1101,6 @@ sub check_star_catalog {
 	# Search error for ACQ is the slew error, for fid, guide or mon it is about 4 arcsec
 	my $search_err = ( (defined $type) and ($type =~ /BOT|ACQ/)) ? $slew_err : 4.0;
 	
-	# Find position extrema for smallest rectangle check
-	if ( $type =~ /BOT|GUI/ ) {
-	    $max_y = ($max_y > $yag ) ? $max_y : $yag;
-	    $min_y = ($min_y < $yag ) ? $min_y : $yag;
-	    $max_z = ($max_z > $zag ) ? $max_z : $zag;
-	    $min_z = ($min_z < $zag ) ? $min_z : $zag;
-	}
 	next if ($type eq 'NUL');
 
        # Warn if star not identified ACA-042
@@ -1385,13 +1372,6 @@ sub check_star_catalog {
 	}
     }
 
-
-
-# Find the smallest rectangle size that all acq stars fit in
-    my $y_side = sprintf( "%.0f", $max_y - $min_y );
-    my $z_side = sprintf( "%.0f", $max_z - $min_z );
-    push @yellow_warn, "Guide stars fit in $y_side x $z_side square arc-second box\n"
-	if $y_side < $min_y_side && $z_side < $min_z_side;
 
     # Collect warnings
     push @{$self->{warn}}, @warn;
