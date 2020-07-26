@@ -2470,7 +2470,8 @@ sub set_proseco_probs_and_check_P2{
         for my $warn (@{$sparkles->{$warn_type}}){
 	    # Skip the warnings for include ids as all are included in starcheck->sparkles
 	    # For this, we really should read the pickle to compare.
-	    if (($warn =~ 'included acq ID') or ($warn =~ 'included guide ID')){
+	    if (($warn =~ 'included acq ID') or ($warn =~ 'included guide ID')
+		or ($warn =~ 'include fid ID')){
 		next;
 	    }
             # Skip warnings about imposters as handled in starcheck
