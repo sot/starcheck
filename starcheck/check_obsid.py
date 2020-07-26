@@ -272,7 +272,8 @@ def make_proseco_catalog(kwargs):
     else:
         fid_offset = 0
     fid_ids -= fid_offset
-    proseco.characteristics_fid.fid_sets[kw['detector']] = [set(list(fid_ids))]
+    args['include_ids_fid'] = list(fid_ids)
+
     aca = get_aca_catalog(**args)
     if list(aca.fids['id']) != list(fid_ids):
         raise ValueError("Unexpected proseco/starcheck fid mismatch")
