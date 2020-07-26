@@ -1208,12 +1208,6 @@ sub check_star_catalog {
                 if ($mag < 5.8){
                     push @warn, $acq_mag_warn;
                 }
-                elsif ($mag > $self->{mag_faint_red}){
-                    push @orange_warn, $acq_mag_warn;
-                }
-                elsif ($mag > $self->{mag_faint_yellow}){
-                    push @yellow_warn, $acq_mag_warn;
-                }
             }
 	}
 
