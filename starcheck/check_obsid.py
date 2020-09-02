@@ -222,8 +222,9 @@ def make_proseco_catalog(kwargs):
     'n_guide' number of guide stars
     'man_angle' the maneuver angle to the target quaternion in degrees.
     'include_ids_acq' list of acq star ids
-    'include_ids_guide' list of guide star ids
     'include_halfws_acq' list of acq star halfwidths in arcsecs
+    'include_ids_guide' list of guide star ids
+    'include_ids_fid' list of fid ids
     'dither_acq' acquisition dither
     'dither_guide' guide dither
     't_ccd_acq' acquisition temperature in deg C
@@ -240,6 +241,19 @@ def make_proseco_catalog(kwargs):
     """
 
     kw = de_bytestr(kwargs)
+
+    # Note that the fid ids in starcheck are 1-6
+    # ACIS, 7-10 HRC-I 11-14 HRC-S.  Proseco just uses indexes 1-6 so
+    # subtract off the offsets.
+    fid_ids = np.array(kw['fid_ids'])
+    if kw['detector'] == 'HRC-I':
+        fid_offset = 6
+    elif kw['detector'] == 'HRC-S':
+        fid_offset = 10
+    else:
+        fid_offset = 0
+    fid_ids -= fid_offset
+
     args = dict(obsid=int(kw['obsid']),
                 att=Quaternion.normalize(kw['att']),
                 date=kw['date'],
@@ -254,29 +268,9 @@ def make_proseco_catalog(kwargs):
                 include_halfws_acq=kw['include_halfws_acq'],
                 detector=kw['detector'], sim_offset=kw['sim_offset'],
                 include_ids_guide=kw['include_ids_guide'],
+                include_ids_fid=list(fid_ids),
                 n_fid=len(kw['fid_ids']), focus_offset=0)
-
-
-    # Apply an awkward hack (monkey patching characteristics) to deal
-    # with the fact that proseco doesn't support specifying fids
-    # explicitly.  The auto-selected fids should just match anyway,
-    # but setting them explicitly even via hack seems appropriate and
-    # somewhat robust. Note that the fid ids in starcheck are 1-6
-    # ACIS, 7-10 HRC-I 11-14 HRC-S.  Proseco just uses indexes 1-6 so
-    # subtract off the offsets.
-    fid_ids = np.array(kw['fid_ids'])
-    if kw['detector'] == 'HRC-I':
-        fid_offset = 6
-    elif kw['detector'] == 'HRC-S':
-        fid_offset = 10
-    else:
-        fid_offset = 0
-    fid_ids -= fid_offset
-    args['include_ids_fid'] = list(fid_ids)
-
     aca = get_aca_catalog(**args)
-    if list(aca.fids['id']) != list(fid_ids):
-        raise ValueError("Unexpected proseco/starcheck fid mismatch")
     return aca
 
 
