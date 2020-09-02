@@ -75,7 +75,6 @@ my %bad_acqs;
 my %bad_gui;
 my %bad_id;
 my %config;
-my $db_handle;
 
 
 1;
@@ -103,13 +102,6 @@ sub new {
     return $self;
 }
     
-##################################################################################
-sub set_db_handle {
-##################################################################################
-    my $handle = shift;
-    $db_handle = $handle;
-}
-
 
 ##################################################################################
 sub setcolors {
@@ -1783,7 +1775,7 @@ sub print_report {
                 }
             }
             # Make the id a URL if there is star history or if star history could
-            # not be checked (no db_handle)
+            # not be checked
             my $star_link;
             if ($db_stats->{acq} or $db_stats->{gui}){
                 $star_link = sprintf("HREF=\"%s%s\"",$star_stat_lookup, $c->{"GS_ID${i}"});
@@ -2465,13 +2457,15 @@ sub set_proseco_probs_and_check_P2{
 	    # Skip the warnings for include ids as all are included in starcheck->sparkles
 	    # For this, we really should read the pickle to compare.
 	    if (($warn =~ 'included acq ID') or ($warn =~ 'included guide ID')
-		or ($warn =~ 'include fid ID')){
+		or ($warn =~ 'included fid ID')){
 		next;
 	    }
             # Skip warnings about imposters as handled in starcheck
             if ($warn =~ 'imposter offset'){
                 next;
             }
+	    print "|$warn_type|\n";
+	    print ":$warn:\n";
             push @{$self->{$warn_type}}, $warn;
         }
     }
