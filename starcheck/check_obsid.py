@@ -292,9 +292,9 @@ def proseco_probs(aca, include_ids_acq):
 def run_sparkles(aca):
     acar = aca.get_review_table()
     acar.run_aca_review()
-    return {'critical': [w['text'] for w in acar.messages == 'critical'],
-            'caution': [w['text'] for w in acar.messages == 'caution'],
-            'warning': [w['text'] for w in acar.messages == 'warning'],
+    return {'warn': [w['text'] for w in acar.messages == 'critical'],
+            'orange_warn': [w['text'] for w in acar.messages == 'caution'],
+            'yellow_warn': [w['text'] for w in acar.messages == 'warning'],
             'fyi': [w['text'] for w in acar.messages == 'info']}
 
 
