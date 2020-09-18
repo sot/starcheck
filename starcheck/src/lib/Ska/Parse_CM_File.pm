@@ -569,7 +569,12 @@ sub guide{
 	    }
 	    if ($line =~ /^MON/){
 		my @l= split ' ', $line;
-		push @{$guidesumm{$oflsid}{info}}, "MON --- $l[2] $l[3] --- $l[5] $l[6] $l[7]";
+		if (scalar(@l) == 8){
+		    push @{$guidesumm{$oflsid}{info}}, "MON --- $l[2] $l[3] --- $l[5] $l[6] $l[7]";
+		}
+		else{
+		    push @{$guidesumm{$oflsid}{info}}, "MON --- $l[2] $l[3] --- $l[5] $l[6]";
+		}
 	    }
 	}
     }
