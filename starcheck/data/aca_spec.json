@@ -39,6 +39,10 @@
         [
             "2018:283:13:00:00",
             "2018:297:00:00:00"
+        ],
+        [
+            "2020:145:14:10:00",
+            "2020:152:00:00:00"
         ]
     ],
     "comps": [
@@ -101,7 +105,9 @@
                     120,
                     130,
                     150,
-                    170
+                    160,
+                    170,
+                    180
                 ],
                 [
                     0.00695,
@@ -113,12 +119,14 @@
                     -0.0816,
                     -0.0816,
                     0.0456,
-                    0.08471
+                    0.08471,
+                    0.0,
+                    0.0
                 ]
             ],
             "init_kwargs": {
                 "ampl": 0.003851,
-                "epoch": "2018:287:12:00:00",
+                "epoch": "2018:287:00:00:00",
                 "tau": 365,
                 "var_func": "linear"
             },
@@ -155,29 +163,57 @@
         },
         {
             "class_name": "StepFunctionPower",
-            "init_args": [
-                "aca0",
-                "2018:283:14:00:00"
-            ],
-            "init_kwargs": {},
+            "init_args": [],
+            "init_kwargs": {
+                "node": "aca0",
+                "time": "2018:283:14:00:00"
+            },
             "name": "step_power__aca0"
+        },
+        {
+            "class_name": "StepFunctionPower",
+            "init_args": [],
+            "init_kwargs": {
+                "P": -0.5,
+                "id": "_2",
+                "node": "aca0",
+                "time": "2020:213:04:25:12"
+            },
+            "name": "step_power_2__aca0"
         }
     ],
-    "datestart": "2018:270:12:00:46.816",
-    "datestop": "2018:305:11:52:30.816",
+    "datestart": "2017:138:00:05:02.816",
+    "datestop": "2020:242:23:51:02.816",
     "dt": 328.0,
+    "evolve_method": 1,
+    "gui_config": {
+        "filename": "/Users/mdahmer/WIP/xija_model_updates/aacccdpt/chandra_models/chandra_models/xija/aca/aca_spec.json",
+        "plot_names": [
+            "aacccdpt data__time",
+            "solarheat__aca0 solar_heat__pitch",
+            "aacccdpt resid__time"
+        ],
+        "set_data_vals": {
+            "aca0": -10
+        },
+        "size": [
+            1869,
+            1276
+        ]
+    },
+    "limits": {},
     "mval_names": [],
     "name": "aacccdpt",
     "pars": [
         {
             "comp_name": "heatsink__aca0",
             "fmt": "{:.4g}",
-            "frozen": true,
+            "frozen": false,
             "full_name": "heatsink__aca0__T",
             "max": 100.0,
             "min": -300.0,
             "name": "T",
-            "val": -23.89838937913649
+            "val": -28.65540821609129
         },
         {
             "comp_name": "heatsink__aca0",
@@ -187,7 +223,7 @@
             "max": 300.0,
             "min": 2.0,
             "name": "tau",
-            "val": 24.90678021923017
+            "val": 27.10876385166852
         },
         {
             "comp_name": "prop_heat__aca0",
@@ -217,7 +253,7 @@
             "max": 1.0,
             "min": -0.5,
             "name": "P_45",
-            "val": 0.30303718997802326
+            "val": 0.47571725930156505
         },
         {
             "comp_name": "solarheat__aca0",
@@ -227,7 +263,7 @@
             "max": 1.0,
             "min": -0.5,
             "name": "P_60",
-            "val": 0.5619160680248687
+            "val": 0.7207974181783285
         },
         {
             "comp_name": "solarheat__aca0",
@@ -237,7 +273,7 @@
             "max": 1.0,
             "min": 0.0,
             "name": "P_75",
-            "val": 0.7386282687149521
+            "val": 0.8768030843093932
         },
         {
             "comp_name": "solarheat__aca0",
@@ -247,7 +283,7 @@
             "max": 1.0,
             "min": 0.0,
             "name": "P_90",
-            "val": 0.8019261168108321
+            "val": 0.9311821208295803
         },
         {
             "comp_name": "solarheat__aca0",
@@ -257,7 +293,7 @@
             "max": 1.0,
             "min": 0.0,
             "name": "P_110",
-            "val": 0.762245281983901
+            "val": 0.9167388622154689
         },
         {
             "comp_name": "solarheat__aca0",
@@ -267,7 +303,7 @@
             "max": 10.0,
             "min": -10.0,
             "name": "P_120",
-            "val": 0.7108826947830199
+            "val": 0.8482159166685167
         },
         {
             "comp_name": "solarheat__aca0",
@@ -277,7 +313,7 @@
             "max": 1.0,
             "min": 0.0,
             "name": "P_130",
-            "val": 0.6662261894596491
+            "val": 0.7943769839748785
         },
         {
             "comp_name": "solarheat__aca0",
@@ -287,7 +323,17 @@
             "max": 1.0,
             "min": -0.5,
             "name": "P_150",
-            "val": 0.40588983469965495
+            "val": 0.5303516267211078
+        },
+        {
+            "comp_name": "solarheat__aca0",
+            "fmt": "{:.4g}",
+            "frozen": true,
+            "full_name": "solarheat__aca0__P_160",
+            "max": 1.0,
+            "min": -0.5,
+            "name": "P_160",
+            "val": 0.3357828686757357
         },
         {
             "comp_name": "solarheat__aca0",
@@ -297,7 +343,17 @@
             "max": 1.0,
             "min": -1.0,
             "name": "P_170",
-            "val": 0.009150783903215415
+            "val": 0.07507603162545229
+        },
+        {
+            "comp_name": "solarheat__aca0",
+            "fmt": "{:.4g}",
+            "frozen": true,
+            "full_name": "solarheat__aca0__P_180",
+            "max": 1.0,
+            "min": -1.0,
+            "name": "P_180",
+            "val": 0.0
         },
         {
             "comp_name": "solarheat__aca0",
@@ -307,7 +363,7 @@
             "max": 0.5,
             "min": -0.5,
             "name": "dP_45",
-            "val": 0.024404527151623303
+            "val": 0.04589293950867146
         },
         {
             "comp_name": "solarheat__aca0",
@@ -317,7 +373,7 @@
             "max": 0.5,
             "min": -0.5,
             "name": "dP_60",
-            "val": 0.04018759548735007
+            "val": 0.04873691183297606
         },
         {
             "comp_name": "solarheat__aca0",
@@ -327,7 +383,7 @@
             "max": 0.5,
             "min": -0.5,
             "name": "dP_75",
-            "val": 0.05641139343966958
+            "val": 0.056511954342371176
         },
         {
             "comp_name": "solarheat__aca0",
@@ -337,7 +393,7 @@
             "max": 0.5,
             "min": -0.5,
             "name": "dP_90",
-            "val": 0.06110552916877352
+            "val": 0.07013272342901594
         },
         {
             "comp_name": "solarheat__aca0",
@@ -347,7 +403,7 @@
             "max": 0.5,
             "min": -0.5,
             "name": "dP_110",
-            "val": 0.05970993012816805
+            "val": 0.0498172786877452
         },
         {
             "comp_name": "solarheat__aca0",
@@ -357,7 +413,7 @@
             "max": 0.5,
             "min": -0.5,
             "name": "dP_120",
-            "val": 0.05868000381144026
+            "val": 0.07893114421424799
         },
         {
             "comp_name": "solarheat__aca0",
@@ -367,7 +423,7 @@
             "max": 0.5,
             "min": -0.5,
             "name": "dP_130",
-            "val": 0.06585438499683956
+            "val": 0.07152653801792419
         },
         {
             "comp_name": "solarheat__aca0",
@@ -377,7 +433,17 @@
             "max": 0.5,
             "min": -0.5,
             "name": "dP_150",
-            "val": 0.0594172994047705
+            "val": 0.04531994865359679
+        },
+        {
+            "comp_name": "solarheat__aca0",
+            "fmt": "{:.4g}",
+            "frozen": true,
+            "full_name": "solarheat__aca0__dP_160",
+            "max": 0.5,
+            "min": -0.5,
+            "name": "dP_160",
+            "val": 0.04853608163054846
         },
         {
             "comp_name": "solarheat__aca0",
@@ -387,7 +453,17 @@
             "max": 0.5,
             "min": -0.5,
             "name": "dP_170",
-            "val": 0.05314793822355193
+            "val": 0.02854724201796699
+        },
+        {
+            "comp_name": "solarheat__aca0",
+            "fmt": "{:.4g}",
+            "frozen": true,
+            "full_name": "solarheat__aca0__dP_180",
+            "max": 0.5,
+            "min": -0.5,
+            "name": "dP_180",
+            "val": 0.006071459409910027
         },
         {
             "comp_name": "solarheat__aca0",
@@ -407,7 +483,7 @@
             "max": 1.0,
             "min": -1.0,
             "name": "ampl",
-            "val": 0.026573812060128196
+            "val": 0.03036016265296229
         },
         {
             "comp_name": "solarheat__aca0",
@@ -427,7 +503,7 @@
             "max": 300.0,
             "min": 2.0,
             "name": "tau",
-            "val": 180.29320292935742
+            "val": 181.14329844631152
         },
         {
             "comp_name": "mask__aacccdpt_gt",
@@ -442,13 +518,24 @@
         {
             "comp_name": "step_power__aca0",
             "fmt": "{:.4g}",
-            "frozen": false,
+            "frozen": true,
             "full_name": "step_power__aca0__P",
             "max": 10.0,
             "min": -10.0,
             "name": "P",
-            "val": 0.06983498009753668
+            "val": 0.07113823224061937
+        },
+        {
+            "comp_name": "step_power_2__aca0",
+            "fmt": "{:.4g}",
+            "frozen": true,
+            "full_name": "step_power_2__aca0__P",
+            "max": 10.0,
+            "min": -10.0,
+            "name": "P",
+            "val": -0.069461182096853
         }
     ],
+    "rk4": 0,
     "tlm_code": null
 }
