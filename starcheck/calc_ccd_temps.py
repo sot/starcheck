@@ -153,7 +153,7 @@ def get_ccd_temps(oflsdir, outdir='out',
                 '######################################\n')
 
     # load more general starcheck characteristics to get red/yellow limits
-    char = yaml.load(open(char_file))
+    char = yaml.load(open(char_file), Loader=yaml.FullLoader)
 
     # save spec file in out directory
     shutil.copy(model_spec, outdir)
