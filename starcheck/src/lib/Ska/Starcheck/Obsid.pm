@@ -1591,7 +1591,7 @@ sub check_star_catalog {
             push @orange_warn, sprintf "[%2d] Acq Off (padded) CCD by > 60 arcsec.\n",$i;
         }
         elsif (($type =~ /BOT|ACQ/) and ($acq_edge_delta < 0)){
-            push @{$self->{fyi}}, sprintf "[%2d] Acq Off (padded) CCD (P_ACQ should be < .5)\n",$i;
+            push @{$self->{fyi}}, sprintf "[%2d] Acq Off (padded) CCD\n",$i;
         }
 
 	# Faint and bright limits ~ACA-009 ACA-010
