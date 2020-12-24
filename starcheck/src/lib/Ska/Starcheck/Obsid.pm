@@ -12,7 +12,6 @@ package Ska::Starcheck::Obsid;
 #  target_cmd: Shortcut to 'MP_TARGQUAT' $command[]
 #  @fid, @acq, @gui: Lists of fid, acq, guide star indices
 #
-# part of the starcheck cvs project
 #
 ##################################################################################
 
