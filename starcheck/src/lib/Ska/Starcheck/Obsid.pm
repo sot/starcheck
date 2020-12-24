@@ -2393,8 +2393,6 @@ sub set_proseco_probs_and_check_P2{
             if ($warn =~ 'imposter offset'){
                 next;
             }
-	    print "|$warn_type|\n";
-	    print ":$warn:\n";
             push @{$self->{$warn_type}}, $warn;
         }
     }
