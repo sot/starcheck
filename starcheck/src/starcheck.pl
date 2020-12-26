@@ -128,6 +128,7 @@ my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
 my $simtrans_file= get_file("$par{dir}/History/SIMTRANS.txt*", 'simtrans');
 my $simfocus_file= get_file("$par{dir}/History/SIMFOCUS.txt*", 'simfocus');
 my $attitude_file= get_file("$par{dir}/History/ATTITUDE.txt*", 'attitude');
+my $proseco_file = get_file("$par{dir}/output/*proseco.pkl.gz", 'proseco');
 
 # Check for characteristics.  Ignore the get_file required vs not API and just pre-check
 # to see if there is characteristics
@@ -344,7 +345,8 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
     $obs{$obsid}->set_manerr(@manerr) if (@manerr);
-    $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file, $tlr_file);
+    $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file,
+			    $dot_file, $tlr_file, $proseco_file);
     $obs{$obsid}->set_fids($fidsel);
     $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});

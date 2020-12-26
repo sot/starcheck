@@ -1,3 +1,6 @@
+import pickle
+from pathlib import Path
+import gzip
 import numpy as np
 from astropy.table import Table
 
@@ -299,3 +302,17 @@ def _mag_for_p_acq(p_acq, date, t_ccd):
     """
     eff_t_ccd = get_effective_t_ccd(t_ccd)
     return mag_for_p_acq(float(p_acq), date.decode(), float(eff_t_ccd))
+
+
+def manual_stars(obsid, proseco_file):
+    pth = Path(de_bytestr(proseco_file))
+    open_func = open if pth.suffix == '.pkl' else gzip.open
+    manual_entries = []
+    with open_func(pth, 'rb') as fh:
+        acas_dict = pickle.load(fh)
+        aca = acas_dict[obsid]
+        call_args = aca.call_args.copy()
+        for key in call_args:
+            if key.startswith('include') or key.startswith('exclude'):
+                manual_entries.append(f'has {key} {call_args[key]}\n')
+    return manual_entries

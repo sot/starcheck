@@ -29,6 +29,7 @@ from starcheck.check_obsid import (_pixels_to_yagzag, _yagzag_to_pixels,
                                    get_mica_star_stats,
                                    get_effective_t_ccd,
                                    make_proseco_catalog,
+                                   manual_stars,
                                    proseco_probs, run_sparkles,
                                    _mag_for_p_acq)
 
@@ -200,7 +201,7 @@ sub set_files {
 ##################################################################################
     my $self = shift;
     ($self->{STARCHECK}, $self->{backstop}, $self->{guide_summ}, $self->{or_file},
-     $self->{mm_file}, $self->{dot_file}, $self->{tlr_file}) = @_;
+     $self->{mm_file}, $self->{dot_file}, $self->{tlr_file}, $self->{proseco_file}) = @_;
 }
 
 ##################################################################################
@@ -846,6 +847,13 @@ sub check_sim_position {
 	}
     }	
 }
+
+#
+sub check_manual_stars {
+    my $self = shift;
+    push @{$self->{fyi}}, manual_stars($self->{obsid}, $self->{proseco_file});
+}
+
     
 #############################################################################################
 sub check_star_catalog {
@@ -2392,7 +2400,11 @@ sub set_proseco_probs_and_check_P2{
             if ($warn =~ 'imposter offset'){
                 next;
             }
-            push @{$self->{$warn_type}}, $warn;
+	    # Skip warning about likely MON star as we have the OR list in starcheck
+	    if (($warn =~ 'likely MON star') and ($self->{HAS_MON} == 1)){
+		next;
+	    }
+            push @{$self->{$warn_type}}, "$warn\n";
         }
     }
 
