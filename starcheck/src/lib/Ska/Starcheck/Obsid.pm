@@ -1930,7 +1930,7 @@ sub check_monitor_commanding {
 	
 	if (($idx_hash{type} =~ /GUI|BOT/) and ($idx_hash{size} eq '8x8') and ($idx_hash{imnum} == 7)){
 	  $stealth_mon = 1;
-	  push @{$self->{fyi}}, sprintf("[%2d] Appears to be MON used as GUI/BOT.  Has Magnitude been checked?\n",
+	  push @{$self->{fyi}}, sprintf("[%2d] Appears to be MON used as GUI/BOT.\n",
 					$idx);
 	  # if it doesn't match the requested location
 	  push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. Guide star as MON %6.2f arc-seconds off OR specification\n"
