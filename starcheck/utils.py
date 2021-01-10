@@ -3,7 +3,6 @@ import numpy as np
 
 from Chandra.Time import DateTime
 from Chandra.Time import secs2date as time2date, date2secs as pydate2secs
-from chandra_aca.star_probs import set_acq_model_ms_filter
 import starcheck
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
