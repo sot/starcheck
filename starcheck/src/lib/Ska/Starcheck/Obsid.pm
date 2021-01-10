@@ -1145,37 +1145,6 @@ sub check_momentum_unload{
     }
 }
 
-#############################################################################################
-sub check_for_special_case_er{
-#############################################################################################
-    my $self = shift;
-    # if the previous obsid is an OR and the current one is an ER
-    # and the obsid is < 10 minutes in duration (we've got a <10 min NPM criterion)
-    # and there is a star catalog to check
-    # and the last obsid had a star catalog
-    # and the pointings are the same
-    # it is a special case ER
-    $self->{special_case_er} = 0;
-    if ($self->{obsid} =~ /^\d+$/
-        and $self->{obsid} >= $ER_MIN_OBSID
-        and $self->find_command("MP_STARCAT")
-        and $self->{prev}
-        and $self->{prev}->{obsid} =~ /^\d+$/
-        and $self->{prev}->{obsid} < $ER_MIN_OBSID
-        and $self->{prev}->find_command("MP_STARCAT")
-        and abs($self->{ra} - $self->{prev}->{ra}) < 0.001
-        and abs($self->{dec} - $self->{prev}->{dec}) < 0.001
-        and abs($self->{roll} - $self->{prev}->{roll}) < 0.001){
-        if (($self->{obs_tstop} - $self->{obs_tstart}) < 10*60){
-            $self->{special_case_er} = 1;
-            push @{$self->{fyi}}, "Special Case ER\n";
-        }
-        else{
-            push @{$self->{fyi}},
-            sprintf("Same attitude as last obsid but too long (%.1f min) for Special Case ER\n", ($self->{obs_tstop} - $self->{obs_tstart})/60.);
-        }
-    }
-}
 
 #############################################################################################
 sub check_sim_position {
