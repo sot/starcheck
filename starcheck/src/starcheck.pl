@@ -540,7 +540,6 @@ foreach my $obsid (@obsid_id) {
         $obs{$obsid}->{compass_file} = "$STARCHECK/compass$obs{$obsid}->{obsid}.png";
     }
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
-    $obs{$obsid}->check_flick_pix_mon();
     $obs{$obsid}->set_dynamic_mag_limits();
     $obs{$obsid}->check_dither($dither);
     # Get the args that proseco would want
