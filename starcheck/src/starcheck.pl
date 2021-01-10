@@ -801,22 +801,6 @@ $out .= '</PRE></TD></TABLE> ';
 
 my $ptf = PoorTextFormat->new();
 
-# Write make_stars file
-my $make_stars = "$STARCHECK/make_stars.txt";
-open (my $OUT, "> $make_stars") or die "Couldn't open $make_stars for writing\n";
-foreach my $obsid (@obsid_id) {
-    my $c = $obs{$obsid};
-    my $format = ($c->{obsid} =~ /^[0-9]+$/) ? "%05d" : "%s";
-    if ( (defined $c->{ra}) and (defined $c->{dec}) and (defined $c->{roll})){
-	printf $OUT "../make_stars.pl -starcat starcat.dat.$format", $c->{obsid};
-	print $OUT " -ra $c->{ra} -dec $c->{dec} -roll $c->{roll} ";
-	print $OUT "-sim_z $c->{SIM_OFFSET_Z} " if ($c->{SIM_OFFSET_Z});
-	print $OUT "-si $c->{SI} " if ($c->{SI});
-	print $OUT "\n";
-    }
-}
-close($OUT);
-
 # Write the HTML
 
 if ($par{html}) {
@@ -832,7 +816,6 @@ if ($par{html}) {
     print STDERR "Wrote HTML report to $STARCHECK.html\n";
 
     my $guide_summ_start = 'PROCESSING SOCKET REQUESTS';
-    make_annotated_file('', 'starcat.dat.', ' -ra ', $make_stars);
     make_annotated_file('', ' ID=\s+', ', ', $backstop);
     make_annotated_file($guide_summ_start, '^\s+ID:\s+', '\S\S', $guide_summ);
     make_annotated_file('', '^ ID=', ', ', $or_file) if ($or_file);

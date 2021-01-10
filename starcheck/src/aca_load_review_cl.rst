@@ -109,10 +109,6 @@ Observing
 
       - CRddd_hhvv.tlr.html
  
-      - make_stars.txt
- 
-      - make_stars.txt.html
- 
       - mdddd:hhvv.dot.html
  
       - mgddd:hhvv.sum.html
@@ -137,10 +133,6 @@ Vehicle
       - VRddd:hhvv.backstop.html
 
       - VRddd_hhvv.tlr.html
- 
-      - make_stars.txt
- 
-      - make_stars.txt.html
  
       - mdddd:hhvv.dot.html
  

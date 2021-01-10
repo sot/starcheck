@@ -2155,7 +2155,6 @@ sub print_report {
 	if ($self->{or_file});
     $o .= sprintf("<A HREF=\"%s/%s.html#%s\">MANVR</A> ", $self->{STARCHECK}, basename($self->{mm_file}), $self->{dot_obsid});
     $o .= sprintf("<A HREF=\"%s/%s.html#%s\">DOT</A> ", $self->{STARCHECK}, basename($self->{dot_file}), $self->{obsid});
-    $o .= sprintf("<A HREF=\"%s/%s.html#%s\">MAKE_STARS</A> ", $self->{STARCHECK}, "make_stars.txt" , $self->{obsid});
     $o .= sprintf("<A HREF=\"%s/%s.html#%s\">TLR</A> ", $self->{STARCHECK}, basename($self->{tlr_file}) , $self->{obsid});
     $o .= sprintf "\n\n";
     for my $n (1 .. 10) {		# Allow for multiple TARGQUAT cmds, though 2 is the typical limit
