@@ -1,14 +1,6 @@
 paths:
    week_lookup: https://icxc.harvard.edu/cgi-bin/aspect/starcheck/find_shortterm.cgi
 
-# string match on oflsids that may not have a maneuver or starcat, and its OK!
-# The RDE (and probably RDX) entries most likely do not applie to ORViewer DOT schedules
-# and can likely be removed in the future.
-no_starcat_oflsid:
-   - RDX
-   - RDE
-   - DC_T
-
 ccd_temp_yellow_limit: -7.5
 ccd_temp_red_limit: -6.5
 

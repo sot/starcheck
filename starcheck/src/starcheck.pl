@@ -363,7 +363,6 @@ my %guidesumm = Ska::Parse_CM_File::guide($guide_summ) if (defined $guide_summ);
 
 foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_obsid(\%guidesumm); # Commanded obsid
-    $obs{$obsid}->set_ok_no_starcat();
     $obs{$obsid}->set_target();
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
@@ -403,12 +402,6 @@ foreach my $oflsid (@obsid_id){
     }
     else {
 		my $obsid = $obs{$oflsid}->{obsid};
-		if (defined $obs{$oflsid}->{ok_no_starcat}){
-			my $ofls_string = $obs{$oflsid}->{ok_no_starcat};
-			push @{$obs{$oflsid}->{fyi}}, 
-			sprintf("No Guide Star Summary for obsid $obsid ($oflsid). OK for '$ofls_string' ER. \n");
-			next HAS_GUIDE;
-		}
 		push @{$obs{$oflsid}->{warn}}, sprintf("No Guide Star Summary for obsid $obsid ($oflsid). \n");
     }
 	
@@ -708,12 +701,6 @@ for my $obs_idx (0 .. $#obsid_id) {
 
         # minumum requirements for fractional guide star count for ERs and ORs
         my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000 ) ? 6.0 : 4.0;
-
-        # if there is no star catalog and that's ok
-        if (not ($obs{$obsid}->find_command("MP_STARCAT"))
-                and $obs{$obsid}->{ok_no_starcat}){
-            $min_num_gui = 0.0;
-        }
 
         # use the 'special case' ER rules from ACA-044
         if ($obs{$obsid}->{special_case_er}){
