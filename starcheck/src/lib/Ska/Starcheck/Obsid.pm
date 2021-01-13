@@ -1785,42 +1785,6 @@ sub check_star_catalog {
     push @{$self->{yellow_warn}}, @yellow_warn;
 }
 
-#############################################################################################
-sub check_flick_pix_mon {
-#############################################################################################
-    my $self = shift;
-
-    # this only applies to ERs (and they should have numeric obsids)
-    return unless ( $self->{obsid} =~ /^\d+$/ and $self->{obsid} >= $ER_MIN_OBSID );
-
-    my $c;
-    # Check for existence of a star catalog
-    return unless ($c = find_command($self, "MP_STARCAT"));
-    
-    # See if there are any monitor stars.  Return if not.
-    my @mon_stars = grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
-    return unless (@mon_stars);
-
-    for my $mon_star (@mon_stars){
-
-	push @{$self->{fyi}}, sprintf("Obsid contains flickering pixel MON\n");
-
-
-	push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. Size is not 8x8\n", $mon_star)
-	    unless $c->{"SIZE${mon_star}"} eq "8x8";
-	
-	push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. Monitor Window RESTRK should be 0\n", $mon_star) 
-	    unless $c->{"RESTRK${mon_star}"} == 0;
-	
-        # Verify the DTS is set to self
-	push @{$self->{warn}}, sprintf("[%2d] Monitor Commanding. DTS should be set to self\n", $mon_star)
-	    unless $c->{"DIMDTS${mon_star}"} == $c->{"IMNUM${mon_star}"};
-
-    }	
-    
-
-}
-
 
 #############################################################################################
 sub check_monitor_commanding {
