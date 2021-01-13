@@ -817,19 +817,6 @@ sub check_dither {
     my $obs_end_pad = 3*60;
     my $manvr;
 
-    # If there's no starcat on purpose, return without doing any dither checks.
-    # This used to just check if "ok_no_starcat" was defined and set to non-zero, but
-    # that can actually happen on RDE observations that have star catalogs, such as
-    # obsid 57166 in APR2009C.  Now this checks that an observation doesn't actually
-    # have a star catalog before checking to see if it is "allowed" to not have
-    # a star catalog.  This RDE/RDX business only applies to legacy loads pre ORViewer-DOT
-    # and can likely be removed in the future along with the ok_no_starcat entries
-    # for them in characteristics.
-    my $cat_cmd = find_command($self, 'MP_STARCAT');
-    if (not $cat_cmd and defined $self->{ok_no_starcat} and $self->{ok_no_starcat}){
-        return;
-    }
-
     unless (defined $dthr){
       push @{$self->{warn}}, "Dither states unavailable. Dither not checked\n";
       return;
@@ -1228,27 +1215,6 @@ sub check_sim_position {
 }
     
 #############################################################################################
-sub set_ok_no_starcat{
-#############################################################################################
-    my $self = shift;
-    my $oflsid = $self->{dot_obsid};
-    # Is this an obsid that is allowed to not have a star catalog, 
-    # if so, what oflsid string does it match:
-    my $ok_no_starcat;
-    if (defined $config{no_starcat_oflsid}){
-        my @no_starcats = @{$config{no_starcat_oflsid}};
-        for my $ofls_string (@no_starcats){
-            if ( $oflsid =~ /$ofls_string/){
-                $ok_no_starcat = $ofls_string;
-            }
-        }
-    }
-    $self->{ok_no_starcat} = $ok_no_starcat;
-}
-
-
-
-#############################################################################################
 sub check_star_catalog {
 #############################################################################################
     my $self = shift;
@@ -1302,7 +1268,6 @@ sub check_star_catalog {
 
     my $oflsid = $self->{dot_obsid};
     my $obsid = $self->{obsid};
-    my $ok_no_starcat = $self->{ok_no_starcat};
 
    # Set slew error (arcsec) for this obsid, or 120 if not available 
     my $slew_err;
@@ -1312,22 +1277,13 @@ sub check_star_catalog {
     }
     else{
 	# if no target quaternion, warn and continue
-	if (defined $ok_no_starcat){
-	  push @{$self->{fyi}}, "No target/maneuver for obsid $obsid ($oflsid). OK for '$ok_no_starcat' ER. \n";
-	}
-	else{
 	  push @{$self->{warn}}, "No target/maneuver for obsid $obsid ($oflsid). \n";		    
-	}
     }
     $slew_err = 120 if not defined $slew_err;
 
     # ACA-004
     # if no starcat, warn and quit this subroutine
     unless ($c = find_command($self, "MP_STARCAT")) {
-	if (defined $ok_no_starcat){
-	    push @{$self->{fyi}}, "No star catalog for obsid $obsid ($oflsid). OK for '$ok_no_starcat' ER. \n";
-	    return;
-	}
 	push @{$self->{warn}}, "No star catalog for obsid $obsid ($oflsid). \n";		    
 	return;
     }
