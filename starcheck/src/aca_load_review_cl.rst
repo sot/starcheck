@@ -208,22 +208,6 @@ Checks
 |       |                  | | |configuration (2    |      |     |    |    |    |                |
 |       |                  | | |monitor windows)    |      |     |    |    |    |                |
 +-------+------------------+-+-+--------------------+------+-----+----+----+----+----------------+
-|       |                  |X|X|Special Case Engineering Request           |    |                |
-|       |                  | | |(immediately follows an OR at identical    |    |                |
-|       |                  | | |attitude, duration in NPM <= 10 min )      |    |                |
-|       |                  | | +--------------------+------+-----+----+----+    |AS:             |
-|       |                  | | |Special Case ER     | #FL  | #AS |#GS |#MW |    |                |
-|       |                  | | |                    |      |     |    |    |    |Possible Bright |
-|       |                  | | +--------------------+------+-----+----+----+    |Star Hold       |
-|ACA-044|Star catalog      | | |Requirements        |  0   | >=4 |>=4 |<=1 |n/a |                |
-|       |                  | | +--------------------+------+-----+----+----+    |GS:             |
-|       |                  | | |Standard            |  0   | 5-8 |6-8 | 0  |    |                |
-|       |                  | | |configuration       |      |     |    |    |    |Reduced aspect  |
-|       |                  | | +--------------------+------+-----+----+----+    |quality         |
-|       |                  | | |Alternate           |  0   | 4-8 |5-7 | 1  |    |                |
-|       |                  | | |configuration       |      |     |    |    |    |                |
-|       |                  | | |(monitor window)    |      |     |    |    |    |                |
-+-------+------------------+-+-+--------------------+------+-----+----+----+----+----------------+
 |ACA-009|Magnitude limit   |X|X|AS: 5.8 - 10.3 (or fainter, if needed to   |n/a |Possible Bright |
 |       |                  | | |find stars)                                |    |Star Hold       |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
