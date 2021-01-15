@@ -536,7 +536,6 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
 	$obs{$obsid}->check_momentum_unload(\@bs);
-    $obs{$obsid}->check_for_special_case_er();
     $obs{$obsid}->check_bright_perigee($radmon);
 
 # Make sure there is only one star catalog per obsid
@@ -692,11 +691,6 @@ for my $obs_idx (0 .. $#obsid_id) {
 
         # minumum requirements for fractional guide star count for ERs and ORs
         my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000 ) ? 6.0 : 4.0;
-
-        # use the 'special case' ER rules from ACA-044
-        if ($obs{$obsid}->{special_case_er}){
-            $min_num_gui = 4.0;
-        }
 
         # Use the acq prob model values saved in figure_of_merit for the expected
         # number of acq stars and a bad overall probability.  figure_of_merit isn't
