@@ -1109,15 +1109,8 @@ sub check_bright_perigee{
     # Pass 1 to _guide_count as third arg to use the count_9th mode
     my $bright_count = _guide_count(\@mags, $self->{ccd_temp}, 1);
     if ($bright_count < $min_n_stars){
-        if ($self->{special_case_er} == 1){
-            push @{$self->{fyi}}, "Only $bright_count star(s) brighter than scaled 9th mag. "
-                . "Acceptable for Special Case ER\n";
-        }
-        else{
-            push @{$self->{warn}}, "$bright_count star(s) brighter than scaled 9th mag. "
-                . "Perigee requires at least $min_n_stars\n";
-        }
-
+	push @{$self->{warn}}, "$bright_count star(s) brighter than scaled 9th mag. "
+	    . "Perigee requires at least $min_n_stars\n";
     }
 }
 
