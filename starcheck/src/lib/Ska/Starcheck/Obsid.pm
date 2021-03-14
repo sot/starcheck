@@ -2286,6 +2286,7 @@ sub proseco_args{
 # If an observation does not have a target quaternion or a starcat, it is skipped and
 # an empty hash is returned with no warning.
     my $self = shift;
+    my $or = shift;
     my %proseco_args;
     # For the target quaternion, use the -1 to get the last quaternion (there could be more than
     # one for a segmented maneuver).
@@ -2300,6 +2301,7 @@ sub proseco_args{
     my $si = $is_OR ? $self->{SI} : 'ACIS-S';
     my $offset = $is_OR ? $self->{SIM_OFFSET_Z} : 0;
 
+    my $mon_cnt = 0;
     my @acq_ids;
     my @acq_indexes;
     my @gui_ids;
@@ -2309,6 +2311,11 @@ sub proseco_args{
   IDX:
     foreach my $i (1..16) {
         (my $sid  = $cat_cmd->{"GS_ID$i"}) =~ s/[\s\*]//g;
+
+	if ($cat_cmd->{"TYPE$i"} =~ /MON/){
+	    $mon_cnt += 1;
+	}
+
         # If there is no star there is nothing for proseco probs to do so skip it.
         # But warn if it was a thing that should have had an id (BOT/ACQ/GUI).
         if ($sid eq '---'){
@@ -2359,10 +2366,15 @@ sub proseco_args{
         n_acq => scalar(@acq_ids),
         include_halfws_acq => \@halfwidths,
         include_ids_guide => \@gui_ids,
-        n_guide => scalar(@gui_ids),
+        n_guide => scalar(@gui_ids) + $mon_cnt,
         fid_ids => \@fid_ids,
         n_fid => scalar(@fid_ids),
         acq_indexes => \@acq_indexes);
+
+    if ($self->{HAS_MON}){
+	my $mon_type = ($mon_cnt > 0) ? 2 : 1;
+	$proseco_args{monitors} = [[$or->{MON_RA}, $or->{MON_DEC}, 0, 0, $mon_type]];
+    }
 
     return \%proseco_args
 
@@ -2370,7 +2382,7 @@ sub proseco_args{
 
 
 ###################################################################################
-sub set_proseco_probs_and_check_P2{
+sub set_and_check_proseco{
 ###################################################################################
 # For observations with a star catalog and which have valid parameters already determined
 # in $self->{proseco_args}, call the Python proseco_probs method to calculate the

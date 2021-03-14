@@ -273,6 +273,8 @@ def make_proseco_catalog(kwargs):
                 include_ids_guide=kw['include_ids_guide'],
                 include_ids_fid=list(fid_ids),
                 n_fid=len(kw['fid_ids']), focus_offset=0)
+    if 'monitors' in kw:
+        args['monitors']=kw['monitors']
     aca = get_aca_catalog(**args)
     return aca
 
