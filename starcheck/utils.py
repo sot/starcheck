@@ -59,8 +59,9 @@ def get_data_dir():
 def _make_pcad_attitude_check_report(kwargs):
     try:
         return make_pcad_attitude_check_report(**de_bytestr(kwargs))
-    except Exception as err:
-        perl.warning("Error running dynamic attitude checks {}\n".format(err))
+    except Exception:
+        import traceback
+        traceback.print_exc()
 
 
 def get_dither_kadi_state(date):

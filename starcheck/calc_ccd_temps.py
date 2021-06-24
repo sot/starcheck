@@ -17,7 +17,6 @@ import time
 import shutil
 import numpy as np
 import json
-import yaml
 from pathlib import Path
 
 # Matplotlib setup
@@ -152,9 +151,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     logger.info('###############################'
                 '######################################\n')
 
-    # load more general starcheck characteristics to get red/yellow limits
-    char = yaml.load(open(char_file), Loader=yaml.SafeLoader)
-
     # save spec file in out directory
     shutil.copy(model_spec, outdir)
 
@@ -224,7 +220,7 @@ def get_ccd_temps(oflsdir, outdir='out',
         ccd_times, ccd_temps = mock_telem_predict(states)
 
     make_check_plots(outdir, states, ccd_times, ccd_temps,
-                     tstart=bs_start.secs, tstop=sched_stop.secs, char=char)
+                     tstart=bs_start.secs, tstop=sched_stop.secs)
     intervals = get_obs_intervals(sc_obsids)
     obsreqs = None if orlist is None else {obs['obsid']: obs for obs in read_or_list(orlist)}
     obstemps = get_interval_data(intervals, ccd_times, ccd_temps, obsreqs)
@@ -547,7 +543,7 @@ def plot_two(fig_id, x, y, x2, y2,
     return {'fig': fig, 'ax': ax, 'ax2': ax2}
 
 
-def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
+def make_check_plots(outdir, states, times, temps, tstart, tstop):
     """
     Make output plots.
 
@@ -559,6 +555,8 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
     :param tstop: schedule stop time (secs)
     :rtype: dict of review information including plot file names
     """
+    import proseco.characteristics as char
+
     plots = {}
 
     # Start time of loads being reviewed expressed in units for plotdate()
@@ -575,8 +573,8 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
 
     logger.info('Making temperature check plots')
     for fig_id, msid in enumerate(('aca',)):
-        temp_ymax = max(char['ccd_temp_red_limit'], np.max(temps))
-        temp_ymin = min(char['ccd_temp_yellow_limit'], np.min(temps))
+        temp_ymax = max(char.aca_t_ccd_planning_limit, np.max(temps))
+        temp_ymin = min(char.aca_t_ccd_penalty_limit, np.min(temps))
         plots[msid] = plot_two(fig_id=fig_id + 1,
                                x=times,
                                y=temps,
@@ -591,9 +589,9 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
                                figsize=(9, 5),
                                )
         ax = plots[msid]['ax']
-        plots[msid]['ax'].axhline(y=char['ccd_temp_yellow_limit'],
+        plots[msid]['ax'].axhline(y=char.aca_t_ccd_penalty_limit,
                                   linestyle='--', color='g', linewidth=2.0)
-        plots[msid]['ax'].axhline(y=char['ccd_temp_red_limit'],
+        plots[msid]['ax'].axhline(y=char.aca_t_ccd_planning_limit,
                                   linestyle='--', color='r', linewidth=2.0)
         plt.subplots_adjust(bottom=0.1)
         pad = 1
