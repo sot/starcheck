@@ -80,8 +80,6 @@ def get_options():
                         help="output destination for temperature JSON, file or stdout")
     parser.add_argument("--model-spec",
                         help="xija ACA model specification file")
-    parser.add_argument("--char-file",
-                        help="starcheck characteristics file")
     parser.add_argument("--orlist",
                         help="OR list")
     parser.add_argument("--traceback",
@@ -100,7 +98,7 @@ def get_options():
 
 def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=None,
-                  model_spec=None, char_file=None, orlist=None,
+                  model_spec=None, orlist=None,
                   run_start_time=None,
                   verbose=1, **kwargs):
     """
@@ -113,7 +111,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param json_obsids: file-like object or string containing JSON of
                         starcheck Obsid objects (default='<oflsdir>/starcheck/obsids.json')
     :param model_spec: xija ACA model spec file (default=package aca_spec.json)
-    :param char_file: starcheck characteristics file (default=package characteristics.yaml)
     :param run_start_time: Chandra.Time date, clock time when starcheck was run,
                      or a user-provided value (usually for regression testing).
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
@@ -127,8 +124,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     module_dir = Path(__file__).parent
     if model_spec is None:
         model_spec = str(module_dir / 'data' / 'aca_spec.json')
-    if char_file is None:
-        char_file = str(module_dir / 'data' / 'characteristics.yaml')
 
     if json_obsids is None:
         # Only happens in testing, so use existing obsids file in OFLS dir
@@ -557,7 +552,6 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
     :param tstop: schedule stop time (secs)
     :rtype: dict of review information including plot file names
     """
-    import proseco.characteristics as char
 
     plots = {}
 
