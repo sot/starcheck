@@ -40,6 +40,7 @@ import xija
 from chandra_aca import dark_model
 from parse_cm import read_or_list
 from chandra_aca.drift import get_aca_offsets
+import proseco.characteristics as proseco_char
 
 from starcheck import __version__ as version
 
@@ -147,6 +148,7 @@ def get_ccd_temps(oflsdir, outdir='out',
                 % (TASK_NAME, proc['execution_time'], proc['run_user']))
     logger.info("# Continuity run_start_time = {}".format(run_start_time.date))
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
+    logger.info(f'# chandra_models version = {proseco_char.chandra_models_version}')
     logger.info(f'# kadi version = {kadi.__version__}')
     logger.info('###############################'
                 '######################################\n')
@@ -220,7 +222,7 @@ def get_ccd_temps(oflsdir, outdir='out',
         ccd_times, ccd_temps = mock_telem_predict(states)
 
     make_check_plots(outdir, states, ccd_times, ccd_temps,
-                     tstart=bs_start.secs, tstop=sched_stop.secs)
+                     tstart=bs_start.secs, tstop=sched_stop.secs, char=proseco_char)
     intervals = get_obs_intervals(sc_obsids)
     obsreqs = None if orlist is None else {obs['obsid']: obs for obs in read_or_list(orlist)}
     obstemps = get_interval_data(intervals, ccd_times, ccd_temps, obsreqs)
@@ -543,7 +545,7 @@ def plot_two(fig_id, x, y, x2, y2,
     return {'fig': fig, 'ax': ax, 'ax2': ax2}
 
 
-def make_check_plots(outdir, states, times, temps, tstart, tstop):
+def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
     """
     Make output plots.
 
