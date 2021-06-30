@@ -552,7 +552,6 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
     :param tstop: schedule stop time (secs)
     :rtype: dict of review information including plot file names
     """
-
     plots = {}
 
     # Start time of loads being reviewed expressed in units for plotdate()
