@@ -17,7 +17,6 @@ import time
 import shutil
 import numpy as np
 import json
-import yaml
 from pathlib import Path
 
 # Matplotlib setup
@@ -41,6 +40,7 @@ import xija
 from chandra_aca import dark_model
 from parse_cm import read_or_list
 from chandra_aca.drift import get_aca_offsets
+import proseco.characteristics as proseco_char
 
 from starcheck import __version__ as version
 
@@ -80,8 +80,6 @@ def get_options():
                         help="output destination for temperature JSON, file or stdout")
     parser.add_argument("--model-spec",
                         help="xija ACA model specification file")
-    parser.add_argument("--char-file",
-                        help="starcheck characteristics file")
     parser.add_argument("--orlist",
                         help="OR list")
     parser.add_argument("--traceback",
@@ -100,7 +98,7 @@ def get_options():
 
 def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=None,
-                  model_spec=None, char_file=None, orlist=None,
+                  model_spec=None, orlist=None,
                   run_start_time=None,
                   verbose=1, **kwargs):
     """
@@ -113,7 +111,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param json_obsids: file-like object or string containing JSON of
                         starcheck Obsid objects (default='<oflsdir>/starcheck/obsids.json')
     :param model_spec: xija ACA model spec file (default=package aca_spec.json)
-    :param char_file: starcheck characteristics file (default=package characteristics.yaml)
     :param run_start_time: Chandra.Time date, clock time when starcheck was run,
                      or a user-provided value (usually for regression testing).
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
@@ -127,8 +124,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     module_dir = Path(__file__).parent
     if model_spec is None:
         model_spec = str(module_dir / 'data' / 'aca_spec.json')
-    if char_file is None:
-        char_file = str(module_dir / 'data' / 'characteristics.yaml')
 
     if json_obsids is None:
         # Only happens in testing, so use existing obsids file in OFLS dir
@@ -148,12 +143,10 @@ def get_ccd_temps(oflsdir, outdir='out',
                 % (TASK_NAME, proc['execution_time'], proc['run_user']))
     logger.info("# Continuity run_start_time = {}".format(run_start_time.date))
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
+    logger.info(f'# chandra_models version = {proseco_char.chandra_models_version}')
     logger.info(f'# kadi version = {kadi.__version__}')
     logger.info('###############################'
                 '######################################\n')
-
-    # load more general starcheck characteristics to get red/yellow limits
-    char = yaml.load(open(char_file), Loader=yaml.SafeLoader)
 
     # save spec file in out directory
     shutil.copy(model_spec, outdir)
@@ -224,7 +217,7 @@ def get_ccd_temps(oflsdir, outdir='out',
         ccd_times, ccd_temps = mock_telem_predict(states)
 
     make_check_plots(outdir, states, ccd_times, ccd_temps,
-                     tstart=bs_start.secs, tstop=sched_stop.secs, char=char)
+                     tstart=bs_start.secs, tstop=sched_stop.secs, char=proseco_char)
     intervals = get_obs_intervals(sc_obsids)
     obsreqs = None if orlist is None else {obs['obsid']: obs for obs in read_or_list(orlist)}
     obstemps = get_interval_data(intervals, ccd_times, ccd_temps, obsreqs)
@@ -575,8 +568,8 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
 
     logger.info('Making temperature check plots')
     for fig_id, msid in enumerate(('aca',)):
-        temp_ymax = max(char['ccd_temp_red_limit'], np.max(temps))
-        temp_ymin = min(char['ccd_temp_yellow_limit'], np.min(temps))
+        temp_ymax = max(char.aca_t_ccd_planning_limit, np.max(temps))
+        temp_ymin = min(char.aca_t_ccd_penalty_limit, np.min(temps))
         plots[msid] = plot_two(fig_id=fig_id + 1,
                                x=times,
                                y=temps,
@@ -591,9 +584,9 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
                                figsize=(9, 5),
                                )
         ax = plots[msid]['ax']
-        plots[msid]['ax'].axhline(y=char['ccd_temp_yellow_limit'],
+        plots[msid]['ax'].axhline(y=char.aca_t_ccd_penalty_limit,
                                   linestyle='--', color='g', linewidth=2.0)
-        plots[msid]['ax'].axhline(y=char['ccd_temp_red_limit'],
+        plots[msid]['ax'].axhline(y=char.aca_t_ccd_planning_limit,
                                   linestyle='--', color='r', linewidth=2.0)
         plt.subplots_adjust(bottom=0.1)
         pad = 1

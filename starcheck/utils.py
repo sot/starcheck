@@ -1,4 +1,5 @@
 import os
+import functools
 import numpy as np
 
 from Chandra.Time import DateTime
@@ -6,8 +7,26 @@ from Chandra.Time import secs2date as time2date, date2secs as pydate2secs
 import starcheck
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
+from starcheck.plot import make_plots_for_obsid
 from starcheck import __version__ as version
 from kadi.commands import states
+
+
+def print_traceback_on_exception(func):
+    """Decorator to print a stack trace on exception.
+
+    The default perl inline suppresses this stack trace which makes debugging
+    difficult.
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            raise
+    return wrapper
 
 
 # Borrowed from https://stackoverflow.com/a/33160507
@@ -25,44 +44,38 @@ def de_bytestr(data):
     return data
 
 
+@print_traceback_on_exception
 def date2time(date):
     return pydate2secs(de_bytestr(date))
 
 
+@print_traceback_on_exception
 def ccd_temp_wrapper(kwargs):
-    try:
-        return get_ccd_temps(**de_bytestr(kwargs))
-    except Exception:
-        import traceback
-        traceback.print_exc()
-        raise
+    return get_ccd_temps(**de_bytestr(kwargs))
 
 
+@print_traceback_on_exception
 def plot_cat_wrapper(kwargs):
-    try:
-        from starcheck.plot import make_plots_for_obsid
-    except ImportError as err:
-        # write errors to starcheck's global warnings and STDERR
-        perl.warning("Error with Inline::Python imports {}\n".format(err))
     return make_plots_for_obsid(**de_bytestr(kwargs))
 
 
+@print_traceback_on_exception
 def starcheck_version():
     return version
 
 
+@print_traceback_on_exception
 def get_data_dir():
     sc_data = os.path.join(os.path.dirname(starcheck.__file__), 'data')
     return sc_data if os.path.exists(sc_data) else ""
 
 
+@print_traceback_on_exception
 def _make_pcad_attitude_check_report(kwargs):
-    try:
-        return make_pcad_attitude_check_report(**de_bytestr(kwargs))
-    except Exception as err:
-        perl.warning("Error running dynamic attitude checks {}\n".format(err))
+    return make_pcad_attitude_check_report(**de_bytestr(kwargs))
 
 
+@print_traceback_on_exception
 def get_dither_kadi_state(date):
     date = date.decode('ascii')
     cols = ['dither', 'dither_ampl_pitch', 'dither_ampl_yaw',
@@ -77,6 +90,7 @@ def get_dither_kadi_state(date):
     return state
 
 
+@print_traceback_on_exception
 def get_run_start_time(run_start_time, backstop_start):
     """
     Determine a reasonable reference run start time based on the supplied
