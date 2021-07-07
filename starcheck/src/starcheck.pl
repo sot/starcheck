@@ -72,8 +72,8 @@ my %par = (dir  => '.',
 		   );
 
 
-GetOptions( \%par, 
-			'help', 
+GetOptions( \%par,
+			'help',
 			'dir=s',
 			'out=s',
 			'plot!',
@@ -108,7 +108,7 @@ usage( 1 )
 # Find backstop, guide star summary, OR, and maneuver files.
 my %input_files = ();
 
-# for split loads directory and prefix configuration 
+# for split loads directory and prefix configuration
 my $sosa_dir_slash = $par{vehicle} ? "vehicle/" : "";
 my $sosa_prefix = $par{vehicle} ? "V_" : "";
 
@@ -122,8 +122,8 @@ my $or_file    = get_file("$par{dir}/mps/or/*.or",      'OR');
 my $mm_file    = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 my $dot_file   = get_file("$par{dir}/mps/md*.dot",     'DOT', 'required');
 my $mech_file  = get_file("$par{dir}/${sosa_dir_slash}output/${sosa_prefix}TEST_mechcheck.txt*", 'mech check');
-my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');    
-my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither'); 
+my $fidsel_file= get_file("$par{dir}/History/FIDSEL.txt*",'fidsel');
+my $dither_file= get_file("$par{dir}/History/DITHER.txt*",'dither');
 my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
 my $simtrans_file= get_file("$par{dir}/History/SIMTRANS.txt*", 'simtrans');
 my $simfocus_file= get_file("$par{dir}/History/SIMFOCUS.txt*", 'simfocus');
@@ -149,7 +149,7 @@ if (glob("$par{dir}/output/*_dynamical_offsets.txt")){
 my $config_file = get_file("$Starcheck_Data/$par{config_file}*", 'config', 'required');
 
 my $config_ref = YAML::LoadFile($config_file);
-my $mp_top_link = guess_mp_toplevel({ path => abs_path($par{dir}), 
+my $mp_top_link = guess_mp_toplevel({ path => abs_path($par{dir}),
 									  config => $config_ref });
 
 
@@ -159,7 +159,7 @@ my $odb_file = get_file("$Starcheck_Data/$par{fid_char}*", 'odb', 'required');
 my $agasc_file = get_file("$par{agasc_file}", "agasc_file");
 
 
-my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');    
+my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');
 my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
 my $tlr_file   = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required');
 
@@ -218,7 +218,7 @@ my %dot = %{$dot_ref};
 
 my @load_segments = Ska::Parse_CM_File::TLR_load_segments($tlr_file);
 
-# Read momentum management (maneuvers + SIM move) summary file 
+# Read momentum management (maneuvers + SIM move) summary file
 my %mm = Ska::Parse_CM_File::MM({file => $mm_file, ret_type => 'hash'}) if ($mm_file);
 
 # Read maneuver management summary for handy obsid time checks
@@ -259,7 +259,7 @@ Ska::Starcheck::Obsid::set_config($config_ref);
 
 # Read Maneuver error file containing more accurate maneuver errors
 my @manerr;
-if ($manerr_file) { 
+if ($manerr_file) {
     @manerr = Ska::Parse_CM_File::man_err($manerr_file);
 } else { warning("Could not find Maneuver Error file in output/ directory\n") };
 
@@ -279,7 +279,7 @@ my ($radmon_time_violation, $radmon) = Ska::Parse_CM_File::radmon($radmon_file, 
 # if dither history runs into load or kadi mismatch
 if ($dither_error ne ""){
     warning($dither_error);
-} 
+}
 
 # if radmon history runs into load
 if ($radmon_time_violation){
@@ -313,7 +313,7 @@ warning("Could not open bad AGASC file $bad_agasc_file\n")
 # Initialize list of "interesting" commands
 
 my (%dot_cmd, %dot_time_offset, %dot_tolerance);
-set_dot_cmd();  
+set_dot_cmd();
 
 # Go through records and set the time of MP_TARGQUAT commands to
 # the time of the subsequent cmd with COMMAND_SW | TLMSID= AOMANUVR
@@ -321,7 +321,7 @@ set_dot_cmd();
 fix_targquat_time();
 
 # Now go through records, pull out the interesting things, and assemble
-# into structures based on obsid. 
+# into structures based on obsid.
 
 my $obsid;
 my %obs;
@@ -330,11 +330,11 @@ for my $i (0 .. $#cmd) {
     # Get obsid (aka ofls_id) for this cmd by matching up with corresponding
     # commands from DOT.  Returns undef if it isn't "interesting"
     next unless ($obsid = get_obsid ($time[$i], $cmd[$i], $date[$i]));
-    
+
     # If obsid hasn't been seen before, create obsid object
 
     unless ($obs{$obsid}) {
-	push @obsid_id, $obsid;	
+	push @obsid_id, $obsid;
 	$obs{$obsid} = Ska::Starcheck::Obsid->new($obsid, $date[$i]);
     }
 
@@ -388,7 +388,7 @@ foreach my $oflsid (keys %guidesumm){
     }
 }
 
-# Add guide_summary data to MP_STARCAT cmd for each obsid.  
+# Add guide_summary data to MP_STARCAT cmd for each obsid.
 
 HAS_GUIDE:
 foreach my $oflsid (@obsid_id){
@@ -399,7 +399,7 @@ foreach my $oflsid (@obsid_id){
 		my $obsid = $obs{$oflsid}->{obsid};
 		push @{$obs{$oflsid}->{warn}}, sprintf("No Guide Star Summary for obsid $obsid ($oflsid). \n");
     }
-	
+
 }
 
 # Set up for SIM-Z checking
@@ -521,6 +521,7 @@ foreach my $obsid (@obsid_id) {
                          roll=>$obs{$obsid}->{roll},
                          catalog=>$cat_as_array,
                          starcat_time=>"$obs{$obsid}->{date}",
+                         duration=>($obs{$obsid}->{obs_tstop} - $obs{$obsid}->{obs_tstart}),
                          outdir=>$STARCHECK);
         plot_cat_wrapper(\%plot_args);
         $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
@@ -580,7 +581,7 @@ if ($mp_top_link){
 if (%input_files) {
     $out .= "------------  PROCESSING FILES  -----------------\n\n";
     $out .= "DATA = $Starcheck_Data\n";
-    for my $name (sort (keys %input_files)) { 
+    for my $name (sort (keys %input_files)) {
 	push @{$save_hash{files}}, $input_files{$name};
         if ($input_files{$name} =~ /$Starcheck_Data\/?(.*)/){
             $out .= "Using $name file \$\{DATA\}/$1\n";
@@ -589,7 +590,7 @@ if (%input_files) {
             $out .= "Using $name file $input_files{$name}\n";
         }
     };
-     
+
 # Add info about which bad pixel file is being used:
     if (defined $ACA_badpix_date){
 	$out .= "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
@@ -666,7 +667,7 @@ $out .= "------------  SUMMARY OF OBSIDS -----------------\n\n";
 # keep track of which load segment we're in
 my $load_seg_idx = 0;
 
-for my $obs_idx (0 .. $#obsid_id) {    
+for my $obs_idx (0 .. $#obsid_id) {
     $obsid = $obsid_id[$obs_idx];
 
     # mark the OBC load segment starts
@@ -676,9 +677,9 @@ for my $obs_idx (0 .. $#obsid_id) {
     	if ($load_seg_time < $obsid_time){
 	    $out .= "         ------  $load_segments[$load_seg_idx]->{date}   OBC Load Segment Begins     $load_segments[$load_seg_idx]->{seg_id} \n";
 	    $load_seg_idx++;
-	    
+
 	}
-	
+
     }
 
     $out .= sprintf "<A HREF=\"#obsid$obs{$obsid}->{obsid}\">OBSID = %5s</A>", $obs{$obsid}->{obsid};
@@ -713,7 +714,7 @@ for my $obs_idx (0 .. $#obsid_id) {
         $out .= "$gui_font_start";
         $out .= sprintf("%3.1f GUI | ", $guide_count);
         $out .= "$font_stop";
-	
+
     }
     # if Obsid is non-numeric, print "Unknown"
     else{
@@ -834,13 +835,13 @@ if ($par{text}) {
     print STDERR "Wrote text report to $STARCHECK.txt\n";
 
 }
-  
+
 
 ##***************************************************************************
 sub guess_mp_toplevel{
 ##***************************************************************************
 
-    # figure out the "week" based on the path, and make a URL to point to the 
+    # figure out the "week" based on the path, and make a URL to point to the
     # lookup cgi as defined in the config at paths->week_lookup
 
     my $arg_ref = shift;
@@ -862,11 +863,11 @@ sub guess_mp_toplevel{
 	my $weekfile = ${week} . ${rev};
 	my $url = $lookup_cgi . "?week=${weekfile}";
 	return { url => $url, week => $weekfile };
-    
+
     }
     return undef;
-    
-    
+
+
 }
 
 
@@ -953,7 +954,7 @@ sub fix_targquat_time {
 	    if ($set eq 1) {
 		$time[$i] = $manv_time;
 #		undef $manv_time;	# Make sure that each TARGQUAT gets a unique AOMANUVR time
-	        $set = 0;   
+	        $set = 0;
 	    } else {
 		warning ("Found MP_TARGQUAT at $date[$i] without corresponding AOMANUVR\n");
 	    }
@@ -1002,13 +1003,13 @@ sub get_obsid {
 	my $cmd_identifier = $dot{$obsid_index}{cmd_identifier};
 	my $dt        = $dot_time_offset{$cmd_identifier} || 0.0;
 	my $tolerance = $dot_tolerance{$cmd_identifier}   || $TIME_TOLERANCE ;
-	
+
 
 	if ($dot_cmd{$cmd_identifier} eq $cmd ){
 	    if ( abs($dot{$obsid_index}{time} + $dt - $time) < $tolerance) {
 		if ($obsid_index =~ /\S0*(\S+)\d{4}/){
-		    return $1; 
-		    
+		    return $1;
+
 		}
 		else{
 		    die "Couldn't parse obsid_index = '$obsid_index' in get_obsid()\n";
@@ -1018,14 +1019,14 @@ sub get_obsid {
     }
 
     # Couldn't match input command to DOT.  This happens normally for
-    # replan/reopen loads.  This command is ignored for subsequent 
+    # replan/reopen loads.  This command is ignored for subsequent
     # starcheck checking, but a global warning at the top is printed
     # in case this is not expected.
 
     warning("Could not find a match in DOT for $cmd at $date\n");
 
     return ();
-}    
+}
 
 
 ##***************************************************************************
@@ -1044,7 +1045,7 @@ sub get_file {
       warning($warn);
 	die "\n" if ($required);
 	return undef;
-    } 
+    }
     $input_files{$name}=$files[0];
     print STDERR "Using $name file $files[0]\n";
     return $files[0];
@@ -1079,7 +1080,7 @@ sub usage
 
 =head1 NAME
 
-starcheck.pl - Check for problems in command load star catalogs 
+starcheck.pl - Check for problems in command load star catalogs
 
 =head1 SYNOPSIS
 
@@ -1100,7 +1101,7 @@ Default is '.'.
 
 =item B<-out <out>>
 
-Output reports will be <out>.html, <out>.txt.  Star plots will be 
+Output reports will be <out>.html, <out>.txt.  Star plots will be
 <out>/stars_<obsid>.png.  The default is <out> = 'STARCHECK'.
 
 =item B<-vehicle>
@@ -1111,7 +1112,7 @@ the ACA load review processing.
 =item B<-[no]plot>
 
 Enable (or disable) generation of star/fid plots.  These plots require
-the tool mp_get_agasc and the AGASC catalog online.  Default is plotting 
+the tool mp_get_agasc and the AGASC catalog online.  Default is plotting
 enabled.
 
 =item B<-[no]html>
@@ -1150,7 +1151,7 @@ such that a negative value -N is interpreted as N days before the first backstop
 
 =head1 DESCRIPTION
 
-B<Starcheck.pl> checks for problems in ACA star catalogs produced by the 
+B<Starcheck.pl> checks for problems in ACA star catalogs produced by the
 OFLS, relying primarily on the output of Backstop.  In addition,
 if a guide star summary file is available, that information is
 used to determine star/fid IDs and magnitudes.  A report summarizing
@@ -1162,7 +1163,7 @@ named <out>/stars_<obsid>.png.  If not specified on the command line,
 
 Starcheck.pl looks in <dir> for a single Backstop file with the name '*.backstop'.
 Zero matches or multiple matches of this name results in a fatal error.
-The guide star summary file is assumed to be named 'mg*.sum'.  If no file 
+The guide star summary file is assumed to be named 'mg*.sum'.  If no file
 is found, a warning is produced but processing continues.  Multiple matches
 results in a fatal error, however.
 
