@@ -488,7 +488,6 @@ my $json_obsid_temps;
 $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                       outdir=>$STARCHECK,
                                       json_obsids => $json_text,
-                                      model_spec => "$Starcheck_Data/aca_spec.json",
                                       orlist => $or_file,
                                       run_start_time => $run_start_time,
                                   });

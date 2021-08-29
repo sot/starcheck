@@ -41,6 +41,7 @@ from chandra_aca import dark_model
 from parse_cm import read_or_list
 from chandra_aca.drift import get_aca_offsets
 import proseco.characteristics as proseco_char
+from xija.get_model_spec import get_xija_model_spec
 
 from starcheck import __version__ as version
 
@@ -110,7 +111,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param outdir: output directory for plots
     :param json_obsids: file-like object or string containing JSON of
                         starcheck Obsid objects (default='<oflsdir>/starcheck/obsids.json')
-    :param model_spec: xija ACA model spec file (default=package aca_spec.json)
+    :param model_spec: xija ACA model spec file (default=chandra_models current aca_spec.json)
     :param run_start_time: Chandra.Time date, clock time when starcheck was run,
                      or a user-provided value (usually for regression testing).
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
@@ -121,9 +122,10 @@ def get_ccd_temps(oflsdir, outdir='out',
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
-    module_dir = Path(__file__).parent
     if model_spec is None:
-        model_spec = str(module_dir / 'data' / 'aca_spec.json')
+        model_spec, chandra_models_version = get_xija_model_spec(
+            'aca',
+            version=proseco_char.chandra_models_version)
 
     if json_obsids is None:
         # Only happens in testing, so use existing obsids file in OFLS dir
@@ -148,8 +150,13 @@ def get_ccd_temps(oflsdir, outdir='out',
     logger.info('###############################'
                 '######################################\n')
 
-    # save spec file in out directory
-    shutil.copy(model_spec, outdir)
+    # save model_spec in out directory
+    if isinstance(model_spec, dict):
+        with (Path(outdir) / 'aca_spec.json').open('w') as fh:
+            fh.write(json.dumps(model_spec, sort_keys=True, indent=4,
+                                cls=NumpyAwareJSONEncoder))
+    else:
+        shutil.copy(model_spec, outdir)
 
     # json_obsids can be either a string or a file-like object.  Try those options in order.
     try:
