@@ -103,7 +103,7 @@ def get_ccd_temps(oflsdir, outdir='out',
                   run_start_time=None,
                   verbose=1, **kwargs):
     """
-    Using the cmds and cmd_states sybase databases, available telemetry, and
+    Using the cmds and cmd_states tables, available telemetry, and
     the pitches determined from the planning products, calculate xija ACA model
     temperatures for the given week.
 
