@@ -9,7 +9,8 @@ from Ska.quatutil import radec2yagzag
 from chandra_aca.plot import bad_acq_stars, plot_stars, plot_compass
 
 
-def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir, red_mag_lim=10.7):
+def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir,
+                         red_mag_lim=10.7, duration=0.0):
     """
     Make standard starcheck plots for obsid and save as pngs with standard names.
     Writes out to stars_{obsid}.png and star_view_{obsid}.png in supplied outdir.
@@ -18,11 +19,12 @@ def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir, re
     :param ra: RA in degrees
     :param dec: Dec in degrees
     :param roll: Roll in degrees
-
+    :param starcat_time: start time of observation
     :param catalog: list of dicts or other astropy.table compatible structure with conventional
                     starcheck catalog parameters for a set of ACQ/BOT/GUI/FID/MON items.
     :param outdir: output directory for png plot files
     :param red_mag_lim: faint limit
+    :param duration: length of observation in seconds
     """
 
     # explicitly float convert these, as we may be receiving this from Perl passing strings
@@ -45,13 +47,13 @@ def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir, re
     bad_stars = bad_acq_stars(stars)
 
     f_plot = plot_stars(attitude=[ra, dec, roll], catalog=None, stars=stars,
-                        title=None, starcat_time=starcat_time,
+                        title=None, starcat_time=starcat_time, duration=duration,
                         bad_stars=bad_stars, red_mag_lim=None)
     f_plot.savefig(os.path.join(outdir, 'star_view_{}.png'.format(obsid)), dpi=80)
     plt.close(f_plot)
     cat_plot = plot_stars(attitude=[ra, dec, roll], catalog=catalog, stars=stars,
                           title="RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll),
-                          starcat_time=starcat_time,
+                          starcat_time=starcat_time, duration=duration,
                           bad_stars=bad_stars, red_mag_lim=red_mag_lim)
     cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)), dpi=80)
     plt.close(cat_plot)
