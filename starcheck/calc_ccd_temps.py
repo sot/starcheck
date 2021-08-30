@@ -123,9 +123,7 @@ def get_ccd_temps(oflsdir, outdir='out',
         os.mkdir(outdir)
 
     if model_spec is None:
-        model_spec, chandra_models_version = get_xija_model_spec(
-            'aca',
-            version=proseco_char.chandra_models_version)
+        model_spec, chandra_models_version = get_xija_model_spec('aca')
 
     if json_obsids is None:
         # Only happens in testing, so use existing obsids file in OFLS dir
