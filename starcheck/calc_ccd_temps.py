@@ -153,8 +153,8 @@ def get_ccd_temps(oflsdir, outdir='out',
     # save model_spec in out directory
     if isinstance(model_spec, dict):
         with (Path(outdir) / 'aca_spec.json').open('w') as fh:
-            fh.write(json.dumps(model_spec, sort_keys=True, indent=4,
-                                cls=NumpyAwareJSONEncoder))
+            json.dump(model_spec, fh, sort_keys=True, indent=4,
+                      cls=NumpyAwareJSONEncoder)
     else:
         shutil.copy(model_spec, outdir)
 
