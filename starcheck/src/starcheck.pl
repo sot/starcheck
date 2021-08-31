@@ -559,8 +559,6 @@ my $hostname = hostname;
 $out .= "------------  Starcheck $version    -----------------\n";
 $out .= " Run on $date by $ENV{USER} from $hostname\n";
 $out .= " Configuration:  Using AGASC at $agasc_file\n";
-# ASCDS $ascds_version_name ($ascds_version)\n"
-#    if ($mp_agasc_version and $ascds_version_name);
 my $chandra_models_version = get_chandra_models_version();
 $out .= " chandra_models version: $chandra_models_version\n";
 $out .= "\n";
