@@ -48,9 +48,9 @@ from starcheck.utils import (_make_pcad_attitude_check_report,
                              date2time, time2date,
                              ccd_temp_wrapper,
                              starcheck_version, get_data_dir,
+                             get_chandra_models_version,
                              get_dither_kadi_state,
                              get_run_start_time)
-
 
 };
 
@@ -563,11 +563,14 @@ $out .= " Run on $date by $ENV{USER} from $hostname\n";
 $out .= " Configuration:  Using AGASC at $agasc_file\n";
 # ASCDS $ascds_version_name ($ascds_version)\n"
 #    if ($mp_agasc_version and $ascds_version_name);
+my $chandra_models_version = get_chandra_models_version();
+$out .= " chandra_models version: $chandra_models_version\n";
 $out .= "\n";
 
 $save_hash{run}{user} = $ENV{USER};
 $save_hash{run}{host} = $hostname;
 $save_hash{run}{agasc} = $agasc_file;
+
 
 if ($mp_top_link){
     $out .= sprintf("<A HREF=\"%s\">Short Term Schedule: %s</A>", $mp_top_link->{url}, $mp_top_link->{week});

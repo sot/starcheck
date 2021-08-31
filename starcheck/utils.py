@@ -10,6 +10,7 @@ from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.plot import make_plots_for_obsid
 from starcheck import __version__ as version
 from kadi.commands import states
+import proseco.characteristics as proseco_char
 
 
 def print_traceback_on_exception(func):
@@ -62,6 +63,11 @@ def plot_cat_wrapper(kwargs):
 @print_traceback_on_exception
 def starcheck_version():
     return version
+
+
+@print_traceback_on_exception
+def get_chandra_models_version():
+    return proseco_char.chandra_models_version
 
 
 @print_traceback_on_exception
