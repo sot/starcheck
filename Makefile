@@ -20,7 +20,7 @@ TEST_DATA_TGZ = ${SKA}/data/starcheck/JUL0918A_test_data.tar.gz
 # with "make install_dist" from that project
 TEST_BACKSTOP = JUL0918A/CR190_0603.backstop
 
-DATA_FILES = starcheck/data/aca_spec.json starcheck/data/ACABadPixels starcheck/data/agasc.bad \
+DATA_FILES = starcheck/data/ACABadPixels starcheck/data/agasc.bad \
 	starcheck/data/fid_CHARACTERIS_JUL01 starcheck/data/fid_CHARACTERIS_FEB07 \
 	starcheck/data/fid_CHARACTERISTICS starcheck/data/characteristics.yaml \
 	starcheck/data/overlib.js starcheck/data/up.gif starcheck/data/down.gif \

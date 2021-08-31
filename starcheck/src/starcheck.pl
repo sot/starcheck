@@ -48,9 +48,9 @@ from starcheck.utils import (_make_pcad_attitude_check_report,
                              date2time, time2date,
                              ccd_temp_wrapper,
                              starcheck_version, get_data_dir,
+                             get_chandra_models_version,
                              get_dither_kadi_state,
                              get_run_start_time)
-
 
 };
 
@@ -488,7 +488,6 @@ my $json_obsid_temps;
 $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                       outdir=>$STARCHECK,
                                       json_obsids => $json_text,
-                                      model_spec => "$Starcheck_Data/aca_spec.json",
                                       orlist => $or_file,
                                       run_start_time => $run_start_time,
                                   });
@@ -550,25 +549,19 @@ print $JSON_OUT $final_json;
 close($JSON_OUT);
 
 # Produce final report
-my %save_hash;
 
 my $out = '<TABLE><TD><PRE> ';
 my $date = `date`;
 chomp $date;
 
 my $hostname = hostname;
-$save_hash{run}{date} = $date;
 
 $out .= "------------  Starcheck $version    -----------------\n";
 $out .= " Run on $date by $ENV{USER} from $hostname\n";
 $out .= " Configuration:  Using AGASC at $agasc_file\n";
-# ASCDS $ascds_version_name ($ascds_version)\n"
-#    if ($mp_agasc_version and $ascds_version_name);
+my $chandra_models_version = get_chandra_models_version();
+$out .= " chandra_models version: $chandra_models_version\n";
 $out .= "\n";
-
-$save_hash{run}{user} = $ENV{USER};
-$save_hash{run}{host} = $hostname;
-$save_hash{run}{agasc} = $agasc_file;
 
 if ($mp_top_link){
     $out .= sprintf("<A HREF=\"%s\">Short Term Schedule: %s</A>", $mp_top_link->{url}, $mp_top_link->{week});
@@ -581,7 +574,6 @@ if (%input_files) {
     $out .= "------------  PROCESSING FILES  -----------------\n\n";
     $out .= "DATA = $Starcheck_Data\n";
     for my $name (sort (keys %input_files)) {
-	push @{$save_hash{files}}, $input_files{$name};
         if ($input_files{$name} =~ /$Starcheck_Data\/?(.*)/){
             $out .= "Using $name file \$\{DATA\}/$1\n";
         }
@@ -593,7 +585,6 @@ if (%input_files) {
 # Add info about which bad pixel file is being used:
     if (defined $ACA_badpix_date){
 	$out .= "Using ACABadPixel file from $ACA_badpix_date Dark Cal \n";
-	$save_hash{run}{badpix} = $ACA_badpix_date;
     }
 
     $out .= "\n";
@@ -604,7 +595,6 @@ if (@global_warn) {
     $out .= $red_font_start;
     foreach (@global_warn) {
 	$out .= $_;
-        push @{$save_hash{processing_warning}}, $_;
     }
     $out .= qq{${font_stop}\n};
 }
