@@ -208,10 +208,10 @@ Checks
 |       |                  | | |configuration (2    |      |     |    |    |    |                |
 |       |                  | | |monitor windows)    |      |     |    |    |    |                |
 +-------+------------------+-+-+--------------------+------+-----+----+----+----+----------------+
-|ACA-009|Magnitude limit   |X|X|AS: 5.8 - 10.3 (or fainter, if needed to   |n/a |Possible Bright |
+|ACA-009|Magnitude limit   |X|X|AS: 5.2 - 10.3 (or fainter, if needed to   |n/a |Possible Bright |
 |       |                  | | |find stars)                                |    |Star Hold       |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
-|ACA-010|Magnitude limit   |X|X|GS: 6.0 - 10.3 (or fainter, if needed to   |n/a |Reduced aspect  |
+|ACA-010|Magnitude limit   |X|X|GS: 5.4 - 10.3 (or fainter, if needed to   |n/a |Reduced aspect  |
 |       |                  | | |find stars)                                |    |quality         |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
 |ACA-011|Magnitude limit   |X|X|FL: 6.8 - 7.2                              |n/a |Reduced aspect  |
