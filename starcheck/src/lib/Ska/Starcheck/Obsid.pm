@@ -1524,7 +1524,7 @@ sub check_star_catalog {
 	if ($mag ne '---') {
             if ($type eq 'GUI' or $type eq 'BOT'){
                 my $guide_mag_warn = sprintf "[%2d] Magnitude. Guide star %6.3f\n", $i, $mag;
-                if (($mag > 10.3) or ($mag < 5.4)){
+                if (($mag > 10.3) or ($mag < 5.2)){
                     push @warn, $guide_mag_warn;
                 }
             }
