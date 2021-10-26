@@ -1524,13 +1524,13 @@ sub check_star_catalog {
 	if ($mag ne '---') {
             if ($type eq 'GUI' or $type eq 'BOT'){
                 my $guide_mag_warn = sprintf "[%2d] Magnitude. Guide star %6.3f\n", $i, $mag;
-                if (($mag > 10.3) or ($mag < 6.0)){
+                if (($mag > 10.3) or ($mag < 5.2)){
                     push @warn, $guide_mag_warn;
                 }
             }
             if ($type eq 'BOT' or $type eq 'ACQ'){
                 my $acq_mag_warn = sprintf "[%2d] Magnitude. Acq star %6.3f\n", $i, $mag;
-                if ($mag < 5.8){
+                if ($mag < 5.2){
                     push @warn, $acq_mag_warn;
                 }
                 elsif ($mag > $self->{mag_faint_red}){
