@@ -1115,7 +1115,7 @@ sub check_bright_perigee{
     }
 
     # Pass 1 to _guide_count as third arg to use the count_9th mode
-    my $bright_count = _guide_count(\@mags, $self->{ccd_temp}, 1);
+    my $bright_count = sprintf("%.1f", _guide_count(\@mags, $self->{ccd_temp}, 1));
     if ($bright_count < $min_n_stars){
 	push @{$self->{warn}}, "$bright_count star(s) brighter than scaled 9th mag. "
 	    . "Perigee requires at least $min_n_stars\n";
@@ -2634,7 +2634,7 @@ sub count_guide_stars{
             push @mags, $mag;
 	}
     }
-    return _guide_count(\@mags, $self->{ccd_temp});
+    return sprintf("%.1f", _guide_count(\@mags, $self->{ccd_temp}));
 }
 
 
@@ -2849,6 +2849,8 @@ sub set_proseco_probs_and_check_P2{
         return;
     }
     my ($p_acqs, $P2, $expected) = proseco_probs($args);
+
+    $P2 = sprintf("%.1f", $P2);
 
     my @acq_indexes = @{$args->{acq_indexes}};
 
