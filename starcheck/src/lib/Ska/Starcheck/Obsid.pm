@@ -2269,7 +2269,7 @@ sub print_report {
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
 	$o .= "$red_font_start" if $bad_FOM;
 	$o .= "Probability of acquiring 2 or fewer stars (10^-x):\t";
-        $o .= substr(sprintf("%.4f", $self->{figure_of_merit}->{P2}), 0, 6) . "\t";
+        $o .= substr(sprintf("%.1f", $self->{figure_of_merit}->{P2}), 0, 3) . "\t";
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
 	$o .= sprintf("Acquisition Stars Expected  : %.2f\n",
