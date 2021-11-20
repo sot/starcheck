@@ -2619,6 +2619,19 @@ sub quat2radecroll {
     return ($ra, $dec, $roll);
 }
 
+###################################################################################
+sub check_guide_count{
+###################################################################################
+    my $self = shift;
+    my $guide_count = $self->count_guide_stars();
+
+    if ($guide_count < 4.0){
+        push @{$self->{warn}}, "Guide count of $guide_count < 4.0.";
+    }
+
+    # Also save the guide count in the figure_of_merit
+    $self->{figure_of_merit}->{guide_count} = $guide_count;
+}
 
 ###################################################################################
 sub count_guide_stars{

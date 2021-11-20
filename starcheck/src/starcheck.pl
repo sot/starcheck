@@ -536,6 +536,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
 	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->check_bright_perigee($radmon);
+    $obs{$obsid}->check_guide_count();
 
 # Make sure there is only one star catalog per obsid
     warning ("More than one star catalog assigned to Obsid $obsid\n")
@@ -674,7 +675,7 @@ for my $obs_idx (0 .. $#obsid_id) {
     $out .= sprintf "<A HREF=\"#obsid$obs{$obsid}->{obsid}\">OBSID = %5s</A>", $obs{$obsid}->{obsid};
     $out .= sprintf " at $obs{$obsid}->{date}   ";
 
-    my $guide_count = $obs{$obsid}->count_guide_stars();
+    my $guide_count = $obs{$obsid}->{figure_of_merit}->{guide_count};
 
     # if Obsid is numeric, print tally info
     if ($obs{$obsid}->{obsid} =~ /^\d+$/ ){
