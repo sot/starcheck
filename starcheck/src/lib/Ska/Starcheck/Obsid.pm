@@ -2272,8 +2272,9 @@ sub print_report {
         $o .= sprintf("%.1f", $self->{figure_of_merit}->{P2}) . "\t";
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
-	$o .= sprintf("Acquisition Stars Expected  : %.2f\n",
-                      $self->{figure_of_merit}->{expected});
+	$o .= sprintf("Acquisition Stars Expected  : %.2f\tGuide star count: %.1f \n",
+                      $self->{figure_of_merit}->{expected},
+                      $self->{figure_of_merit}->{guide_count});
     }
 
 
