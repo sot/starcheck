@@ -2457,7 +2457,7 @@ sub identify_stars {
             my $gs_mag = $c->{"GS_MAG$i"};
             my $dmag = abs($star->{mag_aca} - $gs_mag);
             if ($dmag > 0.01){
-                push @{$self->{warn}},
+                push @{$self->{yellow_warn}},
                     sprintf("[%d] Guide sum mag diff from agasc mag %9.5f\n", $i, $dmag);
             }
 	    # let's still confirm that the backstop yag zag is what we expect
