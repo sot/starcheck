@@ -1120,6 +1120,7 @@ sub check_bright_perigee{
 	push @{$self->{warn}}, "$bright_count star(s) brighter than scaled 9th mag. "
 	    . "Perigee requires at least $min_n_stars\n";
     }
+    $self->{figure_of_merit}->{guide_count_9th} = $bright_count;
 }
 
 
@@ -2272,9 +2273,12 @@ sub print_report {
         $o .= sprintf("%.1f", $self->{figure_of_merit}->{P2}) . "\t";
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
-	$o .= sprintf("Acquisition Stars Expected  : %.2f\tGuide star count: %.1f \n",
-                      $self->{figure_of_merit}->{expected},
-                      $self->{figure_of_merit}->{guide_count});
+	$o .= sprintf("Acquisition Stars Expected  : %.2f\n", $self->{figure_of_merit}->{expected});
+	$o .= sprintf("Guide star count: %.1f \t", $self->{figure_of_merit}->{guide_count});
+	if (defined $self->{figure_of_merit}->{guide_count_9th}){
+	    $o .= sprintf("Guide count_9th: %.1f", $self->{figure_of_merit}->{guide_count_9th});
+	}
+	$o .= "\n";
     }
 
 
