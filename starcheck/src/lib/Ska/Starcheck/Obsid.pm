@@ -1115,11 +1115,12 @@ sub check_bright_perigee{
     }
 
     # Pass 1 to _guide_count as third arg to use the count_9th mode
-    my $bright_count = _guide_count(\@mags, $self->{ccd_temp}, 1);
+    my $bright_count = sprintf("%.1f", _guide_count(\@mags, $self->{ccd_temp}, 1));
     if ($bright_count < $min_n_stars){
 	push @{$self->{warn}}, "$bright_count star(s) brighter than scaled 9th mag. "
 	    . "Perigee requires at least $min_n_stars\n";
     }
+    $self->{figure_of_merit}->{guide_count_9th} = $bright_count;
 }
 
 
@@ -2269,11 +2270,15 @@ sub print_report {
 	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
 	$o .= "$red_font_start" if $bad_FOM;
 	$o .= "Probability of acquiring 2 or fewer stars (10^-x):\t";
-        $o .= substr(sprintf("%.4f", $self->{figure_of_merit}->{P2}), 0, 6) . "\t";
+        $o .= sprintf("%.1f", $self->{figure_of_merit}->{P2}) . "\t";
 	$o .= "$font_stop" if $bad_FOM;
 	$o .= "\n";
-	$o .= sprintf("Acquisition Stars Expected  : %.2f\n",
-                      $self->{figure_of_merit}->{expected});
+	$o .= sprintf("Acquisition Stars Expected  : %.2f\n", $self->{figure_of_merit}->{expected});
+	$o .= sprintf("Guide star count: %.1f \t", $self->{figure_of_merit}->{guide_count});
+	if (defined $self->{figure_of_merit}->{guide_count_9th}){
+	    $o .= sprintf("Guide count_9th: %.1f", $self->{figure_of_merit}->{guide_count_9th});
+	}
+	$o .= "\n";
     }
 
 
@@ -2452,7 +2457,7 @@ sub identify_stars {
             my $gs_mag = $c->{"GS_MAG$i"};
             my $dmag = abs($star->{mag_aca} - $gs_mag);
             if ($dmag > 0.01){
-                push @{$self->{warn}},
+                push @{$self->{yellow_warn}},
                     sprintf("[%d] Guide sum mag diff from agasc mag %9.5f\n", $i, $dmag);
             }
 	    # let's still confirm that the backstop yag zag is what we expect
@@ -2619,6 +2624,21 @@ sub quat2radecroll {
     return ($ra, $dec, $roll);
 }
 
+###################################################################################
+sub check_guide_count{
+###################################################################################
+    my $self = shift;
+    my $guide_count = $self->count_guide_stars();
+
+    my $min_num_gui = ($self->{obsid} >= 38000 ) ? 6.0 : 4.0;
+
+    if ($guide_count < $min_num_gui){
+        push @{$self->{warn}}, "Guide count of $guide_count < $min_num_gui.";
+    }
+
+    # Also save the guide count in the figure_of_merit
+    $self->{figure_of_merit}->{guide_count} = $guide_count;
+}
 
 ###################################################################################
 sub count_guide_stars{
@@ -2634,7 +2654,7 @@ sub count_guide_stars{
             push @mags, $mag;
 	}
     }
-    return _guide_count(\@mags, $self->{ccd_temp});
+    return sprintf("%.1f", _guide_count(\@mags, $self->{ccd_temp}));
 }
 
 
@@ -2849,6 +2869,8 @@ sub set_proseco_probs_and_check_P2{
         return;
     }
     my ($p_acqs, $P2, $expected) = proseco_probs($args);
+
+    $P2 = sprintf("%.1f", $P2);
 
     my @acq_indexes = @{$args->{acq_indexes}};
 
