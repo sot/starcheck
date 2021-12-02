@@ -2630,8 +2630,10 @@ sub check_guide_count{
     my $self = shift;
     my $guide_count = $self->count_guide_stars();
 
-    if ($guide_count < 4.0){
-        push @{$self->{warn}}, "Guide count of $guide_count < 4.0.";
+    my $min_num_gui = ($self->{obsid} >= 38000 ) ? 6.0 : 4.0;
+
+    if ($guide_count < $min_num_gui){
+        push @{$self->{warn}}, "Guide count of $guide_count < $min_num_gui.";
     }
 
     # Also save the guide count in the figure_of_merit
