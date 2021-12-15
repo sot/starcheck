@@ -1349,6 +1349,24 @@ sub check_star_catalog {
         }
     }
 
+    # Overlap spoiler check
+    # For each 'tracked' type (GUI, BOT, FID, MON) confirm that it isn't within 60 arcsecs
+    # (Y and Z) of another tracked type.
+    foreach my $i (1..16){
+	next if $c->{"TYPE$i"} =~ /NUL|ACQ/;
+	foreach my $j (1..16){
+	    next if $i == $j;
+	    next if $c->{"TYPE$j"} =~ /NUL|ACQ/;
+	    my $dy = $c->{"YANG${i}"} - $c->{"YANG${j}"};
+	    my $dz = $c->{"ZANG${i}"} - $c->{"ZANG${j}"};
+	    if ((abs($dy) < 60) & (abs($dz) < 60)){
+		push @warn,
+		sprintf("[%2d] Catalog overlap. Delta y,z (%.1f,%.1f) < 60 to idx $j.\n",
+			$i, $dy, $dz);
+	    }
+	}
+    }
+
     # Seed smallest maximums and largest minimums for guide star box
     my $max_y = -3000;
     my $min_y = 3000;
