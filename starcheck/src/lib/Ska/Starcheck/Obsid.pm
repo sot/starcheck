@@ -1350,6 +1350,8 @@ sub check_star_catalog {
     }
 
     # Overlap spoiler check
+    # The PEA will drop a readout window if it overlaps with another window.  This was
+    # noticed in obsid 45890 and 45884 in NOV2921A.
     # For each 'tracked' type (GUI, BOT, FID, MON) confirm that it isn't within 60 arcsecs
     # (Y and Z) of another tracked type.
     foreach my $i (1..16){
