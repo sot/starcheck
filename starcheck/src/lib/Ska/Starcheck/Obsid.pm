@@ -1354,15 +1354,14 @@ sub check_star_catalog {
     # (Y and Z) of another tracked type.
     foreach my $i (1..16){
 	next if $c->{"TYPE$i"} =~ /NUL|ACQ/;
-	foreach my $j (1..16){
-	    next if $i == $j;
+	foreach my $j ($i+1..16){
 	    next if $c->{"TYPE$j"} =~ /NUL|ACQ/;
 	    my $dy = $c->{"YANG${i}"} - $c->{"YANG${j}"};
 	    my $dz = $c->{"ZANG${i}"} - $c->{"ZANG${j}"};
 	    if ((abs($dy) < 60) & (abs($dz) < 60)){
 		push @warn,
-		sprintf("[%2d] Catalog overlap. Delta y,z (%.1f,%.1f) < 60 to idx $j.\n",
-			$i, $dy, $dz);
+		sprintf("Track overlap for idxs [$i] [$j]. Delta y,z (%.1f,%.1f) < 60.\n",
+			$dy, $dz);
 	    }
 	}
     }
