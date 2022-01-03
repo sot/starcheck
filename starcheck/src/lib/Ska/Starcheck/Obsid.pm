@@ -1349,6 +1349,25 @@ sub check_star_catalog {
         }
     }
 
+    # Overlap spoiler check
+    # The PEA will drop a readout window if it overlaps with another window.  This was
+    # noticed in obsid 45890 and 45884 in NOV2921A.
+    # For each 'tracked' type (GUI, BOT, FID, MON) confirm that it isn't within 60 arcsecs
+    # (Y and Z) of another tracked type.
+    foreach my $i (1..16){
+	next if $c->{"TYPE$i"} =~ /NUL|ACQ/;
+	foreach my $j ($i+1..16){
+	    next if $c->{"TYPE$j"} =~ /NUL|ACQ/;
+	    my $dy = $c->{"YANG${i}"} - $c->{"YANG${j}"};
+	    my $dz = $c->{"ZANG${i}"} - $c->{"ZANG${j}"};
+	    if ((abs($dy) < 60) & (abs($dz) < 60)){
+		push @warn,
+		sprintf("Track overlap for idxs [$i] [$j]. Delta y,z (%.1f,%.1f) < 60.\n",
+			$dy, $dz);
+	    }
+	}
+    }
+
     # Seed smallest maximums and largest minimums for guide star box
     my $max_y = -3000;
     my $min_y = 3000;
