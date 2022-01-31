@@ -519,7 +519,10 @@ def plot_two(fig_id, x, y, x2, y2,
     fig = plt.figure(fig_id, figsize=figsize)
     fig.clf()
     ax = fig.add_subplot(1, 1, 1)
-    ax.plot_date(xt, y, marker='', linestyle=linestyle, color=color)
+
+    # Override plot_date's default fmt='o' with just the linestyle we want.
+    # If we set this via linestyle and marker matplotlib will throw a warning.
+    ax.plot_date(xt, y, fmt=linestyle, color=color)
     ax.set_xlim(min(xt), max(xt))
     if ylim:
         ax.set_ylim(*ylim)
@@ -530,7 +533,9 @@ def plot_two(fig_id, x, y, x2, y2,
     ax2 = ax.twinx()
 
     xt2 = Ska.Matplotlib.cxctime2plotdate(x2)
-    ax2.plot_date(xt2, y2, marker='', linestyle=linestyle2, color=color2)
+
+    # Override plot_date's default fmt='o' with just the linestyle we want.
+    ax2.plot_date(xt2, y2, fmt=linestyle2, color=color2)
     pad = 1
     ax2.set_xlim(min(xt) - pad, max(xt) + pad)
     if ylim2:
