@@ -518,7 +518,6 @@ def plot_two(fig_id, x, y, x2, y2,
     fig = plt.figure(fig_id, figsize=figsize)
     fig.clf()
     ax = fig.add_subplot(1, 1, 1)
-
     ax.plot_date(xt, y, fmt='-', color=color)
     ax.set_xlim(min(xt), max(xt))
     if ylim:
