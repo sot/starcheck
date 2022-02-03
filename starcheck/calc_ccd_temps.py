@@ -508,7 +508,6 @@ def write_obstemps(output_dev, obstemps):
 
 
 def plot_two(fig_id, x, y, x2, y2,
-             linestyle='-', linestyle2='-',
              color='blue', color2='magenta',
              ylim=None, ylim2=None,
              xlabel='', ylabel='', ylabel2='',
@@ -519,7 +518,7 @@ def plot_two(fig_id, x, y, x2, y2,
     fig = plt.figure(fig_id, figsize=figsize)
     fig.clf()
     ax = fig.add_subplot(1, 1, 1)
-    ax.plot_date(xt, y, marker='', linestyle=linestyle, color=color)
+    ax.plot_date(xt, y, fmt='-', color=color)
     ax.set_xlim(min(xt), max(xt))
     if ylim:
         ax.set_ylim(*ylim)
@@ -530,7 +529,7 @@ def plot_two(fig_id, x, y, x2, y2,
     ax2 = ax.twinx()
 
     xt2 = Ska.Matplotlib.cxctime2plotdate(x2)
-    ax2.plot_date(xt2, y2, marker='', linestyle=linestyle2, color=color2)
+    ax2.plot_date(xt2, y2, fmt='-', color=color2)
     pad = 1
     ax2.set_xlim(min(xt) - pad, max(xt) + pad)
     if ylim2:
