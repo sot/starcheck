@@ -857,6 +857,9 @@ sub check_dither {
         }
     }
 
+    my $c = find_command($self, "MP_STARCAT");
+    my @mon_stars = grep { $c->{"TYPE$_"} eq 'MON' } (1..16);
+
 
     $self->{dither_acq} = $acq_dither;
     $self->{dither_guide} = $guide_dither;
@@ -865,8 +868,16 @@ sub check_dither {
 
     # Check for standard dither
     if ($guide_dither->{state} eq 'ENAB'){
-        if ((not standard_dither($guide_dither)) or not standard_dither($acq_dither)){
-            push @{$self->{yellow_warn}}, "Non-standard dither\n";
+	if ((not standard_dither($guide_dither)) or not standard_dither($acq_dither)){
+	    # If the acquisition dither is zero and there is a mon window that's normal.
+	    if ((scalar(@mon_stars) > 0) and standard_dither($guide_dither)
+		and ($acq_dither->{ampl_p} == 0) and ($acq_dither->{ampl_y} == 0)){
+		push @{$self->{fyi}}, "Has Monitor window dither transition\n";
+	    }
+	    else{
+		push @{$self->{yellow_warn}}, "Non-standard dither\n";
+	    }
+
         }
         if (($guide_dither->{ampl_p} != $acq_dither->{ampl_p})
                 or ($guide_dither->{ampl_y} != $acq_dither->{ampl_y})){
