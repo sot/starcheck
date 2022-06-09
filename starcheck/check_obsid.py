@@ -278,6 +278,8 @@ def make_proseco_catalog(kwargs):
     if 'monitors' in kw:
         args['monitors'] = kw['monitors']
     aca = get_aca_catalog(**args)
+    #import pickle
+    #pickle.dump({int(kw['obsid']): aca}, open(f"{kw['date']}.pkl", 'wb'))
     return aca
 
 
@@ -347,13 +349,13 @@ def compare_cats(cat1, cat2, type=None):
     for id in cat1['id']:
         if id not in cat2['id']:
             continue
-        a = cat1.get_id(id)
-        b = cat2.get_id(id)
+        a = cat1.get_id(id, mon=(type=='mon'))
+        b = cat2.get_id(id, mon=(type=='mon'))
 
         for col in check_cols:
             if isinstance(a[col], float):
                 if not np.isclose(a[col], b[col], atol=.1, rtol=0):
-                    diffs.append(f"{col} a[col] {a[col]} != b[col] {b[col]}")
+                    diffs.append(f"{col} a[col] {a[col]:.2f} != b[col] {b[col]:.2f}")
             else:
                 if not a[col] == b[col]:
                     diffs.append(f"{col} a[col] {a[col]} != b[col] {b[col]}")
@@ -375,11 +377,11 @@ def compare_prosecos(aca, pfile):
 
     # Check temperatures
     if not np.isclose(aca.t_ccd_acq, prod_aca.t_ccd_acq, rtol=0, atol=1):
-        diffs.append(f"Acq t_ccd starcheck {aca.t_ccd_acq} products pkl {prod_aca.t_ccd_acq}")
+        diffs.append(f"Acq t_ccd starcheck {aca.t_ccd_acq:.1f} products pkl {prod_aca.t_ccd_acq:.1f}")
 
     if not np.isclose(aca.t_ccd_guide, prod_aca.t_ccd_guide, rtol=0, atol=1):
         diffs.append(
-            f"Guide/Max t_ccd starcheck {aca.t_ccd_guide} products pkl {prod_aca.t_ccd_guide}")
+            f"Guide/Max t_ccd starcheck {aca.t_ccd_guide:.1f} products pkl {prod_aca.t_ccd_guide:.1f}")
 
     # Check acquisition catalog
     ok1 = np.in1d(aca['type'], ['ACQ', 'BOT'])

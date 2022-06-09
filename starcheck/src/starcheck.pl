@@ -514,8 +514,8 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_dynamic_mag_limits();
     $obs{$obsid}->check_dither($dither);
     # Get the args that proseco would want
-    $obs{$obsid}->{'proseco_args'} = $obs{$obsid}->proseco_args();
-    $obs{$obsid}->set_proseco_probs_and_check_P2();
+    $obs{$obsid}->{'proseco_args'} = $obs{$obsid}->proseco_args($or{$obsid});
+    $obs{$obsid}->set_and_check_proseco();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
     $obs{$obsid}->check_momentum_unload(\@bs);

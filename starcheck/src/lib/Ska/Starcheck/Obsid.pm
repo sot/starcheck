@@ -2306,59 +2306,6 @@ sub set_ccd_temps{
     }
 }
 
-use Inline Python => q{
-
-from proseco.catalog import get_aca_catalog
-
-
-def proseco_probs(kwargs):
-    """
-    Call proseco's get_acq_catalog with the parameters supplied in `kwargs` for a specific obsid catalog
-    and return the individual acq star probabilities, the P2 value for the catalog, and the expected
-    number of acq stars.
-
-    `kwargs` will be a Perl hash converted to dict (by Inline) of the expected keyword params. These keys
-    must be defined:
-
-    'q1', 'q2', 'q3', 'q4' = the target quaternion
-    'man_angle' the maneuver angle to the target quaternion in degrees.
-    'acq_ids' list of acq star ids
-    'halfwidths' list of acq star halfwidths in arcsecs
-    't_ccd_acq' acquisition temperature in deg C
-    'date' observation date (in Chandra.Time compatible format)
-    'detector' science detector
-    'sim_offset' SIM offset
-
-    As these values are from a Perl hash, bytestrings will be converted by de_bytestr early in this method.
-
-    :param kwargs: dict of expected keywords
-    :return tuple: (list of floats of star acq probabilties, float P2, float expected acq stars)
-
-    """
-
-    kw = de_bytestr(kwargs)
-    args = dict(obsid=0,
-                att=Quaternion.normalize(kw['att']),
-                date=kw['date'],
-                n_acq=kw['n_acq'],
-                man_angle=kw['man_angle'],
-                t_ccd_acq=kw['t_ccd_acq'],
-                t_ccd_guide=kw['t_ccd_guide'],
-                dither_acq=ACABox(kw['dither_acq']),
-                dither_guide=ACABox(kw['dither_guide']),
-                include_ids_acq=kw['include_ids_acq'],
-                include_halfws_acq=kw['include_halfws_acq'],
-                detector=kw['detector'], sim_offset=kw['sim_offset'],
-                n_fid=0, n_guide=0, focus_offset=0)
-    aca = get_aca_catalog(**args)
-    acq_cat = aca.acqs
-
-    # Assign the proseco probabilities back into an array.
-    p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq_id][0]) for acq_id in kw['include_ids_acq']]
-
-    return p_acqs, float(-np.log10(acq_cat.calc_p_safe())), float(np.sum(p_acqs))
-};
-
 
 ###################################################################################
 sub proseco_args{
@@ -2370,6 +2317,7 @@ sub proseco_args{
 # If an observation does not have a target quaternion or a starcat, it is skipped and
 # an empty hash is returned with no warning.
     my $self = shift;
+    my $or = shift;
     my %proseco_args;
     # For the target quaternion, use the -1 to get the last quaternion (there could be more than
     # one for a segmented maneuver).
@@ -2384,6 +2332,7 @@ sub proseco_args{
     my $si = $is_OR ? $self->{SI} : 'ACIS-S';
     my $offset = $is_OR ? $self->{SIM_OFFSET_Z} : 0;
 
+    my $mon_cnt = 0;
     my @acq_ids;
     my @acq_indexes;
     my @gui_ids;
@@ -2393,6 +2342,9 @@ sub proseco_args{
   IDX:
     foreach my $i (1..16) {
         (my $sid  = $cat_cmd->{"GS_ID$i"}) =~ s/[\s\*]//g;
+	if ($cat_cmd->{"TYPE$i"} =~ /MON/){
+	    $mon_cnt += 1;
+	}
         # If there is no star there is nothing for proseco probs to do so skip it.
         # But warn if it was a thing that should have had an id (BOT/ACQ/GUI).
         if ($sid eq '---'){
@@ -2416,7 +2368,7 @@ sub proseco_args{
             push @halfwidths, $hw;
             push @acq_indexes, $i;
         }
-        if ($cat_cmd->{"TYPE$i"} =~ /BOT|GUI/){
+        if ($cat_cmd->{"TYPE$i"} =~ /BOT|GUI|MON/){
             push @gui_ids, $sid;
         }
         if ($cat_cmd->{"TYPE$i"} =~ /FID/){
@@ -2448,13 +2400,18 @@ sub proseco_args{
         n_fid => scalar(@fid_ids),
         acq_indexes => \@acq_indexes);
 
+    if ($self->{HAS_MON}){
+	my $mon_type = ($mon_cnt > 0) ? 2 : 1;
+	$proseco_args{monitors} = [[$or->{MON_RA}, $or->{MON_DEC}, 0, 0, $mon_type]];
+    }
+
     return \%proseco_args
 
 }
 
 
 ###################################################################################
-sub set_proseco_probs_and_check_P2{
+sub set_and_check_proseco{
 ###################################################################################
 # For observations with a star catalog and which have valid parameters already determined
 # in $self->{proseco_args}, call the Python proseco_probs method to calculate the
@@ -2469,9 +2426,37 @@ sub set_proseco_probs_and_check_P2{
     if (not %{$args}){
         return;
     }
-    my ($p_acqs, $P2, $expected) = proseco_probs($args);
+    my $proseco_catalog = make_proseco_catalog($args);
+    my ($p_acqs, $P2, $expected) = proseco_probs($proseco_catalog, $args->{include_ids_acq});
+    my $sparkles = run_sparkles($proseco_catalog);
+    for my $warn_type (keys %{$sparkles}){
+        for my $warn (@{$sparkles->{$warn_type}}){
+	    # Skip the warnings for include ids as all are included in starcheck->sparkles
+	    # For this, we really should read the pickle to compare.
+	    if (($warn =~ 'included acq ID') or ($warn =~ 'included guide ID')
+		or ($warn =~ 'included fid ID')){
+		next;
+	    }
+            # Skip warnings about imposters as handled in starcheck
+            if ($warn =~ 'imposter offset'){
+                next;
+            }
+	    # Skip warning about likely MON star as we have the OR list in starcheck
+	    if (($warn =~ 'likely MON star') and ($self->{HAS_MON} == 1)){
+		next;
+	    }
+	    # Skip warning about number of stars requested as inaccurate
+	    if ($warn =~ 'guides requested'){
+		next;
+	    }
+            push @{$self->{$warn_type}}, "$warn\n";
+        }
+    }
 
-    $P2 = sprintf("%.1f", $P2);
+    my $diff_warns = compare_prosecos($proseco_catalog, $self->{proseco_file});
+    for my $warn (@{$diff_warns}){
+        push @{$self->{'orange_warn'}}, "$warn\n";
+    }
 
     my @acq_indexes = @{$args->{acq_indexes}};
 
@@ -2508,9 +2493,8 @@ sub set_proseco_probs_and_check_P2{
              "-log10 probability of 2 or fewer stars < $P2_yellow\n";
     }
 
+
 }
-
-
 
 
 sub set_dynamic_mag_limits{
