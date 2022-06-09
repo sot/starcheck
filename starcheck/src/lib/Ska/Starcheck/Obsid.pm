@@ -236,8 +236,6 @@ use POSIX qw(floor);
 use English;
 use IO::All;
 
-use RDB;
-
 use Carp;
 
 # Constants
@@ -262,11 +260,7 @@ my $agasc_start_date = '2000:001:00:00:00.000';
 # Actual science global structures.
 my @bad_pixels;
 my %odb;
-my %bad_acqs;
-my %bad_gui;
-my %bad_id;
 my %config;
-my $db_handle;
 
 
 1;
@@ -292,13 +286,6 @@ sub new {
     $self->{ccd_temp} = undef;
     $self->{config} = \%config;
     return $self;
-}
-
-##################################################################################
-sub set_db_handle {
-##################################################################################
-    my $handle = shift;
-    $db_handle = $handle;
 }
 
 
@@ -365,70 +352,6 @@ sub set_ACA_bad_pixels {
     }
 
     print STDERR "Read ", ($#bad_pixels+1), " ACA bad pixels from $pixel_file\n";
-}
-
-##################################################################################
-sub set_bad_acqs {
-##################################################################################
-
-    my $rdb_file = shift;
-    if ( -r $rdb_file ){
-	my $rdb = new RDB $rdb_file or warn "Problem Loading $rdb_file\n";
-
-	my %data;
-	while($rdb && $rdb->read( \%data )) {
-	    $bad_acqs{ $data{'agasc_id'} }{'n_noids'} = $data{'n_noids'};
-	    $bad_acqs{ $data{'agasc_id'} }{'n_obs'} = $data{'n_obs'};
-	}
-
-	undef $rdb;
-	return 1;
-    }
-    else{
-	return 0;
-    }
-
-}
-
-
-##################################################################################
-sub set_bad_gui {
-##################################################################################
-
-    my $rdb_file = shift;
-    if ( -r $rdb_file ){
-	my $rdb = new RDB $rdb_file or warn "Problem Loading $rdb_file\n";
-
-	my %data;
-	while($rdb && $rdb->read( \%data )) {
-	    $bad_gui{ $data{'agasc_id'} }{'n_nbad'} = $data{'n_nbad'};
-	    $bad_gui{ $data{'agasc_id'} }{'n_obs'} = $data{'n_obs'};
-	}
-
-	undef $rdb;
-	return 1;
-    }
-    else{
-	return 0;
-    }
-
-}
-
-
-##################################################################################
-sub set_bad_agasc {
-# Read bad AGASC ID file
-# one object per line: numeric id followed by commentary.
-##################################################################################
-
-    my $bad_file = shift;
-    my $BS = io($bad_file);
-    while (my $line = $BS->getline()) {
-	$bad_id{$1} = 1 if ($line =~ (/^ \s* (\d+)/x));
-    }
-
-    print STDERR "Read ",(scalar keys %bad_id) ," bad AGASC IDs from $bad_file\n";
-    return 1;
 }
 
 
@@ -1413,8 +1336,8 @@ sub check_star_catalog {
 	my $obs_bad_frac = 0.3;
 	# Bad Acquisition Star
 	if ($type =~ /BOT|ACQ|GUI/){
-	my $n_obs = $bad_acqs{$sid}{n_obs};
-	    my $n_noids = $bad_acqs{$sid}{n_noids};
+	    my $n_obs = 0;
+	    my $n_noids = 0;
 	    if (defined $db_stats->{acq}){
 	        $n_obs = $db_stats->{acq};
 	        $n_noids = $db_stats->{acq_noid};
@@ -1428,8 +1351,8 @@ sub check_star_catalog {
 
 	# Bad Guide Star
 	if ($type =~ /BOT|GUI/){
-	    my $n_obs = $bad_gui{$sid}{n_obs};
-	    my $n_nbad = $bad_gui{$sid}{n_nbad};
+	    my $n_obs = 0;
+	    my $n_nbad = 0;
 	    if (defined $db_stats->{gui}){
 	        $n_obs = $db_stats->{gui};
 	        $n_nbad = $db_stats->{gui_bad};
@@ -1443,9 +1366,7 @@ sub check_star_catalog {
 
 	# Bad AGASC ID ACA-031
 	push @yellow_warn,sprintf "[%2d] Non-numeric AGASC ID.  %s\n",$i,$sid if ($sid ne '---' && $sid =~ /\D/);
-	if (($type =~ /BOT|GUI|ACQ/) and (defined $bad_id{$sid})){
-            push @warn, sprintf "[%2d] Bad AGASC ID.  %s\n",$i,$sid;
-	}
+
 	# Set NOTES variable for marginal or bad star based on AGASC info
 	$c->{"GS_NOTES$i"} = '';
 	my $note = '';

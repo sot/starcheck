@@ -163,10 +163,7 @@ my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');
 my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
 my $tlr_file   = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required');
 
-my $bad_agasc_file = get_file("$Starcheck_Data/agasc.bad", 'banned_agasc');
 my $ACA_bad_pixel_file = get_file("$Starcheck_Data/ACABadPixels", 'bad_pixel');
-my $bad_acqs_file = get_file( "$Starcheck_Data/bad_acq_stars.rdb", 'acq_star_rdb');
-my $bad_gui_file = get_file( "$Starcheck_Data/bad_gui_stars.rdb", 'gui_star_rdb');
 
 
 # Let's find which dark current made the current bad pixel file
@@ -291,24 +288,10 @@ if ($fid_time_violation){
     warning("Fidsel History runs into load\n");
 }
 
-
-# Read in the failed acquisition stars
-warning("Could not open ACA bad acquisition stars file $bad_acqs_file\n")
-    unless (Ska::Starcheck::Obsid::set_bad_acqs($bad_acqs_file));
-
-
-# Read in the troublesome guide stars
-warning("Could not open ACA bad guide star file $bad_gui_file\n")
-    unless (Ska::Starcheck::Obsid::set_bad_gui($bad_gui_file));
-
-
 # Read in the ACA bad pixels
 warning("Could not open ACA bad pixel file $ACA_bad_pixel_file\n")
     unless (Ska::Starcheck::Obsid::set_ACA_bad_pixels($ACA_bad_pixel_file));
 
-# Read bad AGASC stars
-warning("Could not open bad AGASC file $bad_agasc_file\n")
-    unless (Ska::Starcheck::Obsid::set_bad_agasc($bad_agasc_file));
 
 # Initialize list of "interesting" commands
 
