@@ -205,7 +205,7 @@ sub set_files {
 ##################################################################################
     my $self = shift;
     ($self->{STARCHECK}, $self->{backstop}, $self->{guide_summ}, $self->{or_file},
-     $self->{mm_file}, $self->{dot_file}, $self->{tlr_file}) = @_;
+     $self->{mm_file}, $self->{dot_file}, $self->{tlr_file}, $self->{proseco_file}) = @_;
 }
 
 ##################################################################################
@@ -852,6 +852,12 @@ sub check_sim_position {
 	}
     }
 }
+
+sub check_manual_stars {
+    my $self = shift;
+    push @{$self->{fyi}}, manual_stars($self->{obsid}, $self->{proseco_file});
+}
+
 
 #############################################################################################
 sub check_star_catalog {
