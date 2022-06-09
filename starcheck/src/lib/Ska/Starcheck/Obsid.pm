@@ -1023,30 +1023,6 @@ sub check_star_catalog {
         }
     }
 
-    # Overlap spoiler check
-    # The PEA will drop a readout window if it overlaps with another window.  This was
-    # noticed in obsid 45890 and 45884 in NOV2921A.
-    # For each 'tracked' type (GUI, BOT, FID, MON) confirm that it isn't within 60 arcsecs
-    # (Y and Z) of another tracked type.
-    foreach my $i (1..16){
-	next if $c->{"TYPE$i"} =~ /NUL|ACQ/;
-	foreach my $j ($i+1..16){
-	    next if $c->{"TYPE$j"} =~ /NUL|ACQ/;
-	    my $dy = $c->{"YANG${i}"} - $c->{"YANG${j}"};
-	    my $dz = $c->{"ZANG${i}"} - $c->{"ZANG${j}"};
-	    if ((abs($dy) < 60) & (abs($dz) < 60)){
-		push @warn,
-		sprintf("Track overlap for idxs [$i] [$j]. Delta y,z (%.1f,%.1f) < 60.\n",
-			$dy, $dz);
-	    }
-	}
-    }
-
-    # Seed smallest maximums and largest minimums for guide star box
-    my $max_y = -3000;
-    my $min_y = 3000;
-    my $max_z = -3000;
-    my $min_z = 3000;
 
     foreach my $i (1..16) {
 	(my $sid  = $c->{"GS_ID$i"}) =~ s/[\s\*]//g;
@@ -1061,13 +1037,6 @@ sub check_star_catalog {
 	# Search error for ACQ is the slew error, for fid, guide or mon it is about 4 arcsec
 	my $search_err = ( (defined $type) and ($type =~ /BOT|ACQ/)) ? $slew_err : 4.0;
 
-	# Find position extrema for smallest rectangle check
-	if ( $type =~ /BOT|GUI/ ) {
-	    $max_y = ($max_y > $yag ) ? $max_y : $yag;
-	    $min_y = ($min_y < $yag ) ? $min_y : $yag;
-	    $max_z = ($max_z > $zag ) ? $max_z : $zag;
-	    $min_z = ($min_z < $zag ) ? $min_z : $zag;
-	}
 	next if ($type eq 'NUL');
 
        # Warn if star not identified ACA-042
@@ -1159,58 +1128,6 @@ sub check_star_catalog {
             }
 	}
 
-	# Star/fid outside of CCD boundaries
-        # ACA-019 ACA-020 ACA-021
-	my ($pixel_row, $pixel_col) = _yagzag_to_pixels($yag, $zag);
-
-        # Set "acq phase" dither to acq dither or 20.0 if undefined
-        my $dither_acq_y = $self->{dither_acq}->{ampl_y} or 20.0;
-        my $dither_acq_p = $self->{dither_acq}->{ampl_p} or 20.0;
-
-        # Set "dither" for FID to be pseudodither of 5.0 to give 1 pix margin
-        # Set "track phase" dither for BOT GUI to max guide dither over interval or 20.0 if undefined.
-        my $dither_track_y = ($type eq 'FID') ? 5.0 : $self->{dither_guide}->{ampl_y_max} or 20.0;
-        my $dither_track_p = ($type eq 'FID') ? 5.0 : $self->{dither_guide}->{ampl_p_max} or 20.0;
-
-        my $pix_window_pad = 7; # half image size + point uncertainty + ? + 1 pixel of margin
-        my $pix_row_pad = 8;
-        my $pix_col_pad = 1;
-        my $row_lim = 512.0 - ($pix_row_pad + $pix_window_pad);
-        my $col_lim = 512.0 - ($pix_col_pad + $pix_window_pad);
-
-        my %track_limits = ('row' => $row_lim - $dither_track_y / $ang_per_pix,
-                            'col' => $col_lim - $dither_track_p / $ang_per_pix);
-        my %pixel = ('row' => $pixel_row,
-                     'col' => $pixel_col);
-        # Store the sign of the pixel row/col just to make it easier to print the corresponding limit
-        my %pixel_sign = ('row' => ($pixel_row < 0) ? -1 : 1,
-                          'col' => ($pixel_col < 0) ? -1 : 1);
-
-        if ($type =~ /BOT|GUI|FID/){
-            foreach my $axis ('row', 'col'){
-                my $track_delta = abs($track_limits{$axis}) - abs($pixel{$axis});
-                if ($track_delta < 2.5){
-                    push @warn, sprintf "[%2d] Less than 2.5 pix edge margin $axis lim %.1f val %.1f delta %.1f\n",
-                        $i, $pixel_sign{$axis} * $track_limits{$axis}, $pixel{$axis}, $track_delta;
-                }
-                elsif ($track_delta < 5){
-                    push @orange_warn, sprintf "[%2d] Within 5 pix of CCD $axis lim %.1f val %.1f delta %.1f\n",
-                        $i, $pixel_sign{$axis} * $track_limits{$axis}, $pixel{$axis}, $track_delta;
-                }
-            }
-        }
-        # For acq stars, the distance to the row/col padded limits are also confirmed,
-        # but code to track which boundary is exceeded (row or column) is not present.
-        # Note from above that the pix_row_pad used for row_lim has 7 more pixels of padding
-        # than the pix_col_pad used to determine col_lim.
-        my $acq_edge_delta = min(($row_lim - $dither_acq_y / $ang_per_pix) - abs($pixel_row),
-                                 ($col_lim - $dither_acq_p / $ang_per_pix) - abs($pixel_col));
-        if (($type =~ /BOT|ACQ/) and ($acq_edge_delta < (-1 * 12))){
-            push @orange_warn, sprintf "[%2d] Acq Off (padded) CCD by > 60 arcsec.\n",$i;
-        }
-        elsif (($type =~ /BOT|ACQ/) and ($acq_edge_delta < 0)){
-            push @{$self->{fyi}}, sprintf "[%2d] Acq Off (padded) CCD\n",$i;
-        }
 
 	# Faint and bright limits ~ACA-009 ACA-010
 	if ($mag ne '---') {
@@ -1389,13 +1306,6 @@ sub check_star_catalog {
 	}
     }
 
-
-
-# Find the smallest rectangle size that all acq stars fit in
-    my $y_side = sprintf( "%.0f", $max_y - $min_y );
-    my $z_side = sprintf( "%.0f", $max_z - $min_z );
-    push @yellow_warn, "Guide stars fit in $y_side x $z_side square arc-second box\n"
-	if $y_side < $min_y_side && $z_side < $min_z_side;
 
     # Collect warnings
     push @{$self->{warn}}, @warn;
