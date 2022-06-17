@@ -855,7 +855,9 @@ sub check_sim_position {
 
 sub check_manual_stars {
     my $self = shift;
-    push @{$self->{fyi}}, manual_stars($self->{obsid}, $self->{proseco_file});
+    if ($self->{proseco_file}){
+        push @{$self->{fyi}}, manual_stars($self->{obsid}, $self->{proseco_file});
+    }
 }
 
 
@@ -2453,9 +2455,12 @@ sub set_and_check_proseco{
         }
     }
 
-    my $diff_warns = compare_prosecos($proseco_catalog, $self->{proseco_file});
-    for my $warn (@{$diff_warns}){
-        push @{$self->{'orange_warn'}}, "$warn\n";
+    if ($self->{proseco_file}){
+        my $diff_warns = compare_prosecos($proseco_catalog,
+                                          $self->{proseco_file});
+        for my $warn (@{$diff_warns}){
+            push @{$self->{orange_warn}}, "$warn\n";
+        }
     }
 
     my @acq_indexes = @{$args->{acq_indexes}};
