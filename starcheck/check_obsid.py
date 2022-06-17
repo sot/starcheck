@@ -366,7 +366,11 @@ def compare_prosecos(aca, pfile):
 
     diffs = []
 
-    pfile_acas = pickle.load(gzip.open(pfile))
+    pth = Path(de_bytestr(pfile))
+    open_func = open if pth.suffix == '.pkl' else gzip.open
+    with open_func(pth, 'rb') as fh:
+        pfile_acas = pickle.load(fh)
+
     if aca.obsid not in pfile_acas:
         diffs = [f"obsid {aca.obsid} not in {pfile}"]
         return diffs
