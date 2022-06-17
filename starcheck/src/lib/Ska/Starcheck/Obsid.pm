@@ -2426,6 +2426,9 @@ sub set_and_check_proseco{
     my $args = $self->{proseco_args};
 
     if (not %{$args}){
+        $self->{figure_of_merit} = {expected => 0,
+                                P2 => 0,
+                                cum_prob_bad => 1};
         return;
     }
     my $proseco_catalog = make_proseco_catalog($args);
