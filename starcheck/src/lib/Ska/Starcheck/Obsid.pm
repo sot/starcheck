@@ -2370,7 +2370,7 @@ sub proseco_args{
             push @halfwidths, $hw;
             push @acq_indexes, $i;
         }
-        if ($cat_cmd->{"TYPE$i"} =~ /BOT|GUI|MON/){
+        if ($cat_cmd->{"TYPE$i"} =~ /BOT|GUI/){
             push @gui_ids, $sid;
         }
         if ($cat_cmd->{"TYPE$i"} =~ /FID/){
@@ -2397,7 +2397,7 @@ sub proseco_args{
         n_acq => scalar(@acq_ids),
         include_halfws_acq => \@halfwidths,
         include_ids_guide => \@gui_ids,
-        n_guide => scalar(@gui_ids),
+        n_guide => scalar(@gui_ids) + $mon_cnt,
         fid_ids => \@fid_ids,
         n_fid => scalar(@fid_ids),
         acq_indexes => \@acq_indexes);
