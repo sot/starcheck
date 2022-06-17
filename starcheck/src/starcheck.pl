@@ -128,6 +128,7 @@ my $radmon_file= get_file("$par{dir}/History/RADMON.txt*", 'radmon');
 my $simtrans_file= get_file("$par{dir}/History/SIMTRANS.txt*", 'simtrans');
 my $simfocus_file= get_file("$par{dir}/History/SIMFOCUS.txt*", 'simfocus');
 my $attitude_file= get_file("$par{dir}/History/ATTITUDE.txt*", 'attitude');
+my $proseco_file = get_file("$par{dir}/output/*proseco.pkl.gz", 'proseco');
 
 # Check for characteristics.  Ignore the get_file required vs not API and just pre-check
 # to see if there is characteristics
@@ -163,10 +164,7 @@ my $manerr_file= get_file("$par{dir}/output/*_ManErr.txt",'manerr');
 my $ps_file    = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
 my $tlr_file   = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required');
 
-my $bad_agasc_file = get_file("$Starcheck_Data/agasc.bad", 'banned_agasc');
 my $ACA_bad_pixel_file = get_file("$Starcheck_Data/ACABadPixels", 'bad_pixel');
-my $bad_acqs_file = get_file( "$Starcheck_Data/bad_acq_stars.rdb", 'acq_star_rdb');
-my $bad_gui_file = get_file( "$Starcheck_Data/bad_gui_stars.rdb", 'gui_star_rdb');
 
 
 # Let's find which dark current made the current bad pixel file
@@ -291,24 +289,10 @@ if ($fid_time_violation){
     warning("Fidsel History runs into load\n");
 }
 
-
-# Read in the failed acquisition stars
-warning("Could not open ACA bad acquisition stars file $bad_acqs_file\n")
-    unless (Ska::Starcheck::Obsid::set_bad_acqs($bad_acqs_file));
-
-
-# Read in the troublesome guide stars
-warning("Could not open ACA bad guide star file $bad_gui_file\n")
-    unless (Ska::Starcheck::Obsid::set_bad_gui($bad_gui_file));
-
-
 # Read in the ACA bad pixels
 warning("Could not open ACA bad pixel file $ACA_bad_pixel_file\n")
     unless (Ska::Starcheck::Obsid::set_ACA_bad_pixels($ACA_bad_pixel_file));
 
-# Read bad AGASC stars
-warning("Could not open bad AGASC file $bad_agasc_file\n")
-    unless (Ska::Starcheck::Obsid::set_bad_agasc($bad_agasc_file));
 
 # Initialize list of "interesting" commands
 
@@ -362,7 +346,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
     $obs{$obsid}->set_manerr(@manerr) if (@manerr);
-    $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file, $tlr_file);
+    $obs{$obsid}->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $mm_file, $dot_file, $tlr_file, $proseco_file);
     $obs{$obsid}->set_fids($fidsel);
     $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{$or{$obsid}} if (exists $or{$obsid});
@@ -530,13 +514,14 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_dynamic_mag_limits();
     $obs{$obsid}->check_dither($dither);
     # Get the args that proseco would want
-    $obs{$obsid}->{'proseco_args'} = $obs{$obsid}->proseco_args();
-    $obs{$obsid}->set_proseco_probs_and_check_P2();
+    $obs{$obsid}->{'proseco_args'} = $obs{$obsid}->proseco_args($or{$obsid});
+    $obs{$obsid}->set_and_check_proseco();
     $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
     $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
-	$obs{$obsid}->check_momentum_unload(\@bs);
-    $obs{$obsid}->check_bright_perigee($radmon);
+    $obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->check_guide_count();
+    $obs{$obsid}->check_manual_stars($obs{$obsid}->{obsid},
+				     $obs{$obsid}->{proseco_file});
 
 # Make sure there is only one star catalog per obsid
     warning ("More than one star catalog assigned to Obsid $obsid\n")

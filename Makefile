@@ -9,7 +9,7 @@ BIN = $(SRC)/starcheck.pl $(SRC)/starcheck
 LIB = $(SRC)/lib/Ska/Starcheck/Obsid.pm \
 	$(SRC)/lib/Ska/Parse_CM_File.pm
 PYTHON_LIB = starcheck/calc_ccd_temps.py starcheck/pcad_att_check.py starcheck/plot.py \
-	     starcheck/utils.py starcheck/__init__.py
+	     starcheck/utils.py starcheck/check_obsid.py starcheck/__init__.py
 DOC_RST = $(SRC)/aca_load_review_cl.rst
 DOC_HTML = aca_load_review_cl.html
 
@@ -20,7 +20,7 @@ TEST_DATA_TGZ = ${SKA}/data/starcheck/JUL0918A_test_data.tar.gz
 # with "make install_dist" from that project
 TEST_BACKSTOP = JUL0918A/CR190_0603.backstop
 
-DATA_FILES = starcheck/data/ACABadPixels starcheck/data/agasc.bad \
+DATA_FILES = starcheck/data/ACABadPixels \
 	starcheck/data/fid_CHARACTERIS_JUL01 starcheck/data/fid_CHARACTERIS_FEB07 \
 	starcheck/data/fid_CHARACTERISTICS starcheck/data/characteristics.yaml \
 	starcheck/data/overlib.js starcheck/data/up.gif starcheck/data/down.gif \
@@ -34,10 +34,10 @@ HOSTNAME = $(shell hostname)
 
 
 $(TEST_BACKSTOP):
-	tar -zxvpf $(TEST_DATA_TGZ) 
+	tar -zxvpf $(TEST_DATA_TGZ)
 
 
-all: 
+all:
 	# Nothing to make; "make install" to install to $(SKA)
 
 
