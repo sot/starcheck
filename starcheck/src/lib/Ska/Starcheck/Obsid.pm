@@ -2885,6 +2885,9 @@ sub set_proseco_probs_and_check_P2{
     my $args = $self->{proseco_args};
 
     if (not %{$args}){
+        $self->{figure_of_merit} = {expected => 0,
+                                P2 => 0,
+                                cum_prob_bad => 1};
         return;
     }
     my ($p_acqs, $P2, $expected) = proseco_probs($args);
