@@ -259,6 +259,7 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
             obstemps[str(interval['obsid'])] = obs
             continue
         obs['ccd_temp'] = np.max(ok_temps)
+        obs['ccd_temp_min'] = np.min(ok_temps)
         obs['ccd_temp_acq'] = np.max(ok_temps[:2])
         obs['n100_warm_frac'] = dark_model.get_warm_fracs(
             100, interval['tstart'], np.max(ok_temps))
