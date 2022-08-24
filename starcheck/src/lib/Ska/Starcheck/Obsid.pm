@@ -2285,24 +2285,23 @@ sub print_report {
     }
     $o .= "\n";
 
-    if (exists $self->{figure_of_merit}) {
-	my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
-	$o .= "$red_font_start" if $bad_FOM;
-	$o .= "Probability of acquiring 2 or fewer stars (10^-x):\t";
-        $o .= sprintf("%.1f", $self->{figure_of_merit}->{P2}) . "\t";
-	$o .= "$font_stop" if $bad_FOM;
-	$o .= "\n";
-	$o .= sprintf("Acquisition Stars Expected  : %.2f\n", $self->{figure_of_merit}->{expected});
-	$o .= sprintf("Guide star count: %.1f \t", $self->{figure_of_merit}->{guide_count});
-	if (defined $self->{figure_of_merit}->{guide_count_9th}){
-	    $o .= sprintf("Guide count_9th: %.1f", $self->{figure_of_merit}->{guide_count_9th});
-	}
-	$o .= "\n";
-    }
-
-
-    # Don't print CCD temperature and dynamic limits if there is no catalog
+    # Don't print probability info, temperature, dynamic limits if there is no catalog
     if ($c = find_command($self, "MP_STARCAT")){
+	if (exists $self->{figure_of_merit}) {
+	    my $bad_FOM = $self->{figure_of_merit}->{cum_prob_bad};
+	    $o .= "$red_font_start" if $bad_FOM;
+	    $o .= "Probability of acquiring 2 or fewer stars (10^-x):\t";
+	    $o .= sprintf("%.1f", $self->{figure_of_merit}->{P2}) . "\t";
+	    $o .= "$font_stop" if $bad_FOM;
+	    $o .= "\n";
+	    $o .= sprintf("Acquisition Stars Expected  : %.2f\n", $self->{figure_of_merit}->{expected});
+	    $o .= sprintf("Guide star count: %.1f \t", $self->{figure_of_merit}->{guide_count});
+	    if (defined $self->{figure_of_merit}->{guide_count_9th}){
+		$o .= sprintf("Guide count_9th: %.1f", $self->{figure_of_merit}->{guide_count_9th});
+	    }
+	    $o .= "\n";
+	}
+
         $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp});
         if (defined $self->{n100_warm_frac}){
             $o .= sprintf("\t N100 Warm Pix Frac %.3f", $self->{n100_warm_frac});

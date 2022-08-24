@@ -396,10 +396,12 @@ foreach my $oflsid (@obsid_id){
 		$obs{$oflsid}->add_guide_summ($oflsid, \%guidesumm);
     }
     else {
-		my $obsid = $obs{$oflsid}->{obsid};
-		push @{$obs{$oflsid}->{warn}}, sprintf("No Guide Star Summary for obsid $obsid ($oflsid). \n");
+	my $obsid = $obs{$oflsid}->{obsid};
+	my $cat = Ska::Starcheck::Obsid::find_command($obs{$obsid}, "MP_STARCAT");
+	if (defined $cat){
+	    push @{$obs{$oflsid}->{warn}}, sprintf("No Guide Star Summary for obsid $obsid ($oflsid). \n");
+	}
     }
-
 }
 
 # Set up for SIM-Z checking
@@ -525,7 +527,7 @@ foreach my $obsid (@obsid_id) {
         $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
         $obs{$obsid}->{plot_field_file} = "$STARCHECK/star_view_$obs{$obsid}->{obsid}.png";
         $obs{$obsid}->{compass_file} = "$STARCHECK/compass$obs{$obsid}->{obsid}.png";
-    }
+
     $obs{$obsid}->check_monitor_commanding(\@bs, $or{$obsid});
     $obs{$obsid}->set_dynamic_mag_limits();
     $obs{$obsid}->check_dither($dither);
@@ -537,8 +539,9 @@ foreach my $obsid (@obsid_id) {
 	$obs{$obsid}->check_momentum_unload(\@bs);
     $obs{$obsid}->check_bright_perigee($radmon);
     $obs{$obsid}->check_guide_count();
+    }
 
-# Make sure there is only one star catalog per obsid
+    # Make sure there is only one star catalog per obsid
     warning ("More than one star catalog assigned to Obsid $obsid\n")
 	if ($obs{$obsid}->find_command('MP_STARCAT',2));
 }
@@ -675,36 +678,40 @@ for my $obs_idx (0 .. $#obsid_id) {
     $out .= sprintf "<A HREF=\"#obsid$obs{$obsid}->{obsid}\">OBSID = %5s</A>", $obs{$obsid}->{obsid};
     $out .= sprintf " at $obs{$obsid}->{date}   ";
 
-    my $guide_count = $obs{$obsid}->{figure_of_merit}->{guide_count};
 
-    # if Obsid is numeric, print tally info
-    if ($obs{$obsid}->{obsid} =~ /^\d+$/ ){
+    # If Obsid is numeric include in the summary
+    if ($obs{$obsid}->{obsid} =~ /^\d+$/){
 
-        # minumum requirements for fractional guide star count for ERs and ORs
-        my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000 ) ? 6.0 : 4.0;
+	my $cat = Ska::Starcheck::Obsid::find_command($obs{$obsid}, "MP_STARCAT");
 
-        # Use the acq prob model values saved in figure_of_merit for the expected
-        # number of acq stars and a bad overall probability.  figure_of_merit isn't
-        # defined if there is no star catalog, so use default of 0 stars and not-bad (0 status)
-        my $n_acq = 0.0;
-        my $bad_acq_prob = 0;
-        if (defined $obs{$obsid}->{figure_of_merit}){
-            $n_acq = $obs{$obsid}->{figure_of_merit}->{expected};
-            $bad_acq_prob = $obs{$obsid}->{figure_of_merit}->{cum_prob_bad};
-        }
-        my $acq_font_start =  $bad_acq_prob ? $red_font_start
-        : $empty_font_start;
-        my $gui_font_start = ($guide_count < $min_num_gui) ? $red_font_start
-        : $empty_font_start;
+	# But exclude the obsid if it has no star catalog
+	if (defined $cat){
+	    my $guide_count = $obs{$obsid}->{figure_of_merit}->{guide_count};
+	    # minumum requirements for fractional guide star count for ERs and ORs
+	    my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000 ) ? 6.0 : 4.0;
 
-        $out .= "$acq_font_start";
-        $out .= sprintf("%3.1f ACQ | ", $n_acq);
-        $out .= "$font_stop";
+	    # Use the acq prob model values saved in figure_of_merit for the expected
+	    # number of acq stars and a bad overall probability.  figure_of_merit isn't
+	    # defined if there is no star catalog, so use default of 0 stars and not-bad (0 status)
+	    my $n_acq = 0.0;
+	    my $bad_acq_prob = 0;
+	    if (defined $obs{$obsid}->{figure_of_merit}){
+		$n_acq = $obs{$obsid}->{figure_of_merit}->{expected};
+		$bad_acq_prob = $obs{$obsid}->{figure_of_merit}->{cum_prob_bad};
+	    }
+	    my $acq_font_start =  $bad_acq_prob ? $red_font_start
+		: $empty_font_start;
+	    my $gui_font_start = ($guide_count < $min_num_gui) ? $red_font_start
+		: $empty_font_start;
 
-        $out .= "$gui_font_start";
-        $out .= sprintf("%3.1f GUI | ", $guide_count);
-        $out .= "$font_stop";
+	    $out .= "$acq_font_start";
+	    $out .= sprintf("%3.1f ACQ | ", $n_acq);
+	    $out .= "$font_stop";
 
+	    $out .= "$gui_font_start";
+	    $out .= sprintf("%3.1f GUI | ", $guide_count);
+	    $out .= "$font_stop";
+	}
     }
     # if Obsid is non-numeric, print "Unknown"
     else{
