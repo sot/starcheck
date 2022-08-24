@@ -94,6 +94,7 @@ sub dither {
     my $dh_file = shift;      # Dither history file name
     my $bs_arr = shift;               # Backstop array reference
     my $kadi_dither = shift;
+    my $dither_error = undef;
 
     my $bs;
 
@@ -109,7 +110,8 @@ sub dither {
     # Parse lines like:
     # 2002262.094827395   | DSDITH  AODSDITH
     # 2002262.095427395   | ENDITH  AOENDITH
-    my $dith_hist_fh = IO::File->new($dh_file, "r") or return ("Dither history file read err", undef);
+
+    my $dith_hist_fh = IO::File->new($dh_file, "r") or $dither_error = "Dither history file read err";
         while (<$dith_hist_fh>) {
 	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (ENDITH|DSDITH)/x) {
 		my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
@@ -121,18 +123,21 @@ sub dither {
           }
 	$dith_hist_fh->close();
 
-    # If the most recent/last entry in the dither file has a timestamp newer than
-    # the first entry in the load, return string error and undef dither history.
-    if ($dh_time[-1] >= $bs_arr->[0]->{time}){
-       return ("Dither history runs into load\n", undef);
-    }
+    if (not defined $dither_error){
+        # If the most recent/last entry in the dither file has a timestamp newer than
+        # the first entry in the load, return string error and undef dither history.
+        if ($dh_time[-1] >= $bs_arr->[0]->{time}){
+        $dither_error = "Dither history runs into load\n";
+        }
 
-    # Confirm that last state matches kadi continuity ENAB/DISA.
-    # Otherwise, return string error and undef dither history.
-    if ($kadi_dither->{'dither'} ne $dh_state[-1]){
-        return ("Dither status in kadi commands does not match DITHER history\n", undef);
+        # Confirm that last state matches kadi continuity ENAB/DISA.
+        # Otherwise, return string error and undef dither history.
+        if ($kadi_dither->{'dither'} ne $dh_state[-1]){
+            $dither_error = "Dither status in kadi commands does not match DITHER history\n"
+                        . sprintf("kadi '%s' ; History '%s' \n",
+                                    $kadi_dither->{'dither'}, $dh_state[-1]);
+        }
     }
-
 
 
     # Now make an array of hashes as the final output.  Keep track of where the info
@@ -191,7 +196,7 @@ sub dither {
             }
         }
     }
-    return ("", \@dither);
+    return ($dither_error, \@dither);
 }
 
 
