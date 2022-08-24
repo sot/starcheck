@@ -2694,12 +2694,19 @@ sub set_ccd_temps{
     }
     # set the temperature to the value for the current obsid
     $self->{ccd_temp} = $obsid_temps->{$self->{obsid}}->{ccd_temp};
+    $self->{ccd_temp_min} = $obsid_temps->{$self->{obsid}}->{ccd_temp_min};
     $self->{ccd_temp_acq} = $obsid_temps->{$self->{obsid}}->{ccd_temp_acq};
     $self->{n100_warm_frac} = $obsid_temps->{$self->{obsid}}->{n100_warm_frac};
     # Add info statement for limit violations
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}){
         push @{$self->{fyi}}, sprintf("CCD temperature exceeds %.1f C\n",
                                        $config{ccd_temp_red_limit});
+    }
+    # Add CRITICAL if OR and too cold as fid lights may be out of boxes
+    if (($self->{obsid} < 38000) and ($self->{ccd_temp_min} < -14.0)){
+	push @{$self->{warn}}, sprintf(
+	    "OR with min(t_ccd) %.1f < -14. Fid lights may not be tracked\n",
+	    $self->{ccd_temp_min});
     }
     # Add info for having a penalty temperature too
     if ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}){
