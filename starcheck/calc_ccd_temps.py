@@ -119,6 +119,15 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
+    # For kadi commands v2 set the default scenario to flight. This is aimed at
+    # running in production on HEAD where the commands archive is updated
+    # hourly. In this case no network resources are used.
+    #
+    # For non-HEAD machines run in an environment with KADI_SCENARIO set to ""
+    # (empty string) or a valid local scenario name in order to get recent
+    # commands using network resources.
+    os.environ.setdefault('KADI_SCENARIO', 'flight')
+
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
