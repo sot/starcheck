@@ -346,7 +346,7 @@ sub get_fid_actions {
 	# take the last thousand entries if there are more than a 1000
 	my @reduced_fidsel_text = @fidsel_text;
         if ($#fidsel_text > 1000){
-            my @reduced_fidsel_text = @fidsel_text[($#fidsel_text-1000) ... $#fidsel_text];
+            @reduced_fidsel_text = @fidsel_text[($#fidsel_text-1000) ... $#fidsel_text];
         }
 #    if ($fs_file && ($fidsel_fh = new IO::File $fs_file, "r")) {
 	for my $fidsel_line (@reduced_fidsel_text){
