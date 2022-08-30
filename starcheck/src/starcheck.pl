@@ -565,6 +565,11 @@ $out .= " Run on $date by $ENV{USER} from $hostname\n";
 $out .= " Configuration:  Using AGASC at $agasc_file\n";
 my $chandra_models_version = get_chandra_models_version();
 $out .= " chandra_models version: $chandra_models_version\n";
+my $kadi_scenario = exists($ENV{KADI_SCENARIO}) ? $ENV{KADI_SCENARIO} : "None";
+if ($kadi_scenario ne "flight") {
+    $kadi_scenario = "${red_font_start}${kadi_scenario}${font_stop}";
+}
+$out .= " Kadi scenario: $kadi_scenario\n";
 $out .= "\n";
 
 if ($mp_top_link){
