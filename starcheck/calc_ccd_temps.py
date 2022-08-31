@@ -42,6 +42,7 @@ from parse_cm import read_or_list
 from chandra_aca.drift import get_aca_offsets
 import proseco.characteristics as proseco_char
 from xija.get_model_spec import get_xija_model_spec
+from testr import test_helper
 
 from starcheck import __version__ as version
 
@@ -119,6 +120,12 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
+    # For kadi commands v2 running on HEAD set the default scenario to flight.
+    # This is aimed at running in production where the commands archive is
+    # updated hourly. In this case no network resources are used.
+    if test_helper.on_head_network():
+        os.environ.setdefault('KADI_SCENARIO', 'flight')
+
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
@@ -131,6 +138,7 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     run_start_time = DateTime(run_start_time)
     config_logging(outdir, verbose)
+    config_logging(outdir, verbose, 'kadi')
 
     # Store info relevant to processing for use in outputs
     proc = {'run_user': os.environ.get('USER'),
@@ -457,7 +465,7 @@ def get_telem_values(tstop, msids, days=7):
     return out
 
 
-def config_logging(outdir, verbose):
+def config_logging(outdir, verbose, name=TASK_NAME):
     """Set up file and console logger.
     See http://docs.python.org/library/logging.html
               #logging-to-multiple-destinations
@@ -475,7 +483,7 @@ def config_logging(outdir, verbose):
                 1: logging.INFO,
                 2: logging.DEBUG}.get(verbose, logging.INFO)
 
-    logger = logging.getLogger(TASK_NAME)
+    logger = logging.getLogger(name)
     logger.setLevel(loglevel)
 
     # Remove existing handlers if calc_ccd_temps is called multiple times
