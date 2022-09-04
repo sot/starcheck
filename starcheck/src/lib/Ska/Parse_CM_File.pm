@@ -94,7 +94,7 @@ sub dither {
     my $dh_file = shift;      # Dither history file name
     my $bs_arr = shift;               # Backstop array reference
     my $kadi_dither = shift;
-    my $dither_error = undef;
+    my $dither_error;
 
     my $bs;
 
