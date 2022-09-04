@@ -277,7 +277,7 @@ my ($dither_error, $dither) = Ska::Parse_CM_File::dither($dither_file, \@bs, $ka
 my ($radmon_time_violation, $radmon) = Ska::Parse_CM_File::radmon($radmon_file, \@bs);
 
 # if dither history runs into load or kadi mismatch
-if ($dither_error ne ""){
+if (defined($dither_error)){
     warning($dither_error);
 }
 
