@@ -71,6 +71,11 @@ def get_chandra_models_version():
 
 
 @print_traceback_on_exception
+def get_kadi_scenario():
+    return os.getenv('KADI_SCENARIO', default="None")
+
+
+@print_traceback_on_exception
 def get_data_dir():
     sc_data = os.path.join(os.path.dirname(starcheck.__file__), 'data')
     return sc_data if os.path.exists(sc_data) else ""

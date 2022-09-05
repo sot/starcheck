@@ -50,7 +50,8 @@ from starcheck.utils import (_make_pcad_attitude_check_report,
                              starcheck_version, get_data_dir,
                              get_chandra_models_version,
                              get_dither_kadi_state,
-                             get_run_start_time)
+                             get_run_start_time,
+                             get_kadi_scenario)
 
 };
 
@@ -565,7 +566,7 @@ $out .= " Run on $date by $ENV{USER} from $hostname\n";
 $out .= " Configuration:  Using AGASC at $agasc_file\n";
 my $chandra_models_version = get_chandra_models_version();
 $out .= " chandra_models version: $chandra_models_version\n";
-my $kadi_scenario = exists($ENV{KADI_SCENARIO}) ? $ENV{KADI_SCENARIO} : "None";
+my $kadi_scenario = get_kadi_scenario();
 if ($kadi_scenario ne "flight") {
     $kadi_scenario = "${red_font_start}${kadi_scenario}${font_stop}";
 }
