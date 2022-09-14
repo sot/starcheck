@@ -8,6 +8,7 @@ import starcheck
 from starcheck.pcad_att_check import make_pcad_attitude_check_report, check_characteristics_date
 from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.plot import make_plots_for_obsid
+from starcheck.check_ir_zone import ir_zone_ok
 from starcheck import __version__ as version
 from kadi.commands import states
 import proseco.characteristics as proseco_char
@@ -84,6 +85,11 @@ def get_data_dir():
 @print_traceback_on_exception
 def _make_pcad_attitude_check_report(kwargs):
     return make_pcad_attitude_check_report(**de_bytestr(kwargs))
+
+
+@print_traceback_on_exception
+def make_ir_check_report(kwargs):
+    return ir_zone_ok(**de_bytestr(kwargs))
 
 
 @print_traceback_on_exception

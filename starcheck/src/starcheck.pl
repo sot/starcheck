@@ -51,7 +51,8 @@ from starcheck.utils import (_make_pcad_attitude_check_report,
                              get_chandra_models_version,
                              get_dither_kadi_state,
                              get_run_start_time,
-                             get_kadi_scenario)
+                             get_kadi_scenario,
+                             make_ir_check_report)
 
 };
 
@@ -607,6 +608,20 @@ if (@global_warn) {
 	$out .= $_;
     }
     $out .= qq{${font_stop}\n};
+}
+
+# Check for just NMAN during high IR Zone
+$out .= "------------  HIGH IR ZONE CHECK  -----------------\n\n";
+my $ir_report = "${STARCHECK}/high_ir_check.txt";
+my $ir_ok = make_ir_check_report({
+    backstop_file=> $backstop,
+    out=> $ir_report});
+if ($ir_ok){
+    $out .= "<A HREF=\"${ir_report}\">[OK] In NMAN during High IR Zones.</A>\n";
+}
+else{
+    $out .= "<A HREF=\"${ir_report}\">[${red_font_start}NOT OK${font_stop}]";
+    $out .= " Not in NMAN during High IR Zone.</A>\n";
 }
 
 
