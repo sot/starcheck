@@ -62,6 +62,8 @@ my $version = starcheck_version();
 
 # Set some global vars with directory locations
 my $SKA = $ENV{SKA} || '/proj/sot/ska';
+my $OR_SIZE = $ENV{PROSECO_OR_IMAGE_SIZE} || '8';
+Ska::Starcheck::Obsid::set_orsize($OR_SIZE);
 
 my %par = (dir  => '.',
 		   plot => 1,
@@ -244,8 +246,6 @@ map { warning("$_\n") } @{$error};
 if ($dot_touched_by_sausage == 0 ){
 	warning("DOT file not modified by SAUSAGE! \n");
 }
-
-
 
 Ska::Starcheck::Obsid::setcolors({ red => $red_font_start,
 				   blue => $blue_font_start,

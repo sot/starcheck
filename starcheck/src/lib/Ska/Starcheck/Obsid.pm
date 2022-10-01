@@ -267,6 +267,7 @@ my %bad_gui;
 my %bad_id;
 my %config;
 my $db_handle;
+my $or_size;
 
 
 1;
@@ -301,6 +302,10 @@ sub set_db_handle {
     $db_handle = $handle;
 }
 
+sub set_orsize {
+    my $or_size_int = shift;
+    $or_size = sprintf("%dx%d", $or_size_int, $or_size_int);
+}
 
 ##################################################################################
 sub setcolors {
@@ -1618,14 +1623,10 @@ sub check_star_catalog {
 	    push @warn, sprintf "[%2d] Search Box Size. Search Box Too Large. \n",$i;
 	}
 
-	# Check that readout sizes are all 6x6 for science observations ACA-027
-	if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne "6x6"){
-	  if (($c->{"SIZE$i"} eq "8x8") and ($or->{HAS_MON}) and ($c->{"IMNUM$i"} == 7 )){
-	    push @{$self->{fyi}}, sprintf("[%2d] Readout Size. 8x8 Stealth MON?\n", $i);
-	  }
-	  else{
-	    push @warn, sprintf("[%2d] Readout Size. %s Should be 6x6\n", $i, $c->{"SIZE$i"});
-	  }
+	# Check that readout sizes are all as-requested for science observations ACA-027
+	if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne $or_size){
+	    push @warn, sprintf("[%2d] Readout Size. %s Should be %s\n",
+            $i, $c->{"SIZE$i"}, $or_size);
 	}
 
 	# Check that readout sizes are all 8x8 for engineering observations ACA-028
