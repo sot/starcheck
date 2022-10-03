@@ -67,26 +67,13 @@ def make_man_angles(backstop_file):
 
     states = get_states(backstop_file, state_keys=['pcad_mode'])
 
-    # If the states begin with NPNT we're done.
-    # If the states begin with NMAN need to rewind to NPNT before states
-    # If anything besides NMAN since NPNT, set to 180?
+    # If the states begin with NPNT we're done.  Otherwise, get some more states.
+    # 10 days is more than enough: it doesn't matter.
     if states['pcad_mode'][0] != 'NPNT':
-        print(states[0])
         pre_states = kadi_states.get_states(
-            start=CxoTime(states[0]['tstart']) - 5, stop=states[0]['tstart'],
+            start=CxoTime(states[0]['tstart']) - 10, stop=states[0]['tstart'],
             state_keys=['pcad_mode'], merge_identical=True)
-        if len(pre_states) > 0:
-            had_nman = False
-            idx = 0
-            for i, state in enumerate(pre_states[::-1]):
-                print(state['pcad_mode', 'datestart'], had_nman)
-                if state['pcad_mode'] == 'NMAN':
-                    had_nman = True
-                if state['pcad_mode'] == 'NPNT' and had_nman:
-                    idx = i
-                    break
-            print(pre_states[-idx - 1::])
-            states = vstack([pre_states[-idx - 1::], states])
+        states = vstack([pre_states, states])
 
     mysums = []
     nman_sum = 0
