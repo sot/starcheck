@@ -26,6 +26,7 @@ import numpy as np
 from astropy.table import Table
 
 from starcheck.utils import time2date, date2time, de_bytestr
+from starcheck.check_ir_zone import get_obs_man_angle
 from mica.archive import aca_dark
 from chandra_aca.star_probs import guide_count
 from chandra_aca.transform import (yagzag_to_pixels, pixels_to_yagzag,
@@ -2072,6 +2073,10 @@ sub print_report {
 		$o .= sprintf("  MANVR: Angle= %6.2f deg  Duration= %.0f sec  Slew err= %.1f arcsec  End= %s\n",
 			      $c->{angle}, $c->{dur}, $c->{man_err}, substr(time2date($c->{tstop}), 0, 17));
 		}
+        if ((defined $c->{man_angle_calc}) and (abs($c->{man_angle_calc} - $c->{angle}) > 10)){
+            $o .= sprintf("  MANVR: Calculated angle for proseco = %6.2f deg\n",
+                        $c->{man_angle_calc});
+        }
 	    $o .= "\n";
 	}
     }
@@ -2800,6 +2805,11 @@ sub proseco_args{
     if ((not $targ_cmd) or (not $cat_cmd) or ($self->{obsid} =~ /NONE(\d+)/)){
         return \%proseco_args;
     }
+    my $man_angle = get_obs_man_angle(de_bytestr($targ_cmd->{tstop}),
+        de_bytestr($self->{backstop}));
+    #print($targ_cmd->{tstop} . " " . $man_angle . "\n");
+    $targ_cmd->{man_angle_calc} = $man_angle;
+
     # Use a default SI and offset for ERs (no effect without fid lights)
     my $is_OR = $self->{obsid} < $ER_MIN_OBSID;
     my $si = $is_OR ? $self->{SI} : 'ACIS-S';
@@ -2853,7 +2863,7 @@ sub proseco_args{
         obsid => $self->{obsid},
         date => $targ_cmd->{stop_date},
         att => [0 + $targ_cmd->{q1}, 0 + $targ_cmd->{q2}, 0 + $targ_cmd->{q3}, 0 + $targ_cmd->{q4}],
-        man_angle => 0 + $targ_cmd->{angle},
+        man_angle => 0 + $man_angle,
         detector => $si,
         sim_offset => 0 + $offset,
         dither_acq => [$self->{dither_acq}->{ampl_y}, $self->{dither_acq}->{ampl_p}],
