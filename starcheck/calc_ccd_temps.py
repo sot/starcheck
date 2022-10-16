@@ -42,7 +42,6 @@ from parse_cm import read_or_list
 from chandra_aca.drift import get_aca_offsets
 import proseco.characteristics as proseco_char
 from xija.get_model_spec import get_xija_model_spec
-from testr import test_helper
 
 from starcheck import __version__ as version
 
@@ -120,11 +119,7 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     :returns: JSON dictionary of labeled dwell intervals with max temperatures
     """
-    # For kadi commands v2 running on HEAD set the default scenario to flight.
-    # This is aimed at running in production where the commands archive is
-    # updated hourly. In this case no network resources are used.
-    if test_helper.on_head_network():
-        os.environ.setdefault('KADI_SCENARIO', 'flight')
+    from .utils import config_logging
 
     if not os.path.exists(outdir):
         os.mkdir(outdir)
@@ -137,8 +132,7 @@ def get_ccd_temps(oflsdir, outdir='out',
         json_obsids = Path(oflsdir, 'starcheck', 'obsids.json').read_text()
 
     run_start_time = DateTime(run_start_time)
-    config_logging(outdir, verbose)
-    config_logging(outdir, verbose, 'kadi')
+    config_logging(outdir, verbose, TASK_NAME)
 
     # Store info relevant to processing for use in outputs
     proc = {'run_user': os.environ.get('USER'),
@@ -463,43 +457,6 @@ def get_telem_values(tstop, msids, days=7):
     out = Table(vals)
 
     return out
-
-
-def config_logging(outdir, verbose, name=TASK_NAME):
-    """Set up file and console logger.
-    See http://docs.python.org/library/logging.html
-              #logging-to-multiple-destinations
-    """
-    # Disable auto-configuration of root logger by adding a null handler.
-    # This prevents other modules (e.g. Chandra.cmd_states) from generating
-    # a streamhandler by just calling logging.info(..).
-    class NullHandler(logging.Handler):
-        def emit(self, record):
-            pass
-    rootlogger = logging.getLogger()
-    rootlogger.addHandler(NullHandler())
-
-    loglevel = {0: logging.CRITICAL,
-                1: logging.INFO,
-                2: logging.DEBUG}.get(verbose, logging.INFO)
-
-    logger = logging.getLogger(name)
-    logger.setLevel(loglevel)
-
-    # Remove existing handlers if calc_ccd_temps is called multiple times
-    for handler in list(logger.handlers):
-        logger.removeHandler(handler)
-
-    formatter = logging.Formatter('%(message)s')
-
-    console = logging.StreamHandler()
-    console.setFormatter(formatter)
-    logger.addHandler(console)
-
-    filehandler = logging.FileHandler(
-        filename=os.path.join(outdir, 'run.dat'), mode='w')
-    filehandler.setFormatter(formatter)
-    logger.addHandler(filehandler)
 
 
 class NumpyAwareJSONEncoder(json.JSONEncoder):
