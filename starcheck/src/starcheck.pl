@@ -501,6 +501,7 @@ $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                       json_obsids => $json_text,
                                       orlist => $or_file,
                                       run_start_time => $run_start_time,
+                                      verbose => $par{verbose},
                                   });
 # convert back from JSON outside
 $obsid_temps = JSON::from_json($json_obsid_temps);
