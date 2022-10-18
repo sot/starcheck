@@ -1,6 +1,7 @@
 import functools
 import logging
 import os
+from pathlib import Path
 
 import numpy as np
 import proseco.characteristics as proseco_char
@@ -188,7 +189,9 @@ def config_logging(outdir, verbose, name):
     console.setFormatter(formatter)
     logger.addHandler(console)
 
+    if not Path(outdir).exists():
+        Path(outdir).mkdir(parents=True)
     filehandler = logging.FileHandler(
-        filename=os.path.join(outdir, 'run.dat'), mode='w')
+        filename=Path(outdir) / 'run.dat', mode='w')
     filehandler.setFormatter(formatter)
     logger.addHandler(filehandler)
