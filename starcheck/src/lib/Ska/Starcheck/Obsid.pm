@@ -302,11 +302,6 @@ sub set_db_handle {
     $db_handle = $handle;
 }
 
-sub set_orsize {
-    my $or_size_int = shift;
-    $or_size = sprintf("%dx%d", $or_size_int, $or_size_int);
-}
-
 ##################################################################################
 sub setcolors {
 ##################################################################################
@@ -1623,6 +1618,8 @@ sub check_star_catalog {
 	    push @warn, sprintf "[%2d] Search Box Size. Search Box Too Large. \n",$i;
 	}
 
+    my $img_size = $ENV{PROSECO_OR_IMAGE_SIZE} || '8';
+    my $or_size = "${img_size}x${img_size}";
 	# Check that readout sizes are all as-requested for science observations ACA-027
 	if ($is_science && $type =~ /BOT|GUI|ACQ/  && $c->{"SIZE$i"} ne $or_size){
 	    push @warn, sprintf("[%2d] Readout Size. %s Should be %s\n",
