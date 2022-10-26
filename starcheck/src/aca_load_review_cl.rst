@@ -255,8 +255,12 @@ Checks
 |ACA-026|Common column     | | |mag brighter than star, and spoiler is     |n/a |quality         |
 |       |                  | | |located between star and readout           |    |                |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
-|ACA-027|Readout sizes     |X|X|Acquisition star and guide star readout    |n/a |Reduced aspect  |
-|       |                  | | |sizes are all 6x6 or 8x8 for ORs           |    |quality         |
+|       |                  |X|X|                                           |    |Reduced aspect  |
+|       |                  | | |                                           |    |quality         |
+|ACA-027|Readout sizes     | | |Acquisition star and guide star readout    |n/a |                |
+|       |                  | | |sizes are all 6x6 or 8x8 for ORs           |    |Ground          |
+|       |                  | | |                                           |    |processing      |
+|       |                  | | |                                           |    |difficulty      |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
 |ACA-028|Readout sizes     |X|X|Acquisition star and guide star readout    |n/a |No ACA Header 3 |
 |       |                  | | |sizes are all 8x8 for ERs                  |    |telemetry       |
