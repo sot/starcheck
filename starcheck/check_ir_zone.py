@@ -1,3 +1,4 @@
+from functools import lru_cache
 import numpy as np
 from astropy.table import Table, vstack
 
@@ -7,13 +8,9 @@ from cxotime import CxoTime
 from Chandra.Maneuver import duration
 from Quaternion import Quat
 
-# Use two globals in the module to save reprocessing
-MAN_TABLE = None
-MAN_ANGLES = None
 
-
+@lru_cache
 def make_man_table():
-    global MAN_TABLE
     angles = []
     durations = []
     q0 = Quat(equatorial=(0, 0, 0))
@@ -21,22 +18,21 @@ def make_man_table():
         q1 = Quat(equatorial=(angle, 0, 0))
         angles.append(angle)
         durations.append(duration(q0, q1))
-    MAN_TABLE = Table([durations, angles], names=['duration', 'angle'])
+    return Table([durations, angles], names=['duration', 'angle'])
 
 
 def get_obs_man_angle(npnt_tstart, backstop_file):
-    global MAN_ANGLES
-    if MAN_ANGLES is None:
-        MAN_ANGLES = make_man_angles(backstop_file)
 
-    idx = np.argmin(np.abs(MAN_ANGLES['tstart'] - npnt_tstart))
-    dt = MAN_ANGLES['tstart'][idx] - npnt_tstart
+    man_angles = make_man_angles(backstop_file)
+
+    idx = np.argmin(np.abs(man_angles['tstart'] - npnt_tstart))
+    dt = man_angles['tstart'][idx] - npnt_tstart
 
     # For starcheck, if something went wrong, just
     # use a large (180) angle
     if np.abs(dt) > 100:
         return float(180)
-    return float(MAN_ANGLES['angle'][idx])
+    return float(man_angles['angle'][idx])
 
 
 def get_states(backstop_file, state_keys=None):
@@ -56,15 +52,10 @@ def get_states(backstop_file, state_keys=None):
                                   state_keys=['pcad_mode'], merge_identical=True)
 
 
+@lru_cache
 def make_man_angles(backstop_file):
 
-    global MAN_ANGLES
-    if MAN_ANGLES is not None:
-        return MAN_ANGLES
-
-    if MAN_TABLE is None:
-        make_man_table()
-
+    man_table = make_man_table()
     states = get_states(backstop_file, state_keys=['pcad_mode'])
 
     # If the states begin with NPNT we're done.  Otherwise, get some more states.
@@ -84,8 +75,8 @@ def make_man_angles(backstop_file):
             mysums.append({'tstart': state['tstart'],
                            'nman_sum': nman_sum.copy(),
                            'angle': np.interp(nman_sum.copy(),
-                                              MAN_TABLE['duration'],
-                                              MAN_TABLE['angle'])})
+                                              man_table['duration'],
+                                              man_table['angle'])})
             nman_sum = 0
         if state['pcad_mode'] not in ['NMAN', 'NPNT']:
             nman_sum += 20000
