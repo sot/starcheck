@@ -6,11 +6,11 @@ ACA Load Review Checklist
    file in the starcheck git project
 
 
-Date: 2021-Oct-26
+Date: 2022-Oct-26
 
-Version: 3.8
+Version: 3.9
 
-Author: E. Martin, S. Bucher, T. Aldcroft, J. Connelly
+Author: E. Martin, S. Hurley, T. Aldcroft, J. Connelly, J. Gonzalez
 
 The following software and data files are installed in the HEAD LAN
 environment.
@@ -21,8 +21,6 @@ Software Packages
   - starcheck
 
   - SAUSAGE
-
-  - make_stars
 
 Load Input Files
 ----------------
@@ -260,7 +258,7 @@ Checks
 |       |                  |X|X|                                           |    |Reduced aspect  |
 |       |                  | | |                                           |    |quality         |
 |ACA-027|Readout sizes     | | |Acquisition star and guide star readout    |n/a |                |
-|       |                  | | |sizes are all 6x6 for ORs                  |    |Ground          |
+|       |                  | | |sizes are all 6x6 or 8x8 for ORs           |    |Ground          |
 |       |                  | | |                                           |    |processing      |
 |       |                  | | |                                           |    |difficulty      |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
@@ -355,164 +353,3 @@ FL
                            
 #MW                        
   number of monitor windows
-                           
-
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                           
