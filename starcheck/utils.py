@@ -179,7 +179,7 @@ def config_logging(outdir, verbose, name):
     logger = logging.getLogger(name)
     logger.setLevel(loglevel)
 
-    # Remove existing handlers if calc_ccd_temps is called multiple times
+    # Remove existing handlers if this logger is already configured
     for handler in list(logger.handlers):
         logger.removeHandler(handler)
 
@@ -189,9 +189,8 @@ def config_logging(outdir, verbose, name):
     console.setFormatter(formatter)
     logger.addHandler(console)
 
-    if not Path(outdir).exists():
-        Path(outdir).mkdir(parents=True)
-    filehandler = logging.FileHandler(
-        filename=Path(outdir) / 'run.dat', mode='w')
+    outdir = Path(outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    filehandler = logging.FileHandler(filename=outdir / 'run.dat', mode='w')
     filehandler.setFormatter(formatter)
     logger.addHandler(filehandler)

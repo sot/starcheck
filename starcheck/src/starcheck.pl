@@ -111,7 +111,11 @@ my $font_stop = qq{</font>};
 usage( 1 )
     if $par{help};
 
-config_logging($STARCHECK, $par{verbose}, "kadi");
+# kadi log levels are a little different and INFO (corresponding to the default
+# verbose=1) is too chatty for the default. Instead allow only verbose=0
+# (CRITICAL) or verbose=2 (DEBUG).
+my $kadi_verbose = $par{verbose} eq '2' ? '2' : '0';
+config_logging($STARCHECK, $kadi_verbose, "kadi");
 set_kadi_scenario_default();
 
 # Find backstop, guide star summary, OR, and maneuver files.
