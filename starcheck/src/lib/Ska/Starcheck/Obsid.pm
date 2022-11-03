@@ -267,7 +267,6 @@ my %bad_gui;
 my %bad_id;
 my %config;
 my $db_handle;
-my $or_size;
 
 
 1;
