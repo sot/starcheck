@@ -245,8 +245,6 @@ if ($dot_touched_by_sausage == 0 ){
 	warning("DOT file not modified by SAUSAGE! \n");
 }
 
-
-
 Ska::Starcheck::Obsid::setcolors({ red => $red_font_start,
 				   blue => $blue_font_start,
 				   yellow => $yellow_font_start,
@@ -1185,6 +1183,14 @@ The guide star summary file is assumed to be named 'mg*.sum'.  If no file
 is found, a warning is produced but processing continues.  Multiple matches
 results in a fatal error, however.
 
+Starcheck uses the SKA environment variable to locate the default agasc file
+"${SKA}/data/agasc/proseco_agasc_1p7.h5".  If SKA is not set this defaults to
+'/proj/sot/ska'.
+
+Starcheck uses the PROSECO_OR_IMAGE_SIZE environment variable if available to
+set up the check for the appropriate readout image size in pixels for science
+observations. This variable should be set to either '6' or '8'. If not set,
+a default of '8' will be used to confirm all readout images sizes are 8x8.
 
 =head1 AUTHOR
 
