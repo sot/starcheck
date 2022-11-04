@@ -46,6 +46,8 @@ from starcheck.pcad_att_check import check_characteristics_date
 from starcheck.utils import (_make_pcad_attitude_check_report,
                              plot_cat_wrapper,
                              date2time, time2date,
+                             config_logging,
+                             set_kadi_scenario_default,
                              ccd_temp_wrapper,
                              starcheck_version, get_data_dir,
                              get_chandra_models_version,
@@ -71,6 +73,7 @@ my %par = (dir  => '.',
                    agasc_file => "${SKA}/data/agasc/proseco_agasc_1p7.h5",
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
+           verbose => 1,
 		   );
 
 
@@ -83,6 +86,7 @@ GetOptions( \%par,
 			'text!',
 			'yaml!',
 			'vehicle!',
+            'verbose=s',
 			'agasc_file=s',
 			'sc_data=s',
 			'fid_char=s',
@@ -106,6 +110,13 @@ my $font_stop = qq{</font>};
 
 usage( 1 )
     if $par{help};
+
+# kadi log levels are a little different and INFO (corresponding to the default
+# verbose=1) is too chatty for the default. Instead allow only verbose=0
+# (CRITICAL) or verbose=2 (DEBUG).
+my $kadi_verbose = $par{verbose} eq '2' ? '2' : '0';
+config_logging($STARCHECK, $kadi_verbose, "kadi");
+set_kadi_scenario_default();
 
 # Find backstop, guide star summary, OR, and maneuver files.
 my %input_files = ();
@@ -492,6 +503,7 @@ $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                       json_obsids => $json_text,
                                       orlist => $or_file,
                                       run_start_time => $run_start_time,
+                                      verbose => $par{verbose},
                                   });
 # convert back from JSON outside
 $obsid_temps = JSON::from_json($json_obsid_temps);
