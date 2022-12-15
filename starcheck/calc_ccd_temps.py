@@ -161,10 +161,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     if maude == 1 or not have_cxc_telem:
         fetch.data_source.set('maude allow_subset=False')
         logger.info("Setting to use maude")
-        stat = None
         use_maude = True
-    else:
-        stat = '5min'
 
     # save model_spec in out directory
     if isinstance(model_spec, dict):
@@ -219,7 +216,8 @@ def get_ccd_temps(oflsdir, outdir='out',
     else:
         tlm_end_time = min(fetch.get_time_range('aacccdpt', format='secs')[1],
                            bs_start.secs, run_start_time.secs)
-    tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1, stat=stat)
+    tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1,
+                           stat=None if use_maude else '5min')
     states = get_week_states(rltt, sched_stop, bs_cmds, tlm)
 
     # If the last obsid interval extends over the end of states then extend the
@@ -240,7 +238,8 @@ def get_ccd_temps(oflsdir, outdir='out',
     if rltt.date > DateTime(MODEL_VALID_FROM).date:
         ccd_times, ccd_temps = make_week_predict(model_spec, states, sched_stop)
     else:
-        ccd_times, ccd_temps = mock_telem_predict(states, stat=stat)
+        ccd_times, ccd_temps = mock_telem_predict(states,
+                                                  stat=None if use_maude else '5min')
 
     make_check_plots(outdir, states, ccd_times, ccd_temps,
                      tstart=bs_start.secs, tstop=sched_stop.secs, char=proseco_char)
