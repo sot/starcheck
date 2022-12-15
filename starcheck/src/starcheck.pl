@@ -537,7 +537,7 @@ foreach my $obsid (@obsid_id) {
                          catalog=>$cat_as_array,
                          starcat_time=>"$obs{$obsid}->{date}",
                          duration=>($obs{$obsid}->{obs_tstop} - $obs{$obsid}->{obs_tstart}),
-                         outdir=>$STARCHECK);
+                         outdir=>$STARCHECK, agasc_file=>$agasc_file);
         plot_cat_wrapper(\%plot_args);
         $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
         $obs{$obsid}->{plot_field_file} = "$STARCHECK/star_view_$obs{$obsid}->{obsid}.png";
