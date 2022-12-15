@@ -63,6 +63,15 @@ except Exception:
     VERSION = 'dev'
 
 
+USE_MAUDE = False
+
+
+def use_maude():
+    global USE_MAUDE
+    fetch.data_source.set('maude allow_subset=False')
+    USE_MAUDE = True
+
+
 def get_options():
     import argparse
     parser = argparse.ArgumentParser(
@@ -101,7 +110,7 @@ def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=None,
                   model_spec=None, orlist=None,
                   run_start_time=None,
-                  verbose=1, **kwargs):
+                  verbose=1, maude=None, **kwargs):
     """
     Using the cmds and cmd_states tables, available telemetry, and
     the pitches determined from the planning products, calculate xija ACA model
@@ -133,6 +142,18 @@ def get_ccd_temps(oflsdir, outdir='out',
 
     run_start_time = DateTime(run_start_time)
     config_logging(outdir, verbose, TASK_NAME)
+
+    if maude == 1:
+        logger.info("Using maude.")
+        use_maude()
+
+    # If maude was not requested check that there is data in the archive
+    if not USE_MAUDE:
+        try:
+            fetch.get_time_range('aacccdpt')
+        except KeyError:
+            logger.info("AACCCDPT not found in cheta archive. Using maude.")
+            use_maude()
 
     # Store info relevant to processing for use in outputs
     proc = {'run_user': os.environ.get('USER'),
@@ -412,7 +433,7 @@ def mock_telem_predict(states):
     tlm = fetch.MSIDset(['aacccdpt'],
                         states[0]['tstart'],
                         states[-1]['tstart'],
-                        stat='5min')
+                        stat=None if USE_MAUDE else '5min')
 
     return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
 
@@ -445,8 +466,9 @@ def get_telem_values(tstop, msids, days=7):
     stop = DateTime(tstop).date
     logger.info('Fetching telemetry between %s and %s' % (start, stop))
 
-    msidset = fetch.MSIDset(msids, start, stop, stat='5min')
-    msidset.interpolate(328.0)  # 328 for '5min' stat
+    msidset = fetch.MSIDset(msids, start, stop,
+                            stat=None if USE_MAUDE else '5min')
+    msidset.interpolate(328.0)  # 328 for '5min' stat, still OK for None
 
     # Finished when we found at least 4 good records (20 mins)
     if len(msidset.times) < 4:

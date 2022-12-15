@@ -84,6 +84,12 @@ def set_kadi_scenario_default():
     if test_helper.on_head_network():
         os.environ.setdefault('KADI_SCENARIO', 'flight')
 
+@python_from_perl
+def get_cheta_source():
+    if starcheck.calc_ccd_temps.USE_MAUDE:
+        return 'maude'
+    else:
+        return 'cheta'
 
 @python_from_perl
 def get_kadi_scenario():
