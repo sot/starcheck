@@ -157,10 +157,12 @@ def get_ccd_temps(oflsdir, outdir='out',
         logger.info("AACCCDPT not found in cheta archive.")
         have_cxc_telem = False
 
+    use_maude = False
     if maude == 1 or not have_cxc_telem:
         fetch.data_source.set('maude allow_subset=False')
         logger.info("Setting to use maude")
         stat = None
+        use_maude = True
     else:
         stat = '5min'
 
@@ -212,8 +214,11 @@ def get_ccd_temps(oflsdir, outdir='out',
     # Get temperature telemetry for 1 day prior to min(last available telem,
     # backstop start, run_start_time) where run_start_time is for regression
     # testing.
-    tlm_end_time = min(fetch.get_time_range('aacccdpt', format='secs')[1],
-                       bs_start.secs, run_start_time.secs)
+    if use_maude:
+        tlm_end_time = min(bs_start.secs, run_start_time.secs)
+    else:
+        tlm_end_time = min(fetch.get_time_range('aacccdpt', format='secs')[1],
+                           bs_start.secs, run_start_time.secs)
     tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1, stat=stat)
     states = get_week_states(rltt, sched_stop, bs_cmds, tlm)
 
