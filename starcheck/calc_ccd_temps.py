@@ -63,15 +63,6 @@ except Exception:
     VERSION = 'dev'
 
 
-USE_MAUDE = False
-
-
-def use_maude():
-    global USE_MAUDE
-    fetch.data_source.set('maude allow_subset=False')
-    USE_MAUDE = True
-
-
 def get_options():
     import argparse
     parser = argparse.ArgumentParser(
@@ -143,18 +134,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     run_start_time = DateTime(run_start_time)
     config_logging(outdir, verbose, TASK_NAME)
 
-    if maude == 1:
-        logger.info("Using maude.")
-        use_maude()
-
-    # If maude was not requested check that there is data in the archive
-    if not USE_MAUDE:
-        try:
-            fetch.get_time_range('aacccdpt')
-        except KeyError:
-            logger.info("AACCCDPT not found in cheta archive. Using maude.")
-            use_maude()
-
     # Store info relevant to processing for use in outputs
     proc = {'run_user': os.environ.get('USER'),
             'execution_time': time.ctime(),
@@ -170,6 +149,20 @@ def get_ccd_temps(oflsdir, outdir='out',
     logger.info(f'# kadi version = {kadi.__version__}')
     logger.info('###############################'
                 '######################################\n')
+
+    have_cxc_telem = True
+    try:
+        fetch.get_time_range('aacccdpt')
+    except KeyError:
+        logger.info("AACCCDPT not found in cheta archive.")
+        have_cxc_telem = False
+
+    if maude == 1 or not have_cxc_telem:
+        fetch.data_source.set('maude allow_subset=False')
+        logger.info("Setting to use maude")
+        stat = None
+    else:
+        stat = '5min'
 
     # save model_spec in out directory
     if isinstance(model_spec, dict):
@@ -221,7 +214,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     # testing.
     tlm_end_time = min(fetch.get_time_range('aacccdpt', format='secs')[1],
                        bs_start.secs, run_start_time.secs)
-    tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1)
+    tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1, stat=stat)
     states = get_week_states(rltt, sched_stop, bs_cmds, tlm)
 
     # If the last obsid interval extends over the end of states then extend the
@@ -242,7 +235,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     if rltt.date > DateTime(MODEL_VALID_FROM).date:
         ccd_times, ccd_temps = make_week_predict(model_spec, states, sched_stop)
     else:
-        ccd_times, ccd_temps = mock_telem_predict(states)
+        ccd_times, ccd_temps = mock_telem_predict(states, stat=stat)
 
     make_check_plots(outdir, states, ccd_times, ccd_temps,
                      tstart=bs_start.secs, tstop=sched_stop.secs, char=proseco_char)
@@ -415,7 +408,7 @@ def make_week_predict(model_spec, states, tstop):
     return model.times, model.comp['aacccdpt'].mvals
 
 
-def mock_telem_predict(states):
+def mock_telem_predict(states, stat=None):
     """
     Fetch AACCCDPT telem over the interval of the given states and return values
     as if they had been calculated by the xija ThermalModel.
@@ -433,7 +426,7 @@ def mock_telem_predict(states):
     tlm = fetch.MSIDset(['aacccdpt'],
                         states[0]['tstart'],
                         states[-1]['tstart'],
-                        stat=None if USE_MAUDE else '5min')
+                        stat=stat)
 
     return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
 
@@ -450,7 +443,7 @@ def get_bs_cmds(oflsdir):
     return bs_cmds
 
 
-def get_telem_values(tstop, msids, days=7):
+def get_telem_values(tstop, msids, days=7, stat=None):
     """
     Fetch last ``days`` of available ``msids`` telemetry values before
     time ``tstop``.
@@ -467,7 +460,7 @@ def get_telem_values(tstop, msids, days=7):
     logger.info('Fetching telemetry between %s and %s' % (start, stop))
 
     msidset = fetch.MSIDset(msids, start, stop,
-                            stat=None if USE_MAUDE else '5min')
+                            stat=stat)
     msidset.interpolate(328.0)  # 328 for '5min' stat, still OK for None
 
     # Finished when we found at least 4 good records (20 mins)

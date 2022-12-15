@@ -586,7 +586,7 @@ if ($kadi_scenario ne "flight") {
 }
 $out .= " Kadi scenario: $kadi_scenario\n";
 my $cheta_source = get_cheta_source();
-if ($cheta_source ne 'cheta'){
+if ($cheta_source ne 'cxc'){
     $cheta_source = "${red_font_start}${cheta_source}${font_stop}";
 }
 $out .= " cheta data source: $cheta_source\n";
@@ -1158,6 +1158,11 @@ Enable (or disable) generation of report in HTML format.  Default is HTML enable
 =item B<-[no]text>
 
 Enable (or disable) generation of report in TEXT format.  Default is TEXT enabled.
+
+=item B<-[no]maude>
+
+Use MAUDE for telemetry instead of default cheta cxc archive.
+MAUDE will also be used if no AACCCDPT telemetry can be found in cheta archive for initial conditions.
 
 =item B<-agasc_file <agasc>>
 
