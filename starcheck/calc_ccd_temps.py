@@ -123,7 +123,7 @@ def get_ccd_temps(oflsdir, outdir='out',
         have_cxc_telem = False
 
     use_maude = False
-    if maude == 1 or not have_cxc_telem:
+    if maude or not have_cxc_telem:
         fetch.data_source.set('maude allow_subset=False')
         logger.info("Setting to use maude")
         use_maude = True
