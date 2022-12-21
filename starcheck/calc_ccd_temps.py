@@ -173,15 +173,19 @@ def get_ccd_temps(oflsdir, outdir='out',
     proc['datestart'] = bs_start.date
     proc['datestop'] = sched_stop.date
 
+    if use_maude:
+        import maude
+        dat = maude.get_msids("aacccdpt")  # returns the latest sample
+        tlm_end_time = dat["data"][0]["times"][0]
+    else:
+        times = fetch.get_time_range('aacccdpt', format='secs')
+        tlm_end_time = times[1]
+
     # Get temperature telemetry for 1 day prior to min(last available telem,
     # backstop start, run_start_time) where run_start_time is for regression
     # testing.
-    if use_maude:
-        tlm_end_time = min(bs_start.secs, run_start_time.secs)
-    else:
-        tlm_end_time = min(fetch.get_time_range('aacccdpt', format='secs')[1],
-                           bs_start.secs, run_start_time.secs)
-    tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1,
+    end_time = min(tlm_end_time, bs_start.secs, run_start_time.secs)
+    tlm = get_telem_values(end_time, ['aacccdpt'], days=1,
                            stat=None if use_maude else '5min')
     states = get_week_states(rltt, sched_stop, bs_cmds, tlm)
 
