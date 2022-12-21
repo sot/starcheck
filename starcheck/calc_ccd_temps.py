@@ -9,7 +9,6 @@ load_check
 This code generates backstop load review outputs for checking a Xija model.
 """
 
-import sys
 import os
 import glob
 import logging
@@ -61,40 +60,6 @@ try:
     VERSION = str(version)
 except Exception:
     VERSION = 'dev'
-
-
-def get_options():
-    import argparse
-    parser = argparse.ArgumentParser(
-        description="Get CCD temps from xija model for starcheck")
-    parser.set_defaults()
-    parser.add_argument("oflsdir",
-                        help="Load products OFLS directory")
-    parser.add_argument("--outdir",
-                        default='out',
-                        help="Output directory")
-    parser.add_argument('--json-obsids', nargs="?", type=argparse.FileType('r'),
-                        default=sys.stdin,
-                        help="JSON-ified starcheck Obsid objects, as file or stdin")
-    parser.add_argument('--output-temps', nargs="?", type=argparse.FileType('w'),
-                        default=sys.stdout,
-                        help="output destination for temperature JSON, file or stdout")
-    parser.add_argument("--model-spec",
-                        help="xija ACA model specification file")
-    parser.add_argument("--orlist",
-                        help="OR list")
-    parser.add_argument("--traceback",
-                        default=True,
-                        help='Enable tracebacks')
-    parser.add_argument("--verbose",
-                        type=int,
-                        default=1,
-                        help="Verbosity (0=quiet, 1=normal, 2=debug)")
-    parser.add_argument("--version",
-                        action='version',
-                        version=VERSION)
-    args = parser.parse_args()
-    return args
 
 
 def get_ccd_temps(oflsdir, outdir='out',
@@ -485,13 +450,6 @@ class NumpyAwareJSONEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def write_obstemps(output_dev, obstemps):
-    """JSON write temperature predictions"""
-    jfile = output_dev
-    jfile.write(json_obstemps)
-    jfile.flush()
-
-
 def plot_two(fig_id, x, y, x2, y2,
              color='blue', color2='magenta',
              ylim=None, ylim2=None,
@@ -630,16 +588,3 @@ def globfile(pathglob):
         raise IOError('Multiple files matching %s' % pathglob)
     else:
         return files[0]
-
-
-if __name__ == '__main__':
-    opt = get_options()
-    try:
-        json_obstemps = get_ccd_temps(**vars(opt))
-        write_obstemps(opt.output_temps, json_obstemps)
-    except Exception as msg:
-        if opt.traceback:
-            raise
-        else:
-            sys.stderr.write("ERROR:{}".format(msg))
-            sys.exit(1)
