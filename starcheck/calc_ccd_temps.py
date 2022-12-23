@@ -9,7 +9,6 @@ load_check
 This code generates backstop load review outputs for checking a Xija model.
 """
 
-import sys
 import os
 import glob
 import logging
@@ -63,45 +62,11 @@ except Exception:
     VERSION = 'dev'
 
 
-def get_options():
-    import argparse
-    parser = argparse.ArgumentParser(
-        description="Get CCD temps from xija model for starcheck")
-    parser.set_defaults()
-    parser.add_argument("oflsdir",
-                        help="Load products OFLS directory")
-    parser.add_argument("--outdir",
-                        default='out',
-                        help="Output directory")
-    parser.add_argument('--json-obsids', nargs="?", type=argparse.FileType('r'),
-                        default=sys.stdin,
-                        help="JSON-ified starcheck Obsid objects, as file or stdin")
-    parser.add_argument('--output-temps', nargs="?", type=argparse.FileType('w'),
-                        default=sys.stdout,
-                        help="output destination for temperature JSON, file or stdout")
-    parser.add_argument("--model-spec",
-                        help="xija ACA model specification file")
-    parser.add_argument("--orlist",
-                        help="OR list")
-    parser.add_argument("--traceback",
-                        default=True,
-                        help='Enable tracebacks')
-    parser.add_argument("--verbose",
-                        type=int,
-                        default=1,
-                        help="Verbosity (0=quiet, 1=normal, 2=debug)")
-    parser.add_argument("--version",
-                        action='version',
-                        version=VERSION)
-    args = parser.parse_args()
-    return args
-
-
 def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=None,
                   model_spec=None, orlist=None,
                   run_start_time=None,
-                  verbose=1, **kwargs):
+                  verbose=1, maude=None, **kwargs):
     """
     Using the cmds and cmd_states tables, available telemetry, and
     the pitches determined from the planning products, calculate xija ACA model
@@ -150,6 +115,19 @@ def get_ccd_temps(oflsdir, outdir='out',
     logger.info('###############################'
                 '######################################\n')
 
+    have_cxc_telem = True
+    try:
+        fetch.get_time_range('aacccdpt')
+    except KeyError:
+        logger.info("AACCCDPT not found in cheta archive.")
+        have_cxc_telem = False
+
+    use_maude = False
+    if maude or not have_cxc_telem:
+        fetch.data_source.set('maude allow_subset=False')
+        logger.info("Setting to use maude")
+        use_maude = True
+
     # save model_spec in out directory
     if isinstance(model_spec, dict):
         with (Path(outdir) / 'aca_spec.json').open('w') as fh:
@@ -195,12 +173,20 @@ def get_ccd_temps(oflsdir, outdir='out',
     proc['datestart'] = bs_start.date
     proc['datestop'] = sched_stop.date
 
+    if use_maude:
+        import maude
+        dat = maude.get_msids("aacccdpt")  # returns the latest sample
+        tlm_end_time = dat["data"][0]["times"][0]
+    else:
+        times = fetch.get_time_range('aacccdpt', format='secs')
+        tlm_end_time = times[1]
+
     # Get temperature telemetry for 1 day prior to min(last available telem,
     # backstop start, run_start_time) where run_start_time is for regression
     # testing.
-    tlm_end_time = min(fetch.get_time_range('aacccdpt', format='secs')[1],
-                       bs_start.secs, run_start_time.secs)
-    tlm = get_telem_values(tlm_end_time, ['aacccdpt'], days=1)
+    end_time = min(tlm_end_time, bs_start.secs, run_start_time.secs)
+    tlm = get_telem_values(end_time, ['aacccdpt'], days=1,
+                           stat=None if use_maude else '5min')
     states = get_week_states(rltt, sched_stop, bs_cmds, tlm)
 
     # If the last obsid interval extends over the end of states then extend the
@@ -221,7 +207,8 @@ def get_ccd_temps(oflsdir, outdir='out',
     if rltt.date > DateTime(MODEL_VALID_FROM).date:
         ccd_times, ccd_temps = make_week_predict(model_spec, states, sched_stop)
     else:
-        ccd_times, ccd_temps = mock_telem_predict(states)
+        ccd_times, ccd_temps = mock_telem_predict(states,
+                                                  stat=None if use_maude else '5min')
 
     make_check_plots(outdir, states, ccd_times, ccd_temps,
                      tstart=bs_start.secs, tstop=sched_stop.secs, char=proseco_char)
@@ -394,7 +381,7 @@ def make_week_predict(model_spec, states, tstop):
     return model.times, model.comp['aacccdpt'].mvals
 
 
-def mock_telem_predict(states):
+def mock_telem_predict(states, stat=None):
     """
     Fetch AACCCDPT telem over the interval of the given states and return values
     as if they had been calculated by the xija ThermalModel.
@@ -412,7 +399,7 @@ def mock_telem_predict(states):
     tlm = fetch.MSIDset(['aacccdpt'],
                         states[0]['tstart'],
                         states[-1]['tstart'],
-                        stat='5min')
+                        stat=stat)
 
     return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
 
@@ -429,7 +416,7 @@ def get_bs_cmds(oflsdir):
     return bs_cmds
 
 
-def get_telem_values(tstop, msids, days=7):
+def get_telem_values(tstop, msids, days=7, stat=None):
     """
     Fetch last ``days`` of available ``msids`` telemetry values before
     time ``tstop``.
@@ -445,8 +432,9 @@ def get_telem_values(tstop, msids, days=7):
     stop = DateTime(tstop).date
     logger.info('Fetching telemetry between %s and %s' % (start, stop))
 
-    msidset = fetch.MSIDset(msids, start, stop, stat='5min')
-    msidset.interpolate(328.0)  # 328 for '5min' stat
+    msidset = fetch.MSIDset(msids, start, stop,
+                            stat=stat)
+    msidset.interpolate(328.0)  # 328 for '5min' stat, still OK for None
 
     # Finished when we found at least 4 good records (20 mins)
     if len(msidset.times) < 4:
@@ -464,13 +452,6 @@ class NumpyAwareJSONEncoder(json.JSONEncoder):
         if hasattr(obj, 'tolist'):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
-
-
-def write_obstemps(output_dev, obstemps):
-    """JSON write temperature predictions"""
-    jfile = output_dev
-    jfile.write(json_obstemps)
-    jfile.flush()
 
 
 def plot_two(fig_id, x, y, x2, y2,
@@ -611,16 +592,3 @@ def globfile(pathglob):
         raise IOError('Multiple files matching %s' % pathglob)
     else:
         return files[0]
-
-
-if __name__ == '__main__':
-    opt = get_options()
-    try:
-        json_obstemps = get_ccd_temps(**vars(opt))
-        write_obstemps(opt.output_temps, json_obstemps)
-    except Exception as msg:
-        if opt.traceback:
-            raise
-        else:
-            sys.stderr.write("ERROR:{}".format(msg))
-            sys.exit(1)

@@ -86,6 +86,15 @@ def set_kadi_scenario_default():
 
 
 @python_from_perl
+def get_cheta_source():
+    sources = starcheck.calc_ccd_temps.fetch.data_source.sources()
+    if len(sources) == 1 and sources[0] == 'cxc':
+        return 'cxc'
+    else:
+        return str(sources)
+
+
+@python_from_perl
 def get_kadi_scenario():
     return os.getenv('KADI_SCENARIO', default="None")
 

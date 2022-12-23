@@ -53,7 +53,7 @@ from starcheck.utils import (_make_pcad_attitude_check_report,
                              get_chandra_models_version,
                              get_dither_kadi_state,
                              get_run_start_time,
-                             get_kadi_scenario,
+                             get_kadi_scenario, get_cheta_source,
                              make_ir_check_report)
 
 };
@@ -74,7 +74,8 @@ my %par = (dir  => '.',
 		   config_file => "characteristics.yaml",
 		   fid_char => "fid_CHARACTERISTICS",
            verbose => 1,
-		   );
+	   maude => 0,
+    );
 
 
 GetOptions( \%par,
@@ -92,7 +93,8 @@ GetOptions( \%par,
 			'fid_char=s',
 			'config_file=s',
                         'run_start_time=s',
-			) ||
+	    'maude!',
+    ) ||
     exit( 1 );
 
 
@@ -504,7 +506,8 @@ $json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
                                       orlist => $or_file,
                                       run_start_time => $run_start_time,
                                       verbose => $par{verbose},
-                                  });
+				      maude => $par{maude},
+				     });
 # convert back from JSON outside
 $obsid_temps = JSON::from_json($json_obsid_temps);
 
@@ -534,7 +537,7 @@ foreach my $obsid (@obsid_id) {
                          catalog=>$cat_as_array,
                          starcat_time=>"$obs{$obsid}->{date}",
                          duration=>($obs{$obsid}->{obs_tstop} - $obs{$obsid}->{obs_tstart}),
-                         outdir=>$STARCHECK);
+                         outdir=>$STARCHECK, agasc_file=>$agasc_file);
         plot_cat_wrapper(\%plot_args);
         $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
         $obs{$obsid}->{plot_field_file} = "$STARCHECK/star_view_$obs{$obsid}->{obsid}.png";
@@ -582,6 +585,11 @@ if ($kadi_scenario ne "flight") {
     $kadi_scenario = "${red_font_start}${kadi_scenario}${font_stop}";
 }
 $out .= " Kadi scenario: $kadi_scenario\n";
+my $cheta_source = get_cheta_source();
+if ($cheta_source ne 'cxc'){
+    $cheta_source = "${red_font_start}${cheta_source}${font_stop}";
+}
+$out .= " cheta data source: $cheta_source\n";
 $out .= "\n";
 
 if ($mp_top_link){
@@ -1150,6 +1158,11 @@ Enable (or disable) generation of report in HTML format.  Default is HTML enable
 =item B<-[no]text>
 
 Enable (or disable) generation of report in TEXT format.  Default is TEXT enabled.
+
+=item B<-[no]maude>
+
+Use MAUDE for telemetry instead of default cheta cxc archive.
+MAUDE will also be used if no AACCCDPT telemetry can be found in cheta archive for initial conditions.
 
 =item B<-agasc_file <agasc>>
 
