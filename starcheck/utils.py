@@ -432,7 +432,7 @@ def proseco_probs(**kw):
     a specific obsid catalog and return the individual acq star probabilities,
     the P2 value for the catalog, and the expected number of acq stars.
 
-    `kwargs` will be a Perl hash converted to dict (by Inline) of the expected
+    `kwargs` will be a Perl hash converted to dict of the expected
     keyword params. These keys must be defined:
 
     'q1', 'q2', 'q3', 'q4' = the target quaternion 'man_angle' the maneuver
