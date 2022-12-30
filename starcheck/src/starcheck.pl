@@ -43,10 +43,9 @@ if ($pid = fork) {} else {
   exec('python', '-m', 'starcheck.server');
 }
 
-
-print "Starting starcheck.pl\n";
-print call_python("utils.time2date", [150000000.]) . "\n";
-print time2date(300000000.) . "\n";
+# DEBUG, limit number of obsids. TODO make this a command line option.
+# Set to undef for no limit.
+my $MAX_OBSIDS = 8;
 
 my $version = call_python("utils.starcheck_version");
 
@@ -362,7 +361,7 @@ for my $i (0 .. $#cmd) {
 				 time => $time[$i],
 				 cmd  => $cmd[$i] } );
 
-    if ($n_obsid > 4) {
+    if (defined $MAX_OBSIDS and $n_obsid > $MAX_OBSIDS) {
         last;
     }
 }
