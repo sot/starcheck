@@ -448,20 +448,26 @@ sub backstop {
     my $backstop = shift;
 
     my @bs = ();
+    my @dates = ();
     open (my $BACKSTOP, $backstop) || die "Couldn't open backstop file $backstop for reading\n";
     while (<$BACKSTOP>) {
-	my ($date, $vcdu, $cmd, $params) = split '\s*\|\s*', $_;
-	$vcdu =~ s/ +.*//; # Get rid of second field in vcdu
-	my %command = parse_params($params);
-	push @bs, { date => $date,
+    	my ($date, $vcdu, $cmd, $params) = split '\s*\|\s*', $_;
+    	$vcdu =~ s/ +.*//; # Get rid of second field in vcdu
+    	my %command = parse_params($params);
+    	push @bs, { date => $date,
 		    vcdu => $vcdu,
 		    cmd  => $cmd,
 		    params => $params,
-		    time => date2time($date),
 		    command => \%command,
 		};
+        push @dates, $date;
     }
     close $BACKSTOP;
+
+    my $times = date2time(\@dates);
+    for (my $i = 0; $i <= $#bs; $i++) {
+        $bs[$i]->{time} = $times->[$i];
+    }
 
     return @bs;
 }
