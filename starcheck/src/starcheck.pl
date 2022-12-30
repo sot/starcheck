@@ -48,29 +48,7 @@ print "Starting starcheck.pl\n";
 print call_python("utils.time2date", [150000000.]) . "\n";
 print time2date(300000000.) . "\n";
 
-use Inline Python => q{
-
-import os
-import traceback
-
-from starcheck.pcad_att_check import check_characteristics_date
-from starcheck.utils import (_make_pcad_attitude_check_report,
-                             plot_cat_wrapper,
-                             config_logging,
-                             set_kadi_scenario_default,
-                             ccd_temp_wrapper,
-                             starcheck_version, get_data_dir,
-                             get_chandra_models_version,
-                             get_dither_kadi_state,
-                             get_run_start_time,
-                             get_kadi_scenario, get_cheta_source,
-                             make_ir_check_report)
-
-};
-
-
-my $version = starcheck_version();
-
+my $version = call_python("utils.starcheck_version");
 
 # Set some global vars with directory locations
 my $SKA = $ENV{SKA} || '/proj/sot/ska';
@@ -108,7 +86,7 @@ GetOptions( \%par,
     exit( 1 );
 
 
-my $Starcheck_Data = $par{sc_data} || get_data_dir();
+my $Starcheck_Data = $par{sc_data} || call_python("utils.get_data_dir");
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
 
 
@@ -127,8 +105,8 @@ usage( 1 )
 # verbose=1) is too chatty for the default. Instead allow only verbose=0
 # (CRITICAL) or verbose=2 (DEBUG).
 my $kadi_verbose = $par{verbose} eq '2' ? '2' : '0';
-config_logging($STARCHECK, $kadi_verbose, "kadi");
-set_kadi_scenario_default();
+call_python("utils.config_logging", [$STARCHECK, $kadi_verbose, "kadi"]);
+call_python("utils.set_kadi_scenario_default");
 
 # Find backstop, guide star summary, OR, and maneuver files.
 my %input_files = ();
@@ -198,6 +176,8 @@ my $bad_gui_file = get_file( "$Starcheck_Data/bad_gui_stars.rdb", 'gui_star_rdb'
 
 my $ACA_badpix_date;
 my $ACA_badpix_firstline =  io($ACA_bad_pixel_file)->getline;
+
+Ska::Starcheck::Obsid::set_config($config_ref);
 
 if ($ACA_badpix_firstline =~ /Bad Pixel.*\d{7}\s+\d{7}\s+(\d{7}).*/ ){
     $ACA_badpix_date = $1;
@@ -286,7 +266,6 @@ my %odb = Ska::Parse_CM_File::odb($odb_file);
 Ska::Starcheck::Obsid::set_odb(%odb);
 
 
-Ska::Starcheck::Obsid::set_config($config_ref);
 
 # Read Maneuver error file containing more accurate maneuver errors
 print "Reading Maneuver Error file $manerr_file\n";
@@ -302,7 +281,7 @@ if ($manerr_file) {
 # command will be the first command ($bs[0]) and the kadi dither state will be fetched at that time.
 # This is expected and appropriate.
 print "Getting dither state from kadi at $bs[0]->{date} \n";
-my $kadi_dither = get_dither_kadi_state($bs[0]->{date});
+my $kadi_dither = call_python("utils.get_dither_kadi_state", [$bs[0]->{date}]);
 
 # Read DITHER history file and backstop to determine expected dither state
 print "Reading DITHER file $dither_file\n";
@@ -523,19 +502,27 @@ sub json_obsids{
 
 # Set the thermal model run start time to be either the supplied
 # run_start_time or now.
-my $run_start_time = get_run_start_time($par{run_start_time}, $bs[0]->{date});
+my $run_start_time = call_python(
+    "utils.get_run_start_time",
+    [$par{run_start_time}, $bs[0]->{date}]
+);
 
 my $json_text = json_obsids();
 my $obsid_temps;
 my $json_obsid_temps;
-$json_obsid_temps = ccd_temp_wrapper({oflsdir=> $par{dir},
-                                      outdir=>$STARCHECK,
-                                      json_obsids => $json_text,
-                                      orlist => $or_file,
-                                      run_start_time => $run_start_time,
-                                      verbose => $par{verbose},
-				      maude => $par{maude},
-				     });
+$json_obsid_temps = call_python(
+    "utils.ccd_temp_wrapper",
+    [],
+    {
+        oflsdir=> $par{dir},
+        outdir=>$STARCHECK,
+        json_obsids => $json_text,
+        orlist => $or_file,
+        run_start_time => $run_start_time,
+        verbose => $par{verbose},
+        maude => $par{maude},
+    }
+);
 # convert back from JSON outside
 $obsid_temps = JSON::from_json($json_obsid_temps);
 
@@ -566,7 +553,7 @@ foreach my $obsid (@obsid_id) {
                          starcat_time=>"$obs{$obsid}->{date}",
                          duration=>($obs{$obsid}->{obs_tstop} - $obs{$obsid}->{obs_tstart}),
                          outdir=>$STARCHECK, agasc_file=>$agasc_file);
-        plot_cat_wrapper(\%plot_args);
+        call_python("utils.plot_cat_wrapper", [], \%plot_args);
         $obs{$obsid}->{plot_file} = "$STARCHECK/stars_$obs{$obsid}->{obsid}.png";
         $obs{$obsid}->{plot_field_file} = "$STARCHECK/star_view_$obs{$obsid}->{obsid}.png";
         $obs{$obsid}->{compass_file} = "$STARCHECK/compass$obs{$obsid}->{obsid}.png";
@@ -606,14 +593,14 @@ my $hostname = hostname;
 $out .= "------------  Starcheck $version    -----------------\n";
 $out .= " Run on $date by $ENV{USER} from $hostname\n";
 $out .= " Configuration:  Using AGASC at $agasc_file\n";
-my $chandra_models_version = get_chandra_models_version();
+my $chandra_models_version = call_python("utils.get_chandra_models_version");
 $out .= " chandra_models version: $chandra_models_version\n";
-my $kadi_scenario = get_kadi_scenario();
+my $kadi_scenario = call_python("utils.get_kadi_scenario");
 if ($kadi_scenario ne "flight") {
     $kadi_scenario = "${red_font_start}${kadi_scenario}${font_stop}";
 }
 $out .= " Kadi scenario: $kadi_scenario\n";
-my $cheta_source = get_cheta_source();
+my $cheta_source = call_python("utils.get_cheta_source");
 if ($cheta_source ne 'cxc'){
     $cheta_source = "${red_font_start}${cheta_source}${font_stop}";
 }
@@ -659,9 +646,14 @@ if (@global_warn) {
 # Check for just NMAN during high IR Zone
 $out .= "------------  HIGH IR ZONE CHECK  -----------------\n\n";
 my $ir_report = "${STARCHECK}/high_ir_check.txt";
-my $ir_ok = make_ir_check_report({
-    backstop_file=> $backstop,
-    out=> $ir_report});
+my $ir_ok = call_python(
+    "utils.make_ir_check_report",
+    [],
+    {
+        backstop_file=> $backstop,
+        out=> $ir_report
+    }
+);
 if ($ir_ok){
     $out .= "<A HREF=\"${ir_report}\">[OK] In NMAN during High IR Zones.</A>\n";
 }
@@ -690,10 +682,19 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($ATT_CHECK_AFTER))){
     }
     else{
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
-        my $att_ok = _make_pcad_attitude_check_report({
-            backstop_file=> $backstop, or_list_file=>$or_file,
-            simtrans_file=>$simtrans_file, simfocus_file=>$simfocus_file, attitude_file=>$attitude_file,
-            ofls_characteristics_file=>$char_file, out=>$att_report, dynamic_offsets_file=>$aimpoint_file});
+        my $att_ok = call_python(
+            "utils._make_pcad_attitude_check_report",
+            [],
+            {
+                backstop_file=> $backstop,
+                or_list_file=>$or_file,
+                simtrans_file=>$simtrans_file,
+                simfocus_file=>$simfocus_file,
+                attitude_file=>$attitude_file,
+                ofls_characteristics_file=>$char_file,
+                out=>$att_report,
+                dynamic_offsets_file=>$aimpoint_file
+            });
         if ($att_ok){
             $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n";
         }
@@ -703,7 +704,10 @@ if ((defined $char_file) or ($bs[0]->{time} > date2time($ATT_CHECK_AFTER))){
         # Only check that characteristics file is less than 30 days old if backstop starts before 01-Aug-2016
         my $CHAR_DATE_CHECK_BEFORE = '2016:214:00:00:00.000';
         if ($bs[0]->{time} < date2time($CHAR_DATE_CHECK_BEFORE)){
-            if (check_characteristics_date($char_file, $date[0])){
+            if (call_python(
+                    "pcad_att_check.check_characteristics_date",
+                    [$char_file, $date[0]])
+                ) {
                 $out .= "[OK] Characteristics file newer than 30 days\n\n";
             }
             else{

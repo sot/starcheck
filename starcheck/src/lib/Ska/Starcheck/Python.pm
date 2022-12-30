@@ -57,6 +57,8 @@ sub call_python {
     $handle->close();
 
     my $data = decode_json $response;
+    # print "CLIENT: Got response: $response\n";
+    # print Dumper($data);
     if (defined $data->{exception}) {
         my $msg = "\nPython exception:\n";
         $msg .= "command = " . Dumper($command) . "\n";
@@ -64,7 +66,6 @@ sub call_python {
         Carp::confess $msg;
     }
 
-    # print "CLIENT: Got result: $data->{result}\n";
     return $data->{result};
 }
 

@@ -22,220 +22,13 @@ use strict;
 use warnings;
 use Ska::Starcheck::Python qw(date2time time2date call_python);
 
-use Inline Python => q{
-import numpy as np
-from astropy.table import Table
-
-from starcheck.utils import de_bytestr
-from mica.archive import aca_dark
-from chandra_aca.star_probs import guide_count
-from chandra_aca.transform import (yagzag_to_pixels, pixels_to_yagzag,
-                                   count_rate_to_mag, mag_to_count_rate)
-import Quaternion
-from Ska.quatutil import radec2yagzag
-import agasc
-
-from proseco.core import ACABox
-from proseco.catalog import get_effective_t_ccd
-from proseco.guide import get_imposter_mags
-import proseco.characteristics as char
-
-import mica.stats.acq_stats
-import mica.stats.guide_stats
-
-ACQS = mica.stats.acq_stats.get_stats()
-GUIDES = mica.stats.guide_stats.get_stats()
-
-def _get_aca_limits():
-    return float(char.aca_t_ccd_planning_limit), float(char.aca_t_ccd_penalty_limit)
-
-def _pixels_to_yagzag(i, j):
-    """
-    Call chandra_aca.transform.pixels_to_yagzag.
-    This wrapper is set to pass allow_bad=True, as exceptions from the Python side
-    in this case would not be helpful, and the very small bad pixel list should be
-    on the CCD.
-    :params i: pixel row
-    :params j: pixel col
-    :returns tuple: yag, zag as floats
-    """
-    yag, zag = pixels_to_yagzag(i, j, allow_bad=True)
-    return float(yag), float(zag)
-
-
-def _yagzag_to_pixels(yag, zag):
-    """
-    Call chandra_aca.transform.yagzag_to_pixels.
-    This wrapper is set to pass allow_bad=True, as exceptions from the Python side
-    in this case would not be helpful, and the boundary checks and such will work fine
-    on the Perl side even if the returned row/col is off the CCD.
-    :params yag: y-angle arcsecs (hopefully as a number from the Perl)
-    :params zag: z-angle arcsecs (hopefully as a number from the Perl)
-    :returns tuple: row, col as floats
-    """
-    row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
-    return float(row), float(col)
-
-
-def _guide_count(mags, t_ccd, count_9th=False):
-    eff_t_ccd = get_effective_t_ccd(t_ccd)
-    return float(guide_count(np.array(mags), eff_t_ccd, count_9th))
-
-def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z):
-    """
-    Return a list of info to make warnings on guide stars or fid lights with local dark map that gives an
-    'imposter_mag' that could perturb a centroid.  The potential worst-case offsets (ignoring effects
-    at the background pixels) are returned and checking against offset limits needs to be done
-    from calling code.
-
-    This fetches the dark current before the date of the observation and passes it to
-    proseco.get_imposter_mags with the star candidate positions to fetch the brightest
-    2x2 for each and calculates the mag for that region.  The worse case offset is then
-    added to an entry for the star index.
-
-    :param idxs: catalog indexes as list or array
-    :param yags: catalog yangs as list or array
-    :param zags: catalog zangs as list or array
-    :param mags: catalog mags (AGASC mags for stars estimated fid mags for fids) list or array
-    :param types: catalog TYPE (ACQ|BOT|FID|MON|GUI) as list or array
-    :param t_ccd: observation t_ccd in deg C (should be max t_ccd in guide phase)
-    :param date: observation date (bytestring via Inline)
-    :param dither_y: dither_y in arcsecs (guide dither)
-    :param dither_z: dither_z in arcsecs (guide dither)
-    :param yellow_lim: yellow limit centroid offset threshold limit (in arcsecs)
-    :param red_lim: red limit centroid offset threshold limit (in arcsecs)
-    :return imposters: list of dictionaries with keys that define the index, the imposter mag,
-             a 'status' key that has value 0 if the code to get the imposter mag ran successfully,
-             calculated centroid offset, and star or fid info to make a warning.
-    """
-
-    types = [t.decode('ascii') for t in types]
-    date = date.decode('ascii')
-    eff_t_ccd = get_effective_t_ccd(t_ccd)
-
-    dark = aca_dark.get_dark_cal_image(date=date, t_ccd_ref=eff_t_ccd, aca_image=True)
-
-
-    def imposter_offset(cand_mag, imposter_mag):
-        """
-        For a given candidate star and the pseudomagnitude of the brightest 2x2 imposter
-        calculate the max offset of the imposter counts are at the edge of the 6x6
-        (as if they were in one pixel).  This is somewhat the inverse of proseco.get_pixmag_for_offset
-        """
-        cand_counts = mag_to_count_rate(cand_mag)
-        spoil_counts = mag_to_count_rate(imposter_mag)
-        return spoil_counts * 3 * 5 / (spoil_counts + cand_counts)
-
-    imposters = []
-    for idx, yag, zag, mag, ctype in zip(idxs, yags, zags, mags, types):
-        if ctype in ['BOT', 'GUI', 'FID']:
-            if ctype in ['BOT', 'GUI']:
-                dither = ACABox((dither_y, dither_z))
-            else:
-                dither = ACABox((5.0, 5.0))
-            row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
-            # Handle any errors in get_imposter_mags with a try/except.  This doesn't
-            # try to pass back a message.  Most likely this will only fail if the star
-            # or fid is completely off the CCD and will have other warning.
-            try:
-                # get_imposter_mags takes a Table of candidates as its first argument, so construct
-                # a single-candidate table `entries`
-                entries = Table([{'idx': idx, 'row': row, 'col': col, 'mag': mag, 'type': ctype}])
-                imp_mags, imp_rows, imp_cols = get_imposter_mags(entries, dark, dither)
-                offset = imposter_offset(mag, imp_mags[0])
-                imposters.append({'idx': int(idx), 'status': int(0),
-                                  'entry_row': float(row), 'entry_col': float(col),
-                                  'bad2_row': float(imp_rows[0]), 'bad2_col': float(imp_cols[0]),
-                                  'bad2_mag': float(imp_mags[0]), 'offset': float(offset)})
-            except:
-                imposters.append({'idx': int(idx), 'status': int(1)})
-    return imposters
-
-
-def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
-    """
-    Fetch the cone of agasc stars.  Update the table with the yag and zag of each star.
-    Return as a dictionary with the agasc ids as keys and all of the values as
-    simple Python types (int, float)
-    """
-    stars = agasc.get_agasc_cone(float(ra), float(dec), float(radius), date.decode('ascii'),
-                                 agasc_file.decode('ascii'))
-    q_aca = Quaternion.Quat([float(ra), float(dec), float(roll)])
-    yags, zags = radec2yagzag(stars['RA_PMCORR'], stars['DEC_PMCORR'], q_aca)
-    yags *= 3600
-    zags *= 3600
-    stars['yang'] = yags
-    stars['zang'] = zags
-
-    # Get a dictionary of the stars with the columns that are used
-    # This needs to be de-numpy-ified to pass back into Perl
-    stars_dict = {}
-    for star in stars:
-        stars_dict[str(star['AGASC_ID'])] = {
-            'id': int(star['AGASC_ID']),
-            'class': int(star['CLASS']),
-            'ra': float(star['RA_PMCORR']),
-            'dec': float(star['DEC_PMCORR']),
-            'mag_aca': float(star['MAG_ACA']),
-            'bv': float(star['COLOR1']),
-            'color1': float(star['COLOR1']),
-            'mag_aca_err': float(star['MAG_ACA_ERR']),
-            'poserr': float(star['POS_ERR']),
-            'yag': float(star['yang']),
-            'zag': float(star['zang']),
-            'aspq': int(star['ASPQ1']),
-            'var': int(star['VAR']),
-            'aspq1': int(star['ASPQ1'])}
-
-    return stars_dict
-
-
-def get_mica_star_stats(agasc_id, time):
-    """
-    Get the acq and guide star statistics for a star before a given time.
-    The time filter is just there to make this play well when run in regression.
-    The mica acq and guide stats are fetched into globals ACQS and GUIDES
-    and this method just filters for the relevant ones for a star and returns
-    a dictionary of summarized statistics.
-
-    :param agasc_id: agasc id of star
-    :param time: time used as end of range to retrieve statistics.
-
-    :return: dictionary of stats for the observed history of the star
-    """
-
-    # Cast the inputs
-    time = float(time)
-    agasc_id = int(agasc_id)
-
-    acqs = Table(ACQS[(ACQS['agasc_id'] == agasc_id)
-                 & (ACQS['guide_tstart'] < time)])
-    ok = acqs['img_func'] == 'star'
-    guides = Table(GUIDES[(GUIDES['agasc_id'] == agasc_id)
-                  & (GUIDES['kalman_tstart'] < time)])
-    mags = np.concatenate(
-               [acqs['mag_obs'][acqs['mag_obs'] != 0],
-                guides['aoacmag_mean'][guides['aoacmag_mean'] != 0]])
-
-    avg_mag = float(np.mean(mags)) if (len(mags) > 0) else float(13.94)
-    stats = {'acq': len(acqs),
-             'acq_noid': int(np.count_nonzero(~ok)),
-             'gui' : len(guides),
-             'gui_bad': int(np.count_nonzero(guides['f_track'] < .95)),
-             'gui_fail': int(np.count_nonzero(guides['f_track'] < .01)),
-             'gui_obc_bad': int(np.count_nonzero(guides['f_obc_bad'] > .05)),
-             'avg_mag': avg_mag}
-    return stats
-
-};
-
-
 use List::Util qw(min max);
 use Quat;
 use File::Basename;
 use POSIX qw(floor);
 use English;
 use IO::All;
+use Data::Dumper qw(Dumper);
 
 use RDB;
 
@@ -332,7 +125,8 @@ sub set_config {
     # Set the ACA planning (red) and penalty (yellow) limits. Under the hood
     # this uses proseco to get the relevant values from the current release of
     # the ACA thermal model in chandra_models.
-    ($config{'ccd_temp_red_limit'}, $config{'ccd_temp_yellow_limit'}) = _get_aca_limits();
+    my $vals = call_python("utils._get_aca_limits");
+    ($config{'ccd_temp_red_limit'}, $config{'ccd_temp_yellow_limit'}) = @$vals;
 }
 
 
@@ -356,7 +150,8 @@ sub set_ACA_bad_pixels {
 	    foreach my $j ($line[2]..$line[3]) {
 		my $pixel = {'row' => $i,
                              'col' => $j};
-		my ($yag,$zag) = _pixels_to_yagzag($i, $j);
+        my $call_vals = call_python("utils._pixels_to_yagzag", [$i, $j]);
+		my ($yag,$zag) = @$call_vals;
 		$pixel->{yag} = $yag;
 		$pixel->{zag} = $zag;
 		push @bad_pixels, $pixel;
@@ -1115,7 +910,8 @@ sub check_bright_perigee{
     }
 
     # Pass 1 to _guide_count as third arg to use the count_9th mode
-    my $bright_count = sprintf("%.1f", _guide_count(\@mags, $self->{ccd_temp}, 1));
+    my $bright_count = sprintf("%.1f",
+      call_python("utils._guide_count", [\@mags, $self->{ccd_temp}, 1]));
     if ($bright_count < $min_n_stars){
 	push @{$self->{warn}}, "$bright_count star(s) brighter than scaled 9th mag. "
 	    . "Perigee requires at least $min_n_stars\n";
@@ -1324,8 +1120,11 @@ sub check_star_catalog {
     }
 
     # Run the hot pixel region check on the Python side on FID|GUI|BOT
-    my @imposters = check_hot_pix(\@idxs, \@yags, \@zags, \@mags, \@types,
-                                   $self->{ccd_temp}, $self->{date}, $dither_guide_y, $dither_guide_z);
+    my $call_vals = call_python(
+        "utils.check_hot_pix",
+        [\@idxs, \@yags, \@zags, \@mags, \@types,
+         $self->{ccd_temp}, $self->{date}, $dither_guide_y, $dither_guide_z]);
+    my @imposters = @$call_vals;
 
     # Assign warnings based on those hot pixel region checks
   IMPOSTER:
@@ -1489,7 +1288,8 @@ sub check_star_catalog {
 
 	# Star/fid outside of CCD boundaries
         # ACA-019 ACA-020 ACA-021
-	my ($pixel_row, $pixel_col) = _yagzag_to_pixels($yag, $zag);
+    my $call_vals = call_python("utils._yagzag_to_pixels", [$yag, $zag]);
+	my ($pixel_row, $pixel_col) = @$call_vals;
 
         # Set "acq phase" dither to acq dither or 20.0 if undefined
         my $dither_acq_y = $self->{dither_acq}->{ampl_y} or 20.0;
@@ -2413,12 +2213,10 @@ sub get_agasc_stars {
     return unless ($c = find_command($self, "MP_TARGQUAT"));
 
     # Use Python agasc to fetch the stars into a hash
-    $self->{agasc_hash} = _get_agasc_stars($self->{ra},
-                                           $self->{dec},
-                                           $self->{roll},
-                                           1.3,
-                                           $self->{date},
-                                           $agasc_file);
+    $self->{agasc_hash} = call_python(
+        "utils._get_agasc_stars",
+        [$self->{ra}, $self->{dec}, $self->{roll}, 1.3, $self->{date}, $agasc_file]
+    );
 
     foreach my $star (values %{$self->{agasc_hash}}) {
 	if ($star->{'mag_aca'} < -10 or $star->{'mag_aca_err'} < -10) {
@@ -2543,7 +2341,7 @@ sub star_dbhist {
 
     my $obs_tstart_minus_day = $obs_tstart - 86400;
 
-    return get_mica_star_stats($star_id, $obs_tstart_minus_day);
+    return call_python("utils.get_mica_star_stats", [$star_id, $obs_tstart_minus_day]);
 
 }
 
@@ -2588,7 +2386,8 @@ sub star_image_map {
 		my $sid = $cat_star->{id};
 		my $yag = $cat_star->{yag};
 		my $zag = $cat_star->{zag};
-		my ($pix_row, $pix_col) = _yagzag_to_pixels($yag, $zag);
+        my $call_vals = call_python("utils._yagzag_to_pixels", [$yag, $zag]);
+		my ($pix_row, $pix_col) = @$call_vals;
 		my $image_x = 54 + ((2900 - $yag) * $pix_scale);
 		my $image_y = 39 + ((2900 - $zag) * $pix_scale);
 		my $star = '<area href="javascript:void(0);"' . "\n"
@@ -2670,7 +2469,7 @@ sub count_guide_stars{
             push @mags, $mag;
 	}
     }
-    return sprintf("%.1f", _guide_count(\@mags, $self->{ccd_temp}));
+    return sprintf("%.1f", call_python("utils._guide_count", [\@mags, $self->{ccd_temp}]));
 }
 
 
@@ -2708,12 +2507,14 @@ sub set_ccd_temps{
     # Add info for having a penalty temperature too
     if ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}){
         push @{$self->{fyi}}, sprintf("Effective guide temperature %.1f C\n",
-                                      get_effective_t_ccd($self->{ccd_temp}));
+                                      call_python("utils.get_effective_t_ccd",
+                                      [$self->{ccd_temp}]));
 
     }
     if ($self->{ccd_temp_acq} > $config{ccd_temp_yellow_limit}){
         push @{$self->{fyi}}, sprintf("Effective acq temperature %.1f C\n",
-                                      get_effective_t_ccd($self->{ccd_temp_acq}));
+                                      call_python("utils.get_effective_t_ccd",
+                                      [$self->{ccd_temp_acq}]));
 
     }
     # Clip the acq ccd temperature to the calibrated range of the grid acq probability model
@@ -2727,60 +2528,6 @@ sub set_ccd_temps{
                               : $self->{ccd_temp_acq};
     }
 }
-
-use Inline Python => q{
-
-from proseco.catalog import get_aca_catalog
-
-
-def proseco_probs(kwargs):
-    """
-    Call proseco's get_acq_catalog with the parameters supplied in `kwargs` for a specific obsid catalog
-    and return the individual acq star probabilities, the P2 value for the catalog, and the expected
-    number of acq stars.
-
-    `kwargs` will be a Perl hash converted to dict (by Inline) of the expected keyword params. These keys
-    must be defined:
-
-    'q1', 'q2', 'q3', 'q4' = the target quaternion
-    'man_angle' the maneuver angle to the target quaternion in degrees.
-    'acq_ids' list of acq star ids
-    'halfwidths' list of acq star halfwidths in arcsecs
-    't_ccd_acq' acquisition temperature in deg C
-    'date' observation date (in Chandra.Time compatible format)
-    'detector' science detector
-    'sim_offset' SIM offset
-
-    As these values are from a Perl hash, bytestrings will be converted by de_bytestr early in this method.
-
-    :param kwargs: dict of expected keywords
-    :return tuple: (list of floats of star acq probabilties, float P2, float expected acq stars)
-
-    """
-
-    kw = de_bytestr(kwargs)
-    args = dict(obsid=0,
-                att=Quaternion.normalize(kw['att']),
-                date=kw['date'],
-                n_acq=kw['n_acq'],
-                man_angle=kw['man_angle'],
-                t_ccd_acq=kw['t_ccd_acq'],
-                t_ccd_guide=kw['t_ccd_guide'],
-                dither_acq=ACABox(kw['dither_acq']),
-                dither_guide=ACABox(kw['dither_guide']),
-                include_ids_acq=kw['include_ids_acq'],
-                include_halfws_acq=kw['include_halfws_acq'],
-                detector=kw['detector'], sim_offset=kw['sim_offset'],
-                n_fid=0, n_guide=0, focus_offset=0)
-    aca = get_aca_catalog(**args)
-    acq_cat = aca.acqs
-
-    # Assign the proseco probabilities back into an array.
-    p_acqs = [float(acq_cat['p_acq'][acq_cat['id'] == acq_id][0]) for acq_id in kw['include_ids_acq']]
-
-    return p_acqs, float(-np.log10(acq_cat.calc_p_safe())), float(np.sum(p_acqs))
-};
-
 
 ###################################################################################
 sub proseco_args{
@@ -2891,7 +2638,8 @@ sub set_proseco_probs_and_check_P2{
     if (not %{$args}){
         return;
     }
-    my ($p_acqs, $P2, $expected) = proseco_probs($args);
+    my $call_vals = call_python("utils.proseco_probs", [], $args);
+    my ($p_acqs, $P2, $expected) = @$call_vals;
 
     $P2 = sprintf("%.1f", $P2);
 
@@ -2933,23 +2681,6 @@ sub set_proseco_probs_and_check_P2{
 }
 
 
-
-use Inline Python => q{
-
-from chandra_aca.star_probs import mag_for_p_acq
-
-def _mag_for_p_acq(p_acq, date, t_ccd):
-    """
-    Call mag_for_p_acq, but cast p_acq and t_ccd as floats (may or may not be needed) and
-    convert date from a bytestring (from the Perl interface).
-    """
-    eff_t_ccd = get_effective_t_ccd(t_ccd)
-    return mag_for_p_acq(float(p_acq), date.decode(), float(eff_t_ccd))
-
-};
-
-
-
 sub set_dynamic_mag_limits{
 # Use the t_ccd at time of acquistion and time to set the mag limits corresponding to the the magnitude
 # for a 75% acquisition succes (yellow limit) and a 50% acquisition success (red limit)
@@ -2961,7 +2692,9 @@ sub set_dynamic_mag_limits{
     my $t_ccd = $self->{ccd_temp_acq};
     # Dynamic mag limits based on 75% and 50% chance of successful star acq
     # Maximum limits of 10.3 and 10.6
-    $self->{mag_faint_yellow} = min(10.3, _mag_for_p_acq(0.75, $date, $t_ccd));
-    $self->{mag_faint_red} = min(10.6, _mag_for_p_acq(0.5, $date, $t_ccd));
+    $self->{mag_faint_yellow} = min(10.3, call_python(
+        "utils._mag_for_p_acq", [0.75, $date, $t_ccd]));
+    $self->{mag_faint_red} = min(10.6, call_python(
+        "utils._mag_for_p_acq", [0.5, $date, $t_ccd]));
 }
 
