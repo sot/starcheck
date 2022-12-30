@@ -3,10 +3,10 @@ import logging
 import os
 from pathlib import Path
 
+import cxotime
 import numpy as np
 import proseco.characteristics as proseco_char
 from Chandra.Time import DateTime
-import cxotime
 from kadi.commands import states
 from testr import test_helper
 
@@ -54,6 +54,7 @@ def python_from_perl(func):
     - Convert byte strings to unicode.
     - Print stack trace on exceptions which perl inline suppresses.
     """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         args = de_bytestr(args)
@@ -62,8 +63,10 @@ def python_from_perl(func):
             return func(*args, **kwargs)
         except Exception:
             import traceback
+
             traceback.print_exc()
             raise
+
     return wrapper
 
 
@@ -108,26 +111,26 @@ def set_kadi_scenario_default():
     # This is aimed at running in production where the commands archive is
     # updated hourly. In this case no network resources are used.
     if test_helper.on_head_network():
-        os.environ.setdefault('KADI_SCENARIO', 'flight')
+        os.environ.setdefault("KADI_SCENARIO", "flight")
 
 
 @python_from_perl
 def get_cheta_source():
     sources = starcheck.calc_ccd_temps.fetch.data_source.sources()
-    if len(sources) == 1 and sources[0] == 'cxc':
-        return 'cxc'
+    if len(sources) == 1 and sources[0] == "cxc":
+        return "cxc"
     else:
         return str(sources)
 
 
 @python_from_perl
 def get_kadi_scenario():
-    return os.getenv('KADI_SCENARIO', default="None")
+    return os.getenv("KADI_SCENARIO", default="None")
 
 
 @python_from_perl
 def get_data_dir():
-    sc_data = os.path.join(os.path.dirname(starcheck.__file__), 'data')
+    sc_data = os.path.join(os.path.dirname(starcheck.__file__), "data")
     return sc_data if os.path.exists(sc_data) else ""
 
 
@@ -143,15 +146,26 @@ def make_ir_check_report(kwargs):
 
 @python_from_perl
 def get_dither_kadi_state(date):
-    cols = ['dither', 'dither_ampl_pitch', 'dither_ampl_yaw',
-            'dither_period_pitch', 'dither_period_yaw']
+    cols = [
+        "dither",
+        "dither_ampl_pitch",
+        "dither_ampl_yaw",
+        "dither_period_pitch",
+        "dither_period_yaw",
+    ]
     state = states.get_continuity(date, cols)
     # Cast the numpy floats as plain floats
-    for key in ['dither_ampl_pitch', 'dither_ampl_yaw',
-                'dither_period_pitch', 'dither_period_yaw']:
+    for key in [
+        "dither_ampl_pitch",
+        "dither_ampl_yaw",
+        "dither_period_pitch",
+        "dither_period_yaw",
+    ]:
         state[key] = float(state[key])
     # get most recent change time
-    state['time'] = float(np.max([DateTime(state['__dates__'][key]).secs for key in cols]))
+    state["time"] = float(
+        np.max([DateTime(state["__dates__"][key]).secs for key in cols])
+    )
     return state
 
 
@@ -204,12 +218,13 @@ def config_logging(outdir, verbose, name):
     class NullHandler(logging.Handler):
         def emit(self, record):
             pass
+
     rootlogger = logging.getLogger()
     rootlogger.addHandler(NullHandler())
 
-    loglevel = {0: logging.CRITICAL,
-                1: logging.INFO,
-                2: logging.DEBUG}.get(int(verbose), logging.INFO)
+    loglevel = {0: logging.CRITICAL, 1: logging.INFO, 2: logging.DEBUG}.get(
+        int(verbose), logging.INFO
+    )
 
     logger = logging.getLogger(name)
     logger.setLevel(loglevel)
@@ -218,7 +233,7 @@ def config_logging(outdir, verbose, name):
     for handler in list(logger.handlers):
         logger.removeHandler(handler)
 
-    formatter = logging.Formatter('%(message)s')
+    formatter = logging.Formatter("%(message)s")
 
     console = logging.StreamHandler()
     console.setFormatter(formatter)
@@ -226,6 +241,6 @@ def config_logging(outdir, verbose, name):
 
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
-    filehandler = logging.FileHandler(filename=outdir / 'run.dat', mode='w')
+    filehandler = logging.FileHandler(filename=outdir / "run.dat", mode="w")
     filehandler.setFormatter(formatter)
     logger.addHandler(filehandler)
