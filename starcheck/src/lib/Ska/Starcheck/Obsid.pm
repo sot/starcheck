@@ -20,12 +20,13 @@ package Ska::Starcheck::Obsid;
 
 use strict;
 use warnings;
+use Ska::Starcheck::Python qw(date2time time2date call_python);
 
 use Inline Python => q{
 import numpy as np
 from astropy.table import Table
 
-from starcheck.utils import time2date, date2time, de_bytestr
+from starcheck.utils import de_bytestr
 from mica.archive import aca_dark
 from chandra_aca.star_probs import guide_count
 from chandra_aca.transform import (yagzag_to_pixels, pixels_to_yagzag,

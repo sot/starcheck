@@ -24,6 +24,7 @@ use Scalar::Util qw(looks_like_number);
 use PoorTextFormat;
 
 use Ska::Starcheck::Obsid;
+use Ska::Starcheck::Python qw(date2time time2date call_python);
 use Ska::Parse_CM_File;
 use Carp;
 use YAML;
@@ -36,6 +37,16 @@ use HTML::TableExtract;
 use Carp 'verbose';
 $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 
+# Start a server that can run Python code
+my $pid;
+if ($pid = fork) {} else {
+  exec('python', '-m', 'starcheck.server');
+}
+
+
+print "Starting starcheck.pl\n";
+print call_python("utils.time2date", [150000000.]) . "\n";
+print time2date(300000000.) . "\n";
 
 use Inline Python => q{
 
@@ -45,7 +56,6 @@ import traceback
 from starcheck.pcad_att_check import check_characteristics_date
 from starcheck.utils import (_make_pcad_attitude_check_report,
                              plot_cat_wrapper,
-                             date2time, time2date,
                              config_logging,
                              set_kadi_scenario_default,
                              ccd_temp_wrapper,
@@ -211,6 +221,7 @@ for my $data_file ('up.gif', 'down.gif', 'overlib.js'){
 
 
 # First read the Backstop file, and split into components
+print "Reading backstop file $backstop\n";
 my @bs = Ska::Parse_CM_File::backstop($backstop);
 
 my $i = 0;
@@ -223,6 +234,7 @@ foreach my $bs (@bs) {
 }
 
 # Read DOT, which is used to figure out the Obsid for each command
+print "Reading DOT file $dot_file\n";
 my ($dot_ref, $dot_touched_by_sausage) = Ska::Parse_CM_File::DOT($dot_file) if ($dot_file);
 my %dot = %{$dot_ref};
 
@@ -231,23 +243,29 @@ my %dot = %{$dot_ref};
 #	print STDERR "$dotkey $dot{$dotkey}{cmd_identifier} $dot{$dotkey}{anon_param3} $dot{$dotkey}{anon_param4} \n";
 #}
 
+print "Reading TLR file $tlr_file\n";
 my @load_segments = Ska::Parse_CM_File::TLR_load_segments($tlr_file);
 
+print "Reading MM file $mm_file\n";
 # Read momentum management (maneuvers + SIM move) summary file
 my %mm = Ska::Parse_CM_File::MM({file => $mm_file, ret_type => 'hash'}) if ($mm_file);
 
 # Read maneuver management summary for handy obsid time checks
+print "Reading process summary $ps_file\n";
 my @ps = Ska::Parse_CM_File::PS($ps_file) if ($ps_file);
 
 # Read mech check file and parse
+print "Reading mech check file $mech_file\n";
 my @mc  = Ska::Parse_CM_File::mechcheck($mech_file) if ($mech_file);
 
 # Read OR file and integrate into %obs
+print "Reading OR file $or_file\n";
 my %or = Ska::Parse_CM_File::OR($or_file) if ($or_file);
 
 # Read FIDSEL (fid light) history file and ODB (for fid
 # characteristics) and parse; use fid_time_violation later (when global_warn set up
 
+print "Reading FIDSEL file $fidsel_file\n";
 my ($fid_time_violation, $error, $fidsel) = Ska::Parse_CM_File::fidsel($fidsel_file, \@bs) ;
 map { warning("$_\n") } @{$error};
 
@@ -271,6 +289,7 @@ Ska::Starcheck::Obsid::set_odb(%odb);
 Ska::Starcheck::Obsid::set_config($config_ref);
 
 # Read Maneuver error file containing more accurate maneuver errors
+print "Reading Maneuver Error file $manerr_file\n";
 my @manerr;
 if ($manerr_file) {
     @manerr = Ska::Parse_CM_File::man_err($manerr_file);
@@ -282,11 +301,14 @@ if ($manerr_file) {
 # in review, and the RUNNING_LOAD_TERMINATION_TIME backstop "pseudo" command is available, that
 # command will be the first command ($bs[0]) and the kadi dither state will be fetched at that time.
 # This is expected and appropriate.
+print "Getting dither state from kadi at $bs[0]->{date} \n";
 my $kadi_dither = get_dither_kadi_state($bs[0]->{date});
 
 # Read DITHER history file and backstop to determine expected dither state
+print "Reading DITHER file $dither_file\n";
 my ($dither_error, $dither) = Ska::Parse_CM_File::dither($dither_file, \@bs, $kadi_dither);
 
+print "Reading RADMON file $radmon_file\n";
 my ($radmon_time_violation, $radmon) = Ska::Parse_CM_File::radmon($radmon_file, \@bs);
 
 # if dither history runs into load or kadi mismatch
@@ -339,6 +361,7 @@ fix_targquat_time();
 my $obsid;
 my %obs;
 my @obsid_id;
+my $n_obsid = 0;
 for my $i (0 .. $#cmd) {
     # Get obsid (aka ofls_id) for this cmd by matching up with corresponding
     # commands from DOT.  Returns undef if it isn't "interesting"
@@ -347,8 +370,9 @@ for my $i (0 .. $#cmd) {
     # If obsid hasn't been seen before, create obsid object
 
     unless ($obs{$obsid}) {
-	push @obsid_id, $obsid;
-	$obs{$obsid} = Ska::Starcheck::Obsid->new($obsid, $date[$i]);
+    	push @obsid_id, $obsid;
+    	$obs{$obsid} = Ska::Starcheck::Obsid->new($obsid, $date[$i]);
+        $n_obsid++;
     }
 
     # Add the command to the correct obs object
@@ -358,6 +382,10 @@ for my $i (0 .. $#cmd) {
 				 date => $date[$i],
 				 time => $time[$i],
 				 cmd  => $cmd[$i] } );
+
+    if ($n_obsid > 4) {
+        last;
+    }
 }
 
 # Read guide star summary file $guide_summ.  This file is the OFLS summary of
@@ -397,7 +425,7 @@ foreach my $obsid (@obsid_id) {
 
 foreach my $oflsid (keys %guidesumm){
     unless (defined $obs{$oflsid}){
-	warning("OFLS ID $oflsid in Guide Summ but not in DOT! \n");
+     #warning("OFLS ID $oflsid in Guide Summ but not in DOT! \n");
     }
 }
 
@@ -1109,8 +1137,11 @@ sub usage
   exit($exit) if ($exit);
 }
 
-
-
+END {
+    print("Killing python server with pid=$pid\n");
+    kill 9, $pid;                    # must it be 9 (SIGKILL)?
+    my $gone_pid = waitpid $pid, 0;  # then check that it's gone
+};
 
 =pod
 

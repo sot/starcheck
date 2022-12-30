@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import proseco.characteristics as proseco_char
 from Chandra.Time import DateTime
-from Chandra.Time import date2secs, secs2date
+import cxotime
 from kadi.commands import states
 from testr import test_helper
 
@@ -16,6 +16,36 @@ from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.check_ir_zone import ir_zone_ok
 from starcheck.pcad_att_check import make_pcad_attitude_check_report
 from starcheck.plot import make_plots_for_obsid
+
+
+def date2secs(val):
+    """Convert date to seconds since 1998.0"""
+    out = cxotime.date2secs(val)
+    # if isinstance(out, (np.number, np.ndarray)):
+    #     out = out.tolist()
+    return out
+
+
+def secs2date(val):
+    """Convert date to seconds since 1998.0"""
+    out = cxotime.secs2date(val)
+    # if isinstance(out, (np.number, np.ndarray)):
+    #    out = out.tolist()
+    return out
+
+
+def date2time(val):
+    out = cxotime.date2secs(val)
+    if isinstance(out, (np.number, np.ndarray)):
+        out = out.tolist()
+    return out
+
+
+def time2date(val):
+    out = cxotime.secs2date(val)
+    if isinstance(out, (np.number, np.ndarray)):
+        out = out.tolist()
+    return out
 
 
 def python_from_perl(func):
@@ -50,10 +80,6 @@ def de_bytestr(data):
     if isinstance(data, set):
         return set(map(de_bytestr, data))
     return data
-
-
-date2time = python_from_perl(date2secs)
-time2date = python_from_perl(secs2date)
 
 
 @python_from_perl
