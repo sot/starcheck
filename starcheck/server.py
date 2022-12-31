@@ -1,3 +1,4 @@
+import collections
 import importlib
 import json
 import socketserver
@@ -6,6 +7,8 @@ import traceback
 
 HOST = "localhost"
 KEY = None
+
+func_calls = collections.Counter()
 
 
 class MyTCPHandler(socketserver.StreamRequestHandler):
@@ -33,22 +36,27 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         # print(f"SERVER receive args: {cmd['args']}")
         # print(f"SERVER receive kwargs: {cmd['kwargs']}")
 
-        # For security reasons, only allow functions in the public API of starcheck module
-        parts = cmd["func"].split(".")
-        package = ".".join(["starcheck"] + parts[:-1])
-        func = parts[-1]
-        module = importlib.import_module(package)
-        func = getattr(module, func)
-        args = cmd["args"]
-        kwargs = cmd["kwargs"]
+        exc = None
 
-        try:
-            result = func(*args, **kwargs)
-        except Exception:
-            result = None
-            exc = traceback.format_exc()
+        # For security reasons, only allow functions in the public API of starcheck module
+        if cmd["func"] == "get_server_calls":
+            # Sort func calls by the items in the counter
+            result = dict(func_calls)
         else:
-            exc = None
+            func_calls[cmd["func"]] += 1
+            parts = cmd["func"].split(".")
+            package = ".".join(["starcheck"] + parts[:-1])
+            func = parts[-1]
+            module = importlib.import_module(package)
+            func = getattr(module, func)
+            args = cmd["args"]
+            kwargs = cmd["kwargs"]
+
+            try:
+                result = func(*args, **kwargs)
+            except Exception:
+                result = None
+                exc = traceback.format_exc()
 
         resp = json.dumps({"result": result, "exception": exc})
         # print(f"SERVER send: {resp}")
