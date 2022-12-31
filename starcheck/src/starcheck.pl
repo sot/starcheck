@@ -67,7 +67,7 @@ if ($pid = fork) {} else {
 
 # DEBUG, limit number of obsids. TODO make this a command line option.
 # Set to undef for no limit.
-my $MAX_OBSIDS = 8;
+my $MAX_OBSIDS = undef;
 
 my $version = call_python("utils.starcheck_version");
 
