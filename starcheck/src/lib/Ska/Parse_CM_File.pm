@@ -99,26 +99,25 @@ sub dither {
                              'DITPAR' => undef);
 
     my @dh_state;
-    my @dh_time;
     my @dh_params;
 
-    # First get everything from DITHER
+    # First get everything from DITHER history.
     # Parse lines like:
     # 2002262.094827395   | DSDITH  AODSDITH
     # 2002262.095427395   | ENDITH  AOENDITH
 
+    # Check that the dither history does not run into the load. This is the only thing
+    # that is checked for the dither history file, the values are not used.
+    # Starcheck v2.0: skip it?
+    # Read the last 10000 bytes in the $dh_file.
     my $dith_hist_fh = IO::File->new($dh_file, "r") or $dither_error = "Dither history file read err";
-    my $date_start = time2date($bs_arr->[0]->{time} - 60 * 86400);
+    $dith_hist_fh->seek(-10000, 2);
+    my $dh_date;
+    my $dh_state;
     while (<$dith_hist_fh>) {
 	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (ENDITH|DSDITH)/x) {
-            my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
-            my $date = "$yr:$doy:$hr:$min:$sec";
-            if ($date gt $date_start) {
-                my $time = date2time($date);
-                push @dh_state, $dith_enab_cmd_map{$state};
-                push @dh_time, $time;
-                push @dh_params, {};
-            }
+            $dh_date = "$1:$2:$3:$4:$5";
+            $dh_state = $6;
         }
     }
 	$dith_hist_fh->close();
@@ -126,16 +125,17 @@ sub dither {
     if (not defined $dither_error){
         # If the most recent/last entry in the dither file has a timestamp newer than
         # the first entry in the load, return string error and undef dither history.
-        if ($dh_time[-1] >= $bs_arr->[0]->{time}){
-        $dither_error = "Dither history runs into load\n";
+        if ($dh_date ge $bs_arr->[0]->{date}){
+            $dither_error = "Dither history runs into load\n";
         }
 
         # Confirm that last state matches kadi continuity ENAB/DISA.
         # Otherwise, return string error and undef dither history.
-        if ($kadi_dither->{'dither'} ne $dh_state[-1]){
+        if ($kadi_dither->{'dither'} ne $dith_enab_cmd_map{$dh_state}){
             $dither_error = "Dither status in kadi commands does not match DITHER history\n"
-                        . sprintf("kadi '%s' ; History '%s' \n",
-                                    $kadi_dither->{'dither'}, $dh_state[-1]);
+              . sprintf("kadi '%s' ; History '%s' \n",
+                        $kadi_dither->{'dither'},
+                        $dith_enab_cmd_map{$dh_state});
         }
     }
 
@@ -329,19 +329,20 @@ sub get_fid_actions {
     my @bs_time;
     my @fs_action;
     my @fs_time;
+    my @fs_date;
     my $fidsel_fh;
 
     # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
-	if ($bs->{cmd} eq 'COMMAND_HW') {
-	    my %params = %{$bs->{command}};
-	    if ($params{TLMSID} eq 'AFIDP') {
-		my $msid = $params{MSID};
-		push @bs_action, "$msid FID $1 ON" if ($msid =~ /AFLC(\d+)/);
-		push @bs_action, "RESET" if ($msid =~ /AFLCRSET/);
-		push @bs_time, $bs->{time} - 10;  # see comment below about timing
-	    }
-	}
+        if ($bs->{cmd} eq 'COMMAND_HW') {
+            my %params = %{$bs->{command}};
+            if ($params{TLMSID} eq 'AFIDP') {
+            my $msid = $params{MSID};
+            push @bs_action, "$msid FID $1 ON" if ($msid =~ /AFLC(\d+)/);
+            push @bs_action, "RESET" if ($msid =~ /AFLCRSET/);
+            push @bs_time, $bs->{time} - 10;  # see comment below about timing
+            }
+        }
     }
 
 #    printf("first bs entry at %s, last entry at %s \n", $bs_time[0], $bs_time[-1]);
@@ -358,21 +359,23 @@ sub get_fid_actions {
             @reduced_fidsel_text = @fidsel_text[($#fidsel_text-1000) ... $#fidsel_text];
         }
 #    if ($fs_file && ($fidsel_fh = new IO::File $fs_file, "r")) {
-	for my $fidsel_line (@reduced_fidsel_text){
+	for my $fidsel_line (@reduced_fidsel_text) {
 	    if ($fidsel_line =~ /(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
-		my ($yr, $doy, $hr, $min, $sec, $action) = ($1,$2,$3,$4,$5,$6);
-		my $time = date2time("$yr:$doy:$hr:$min:$sec") - 10;
+            my ($yr, $doy, $hr, $min, $sec, $action) = ($1,$2,$3,$4,$5,$6);
 
-		if ($action =~ /(RESET|FID.+ON)/) {
-		    # Convert to time, and subtract 10 seconds so that fid lights are
-		    # on slightly before end of manuever.  In actual commanding, they
-		    # come on about 1-2 seconds *after*.
+            if ($action =~ /(RESET|FID.+ON)/) {
 
-		    push @fs_action, $action;
-		    push @fs_time, $time;
-		}
+                push @fs_action, $action;
+                push @fs_date, "$yr:$doy:$hr:$min:$sec";
+            }
 	    }
 	}
+
+    # Convert to time, and subtract 10 seconds so that fid lights are on
+    # slightly before end of manuever.  In actual commanding, they come on about
+    # 1-2 seconds *after*.
+    my $times = date2time(\@fs_date);
+    @fs_time = map { $_ - 10 } @{$times};
 
 #	$fidsel_fh->close();
     }
@@ -512,8 +515,8 @@ sub DOT {
         %{$dot{$_}} = parse_params($command{$_});
         $dot{$_}{time}  = date2time($dot{$_}{TIME}) if ($dot{$_}{TIME});
 
-	# MANSTART is in the dot as a "relative" time like "000:00:00:00.000", so just pass it
-	# to the rel_date2time routine designed to handle that.
+        # MANSTART is in the dot as a "relative" time like "000:00:00:00.000", so just pass it
+        # to the rel_date2time routine designed to handle that.
         $dot{$_}{time} += rel_date2time($dot{$_}{MANSTART}) if ($dot{$_}{TIME} && $dot{$_}{MANSTART});
         $dot{$_}{cmd_identifier} = "$dot{$_}{anon_param1}_$dot{$_}{anon_param2}"
             if ($dot{$_}{anon_param1} and $dot{$_}{anon_param2});
