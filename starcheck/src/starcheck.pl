@@ -15,6 +15,7 @@ use warnings;
 use Getopt::Long;
 use IO::File;
 use IO::All;
+use IO::Socket::INET;
 use Sys::Hostname;
 use English;
 use File::Basename;
@@ -33,14 +34,35 @@ use JSON ();
 use Cwd qw( abs_path );
 
 use HTML::TableExtract;
-
 use Carp 'verbose';
 $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 
-# Start a server that can run Python code
+my $sock = IO::Socket::INET->new(
+    LocalAddr => '', LocalPort => 0, Proto => 'tcp', Listen => 1);
+my $server_port = $sock->sockport();
+close($sock);
+
+# Generate a 16-character random string of letters and numbers that gets used
+# as a key to authenticate the client to the server.
+my $server_key = join '', map +(0..9,'a'..'z','A'..'Z')[rand 62], 1..16;
+
+# Configure the Python interface
+Ska::Starcheck::Python::set_port($server_port);
+Ska::Starcheck::Python::set_key($server_key);
+
+# Global process ID for fork that gets set in the parent process. This is
+# used to kill the forked process when the parent finishes.
 my $pid;
+
+# Start a server that can call functions in the starcheck package
 if ($pid = fork) {} else {
-  exec('python', '-m', 'starcheck.server');
+    open(SERVER, "| python -m starcheck.server");
+    SERVER->autoflush(1);
+    # Send the port and key to the server
+    print SERVER "$server_port\n";
+    print SERVER "$server_key\n";
+    # Forked process waits until it gets killed by the parent finishing
+    sleep;
 }
 
 # DEBUG, limit number of obsids. TODO make this a command line option.
@@ -1141,9 +1163,11 @@ sub usage
 }
 
 END {
-    print("Killing python server with pid=$pid\n");
-    kill 9, $pid;                    # must it be 9 (SIGKILL)?
-    my $gone_pid = waitpid $pid, 0;  # then check that it's gone
+    if (defined $pid) {
+        print("Killing python server with pid=$pid\n");
+        kill 9, $pid;                    # must it be 9 (SIGKILL)?
+        my $gone_pid = waitpid $pid, 0;  # then check that it's gone
+    }
 };
 
 =pod

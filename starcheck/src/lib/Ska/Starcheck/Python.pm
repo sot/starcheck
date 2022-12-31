@@ -12,16 +12,26 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 our @EXPORT = qw();
-our @EXPORT_OK = qw(call_python date2time time2date);
+our @EXPORT_OK = qw(call_python date2time time2date set_port set_key);
 %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 STDOUT->autoflush(1);
 
 $Data::Dumper::Terse = 1;
 
-my $host = "localhost";
-my $port = 44123;
+my $HOST = "localhost";
+my $PORT = 40000;
+my $KEY = "fff";
 
+sub set_port {
+    $PORT = shift;
+    print "CLIENT: Setting port to $PORT\n";
+}
+
+sub set_key {
+    $KEY = shift;
+    print "CLIENT: Setting key to $KEY\n";
+}
 
 sub call_python {
     my $func = shift;
@@ -34,6 +44,7 @@ sub call_python {
         "func" => $func,
         "args" => $args,
         "kwargs" => $kwargs,
+        "key" => $KEY,
     };
     my $command_json = encode_json $command;
     # print "CLIENT: Sending command $command_json\n";
@@ -42,13 +53,13 @@ sub call_python {
     my $iter = 0;
     while ($iter++ < 10) {
         $handle = IO::Socket::INET->new(Proto     => "tcp",
-                                        PeerAddr  => $host,
-                                        PeerPort  => $port);
+                                        PeerAddr  => $HOST,
+                                        PeerPort  => $PORT);
         last if defined($handle);
         sleep 1;
     }
     if (!defined($handle)) {
-        die "Unable to connect to port $port on $host: $!";
+        die "Unable to connect to port $PORT on $HOST: $!";
     }
     $handle->autoflush(1);       # so output gets there right away
     $handle->write("$command_json\n");

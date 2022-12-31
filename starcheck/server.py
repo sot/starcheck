@@ -1,11 +1,11 @@
 import importlib
 import json
 import socketserver
+import sys
 import traceback
 
-
-PORT = 44123
 HOST = "localhost"
+KEY = None
 
 
 class MyTCPHandler(socketserver.StreamRequestHandler):
@@ -24,13 +24,18 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
         # Decode self.data from JSON
         cmd = json.loads(data)
+
+        if cmd["key"] != KEY:
+            print(f"SERVER: bad key {cmd['key']!r}")
+            return
+
         # print(f"SERVER receive func: {cmd['func']}")
         # print(f"SERVER receive args: {cmd['args']}")
         # print(f"SERVER receive kwargs: {cmd['kwargs']}")
 
         # For security reasons, only allow functions in the public API of starcheck module
         parts = cmd["func"].split(".")
-        package = '.'.join(['starcheck'] + parts[:-1])
+        package = ".".join(["starcheck"] + parts[:-1])
         func = parts[-1]
         module = importlib.import_module(package)
         func = getattr(module, func)
@@ -52,13 +57,20 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
 
 def main():
-    # Create the server, binding to localhost on port 9999
-    with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
+    global KEY
+
+    # Read a line from STDIN
+    port = int(sys.stdin.readline().strip())
+    KEY = sys.stdin.readline().strip()
+
+    print("SERVER: starting on port", port)
+
+    # Create the server, binding to localhost on supplied port
+    with socketserver.TCPServer((HOST, port), MyTCPHandler) as server:
         # Activate the server; this will keep running until you
         # interrupt the program with Ctrl-C
         server.serve_forever()
 
 
 if __name__ == "__main__":
-    print("SERVER: starting on port", PORT)
     main()
