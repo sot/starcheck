@@ -2351,7 +2351,8 @@ sub star_image_map {
 	my $self = shift;
 	my $c;
     return unless ($c = find_command($self, 'MP_STARCAT'));
-    return unless ((defined $self->{ra}) and (defined $self->{dec}) and (defined $self->{roll}));	my $obsid = $self->{obsid};
+    return unless ((defined $self->{ra}) and (defined $self->{dec}) and (defined $self->{roll}));
+    my $obsid = $self->{obsid};
 
 	# a hash of the agasc ids we want to plot
 	my %plot_ids;
@@ -2380,21 +2381,30 @@ sub star_image_map {
         # top left +54+39
 	# 2900x2900
 	my $pix_scale = 330 / (2900. * 2);
+
+    # Convert all the yag/zags to pixel rows/cols
+    my @yags = map { $self->{agasc_hash}->{$_}->{yag} } keys %plot_ids;
+    my @zags = map { $self->{agasc_hash}->{$_}->{zag} } keys %plot_ids;
+    my $call_vals = call_python("utils._yagzag_to_pixels", [\@yags, \@zags]);
+    my ($pix_rows, $pix_cols) = @$call_vals;
+
 	my $map = "<map name=\"starmap_${obsid}\" id=\"starmap_${obsid}\"> \n";
-	for my $star_id (keys %plot_ids){
+    my @star_ids = keys %plot_ids;
+    for my $idx (0 .. $#star_ids) {
+        my $star_id = $star_ids[$idx];
+        my $pix_row = $pix_rows->[$idx];
+        my $pix_col = $pix_cols->[$idx];
 		my $cat_star = $self->{agasc_hash}->{$star_id};
 		my $sid = $cat_star->{id};
 		my $yag = $cat_star->{yag};
 		my $zag = $cat_star->{zag};
-        my $call_vals = call_python("utils._yagzag_to_pixels", [$yag, $zag]);
-		my ($pix_row, $pix_col) = @$call_vals;
 		my $image_x = 54 + ((2900 - $yag) * $pix_scale);
 		my $image_y = 39 + ((2900 - $zag) * $pix_scale);
 		my $star = '<area href="javascript:void(0);"' . "\n"
 			. 'ONMOUSEOVER="return overlib ('
 			. "'id=$sid <br/>"
 			. sprintf("yag,zag=%.2f,%.2f <br />", $yag, $zag)
-			. "row,col=$pix_row,$pix_col <br/>"
+			. sprintf("row,col=%.2f,%.2f <br />", $pix_row,$pix_col)
 			. sprintf("mag_aca=%.2f <br />", $cat_star->{mag_aca})
 			. sprintf("mag_aca_err=%.2f <br />", $cat_star->{mag_aca_err} / 100.0)
 			. sprintf("class=%s <br />", $cat_star->{class})

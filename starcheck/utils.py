@@ -226,7 +226,8 @@ def _pixels_to_yagzag(i, j):
     :returns tuple: yag, zag as floats
     """
     yag, zag = pixels_to_yagzag(i, j, allow_bad=True)
-    return float(yag), float(zag)
+    # Convert to lists or floats to avoid numpy types which are not JSON serializable
+    return yag.tolist(), zag.tolist()
 
 
 def _yagzag_to_pixels(yag, zag):
@@ -240,7 +241,8 @@ def _yagzag_to_pixels(yag, zag):
     :returns tuple: row, col as floats
     """
     row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
-    return float(row), float(col)
+    # Convert to lists or floats to avoid numpy types which are not JSON serializable
+    return row.tolist(), col.tolist()
 
 
 def _guide_count(mags, t_ccd, count_9th=False):
