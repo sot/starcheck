@@ -145,18 +145,14 @@ sub set_ACA_bad_pixels {
     my @tmp = io($pixel_file)->slurp;
     my @lines = grep { /^\s+(\d|-)/ } @tmp;
     foreach (@lines) {
-	my @line = split /;|,/, $_;
-	foreach my $i ($line[0]..$line[1]) {
-	    foreach my $j ($line[2]..$line[3]) {
-		my $pixel = {'row' => $i,
+    	my @line = split /;|,/, $_;
+    	foreach my $i ($line[0]..$line[1]) {
+    	    foreach my $j ($line[2]..$line[3]) {
+                my $pixel = {'row' => $i,
                              'col' => $j};
-        my $call_vals = call_python("utils._pixels_to_yagzag", [$i, $j]);
-		my ($yag,$zag) = @$call_vals;
-		$pixel->{yag} = $yag;
-		$pixel->{zag} = $zag;
-		push @bad_pixels, $pixel;
-	    }
-	}
+                push @bad_pixels, $pixel;
+            }
+    	}
     }
 
     print STDERR "Read ", ($#bad_pixels+1), " ACA bad pixels from $pixel_file\n";
@@ -1445,8 +1441,8 @@ sub check_star_catalog {
         my @dr;
         if ($type =~ /GUI|BOT/){
 	    foreach my $pixel (@bad_pixels) {
-		my $dy = abs($yag-$pixel->{yag});
-		my $dz = abs($zag-$pixel->{zag});
+		my $dy = abs($pixel_row-$pixel->{row}) * 5;
+		my $dz = abs($pixel_col-$pixel->{col}) * 5;
 		my $dr = sqrt($dy**2 + $dz**2);
 		next unless ($dz < $self->{dither_guide}->{ampl_p} + 25 and $dy < $self->{dither_guide}->{ampl_y} + 25);
 		push @close_pixels, sprintf(" row, col (%d, %d), dy, dz (%d, %d) \n",
