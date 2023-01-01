@@ -1116,11 +1116,10 @@ sub check_star_catalog {
     }
 
     # Run the hot pixel region check on the Python side on FID|GUI|BOT
-    my $call_vals = call_python(
+    my @imposters = @{call_python(
         "utils.check_hot_pix",
         [\@idxs, \@yags, \@zags, \@mags, \@types,
-         $self->{ccd_temp}, $self->{date}, $dither_guide_y, $dither_guide_z]);
-    my @imposters = @$call_vals;
+         $self->{ccd_temp}, $self->{date}, $dither_guide_y, $dither_guide_z]);};
 
     # Assign warnings based on those hot pixel region checks
   IMPOSTER:
@@ -1284,8 +1283,7 @@ sub check_star_catalog {
 
 	# Star/fid outside of CCD boundaries
         # ACA-019 ACA-020 ACA-021
-    my $call_vals = call_python("utils._yagzag_to_pixels", [$yag, $zag]);
-	my ($pixel_row, $pixel_col) = @$call_vals;
+	my ($pixel_row, $pixel_col) = @{call_python("utils._yagzag_to_pixels", [$yag, $zag])};
 
         # Set "acq phase" dither to acq dither or 20.0 if undefined
         my $dither_acq_y = $self->{dither_acq}->{ampl_y} or 20.0;
@@ -2381,8 +2379,7 @@ sub star_image_map {
     # Convert all the yag/zags to pixel rows/cols
     my @yags = map { $self->{agasc_hash}->{$_}->{yag} } keys %plot_ids;
     my @zags = map { $self->{agasc_hash}->{$_}->{zag} } keys %plot_ids;
-    my $call_vals = call_python("utils._yagzag_to_pixels", [\@yags, \@zags]);
-    my ($pix_rows, $pix_cols) = @$call_vals;
+    my ($pix_rows, $pix_cols) = @{call_python("utils._yagzag_to_pixels", [\@yags, \@zags])};
 
 	my $map = "<map name=\"starmap_${obsid}\" id=\"starmap_${obsid}\"> \n";
     my @star_ids = keys %plot_ids;
@@ -2644,8 +2641,7 @@ sub set_proseco_probs_and_check_P2{
     if (not %{$args}){
         return;
     }
-    my $call_vals = call_python("utils.proseco_probs", [], $args);
-    my ($p_acqs, $P2, $expected) = @$call_vals;
+    my ($p_acqs, $P2, $expected) = @{call_python("utils.proseco_probs", [], $args)};
 
     $P2 = sprintf("%.1f", $P2);
 

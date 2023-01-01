@@ -109,9 +109,9 @@ sub dither {
     # Check that the dither history does not run into the load. This is the only thing
     # that is checked for the dither history file, the values are not used.
     # Starcheck v2.0: skip it?
-    # Read the last 10000 bytes in the $dh_file.
-    my $dith_hist_fh = IO::File->new($dh_file, "r") or $dither_error = "Dither history file read err";
-    $dith_hist_fh->seek(-10000, 2);
+    # Read the last 1000 bytes in the $dh_file (guaranteed to be enough).
+    my $dith_hist_fh = IO::File->new($dh_file, "r") or croak "Can't open $dh_file: $!";
+    $dith_hist_fh->seek(-1000, 2);
     my $dh_date;
     my $dh_state;
     while (<$dith_hist_fh>) {
@@ -233,22 +233,20 @@ sub radmon {
     # Parse lines like:
     # 2012222.011426269 | ENAB OORMPEN
     # 2012224.051225059 | DISA OORMPDS
-    my $hist_fh = IO::File->new($h_file, "r") or return (undef, undef);
-    my $date_start = time2date($bs_arr->[0]->{time} - 60 * 86400);
+    my $hist_fh = IO::File->new($h_file, "r") or croak "Can't open $h_file: $!";
+    # Get the last 1000 characters. This is guaranteed to get the most recent
+    # entries that we care about.
+    $hist_fh->seek(-1000, 2);
 	while (<$hist_fh>) {
-            if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (DISA|ENAB) \s+ (OORMPDS|OORMPEN)/x) {
+        if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (DISA|ENAB) \s+ (OORMPDS|OORMPEN)/x) {
             my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
             my $date = "$yr:$doy:$hr:$min:$sec";
-            if ($date gt $date_start) {
-                my $time = date2time($date);
-                my $date = "$yr:$doy:$hr:$min:$sec";
-                push @h_date, $date;
-                push @h_state, $state;
-                push @h_time, $time;
-            }
+            push @h_date, $date;
+            push @h_state, $state;
         }
     }
 	$hist_fh->close();
+    @h_time = @{date2time(\@h_date)};
 
     my @ok = grep { $h_time[$_] < $bs_arr->[0]->{time} } (0 .. $#h_time);
     my @state = (@h_state[@ok], @bs_state);
@@ -337,10 +335,10 @@ sub get_fid_actions {
         if ($bs->{cmd} eq 'COMMAND_HW') {
             my %params = %{$bs->{command}};
             if ($params{TLMSID} eq 'AFIDP') {
-            my $msid = $params{MSID};
-            push @bs_action, "$msid FID $1 ON" if ($msid =~ /AFLC(\d+)/);
-            push @bs_action, "RESET" if ($msid =~ /AFLCRSET/);
-            push @bs_time, $bs->{time} - 10;  # see comment below about timing
+                my $msid = $params{MSID};
+                push @bs_action, "$msid FID $1 ON" if ($msid =~ /AFLC(\d+)/);
+                push @bs_action, "RESET" if ($msid =~ /AFLCRSET/);
+                push @bs_time, $bs->{time} - 10;  # see comment below about timing
             }
         }
     }
@@ -352,32 +350,25 @@ sub get_fid_actions {
     # 2001211.190730558   | AFLCRSET RESET
     # 2001211.190731558   | AFLC02D1 FID 02 ON
     if (defined $fs_file){
-	my @fidsel_text = io($fs_file)->slurp;
-	# take the last thousand entries if there are more than a 1000
-	my @reduced_fidsel_text = @fidsel_text;
-        if ($#fidsel_text > 1000){
-            @reduced_fidsel_text = @fidsel_text[($#fidsel_text-1000) ... $#fidsel_text];
-        }
-#    if ($fs_file && ($fidsel_fh = new IO::File $fs_file, "r")) {
-	for my $fidsel_line (@reduced_fidsel_text) {
-	    if ($fidsel_line =~ /(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
-            my ($yr, $doy, $hr, $min, $sec, $action) = ($1,$2,$3,$4,$5,$6);
-
-            if ($action =~ /(RESET|FID.+ON)/) {
-
-                push @fs_action, $action;
-                push @fs_date, "$yr:$doy:$hr:$min:$sec";
+        my $fh = IO::File->new($fs_file, "r") or croak "Can't open $fs_file: $!";
+        # Last 1000 bytes of history file is sufficient
+        $fh->seek(-1000, 2);
+        while (<$fh>) {
+            if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
+                my ($yr, $doy, $hr, $min, $sec, $action) = ($1,$2,$3,$4,$5,$6);
+                if ($action =~ /(RESET|FID.+ON)/) {
+                    push @fs_action, $action;
+                    push @fs_date, "$yr:$doy:$hr:$min:$sec";
+                }
             }
-	    }
-	}
+    	}
 
-    # Convert to time, and subtract 10 seconds so that fid lights are on
-    # slightly before end of manuever.  In actual commanding, they come on about
-    # 1-2 seconds *after*.
-    my $times = date2time(\@fs_date);
-    @fs_time = map { $_ - 10 } @{$times};
-
-#	$fidsel_fh->close();
+        # Convert to time, and subtract 10 seconds so that fid lights are on
+        # slightly before end of manuever.  In actual commanding, they come on about
+        # 1-2 seconds *after*.
+        my $times = date2time(\@fs_date);
+        @fs_time = map { $_ - 10 } @{$times};
+    	$fh->close();
     }
 
 #    printf("count of fid entries is %s \n", scalar(@fs_time));
@@ -391,7 +382,7 @@ sub get_fid_actions {
 
     # if the fid history extends into the current load
     if ($fs_time[-1] >= $bs_arr->[0]->{time}){
-	$fid_time_violation = 1;
+        $fid_time_violation = 1;
     }
 
     return (\@action, \@time, $fid_time_violation);
