@@ -119,7 +119,7 @@ my $font_stop = qq{</font>};
 # kadi log levels are a little different and INFO (corresponding to the default
 # verbose=1) is too chatty for the default. Instead allow only verbose=0
 # (CRITICAL) or verbose=2 (DEBUG).
-my $kadi_verbose = $par{verbose} eq '2' ? '2' : '0';
+my $kadi_verbose = $par{verbose} gt 1 ? '2' : '0';
 call_python("utils.config_logging", [$STARCHECK, $kadi_verbose, "kadi"]);
 call_python("utils.set_kadi_scenario_default");
 
