@@ -37,33 +37,6 @@ use HTML::TableExtract;
 use Carp 'verbose';
 $SIG{ __DIE__ } = sub { Carp::confess( @_ )};
 
-my $sock = IO::Socket::INET->new(
-    LocalAddr => '', LocalPort => 0, Proto => 'tcp', Listen => 1);
-my $server_port = $sock->sockport();
-close($sock);
-
-# Generate a 16-character random string of letters and numbers that gets used
-# as a key to authenticate the client to the server.
-my $server_key = join '', map +(0..9,'a'..'z','A'..'Z')[rand 62], 1..16;
-
-# Configure the Python interface
-Ska::Starcheck::Python::set_port($server_port);
-Ska::Starcheck::Python::set_key($server_key);
-
-# Start a server that can call functions in the starcheck package
-print "Here in the forked process\n";
-my $pid = open(SERVER, "| python -m starcheck.server");
-SERVER->autoflush(1);
-# Send the port and key to the server
-print SERVER "$server_port\n";
-print SERVER "$server_key\n";
-
-# DEBUG, limit number of obsids. TODO make this a command line option.
-# Set to undef for no limit.
-my $MAX_OBSIDS = undef;
-
-my $version = call_python("utils.starcheck_version");
-
 # Set some global vars with directory locations
 my $SKA = $ENV{SKA} || '/proj/sot/ska';
 
@@ -98,6 +71,34 @@ GetOptions( \%par,
 	    'maude!',
     ) ||
     exit( 1 );
+
+
+my $sock = IO::Socket::INET->new(
+    LocalAddr => '', LocalPort => 0, Proto => 'tcp', Listen => 1);
+my $server_port = $sock->sockport();
+close($sock);
+
+# Generate a 16-character random string of letters and numbers that gets used
+# as a key to authenticate the client to the server.
+my $server_key = join '', map +(0..9,'a'..'z','A'..'Z')[rand 62], 1..16;
+
+# Configure the Python interface
+Ska::Starcheck::Python::set_port($server_port);
+Ska::Starcheck::Python::set_key($server_key);
+
+# Start a server that can call functions in the starcheck package
+my $pid = open(SERVER, "| python -m starcheck.server");
+SERVER->autoflush(1);
+# Send the port and key to the server
+print SERVER "$server_port\n";
+print SERVER "$server_key\n";
+
+# DEBUG, limit number of obsids. TODO make this a command line option.
+# Set to undef for no limit.
+my $MAX_OBSIDS = undef;
+
+my $version = call_python("utils.starcheck_version");
+
 
 my $Starcheck_Data = $par{sc_data} || call_python("utils.get_data_dir");
 my $STARCHECK   = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
