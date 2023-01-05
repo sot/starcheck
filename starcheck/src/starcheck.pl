@@ -1209,6 +1209,12 @@ Default is '.'.
 Output reports will be <out>.html, <out>.txt.  Star plots will be
 <out>/stars_<obsid>.png.  The default is <out> = 'STARCHECK'.
 
+=item B<-verbose <level>>
+
+Output verbosity. The default is 1. verbose=2 includes kadi logger INFO statements,
+starcheck.server startup and shutdown information. verbose > 2 includes starcheck.server
+full debug output.
+
 =item B<-vehicle>
 
 Use vehicle-only products and the vehicle-only ACA checklist to perform
