@@ -22,15 +22,18 @@ $Data::Dumper::Terse = 1;
 my $HOST = "localhost";
 my $PORT = 40000;
 my $KEY = "fff";
+my $VERBOSE = 1;
 
 sub set_port {
     $PORT = shift;
-    print "CLIENT: Setting port to $PORT\n";
 }
 
 sub set_key {
     $KEY = shift;
-    print "CLIENT: Setting key to $KEY\n";
+}
+
+sub set_debug {
+    $VERBOSE = shift;
 }
 
 sub call_python {
@@ -47,8 +50,10 @@ sub call_python {
         "key" => $KEY,
     };
     my $command_json = encode_json $command;
-    # print "CLIENT: Sending command $command_json\n";
 
+    if ($VERBOSE gt 2){
+	print STDERR "CLIENT: Sending command $command_json\n";
+    }
     my $handle;
     my $iter = 0;
     while ($iter++ < 10) {
@@ -68,8 +73,10 @@ sub call_python {
     $handle->close();
 
     my $data = decode_json $response;
-    # print "CLIENT: Got response: $response\n";
-    # print Dumper($data);
+    if ($VERBOSE gt 2){
+	print STDERR "CLIENT: Got response: $response\n";
+	print STDERR Dumper($data);
+    }
     if (defined $data->{exception}) {
         my $msg = "\nPython exception:\n";
         $msg .= "command = " . Dumper($command) . "\n";

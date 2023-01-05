@@ -1,9 +1,14 @@
 import collections
 import importlib
 import json
+import logging
 import socketserver
 import sys
 import traceback
+
+from ska_helpers.logging import basic_logger
+
+logger = basic_logger(__name__, level="INFO")
 
 HOST = "localhost"
 KEY = None
@@ -33,18 +38,18 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
     def handle(self):
         # self.request is the TCP socket connected to the client
         data = self.rfile.readline()
-        # print(f"SERVER receive: {data.decode('utf-8')}")
+        logger.debug(f"SERVER receive: {data.decode('utf-8')}")
 
         # Decode self.data from JSON
         cmd = json.loads(data)
 
         if cmd["key"] != KEY:
-            print(f"SERVER: bad key {cmd['key']!r}")
+            logger.ERROR(f"SERVER: bad key {cmd['key']!r}")
             return
 
-        # print(f"SERVER receive func: {cmd['func']}")
-        # print(f"SERVER receive args: {cmd['args']}")
-        # print(f"SERVER receive kwargs: {cmd['kwargs']}")
+        logger.debug(f"SERVER receive func: {cmd['func']}")
+        logger.debug(f"SERVER receive args: {cmd['args']}")
+        logger.debug(f"SERVER receive kwargs: {cmd['kwargs']}")
 
         exc = None
 
@@ -69,20 +74,29 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
                 exc = traceback.format_exc()
 
         resp = json.dumps({"result": result, "exception": exc})
-        # print(f"SERVER send: {resp}")
+        logger.debug(f"SERVER send: {resp}")
 
         self.request.sendall(resp.encode("utf-8"))
 
 
 def main():
     global KEY
-
+    
     # Read a line from STDIN
     port = int(sys.stdin.readline().strip())
     KEY = sys.stdin.readline().strip()
-
-    print("SERVER: starting on port", port)
-
+    loglevel = sys.stdin.readline().strip()
+    
+    logmap = {'0': logging.CRITICAL,
+              '1': logging.WARNING,
+              '2': logging.INFO}
+    if loglevel in logmap:
+        logger.setLevel(logmap[loglevel])
+    if int(loglevel) > 2:
+        logger.setLevel(logging.DEBUG)
+        
+    logger.info(f"SERVER: starting on port {port}")    
+    
     # Create the server, binding to localhost on supplied port
     with PythonServer((HOST, port), MyTCPHandler) as server:
         # Activate the server; this will keep running until you

@@ -91,13 +91,19 @@ my $server_key = join '', map +(0..9,'a'..'z','A'..'Z')[rand 62], 1..16;
 # Configure the Python interface
 Ska::Starcheck::Python::set_port($server_port);
 Ska::Starcheck::Python::set_key($server_key);
+Ska::Starcheck::Python::set_debug($par{verbose});
+if ($par{verbose} gt 1){
+    print STDERR "CLIENT: starcheck.server started on port $server_port\n";
+    print STDERR "CLIENT: starcheck.server key $server_key\n";
+}
 
 # Start a server that can call functions in the starcheck package
 my $pid = open(SERVER, "| python -m starcheck.server");
 SERVER->autoflush(1);
-# Send the port and key to the server
+# Send the port, key, and verbosity to the server
 print SERVER "$server_port\n";
 print SERVER "$server_key\n";
+print SERVER "$par{verbose}\n";
 
 # DEBUG, limit number of obsids.
 # Set to undef for no limit (though option defaults to 0)
@@ -1167,8 +1173,10 @@ END {
 	    print("Python server calls:");
 	    print Dumper($server_calls);
 	}
-        print("Shutting down python starcheck server with pid=$pid\n");
-        kill 9, $pid;                    # must it be 9 (SIGKILL)?
+	if ($par{verbose} gt 1){
+	    print("Shutting down python starcheck server with pid=$pid\n");
+	}
+	kill 9, $pid;                    # must it be 9 (SIGKILL)?
         my $gone_pid = waitpid $pid, 0;  # then check that it's gone
     }
 };
