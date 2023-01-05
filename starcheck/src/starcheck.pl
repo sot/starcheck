@@ -12,6 +12,7 @@
 
 use strict;
 use warnings;
+use Data::Dumper;
 use Getopt::Long;
 use IO::File;
 use IO::All;
@@ -1164,7 +1165,7 @@ END {
 	    my $server_calls = call_python("get_server_calls");
 	    # print the server_calls hash sorted by value in descending order
 	    print("Python server calls:");
-	    print Dump($server_calls);
+	    print Dumper($server_calls);
 	}
         print("Shutting down python starcheck server with pid=$pid\n");
         kill 9, $pid;                    # must it be 9 (SIGKILL)?
