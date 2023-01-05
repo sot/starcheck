@@ -72,6 +72,9 @@ GetOptions( \%par,
     ) ||
     exit( 1 );
 
+usage( 1 )
+    if $par{help};
+
 
 my $sock = IO::Socket::INET->new(
     LocalAddr => '', LocalPort => 0, Proto => 'tcp', Listen => 1);
@@ -110,8 +113,6 @@ my $yellow_font_start = qq{<font color="#009900">};
 my $blue_font_start = qq{<font color="#0000FF">};
 my $font_stop = qq{</font>};
 
-usage( 1 )
-    if $par{help};
 
 # kadi log levels are a little different and INFO (corresponding to the default
 # verbose=1) is too chatty for the default. Instead allow only verbose=0
