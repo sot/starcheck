@@ -440,8 +440,7 @@ foreach my $oflsid (@obsid_id){
 		$obs{$oflsid}->add_guide_summ($oflsid, \%guidesumm);
     }
     else {
-	my $obsid = $obs{$oflsid}->{obsid};
-	my $cat = Ska::Starcheck::Obsid::find_command($obs{$obsid}, "MP_STARCAT");
+	my $cat = Ska::Starcheck::Obsid::find_command($obs{$oflsid}, "MP_STARCAT");
 	if (defined $cat){
 	    push @{$obs{$oflsid}->{warn}}, sprintf("No Guide Star Summary for obsid $obsid ($oflsid). \n");
 	}
