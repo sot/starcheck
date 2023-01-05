@@ -1155,11 +1155,13 @@ sub usage
 
 END {
     if (defined $pid) {
-        my $server_calls = call_python("get_server_calls");
-        # print the server_calls hash sorted by value in descending order
-        print("Python server calls:");
-        print Dump($server_calls);
-        print("Killing python server with pid=$pid\n");
+	if ($par{verbose} gt 1){
+	    my $server_calls = call_python("get_server_calls");
+	    # print the server_calls hash sorted by value in descending order
+	    print("Python server calls:");
+	    print Dump($server_calls);
+	}
+        print("Shutting down python starcheck server with pid=$pid\n");
         kill 9, $pid;                    # must it be 9 (SIGKILL)?
         my $gone_pid = waitpid $pid, 0;  # then check that it's gone
     }
