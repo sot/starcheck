@@ -128,7 +128,7 @@ sub dither {
 
         # Confirm that last state matches kadi continuity ENAB/DISA.
         if ($kadi_dither->{'dither'} ne $dith_enab_cmd_map{$dh_state}){
-            $dither_error = "Dither status in kadi commands does not match DITHER history\n"
+            $dither_error .= "Dither status in kadi commands does not match DITHER history\n"
               . sprintf("kadi '%s' ; History '%s' \n",
                         $kadi_dither->{'dither'},
                         $dith_enab_cmd_map{$dh_state});
