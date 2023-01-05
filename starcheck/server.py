@@ -12,7 +12,7 @@ func_calls = collections.Counter()
 
 
 class PythonServer(socketserver.TCPServer):
-    timeout = 2
+    timeout = 180
 
     def handle_timeout(self) -> None:
         print(f"SERVER: starcheck python server timeout after {self.timeout}s idle",
