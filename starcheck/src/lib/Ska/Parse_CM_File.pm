@@ -106,9 +106,6 @@ sub dither {
     # 2002262.094827395   | DSDITH  AODSDITH
     # 2002262.095427395   | ENDITH  AOENDITH
 
-    # Check that the dither history does not run into the load. This is the only thing
-    # that is checked for the dither history file, the values are not used.
-    # Starcheck v2.0: skip it?
     # Read the last 1000 bytes in the $dh_file (guaranteed to be enough).
     my $dith_hist_fh = IO::File->new($dh_file, "r") or croak "Can't open $dh_file: $!";
     $dith_hist_fh->seek(-1000, 2);
@@ -124,13 +121,12 @@ sub dither {
 
     if (not defined $dither_error){
         # If the most recent/last entry in the dither file has a timestamp newer than
-        # the first entry in the load, return string error and undef dither history.
+        # the first entry in the load, update the dither_error var.
         if ($dh_date ge $bs_arr->[0]->{date}){
             $dither_error = "Dither history runs into load\n";
         }
 
         # Confirm that last state matches kadi continuity ENAB/DISA.
-        # Otherwise, return string error and undef dither history.
         if ($kadi_dither->{'dither'} ne $dith_enab_cmd_map{$dh_state}){
             $dither_error = "Dither status in kadi commands does not match DITHER history\n"
               . sprintf("kadi '%s' ; History '%s' \n",
