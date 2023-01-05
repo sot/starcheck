@@ -28,7 +28,6 @@ use File::Basename;
 use POSIX qw(floor);
 use English;
 use IO::All;
-use Data::Dumper qw(Dumper);
 
 use RDB;
 
