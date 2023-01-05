@@ -50,20 +50,13 @@ my $server_key = join '', map +(0..9,'a'..'z','A'..'Z')[rand 62], 1..16;
 Ska::Starcheck::Python::set_port($server_port);
 Ska::Starcheck::Python::set_key($server_key);
 
-# Global process ID for fork that gets set in the parent process. This is
-# used to kill the forked process when the parent finishes.
-my $pid;
-
 # Start a server that can call functions in the starcheck package
-if ($pid = fork) {} else {
-    open(SERVER, "| python -m starcheck.server");
-    SERVER->autoflush(1);
-    # Send the port and key to the server
-    print SERVER "$server_port\n";
-    print SERVER "$server_key\n";
-    # Forked process waits until it gets killed by the parent finishing
-    sleep;
-}
+print "Here in the forked process\n";
+my $pid = open(SERVER, "| python -m starcheck.server");
+SERVER->autoflush(1);
+# Send the port and key to the server
+print SERVER "$server_port\n";
+print SERVER "$server_key\n";
 
 # DEBUG, limit number of obsids. TODO make this a command line option.
 # Set to undef for no limit.
