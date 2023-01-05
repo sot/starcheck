@@ -50,6 +50,7 @@ my %par = (dir  => '.',
 		   fid_char => "fid_CHARACTERISTICS",
            verbose => 1,
 	   maude => 0,
+	   max_obsids => 0,
     );
 
 
@@ -69,6 +70,7 @@ GetOptions( \%par,
 			'config_file=s',
                         'run_start_time=s',
 	    'maude!',
+	    'max_obsids:i',
     ) ||
     exit( 1 );
 
@@ -96,9 +98,9 @@ SERVER->autoflush(1);
 print SERVER "$server_port\n";
 print SERVER "$server_key\n";
 
-# DEBUG, limit number of obsids. TODO make this a command line option.
-# Set to undef for no limit.
-my $MAX_OBSIDS = undef;
+# DEBUG, limit number of obsids.
+# Set to undef for no limit (though option defaults to 0)
+my $MAX_OBSIDS = $par{max_obsids} > 0 ? $par{max_obsids} : undef;
 
 my $version = call_python("utils.starcheck_version");
 
@@ -414,10 +416,12 @@ foreach my $obsid (@obsid_id) {
 }
 
 # Check that every Guide summary OFLS ID has a matching OFLS ID in DOT
-
-foreach my $oflsid (keys %guidesumm){
-    unless (defined $obs{$oflsid}){
-     #warning("OFLS ID $oflsid in Guide Summ but not in DOT! \n");
+# Skip this check if developing code with MAX_OBSIDS set
+if (not defined $MAX_OBSIDS){
+    foreach my $oflsid (keys %guidesumm){
+	unless (defined $obs{$oflsid}){
+	    warning("OFLS ID $oflsid in Guide Summ but not in DOT! \n");
+	}
     }
 }
 
@@ -1219,6 +1223,10 @@ Enable (or disable) generation of report in TEXT format.  Default is TEXT enable
 
 Use MAUDE for telemetry instead of default cheta cxc archive.
 MAUDE will also be used if no AACCCDPT telemetry can be found in cheta archive for initial conditions.
+
+=item B<-max_obsids <N>>
+
+Limit starcheck review to first N obsids (for testing).
 
 =item B<-agasc_file <agasc>>
 
