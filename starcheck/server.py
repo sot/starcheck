@@ -11,6 +11,15 @@ KEY = None
 func_calls = collections.Counter()
 
 
+class PythonServer(socketserver.TCPServer):
+    timeout = 2
+
+    def handle_timeout(self) -> None:
+        print("SERVER: timeout")
+        # self.shutdown()  # DOES NOT WORK, just hangs
+        sys.exit(1)
+
+
 class MyTCPHandler(socketserver.StreamRequestHandler):
     """
     The request handler class for our server.
@@ -74,10 +83,11 @@ def main():
     print("SERVER: starting on port", port)
 
     # Create the server, binding to localhost on supplied port
-    with socketserver.TCPServer((HOST, port), MyTCPHandler) as server:
+    with PythonServer((HOST, port), MyTCPHandler) as server:
         # Activate the server; this will keep running until you
         # interrupt the program with Ctrl-C
-        server.serve_forever()
+        while True:
+            server.handle_request()
 
 
 if __name__ == "__main__":
