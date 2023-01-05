@@ -15,7 +15,8 @@ class PythonServer(socketserver.TCPServer):
     timeout = 2
 
     def handle_timeout(self) -> None:
-        print("SERVER: timeout")
+        print(f"SERVER: starcheck python server timeout after {self.timeout}s idle",
+              file=sys.stderr)
         # self.shutdown()  # DOES NOT WORK, just hangs
         sys.exit(1)
 
