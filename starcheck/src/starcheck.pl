@@ -1165,6 +1165,10 @@ sub usage
 }
 
 END {
+    # Keep and return program exit status at end of END.
+    my $exit_status = $?;
+
+    # If the Python process id is defined, kill that process and wait
     if (defined $pid) {
 	if ($par{verbose} gt 1){
 	    my $server_calls = call_python("get_server_calls");
@@ -1178,6 +1182,7 @@ END {
 	kill 9, $pid;                    # must it be 9 (SIGKILL)?
         my $gone_pid = waitpid $pid, 0;  # then check that it's gone
     }
+    exit($exit_status);
 };
 
 =pod
