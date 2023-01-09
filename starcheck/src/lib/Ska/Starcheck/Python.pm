@@ -13,7 +13,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw();
 our @EXPORT_OK = qw(call_python date2time time2date set_port set_key);
-%EXPORT_TAGS = ( all => \@EXPORT_OK );
+%EXPORT_TAGS = (all => \@EXPORT_OK);
 
 STDOUT->autoflush(1);
 
@@ -51,31 +51,33 @@ sub call_python {
     };
     my $command_json = encode_json $command;
 
-    if ($VERBOSE gt 2){
-	print STDERR "CLIENT: Sending command $command_json\n";
+    if ($VERBOSE gt 2) {
+        print STDERR "CLIENT: Sending command $command_json\n";
     }
     my $handle;
     my $iter = 0;
     while ($iter++ < 10) {
-        $handle = IO::Socket::INET->new(Proto     => "tcp",
-                                        PeerAddr  => $HOST,
-                                        PeerPort  => $PORT);
+        $handle = IO::Socket::INET->new(
+            Proto => "tcp",
+            PeerAddr => $HOST,
+            PeerPort => $PORT
+        );
         last if defined($handle);
         sleep 1;
     }
     if (!defined($handle)) {
         die "Unable to connect to port $PORT on $HOST: $!";
     }
-    $handle->autoflush(1);       # so output gets there right away
+    $handle->autoflush(1);    # so output gets there right away
     $handle->write("$command_json\n");
 
     my $response = <$handle>;
     $handle->close();
 
     my $data = decode_json $response;
-    if ($VERBOSE gt 2){
-	print STDERR "CLIENT: Got response: $response\n";
-	print STDERR Dumper($data);
+    if ($VERBOSE gt 2) {
+        print STDERR "CLIENT: Got response: $response\n";
+        print STDERR Dumper($data);
     }
     if (defined $data->{exception}) {
         my $msg = "\nPython exception:\n";
@@ -87,16 +89,16 @@ sub call_python {
     return $data->{result};
 }
 
-
 sub date2time {
     my $date = shift;
+
     # print "date2time: $date\n";
     return call_python("utils.date2time", [$date]);
 }
 
-
 sub time2date {
     my $time = shift;
+
     # print "time2date: $time\n";
     return call_python("utils.time2date", [$time]);
 }

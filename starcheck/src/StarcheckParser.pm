@@ -1,6 +1,6 @@
-##Starcheck parsing utilities   
-##Brett Unks                      
-##Jan 2003                        
+##Starcheck parsing utilities
+##Brett Unks
+##Jan 2003
 
 # Used by /proj/sot/ska/bin/new_obs.pl - which is no longer running
 # Used by /proj/sot/ska/database/star_parse.pl
@@ -47,19 +47,18 @@ sub get_obsdata {
     my @tmp = split /\={50}\=+\s*\n/, $$starcheck;
     my @tmp1 = grep /OBSID:\s+0*$obsid(\s|\n)/, @tmp;
     my $obs_data;
-    if (scalar(@tmp1) == 1){
-	$obs_data = shift @tmp1;
-	return ObsidParser->new_obsid($obs_data);
+    if (scalar(@tmp1) == 1) {
+        $obs_data = shift @tmp1;
+        return ObsidParser->new_obsid($obs_data);
     }
-    else{
-	croak("Error. Obsid not found in starcheck file for load.\n");
+    else {
+        croak("Error. Obsid not found in starcheck file for load.\n");
     }
-
 
 }
 
 ##***************************************************************************
-sub get_load_record{
+sub get_load_record {
 ##***************************************************************************
     my $starcheck = shift;
     my $mp_path = shift;
@@ -68,7 +67,7 @@ sub get_load_record{
 }
 
 ##***************************************************************************
-sub get_header_lines{
+sub get_header_lines {
 ##***************************************************************************
     my $starcheck = shift;
     my @tmp = split /\={84}\n\n/, $$starcheck;
@@ -80,55 +79,55 @@ sub get_header_lines{
     my @tmp1 = split /PARSEBREAK\n/, $header_text;
 
     my @top_match = grep /Starcheck/, @tmp1;
-    if ( scalar(@top_match) == 1){
-	my $very_top = $top_match[0];
-	my @top_lines = split /\n/, $very_top;
-	$header{very_top} = \@top_lines;
+    if (scalar(@top_match) == 1) {
+        my $very_top = $top_match[0];
+        my @top_lines = split /\n/, $very_top;
+        $header{very_top} = \@top_lines;
     }
 
     my @proc_match = grep /PROCESSING\sWARNINGS\s/, @tmp1;
-    if (scalar(@proc_match) == 1){
-	my $processing_warnings = $proc_match[0];
-	#remove header
-	$processing_warnings =~ s/^------------.*\n//g;
-	# remove blank lines
-	$processing_warnings =~ s/^\n//g;
-	my @warning_lines = split /\n/, $processing_warnings;
-	$header{processing_warnings} = \@warning_lines;
+    if (scalar(@proc_match) == 1) {
+        my $processing_warnings = $proc_match[0];
+
+        #remove header
+        $processing_warnings =~ s/^------------.*\n//g;
+
+        # remove blank lines
+        $processing_warnings =~ s/^\n//g;
+        my @warning_lines = split /\n/, $processing_warnings;
+        $header{processing_warnings} = \@warning_lines;
     }
 
     my @file_match = grep /PROCESSING\sFILES/, @tmp1;
-    if (scalar(@file_match) == 1){
-	my $proc_files = $file_match[0];
-	#remove header
+    if (scalar(@file_match) == 1) {
+        my $proc_files = $file_match[0];
+
+        #remove header
         $proc_files =~ s/^------------.*\n//g;
+
         #remove blank lines
         $proc_files =~ s/^\n//g;
-	my @file_lines = split /\n/, $proc_files;
-	$header{processing_files} = \@file_lines;
+        my @file_lines = split /\n/, $proc_files;
+        $header{processing_files} = \@file_lines;
     }
-
 
     my @summ_match = grep /SUMMARY\sOF\sOBSIDS\s/, @tmp1;
-    if (scalar(@summ_match) == 1){
-	my $obsid_summary = $summ_match[0];
-	#remove header
-	$obsid_summary =~ s/^------------.*\n//g;
-	#remove blank lines
-	$obsid_summary =~ s/^\n//g;
-	my @summary_lines = split /\n/, $obsid_summary;
-	$header{obsid_summary} = \@summary_lines;
+    if (scalar(@summ_match) == 1) {
+        my $obsid_summary = $summ_match[0];
+
+        #remove header
+        $obsid_summary =~ s/^------------.*\n//g;
+
+        #remove blank lines
+        $obsid_summary =~ s/^\n//g;
+        my @summary_lines = split /\n/, $obsid_summary;
+        $header{obsid_summary} = \@summary_lines;
     }
 
-
-    
     return %header;
 
 }
 ##***************************************************************************
-
-
-
 
 ##***************************************************************************
 ##***************************************************************************
@@ -140,6 +139,7 @@ use strict;
 use Carp;
 
 1;
+
 #@EXPORT = qw(new_obsid
 #	     get_full_record
 #	     get_target
@@ -161,56 +161,63 @@ sub new_obsid {
 }
 
 ##***************************************************************************
-sub get_full_record{
+sub get_full_record {
 ##***************************************************************************
     my $obs_data = shift;
     my $obsid = shift;
-    return StarcheckRecord->new_record($obs_data,$obsid)
+    return StarcheckRecord->new_record($obs_data, $obsid);
 }
 
 ##***************************************************************************
-sub get_target{
+sub get_target {
 ##***************************************************************************
     my $data = shift;
     my @block = split "\n", $$data;
     my $topline = $block[0];
     my %target;
-    if ($topline =~ /^OBSID:\s(\S{5})\s*$/){
+    if ($topline =~ /^OBSID:\s(\S{5})\s*$/) {
     }
-    else{
-	if ($topline =~ /OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s.*\sGrating:\s*(\S+)\s*/ ){
-	    if ($topline =~ /OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+Grating:\s*(\S+)\s*/ ){
-		%target = (
-			   'obsid' => $1,
-			   'target' => $2,
-			   'sci_instr' => $3,
-			   'sim_z_offset_steps' => $4,
-			   'grating' => $5
-			   );
-		$target{'target'} =~ s/\s+$//;
+    else {
+        if ($topline =~
+/OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s.*\sGrating:\s*(\S+)\s*/
+          )
+        {
+            if ($topline =~
+/OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+Grating:\s*(\S+)\s*/
+              )
+            {
+                %target = (
+                    'obsid' => $1,
+                    'target' => $2,
+                    'sci_instr' => $3,
+                    'sim_z_offset_steps' => $4,
+                    'grating' => $5
+                );
+                $target{'target'} =~ s/\s+$//;
 
-	    }
-	    if ($topline =~ /OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+\((-*.+)mm\)\s+Grating:\s*(\S+)\s*/ ){
-		%target = (
-			   'obsid' => $1,
-			   'target' => $2,
-			   'sci_instr' => $3,
-			   'sim_z_offset_steps' => $4,
-			   'sim_z_offset_mm' => $5,
-			   'grating' => $6
-			   );
-		$target{'target'} =~ s/\s+$//;
+            }
+            if ($topline =~
+/OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+\((-*.+)mm\)\s+Grating:\s*(\S+)\s*/
+              )
+            {
+                %target = (
+                    'obsid' => $1,
+                    'target' => $2,
+                    'sci_instr' => $3,
+                    'sim_z_offset_steps' => $4,
+                    'sim_z_offset_mm' => $5,
+                    'grating' => $6
+                );
+                $target{'target'} =~ s/\s+$//;
 
-	    }
-	}
-	else{
-	    %target = ();
-	}
+            }
+        }
+        else {
+            %target = ();
+        }
     }
     return %target;
 }
-
-
 
 ##***************************************************************************
 sub get_coords {
@@ -219,10 +226,10 @@ sub get_coords {
     $$data =~ /RA, Dec, Roll \(deg\):\s+(.+)\n/;
     my @tmp = split " ", $1;
     my %coords = (
-		  RA   => $tmp[0],
-		  DEC  => $tmp[1],
-		  ROLL => $tmp[2]
-		  );
+        RA => $tmp[0],
+        DEC => $tmp[1],
+        ROLL => $tmp[2]
+    );
     return %coords;
 }
 
@@ -235,73 +242,78 @@ sub get_quat {
     my @tmp = split ",", $1;
     my @tmp1 = split " ", $2;
     my %quat = (
-                  $tmp[0] => $tmp1[0],
-                  $tmp[1] => $tmp1[1],
-                  $tmp[2] => $tmp1[2],
-                  $tmp[3] => $tmp1[3]
-		);
+        $tmp[0] => $tmp1[0],
+        $tmp[1] => $tmp1[1],
+        $tmp[2] => $tmp1[2],
+        $tmp[3] => $tmp1[3]
+    );
     return %quat;
 }
-
 
 ##***************************************************************************
 sub get_stars {
 ##***************************************************************************
     my ($data) = @_;
     my @stars;
+
     #pull out the header
-    if ( $$data =~ /\-+\n\s+(.+)\n\-+\n/ ){
-	my $hdr_long = $1;
-	my @hdr = split " ", $hdr_long;
-	#now parse out the stars and return an array of hashes
-	my @block = split "\n", $$data;
-	my @indices = grep /^\[.+\]\s+(.+)/, @block;
-	map { s/^(?:\[ |\[)(.+)\]\s+(.+)/$1 $2/} @indices;
-	for my $i (0.. $#indices){
-	    my @tmp = split " ", $indices[$i];
-	    for my $j (0.. $#hdr) { $stars[$i]{$hdr[$j]} = $tmp[$j] if defined $tmp[$j]};
-	}
+    if ($$data =~ /\-+\n\s+(.+)\n\-+\n/) {
+        my $hdr_long = $1;
+        my @hdr = split " ", $hdr_long;
+
+        #now parse out the stars and return an array of hashes
+        my @block = split "\n", $$data;
+        my @indices = grep /^\[.+\]\s+(.+)/, @block;
+        map { s/^(?:\[ |\[)(.+)\]\s+(.+)/$1 $2/ } @indices;
+        for my $i (0 .. $#indices) {
+            my @tmp = split " ", $indices[$i];
+            for my $j (0 .. $#hdr) {
+                $stars[$i]{ $hdr[$j] } = $tmp[$j] if defined $tmp[$j];
+            }
+        }
     }
     return @stars;
-} 
-
-
+}
 
 ##***************************************************************************
-sub get_warnings { # and INFO blocks
+sub get_warnings {    # and INFO blocks
 ##***************************************************************************
     my ($data, $index) = @_;
     my @block = split "\n", $$data;
     my @tmp = grep /^\>\>\s+(WARNING|INFO)\s*:/, @block;
     my @warnings;
-    for my $i (0.. $#tmp) {
-	if ($tmp[$i] =~ /.*(WARNING|INFO).*\[\s?(\d+)\]([\w\s]+)\.(.*)$/){
-	    if ($2 == $index){
-		my $type = $3;
-		my $warn_index = $2;
-		my $details = $4;
-		$details =~ s/^\s*//;
-		push @warnings, {
-		    TYPE    => $type,
-		    INDEX   => $warn_index,
-		    DETAILS => $details,
-		};
-	    }
-	}
-	else{
-	    if ($tmp[$i] =~ /^\>\>\s+(WARNING|INFO)\s*:\s+(.+)\.\s+(?:\[ |\[)(\d+)\].\s(.+)/){
-		if ($3 == $index){
-		    push @warnings, {
-			TYPE    => $2,
-			INDEX   => $3,
-			DETAILS => $4,
-		    };
-		}
-	   }
-	}
+    for my $i (0 .. $#tmp) {
+        if ($tmp[$i] =~ /.*(WARNING|INFO).*\[\s?(\d+)\]([\w\s]+)\.(.*)$/) {
+            if ($2 == $index) {
+                my $type = $3;
+                my $warn_index = $2;
+                my $details = $4;
+                $details =~ s/^\s*//;
+                push @warnings,
+                  {
+                    TYPE => $type,
+                    INDEX => $warn_index,
+                    DETAILS => $details,
+                  };
+            }
+        }
+        else {
+            if ($tmp[$i] =~
+                /^\>\>\s+(WARNING|INFO)\s*:\s+(.+)\.\s+(?:\[ |\[)(\d+)\].\s(.+)/)
+            {
+                if ($3 == $index) {
+                    push @warnings,
+                      {
+                        TYPE => $2,
+                        INDEX => $3,
+                        DETAILS => $4,
+                      };
+                }
+            }
+        }
     }
     return @warnings;
-}	
+}
 
 ##***************************************************************************
 sub get_star_type {
@@ -319,8 +331,9 @@ sub get_all_warnings {
 ##***************************************************************************
     my $data = shift;
     my @block = split "\n", $$data;
-#    use Data::Dumper;
-#    print Dumper @block;
+
+    #    use Data::Dumper;
+    #    print Dumper @block;
     my @warnings = grep /^\>\>\s+(WARNING|INFO)\s*:/, @block;
     map { s/^\>\>\s+WARNING:\s+// } @warnings;
     map { s/^\>\>\s+INFO\s+:\s+// } @warnings;
@@ -333,103 +346,111 @@ sub get_dither_info {
     my $data = shift;
     my %dither;
 
-    if ($$data =~ /Dither:\s(\S+)\s+Y_amp=\s*(\S+)\s+Z_amp=\s*(\S+)\s+Y_period=\s*(\S+)\s+Z_period=\s*(\S+)\s*\n/){
-	%dither = (
-		      'state' => $1,
-		      'y_amp' => $2,
-		      'z_amp' => $3,
-		      'y_period' => $4,
-		      'z_period' => $5
-		      );
+    if ($$data =~
+/Dither:\s(\S+)\s+Y_amp=\s*(\S+)\s+Z_amp=\s*(\S+)\s+Y_period=\s*(\S+)\s+Z_period=\s*(\S+)\s*\n/
+      )
+    {
+        %dither = (
+            'state' => $1,
+            'y_amp' => $2,
+            'z_amp' => $3,
+            'y_period' => $4,
+            'z_period' => $5
+        );
     }
     return %dither;
 }
 
 ##***************************************************************************
-sub get_times{
+sub get_times {
 ##***************************************************************************
     my $data = shift;
-#MP_TARGQUAT at 2006:156:06:36:46.768 (VCDU count = 3473057)
+
+    #MP_TARGQUAT at 2006:156:06:36:46.768 (VCDU count = 3473057)
     my %times;
-#MP_STARCAT at 2006:156:06:36:48.411 (VCDU count = 3473063)
-    if ($$data =~ /MP_STARCAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)\n/g){
-	$times{'MP_STARCAT'} = $1;
-	$times{'VCDU_cnt'} = $2;
+
+    #MP_STARCAT at 2006:156:06:36:48.411 (VCDU count = 3473063)
+    if ($$data =~ /MP_STARCAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)\n/g) {
+        $times{'MP_STARCAT'} = $1;
+        $times{'VCDU_cnt'} = $2;
     }
     return %times;
 }
 
 ##***************************************************************************
-sub get_manvr{
+sub get_manvr {
 ##***************************************************************************
     my $data = shift;
-    my @data_array = split( /\n/, $$data);
-#    use Data::Dumper;
-#    print Dumper @data_array;
+    my @data_array = split(/\n/, $$data);
+
+    #    use Data::Dumper;
+    #    print Dumper @data_array;
     my @new_man;
-    foreach my $i (0 .. $#data_array){
-	next unless ($data_array[$i] =~ /\AMP_TARGQUAT/);
-	my %temp_manvr;
-	if ($data_array[$i] =~ /MP_TARGQUAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)/){
-	    $temp_manvr{'MP_TARGQUAT'} = $1;
-	    $temp_manvr{'VCDU_cnt'} = $2;
-	}	
-	if ($data_array[$i + 1] =~ /(Q1,Q2,Q3,Q4):\s+(.+)/){
-	    my @tmp = split ",", $1;
-	    my @tmp1 = split " ", $2;
-	    my %quat = (
-			$tmp[0] => $tmp1[0],
-			$tmp[1] => $tmp1[1],
-			$tmp[2] => $tmp1[2],
-			$tmp[3] => $tmp1[3]
-			);
-	    $temp_manvr{Q1}=$quat{Q1};
-	    $temp_manvr{Q2}=$quat{Q2};
-	    $temp_manvr{Q3}=$quat{Q3};
-	    $temp_manvr{Q4}=$quat{Q4};
-	}
-	if ($data_array[$i + 2] =~ /\s+MANVR:\sAngle=\s+(\S+)\sdeg\s+Duration=\s+(\S+)\ssec\s+Slew\serr=\s+(\S+)\sarcsec\s*/){
-	    $temp_manvr{'angle_deg'} = $1;
-	    $temp_manvr{'duration_sec'} = $2;
-	    $temp_manvr{'slew_err_arcsec'} = $3;
-	}
-	push @new_man, \%temp_manvr;
+    foreach my $i (0 .. $#data_array) {
+        next unless ($data_array[$i] =~ /\AMP_TARGQUAT/);
+        my %temp_manvr;
+        if ($data_array[$i] =~ /MP_TARGQUAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)/) {
+            $temp_manvr{'MP_TARGQUAT'} = $1;
+            $temp_manvr{'VCDU_cnt'} = $2;
+        }
+        if ($data_array[ $i + 1 ] =~ /(Q1,Q2,Q3,Q4):\s+(.+)/) {
+            my @tmp = split ",", $1;
+            my @tmp1 = split " ", $2;
+            my %quat = (
+                $tmp[0] => $tmp1[0],
+                $tmp[1] => $tmp1[1],
+                $tmp[2] => $tmp1[2],
+                $tmp[3] => $tmp1[3]
+            );
+            $temp_manvr{Q1} = $quat{Q1};
+            $temp_manvr{Q2} = $quat{Q2};
+            $temp_manvr{Q3} = $quat{Q3};
+            $temp_manvr{Q4} = $quat{Q4};
+        }
+        if ($data_array[ $i + 2 ] =~
+/\s+MANVR:\sAngle=\s+(\S+)\sdeg\s+Duration=\s+(\S+)\ssec\s+Slew\serr=\s+(\S+)\sarcsec\s*/
+          )
+        {
+            $temp_manvr{'angle_deg'} = $1;
+            $temp_manvr{'duration_sec'} = $2;
+            $temp_manvr{'slew_err_arcsec'} = $3;
+        }
+        push @new_man, \%temp_manvr;
     }
 
     return @new_man;
 
-#    my %manvr;
+    #    my %manvr;
 ##  MANVR: Angle=  91.35 deg  Duration= 1878 sec  Slew err= 62.7 arcsec
 #    if ($$data =~ /\s+MANVR:\sAngle=\s+(\S+)\sdeg\s+Duration=\s+(\S+)\ssec\s+Slew\serr=\s+(\S+)\sarcsec\s*\n/){
-#	%manvr = (
-#		  'angle_deg' => $1,
-#		  'duration_sec' => $2,
-#		  'slew_err_arcsec' => $3
-#		  );
-#    }
-#    if ($$data =~ /MP_TARGQUAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)\n/){
-#	$manvr{'MP_TARGQUAT'} = $1;
-#    }
-#
-#    if ($$data =~ /(Q1,Q2,Q3,Q4):\s+(.+)\n/){
-#	my @tmp = split ",", $1;
-#	my @tmp1 = split " ", $2;
-#	my %quat = (
-#		    $tmp[0] => $tmp1[0],
-#		    $tmp[1] => $tmp1[1],
-#		    $tmp[2] => $tmp1[2],
-#		    $tmp[3] => $tmp1[3]
-#		    );
-#	$manvr{Q1}=$quat{Q1};
-#	$manvr{Q2}=$quat{Q2};
-#	$manvr{Q3}=$quat{Q3};
-#	$manvr{Q4}=$quat{Q4};
-#    }
-#
-#
-#    return %manvr;
+    #	%manvr = (
+    #		  'angle_deg' => $1,
+    #		  'duration_sec' => $2,
+    #		  'slew_err_arcsec' => $3
+    #		  );
+    #    }
+    #    if ($$data =~ /MP_TARGQUAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)\n/){
+    #	$manvr{'MP_TARGQUAT'} = $1;
+    #    }
+    #
+    #    if ($$data =~ /(Q1,Q2,Q3,Q4):\s+(.+)\n/){
+    #	my @tmp = split ",", $1;
+    #	my @tmp1 = split " ", $2;
+    #	my %quat = (
+    #		    $tmp[0] => $tmp1[0],
+    #		    $tmp[1] => $tmp1[1],
+    #		    $tmp[2] => $tmp1[2],
+    #		    $tmp[3] => $tmp1[3]
+    #		    );
+    #	$manvr{Q1}=$quat{Q1};
+    #	$manvr{Q2}=$quat{Q2};
+    #	$manvr{Q3}=$quat{Q3};
+    #	$manvr{Q4}=$quat{Q4};
+    #    }
+    #
+    #
+    #    return %manvr;
 }
-
 
 ##***************************************************************************
 sub print {
@@ -437,7 +458,6 @@ sub print {
     my ($data, $handle) = (@_, *STDOUT{IO});
     print $handle $$data;
 }
-
 
 package StarcheckRecord;
 
@@ -449,26 +469,26 @@ use Carp;
 1;
 
 ##***************************************************************************
-sub new_record{
+sub new_record {
 ##***************************************************************************
     my $classname = shift;
     my $obs_data = shift;
 
     my $self = {};
-    bless ($self);
+    bless($self);
 
     $self->{obsid} = shift;
 
-    %{$self->{coords}} = $obs_data->get_coords();
-    @{$self->{warnings}} = $obs_data->get_all_warnings();
-    @{$self->{stars}} = $obs_data->get_stars();
-    %{$self->{dither}} = $obs_data->get_dither_info();
-    %{$self->{target}} = $obs_data->get_target();
-    %{$self->{times}} = $obs_data->get_times();
-    @{$self->{manvr}} = $obs_data->get_manvr();
+    %{ $self->{coords} } = $obs_data->get_coords();
+    @{ $self->{warnings} } = $obs_data->get_all_warnings();
+    @{ $self->{stars} } = $obs_data->get_stars();
+    %{ $self->{dither} } = $obs_data->get_dither_info();
+    %{ $self->{target} } = $obs_data->get_target();
+    %{ $self->{times} } = $obs_data->get_times();
+    @{ $self->{manvr} } = $obs_data->get_manvr();
 
     return $self;
-    
+
 }
 
 package LoadRecord;
@@ -479,7 +499,7 @@ use Carp;
 1;
 
 ##***************************************************************************
-sub new_record{
+sub new_record {
 ##***************************************************************************
     my $classname = shift;
     my $starcheck_data = shift;
@@ -487,12 +507,13 @@ sub new_record{
     my $last_ap_date = shift;
 
     my $self = {};
-    bless ($self);
+    bless($self);
 
     $self->{mp_path} = $mp_path;
     $self->{last_ap_date} = $last_ap_date;
-#    @{$self->{lines}} = $starcheck_data->get_header_lines();
-    %{$self->{lines}}= $starcheck_data->get_header_lines();
+
+    #    @{$self->{lines}} = $starcheck_data->get_header_lines();
+    %{ $self->{lines} } = $starcheck_data->get_header_lines();
 
     return $self;
 
