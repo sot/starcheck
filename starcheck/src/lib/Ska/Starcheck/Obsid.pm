@@ -2123,6 +2123,12 @@ sub print_report {
                     $c->{angle}, $c->{dur}, $c->{man_err},
                     substr(time2date($c->{tstop}), 0, 17));
             }
+            if (    (defined $c->{man_angle_calc})
+                and (abs($c->{man_angle_calc} - $c->{angle}) > 10))
+            {
+                $o .= sprintf("  MANVR: Calculated angle for proseco = %6.2f deg\n",
+                    $c->{man_angle_calc});
+            }
             $o .= "\n";
         }
     }
@@ -2916,6 +2922,10 @@ sub proseco_args {
         return \%proseco_args;
     }
 
+    my $man_angle = call_python("check_ir_zone.get_obs_man_angle",
+        [ $targ_cmd->{tstop}, $self->{backstop} ]);
+    $targ_cmd->{man_angle_calc} = $man_angle;
+
     # Use a default SI and offset for ERs (no effect without fid lights)
     my $is_OR = $self->{obsid} < $ER_MIN_OBSID;
     my $si = $is_OR ? $self->{SI} : 'ACIS-S';
@@ -2979,7 +2989,7 @@ sub proseco_args {
             0 + $targ_cmd->{q3},
             0 + $targ_cmd->{q4}
         ],
-        man_angle => 0 + $targ_cmd->{angle},
+        man_angle => 0 + $man_angle,
         detector => $si,
         sim_offset => 0 + $offset,
         dither_acq => [ $self->{dither_acq}->{ampl_y}, $self->{dither_acq}->{ampl_p} ],
