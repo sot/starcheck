@@ -19,8 +19,7 @@ use Carp;
 
 use Ska::Starcheck::Python qw(date2time time2date);
 
-
-my $VERSION = '$Id$';  # '
+my $VERSION = '$Id$';    # '
 1;
 
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
@@ -30,10 +29,10 @@ require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw();
 our @EXPORT_OK = qw( );
-%EXPORT_TAGS = ( all => \@EXPORT_OK );
+%EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ###############################################################
-sub rel_date2time{
+sub rel_date2time {
 ###############################################################
 
     # Return seconds when suppled a "relative datetime" of the
@@ -43,11 +42,11 @@ sub rel_date2time{
     # The old code here uses reverse to just ignore a year if
     # included in the string.
     my ($sec, $min, $hr, $doy) = reverse split ":", $date;
-    return ($doy*86400 + $hr*3600 + $min*60 + $sec);
+    return ($doy * 86400 + $hr * 3600 + $min * 60 + $sec);
 }
 
 ###############################################################
-sub TLR_load_segments{
+sub TLR_load_segments {
 ###############################################################
     my $tlr_file = shift;
 
@@ -56,8 +55,11 @@ sub TLR_load_segments{
 
     my @segment_start_lines = grep /START\sOF\sNEW\sOBC\sLOAD,\sCL\d{3}:\d{4}/, @tlr;
 
-    for my $line (@segment_start_lines){
-        if ( $line =~ /(\d{4}:\d{3}:\d{2}:\d{2}:\d{2}\.\d{3})\s+START\sOF\sNEW\sOBC\sLOAD,\s(CL\d{3}\:\d{4})/ ){
+    for my $line (@segment_start_lines) {
+        if ($line =~
+/(\d{4}:\d{3}:\d{2}:\d{2}:\d{2}\.\d{3})\s+START\sOF\sNEW\sOBC\sLOAD,\s(CL\d{3}\:\d{4})/
+          )
+        {
             my $time = $1;
             my $seg_id = $2;
             push @segment_times, { date => $time, seg_id => $seg_id };
@@ -65,38 +67,38 @@ sub TLR_load_segments{
 
     }
 
-
     return @segment_times;
 
 }
 
-
-
 ###############################################################
 sub dither {
-    # Takes dither history file, array of backstop commands, and a kadi dynamic states "state".
-    # The kadi dynamic states state is fetched/intended to be the state just before the first
-    # backstop command.  It is a reference to a hash with keys 'time', 'dither' (ENAB/DISA),
-    # 'dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw'.
+
+# Takes dither history file, array of backstop commands, and a kadi dynamic states "state".
+# The kadi dynamic states state is fetched/intended to be the state just before the first
+# backstop command.  It is a reference to a hash with keys 'time', 'dither' (ENAB/DISA),
+   # 'dither_ampl_pitch', 'dither_ampl_yaw', 'dither_period_pitch', 'dither_period_yaw'.
     #
     # This routine:
     # 1) confirms that the kadi state and the dither history file match with regard to
     #    the dither enabled/disabled status at the very start of products.
-    # 2) confirms that the dither history file is readable and ends before the backstop starts
-    # 3) builds an array of dither states using the backstop commands, starting with the fully
+# 2) confirms that the dither history file is readable and ends before the backstop starts
+# 3) builds an array of dither states using the backstop commands, starting with the fully
     #    determined state of the initial kadi dynamic state.
     # 4) returns a string for error status and the array of dither states
 ###############################################################
-    my $dh_file = shift;      # Dither history file name
-    my $bs_arr = shift;               # Backstop array reference
+    my $dh_file = shift;    # Dither history file name
+    my $bs_arr = shift;    # Backstop array reference
     my $kadi_dither = shift;
     my $dither_error;
 
     my $bs;
 
-    my %dith_enab_cmd_map = ('DSDITH' => 'DISA',
-                             'ENDITH' => 'ENAB',
-                             'DITPAR' => undef);
+    my %dith_enab_cmd_map = (
+        'DSDITH' => 'DISA',
+        'ENDITH' => 'ENAB',
+        'DITPAR' => undef
+    );
 
     my @dh_state;
     my @dh_params;
@@ -112,29 +114,32 @@ sub dither {
     my $dh_date;
     my $dh_state;
     while (<$dith_hist_fh>) {
-	    if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (ENDITH|DSDITH)/x) {
+        if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (ENDITH|DSDITH)/x) {
             $dh_date = "$1:$2:$3:$4:$5";
             $dh_state = $6;
         }
     }
-	$dith_hist_fh->close();
+    $dith_hist_fh->close();
 
-    if (not defined $dither_error){
+    if (not defined $dither_error) {
+
         # If the most recent/last entry in the dither file has a timestamp newer than
         # the first entry in the load, update the dither_error var.
-        if ($dh_date ge $bs_arr->[0]->{date}){
+        if ($dh_date ge $bs_arr->[0]->{date}) {
             $dither_error = "Dither history runs into load\n";
         }
 
         # Confirm that last state matches kadi continuity ENAB/DISA.
-        if ($kadi_dither->{'dither'} ne $dith_enab_cmd_map{$dh_state}){
-            $dither_error .= "Dither status in kadi commands does not match DITHER history\n"
-              . sprintf("kadi '%s' ; History '%s' \n",
-                        $kadi_dither->{'dither'},
-                        $dith_enab_cmd_map{$dh_state});
+        if ($kadi_dither->{'dither'} ne $dith_enab_cmd_map{$dh_state}) {
+            $dither_error .=
+              "Dither status in kadi commands does not match DITHER history\n"
+              . sprintf(
+                "kadi '%s' ; History '%s' \n",
+                $kadi_dither->{'dither'},
+                $dith_enab_cmd_map{$dh_state}
+              );
         }
     }
-
 
     # Now make an array of hashes as the final output.  Keep track of where the info
     # came from to assist in debugging ('source' key)
@@ -143,64 +148,68 @@ sub dither {
     my $r2a = 3600. * 180. / 3.14159265;
     my $pi = 3.14159265;
 
-
     my $dither_enab = $kadi_dither->{'dither'};
     my $dither_ampl_p = $kadi_dither->{'dither_ampl_pitch'};
     my $dither_ampl_y = $kadi_dither->{'dither_ampl_yaw'};
     my $dither_period_p = $kadi_dither->{'dither_period_pitch'};
     my $dither_period_y = $kadi_dither->{'dither_period_yaw'};
 
-    push @dither, { 'time' => $kadi_dither->{'time'},
-                    'state' => $dither_enab,
-                    'source' => 'kadi',
-                    'ampl_p' => $dither_ampl_p,
-                    'ampl_y' => $dither_ampl_y,
-                    'period_p' => $dither_period_p,
-                    'period_y' => $dither_period_y};
-
-
+    push @dither,
+      {
+        'time' => $kadi_dither->{'time'},
+        'state' => $dither_enab,
+        'source' => 'kadi',
+        'ampl_p' => $dither_ampl_p,
+        'ampl_y' => $dither_ampl_y,
+        'period_p' => $dither_period_p,
+        'period_y' => $dither_period_y
+      };
 
     # Build dither states using just kadi initial state and backstop cmds
     foreach $bs (@{$bs_arr}) {
+
         # Skip all commands except ones that could be dither related
-	if ($bs->{cmd} =~ '(COMMAND_SW|MP_DITHER)') {
-	    my %params = %{$bs->{command}};
-	    if ($params{TLMSID} =~ 'AO(DSDITH|ENDITH|DITPAR)') {
+        if ($bs->{cmd} =~ '(COMMAND_SW|MP_DITHER)') {
+            my %params = %{ $bs->{command} };
+            if ($params{TLMSID} =~ 'AO(DSDITH|ENDITH|DITPAR)') {
                 my $dith_string = $1;
+
                 # The "if defined" logic for each means that the AODITPAR does not
                 # change the dither-enabled status, and the AOENDITH, does not change
                 # the dither parameters...
                 $dither_enab = $dith_enab_cmd_map{$dith_string}
-                    if defined $dith_enab_cmd_map{$dith_string};
+                  if defined $dith_enab_cmd_map{$dith_string};
                 $dither_ampl_p = $params{COEFP} * $r2a if defined $params{COEFP};
                 $dither_ampl_y = $params{COEFY} * $r2a if defined $params{COEFY};
                 $dither_period_p = 1 / ($params{RATEP} / (2 * $pi))
-                    if defined $params{RATEP};
+                  if defined $params{RATEP};
                 $dither_period_y = 1 / ($params{RATEY} / (2 * $pi))
-                    if defined $params{RATEP};
-                # If disabled, reset the amplitudes to be 0.  The params may be nonzero onboard
+                  if defined $params{RATEP};
+
+         # If disabled, reset the amplitudes to be 0.  The params may be nonzero onboard
                 # but we're more interested in the effective amplitudes for starcheck.
-                push @dither, { time => $bs->{time},
-                                state => $dither_enab,
-                                source => 'backstop',
-                                ampl_p => $dither_enab eq 'DISA' ? 0 : $dither_ampl_p,
-                                ampl_y => $dither_enab eq 'DISA' ? 0 : $dither_ampl_y,
-                                period_p => $dither_period_p,
-                                period_y => $dither_period_y,
-                                tlmsid => $params{TLMSID},
-                            };
+                push @dither,
+                  {
+                    time => $bs->{time},
+                    state => $dither_enab,
+                    source => 'backstop',
+                    ampl_p => $dither_enab eq 'DISA' ? 0 : $dither_ampl_p,
+                    ampl_y => $dither_enab eq 'DISA' ? 0 : $dither_ampl_y,
+                    period_p => $dither_period_p,
+                    period_y => $dither_period_y,
+                    tlmsid => $params{TLMSID},
+                  };
             }
         }
     }
     return ($dither_error, \@dither);
 }
 
-
 ###############################################################
 sub radmon {
 ###############################################################
-    my $h_file = shift;      # Radmon history file name
-    my $bs_arr = shift;               # Backstop array reference
+    my $h_file = shift;    # Radmon history file name
+    my $bs_arr = shift;    # Backstop array reference
     my $bs;
     my @bs_state;
     my @bs_time;
@@ -209,20 +218,23 @@ sub radmon {
     my @h_state;
     my @h_time;
     my @h_date;
-    my %cmd = ('DS' => 'DISA',
-	       'EN' => 'ENAB');
+    my %cmd = (
+        'DS' => 'DISA',
+        'EN' => 'ENAB'
+    );
     my %obs;
+
     # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
-	if ($bs->{cmd} =~ '(COMMAND_SW)') {
-	    my %params = %{$bs->{command}};
-	    if ($params{TLMSID} =~ 'OORMP(DS|EN)') {
-		push @bs_state, $cmd{$1};
-		push @bs_time, $bs->{time};  # see comment below about timing
-		push @bs_date, $bs->{date};
-		push @bs_params, { %params };
-	    }
-	}
+        if ($bs->{cmd} =~ '(COMMAND_SW)') {
+            my %params = %{ $bs->{command} };
+            if ($params{TLMSID} =~ 'OORMP(DS|EN)') {
+                push @bs_state, $cmd{$1};
+                push @bs_time, $bs->{time};    # see comment below about timing
+                push @bs_date, $bs->{date};
+                push @bs_params, {%params};
+            }
+        }
     }
 
     # Now get everything from RADMON.txt
@@ -230,84 +242,96 @@ sub radmon {
     # 2012222.011426269 | ENAB OORMPEN
     # 2012224.051225059 | DISA OORMPDS
     my $hist_fh = IO::File->new($h_file, "r") or croak "Can't open $h_file: $!";
+
     # Get the last 1000 characters. This is guaranteed to get the most recent
     # entries that we care about.
     $hist_fh->seek(-1000, 2);
-	while (<$hist_fh>) {
-        if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (DISA|ENAB) \s+ (OORMPDS|OORMPEN)/x) {
-            my ($yr, $doy, $hr, $min, $sec, $state) = ($1,$2,$3,$4,$5,$6);
+    while (<$hist_fh>) {
+        if (
+/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d) \d* \s+ \| \s+ (DISA|ENAB) \s+ (OORMPDS|OORMPEN)/x
+          )
+        {
+            my ($yr, $doy, $hr, $min, $sec, $state) = ($1, $2, $3, $4, $5, $6);
             my $date = "$yr:$doy:$hr:$min:$sec";
             push @h_date, $date;
             push @h_state, $state;
         }
     }
-	$hist_fh->close();
-    @h_time = @{date2time(\@h_date)};
+    $hist_fh->close();
+    @h_time = @{ date2time(\@h_date) };
 
     my @ok = grep { $h_time[$_] < $bs_arr->[0]->{time} } (0 .. $#h_time);
     my @state = (@h_state[@ok], @bs_state);
-    my @time   = (@h_time[@ok], @bs_time);
-    my @date   = (@h_date[@ok], @bs_date);
+    my @time = (@h_time[@ok], @bs_time);
+    my @date = (@h_date[@ok], @bs_date);
 
     # if the most recent/last entry in the dither file has a timestamp newer than
     # the first backstop time, set the time violation flag and return undef for
     # @radmon
     my $time_violation = ($h_time[-1] >= $bs_arr->[0]->{time});
-    if ($time_violation){
-      return ($time_violation, undef);
+    if ($time_violation) {
+        return ($time_violation, undef);
     }
 
     # Now make an array of hashes as the final output.  Keep track of where the info
     # came from to assist in debugging
     my $bs_start = $bs_arr->[0]->{time};
-    my @radmon = map { { time => $time[$_],
-                         date => $date[$_],
-                         state => $state[$_],
-                         source => $time[$_] < $bs_start ? 'history' : 'backstop'}
-                     } (0 .. $#state);
+    my @radmon = map {
+        {
+            time => $time[$_],
+            date => $date[$_],
+            state => $state[$_],
+            source => $time[$_] < $bs_start ? 'history' : 'backstop'
+        }
+    } (0 .. $#state);
     return ($time_violation, \@radmon);
 
 }
 
-
 ###############################################################
 sub fidsel {
 ###############################################################
-    my $fidsel_file = shift;	# FIDSEL file name
-    my $bs          = shift;	# Reference to backstop array
+    my $fidsel_file = shift;    # FIDSEL file name
+    my $bs = shift;    # Reference to backstop array
     my $error = [];
-    my %time_hash = ();		# Hash of time stamps of fid cmds
+    my %time_hash = ();    # Hash of time stamps of fid cmds
 
     my @fs = ();
     foreach (0 .. 14) {
-	$fs[$_] = [];
+        $fs[$_] = [];
     }
 
     my ($actions, $times, $fid_time_violation) = get_fid_actions($fidsel_file, $bs);
 
     # Check for duplicate commanding
     map { $time_hash{$_}++ } @{$times};
-#    foreach (sort keys %time_hash) {
-#	push @{$error}, "ERROR - $time_hash{$_} fid hardware commands at time $_\n"
-#	    if ($time_hash{$_} > 1);
-#    }
 
-    for (my $i = 0; $i <= $#{$times}; $i++) {
-	# If command contains RESET, then turn off (i.e. set tstop) any
-	# fid light that is on
-	if ($actions->[$i] =~ /RESET/) {
-	    foreach my $fid (1 .. 14) {
-		foreach my $fid_interval (@{$fs[$fid]}) {
-		    $fid_interval->{tstop} = $times->[$i] unless ($fid_interval->{tstop});
-		}
-	    }
-	}
-	# Otherwise turn fid on by adding a new entry with tstart=time
-	elsif ((my $fid) = ($actions->[$i] =~ /FID\s+(\d+)\s+ON/)) {
-	    push @{$fs[$fid]}, { tstart => $times->[$i] };
-	} else {
-	    push @{$error}, "Parse_cm_file::fidsel: WARNING - Could not parse $actions->[$i]";
-	}
+    #    foreach (sort keys %time_hash) {
+    #	push @{$error}, "ERROR - $time_hash{$_} fid hardware commands at time $_\n"
+    #	    if ($time_hash{$_} > 1);
+    #    }
+
+    for (my $i = 0 ; $i <= $#{$times} ; $i++) {
+
+        # If command contains RESET, then turn off (i.e. set tstop) any
+        # fid light that is on
+        if ($actions->[$i] =~ /RESET/) {
+            foreach my $fid (1 .. 14) {
+                foreach my $fid_interval (@{ $fs[$fid] }) {
+                    $fid_interval->{tstop} = $times->[$i]
+                      unless ($fid_interval->{tstop});
+                }
+            }
+        }
+
+        # Otherwise turn fid on by adding a new entry with tstart=time
+        elsif ((my $fid) = ($actions->[$i] =~ /FID\s+(\d+)\s+ON/)) {
+            push @{ $fs[$fid] }, { tstart => $times->[$i] };
+        }
+        else {
+            push @{$error},
+              "Parse_cm_file::fidsel: WARNING - Could not parse $actions->[$i]";
+        }
     }
 
     return ($fid_time_violation, $error, \@fs);
@@ -316,8 +340,8 @@ sub fidsel {
 ###############################################################
 sub get_fid_actions {
 ###############################################################
-    my $fs_file = shift;	# Fidsel file name
-    my $bs_arr = shift;		# Backstop array reference
+    my $fs_file = shift;    # Fidsel file name
+    my $bs_arr = shift;    # Backstop array reference
     my $bs;
     my @bs_action;
     my @bs_time;
@@ -329,55 +353,56 @@ sub get_fid_actions {
     # First get everything from backstop
     foreach $bs (@{$bs_arr}) {
         if ($bs->{cmd} eq 'COMMAND_HW') {
-            my %params = %{$bs->{command}};
+            my %params = %{ $bs->{command} };
             if ($params{TLMSID} eq 'AFIDP') {
                 my $msid = $params{MSID};
                 push @bs_action, "$msid FID $1 ON" if ($msid =~ /AFLC(\d+)/);
                 push @bs_action, "RESET" if ($msid =~ /AFLCRSET/);
-                push @bs_time, $bs->{time} - 10;  # see comment below about timing
+                push @bs_time, $bs->{time} - 10;    # see comment below about timing
             }
         }
     }
 
-#    printf("first bs entry at %s, last entry at %s \n", $bs_time[0], $bs_time[-1]);
+    #    printf("first bs entry at %s, last entry at %s \n", $bs_time[0], $bs_time[-1]);
 
     # Now get everything from FIDSEL
     # Parse lines like:
     # 2001211.190730558   | AFLCRSET RESET
     # 2001211.190731558   | AFLC02D1 FID 02 ON
-    if (defined $fs_file){
+    if (defined $fs_file) {
         my $fh = IO::File->new($fs_file, "r") or croak "Can't open $fs_file: $!";
+
         # Last 1000 bytes of history file is sufficient
         $fh->seek(-1000, 2);
         while (<$fh>) {
             if (/(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)\S*\s+\|\s+(AFL.+)/) {
-                my ($yr, $doy, $hr, $min, $sec, $action) = ($1,$2,$3,$4,$5,$6);
+                my ($yr, $doy, $hr, $min, $sec, $action) = ($1, $2, $3, $4, $5, $6);
                 if ($action =~ /(RESET|FID.+ON)/) {
                     push @fs_action, $action;
                     push @fs_date, "$yr:$doy:$hr:$min:$sec";
                 }
             }
-    	}
+        }
 
         # Convert to time, and subtract 10 seconds so that fid lights are on
         # slightly before end of manuever.  In actual commanding, they come on about
         # 1-2 seconds *after*.
         my $times = date2time(\@fs_date);
         @fs_time = map { $_ - 10 } @{$times};
-    	$fh->close();
+        $fh->close();
     }
 
-#    printf("count of fid entries is %s \n", scalar(@fs_time));
-#    printf("first fs entry at %s, last entry at %s \n", $fs_time[0], $fs_time[-1]);
+    #    printf("count of fid entries is %s \n", scalar(@fs_time));
+    #    printf("first fs entry at %s, last entry at %s \n", $fs_time[0], $fs_time[-1]);
 
     my @ok = grep { $fs_time[$_] < $bs_arr->[0]->{time} } (0 .. $#fs_time);
     my @action = (@fs_action[@ok], @bs_action);
-    my @time   = (@fs_time[@ok], @bs_time);
+    my @time = (@fs_time[@ok], @bs_time);
 
     my $fid_time_violation = 0;
 
     # if the fid history extends into the current load
-    if ($fs_time[-1] >= $bs_arr->[0]->{time}){
+    if ($fs_time[-1] >= $bs_arr->[0]->{time}) {
         $fid_time_violation = 1;
     }
 
@@ -403,32 +428,34 @@ sub man_err {
     my $in_man = 0;
     my @me = ();
     my @cols;
-    open (my $MANERR, $man_err)
-	or die "Couldn't open maneuver error file $man_err for reading\n";
+    open(my $MANERR, $man_err)
+      or die "Couldn't open maneuver error file $man_err for reading\n";
     while (<$MANERR>) {
         chomp;
-	last if (/total number/i);
+        last if (/total number/i);
         next unless (/\S/);
         next if (/#Schedule generated/);
-	if ($in_man) {
-	    my @vals = split;
-	    if ($#vals != $#cols) {
-		warn "man_err: ERROR - mismatch between column names and data values\n";
-		return ();	# return nothing
-	    }
-	    my %data = map { $cols[$_], $vals[$_] } (0 .. $#cols);
-	    $data{Seg} = 1 if ($data{Seg} == 0); # Make it easier later on to match the segment number
-				# with the MP_TARGQUAT commands
-	    $data{obsid} = sprintf "%d", $data{obsid};  # Clip leading zeros
+        if ($in_man) {
+            my @vals = split;
+            if ($#vals != $#cols) {
+                warn "man_err: ERROR - mismatch between column names and data values\n";
+                return ();    # return nothing
+            }
+            my %data = map { $cols[$_], $vals[$_] } (0 .. $#cols);
+            $data{Seg} = 1
+              if ($data{Seg} == 0)
+              ;    # Make it easier later on to match the segment number
+                   # with the MP_TARGQUAT commands
+            $data{obsid} = sprintf "%d", $data{obsid};    # Clip leading zeros
 
-	    push @me, \%data;
-	}
-	if (/^\s*obsid\s+maxerryz\s+seg/i) {
-	    @cols = split;
-	    $in_man = 1;
-	}
+            push @me, \%data;
+        }
+        if (/^\s*obsid\s+maxerryz\s+seg/i) {
+            @cols = split;
+            $in_man = 1;
+        }
     }
-	close $MANERR;
+    close $MANERR;
     return @me;
 }
 
@@ -439,29 +466,31 @@ sub backstop {
 
     my @bs = ();
     my @dates = ();
-    open (my $BACKSTOP, $backstop) || die "Couldn't open backstop file $backstop for reading\n";
+    open(my $BACKSTOP, $backstop)
+      || die "Couldn't open backstop file $backstop for reading\n";
     while (<$BACKSTOP>) {
-    	my ($date, $vcdu, $cmd, $params) = split '\s*\|\s*', $_;
-    	$vcdu =~ s/ +.*//; # Get rid of second field in vcdu
-    	my %command = parse_params($params);
-    	push @bs, { date => $date,
-		    vcdu => $vcdu,
-		    cmd  => $cmd,
-		    params => $params,
-		    command => \%command,
-		};
+        my ($date, $vcdu, $cmd, $params) = split '\s*\|\s*', $_;
+        $vcdu =~ s/ +.*//;    # Get rid of second field in vcdu
+        my %command = parse_params($params);
+        push @bs,
+          {
+            date => $date,
+            vcdu => $vcdu,
+            cmd => $cmd,
+            params => $params,
+            command => \%command,
+          };
         push @dates, $date;
     }
     close $BACKSTOP;
 
     my $times = date2time(\@dates);
-    for (my $i = 0; $i <= $#bs; $i++) {
+    for (my $i = 0 ; $i <= $#bs ; $i++) {
         $bs[$i]->{time} = $times->[$i];
     }
 
     return @bs;
 }
-
 
 ###############################################################
 sub DOT {
@@ -476,13 +505,12 @@ sub DOT {
     my %linenum;
     my $touched_by_sausage = 0;
 
-
-    open (my $DOT, $dot_file) || die "Couldn't open DOT file $dot_file\n";
-    while ( <$DOT> ) {
+    open(my $DOT, $dot_file) || die "Couldn't open DOT file $dot_file\n";
+    while (<$DOT>) {
         chomp;
         next unless (/\S/);
         next if (/^\!Schedule generated/);
-        if ( /MTLB/ or /M\d{3}$/ ){
+        if (/MTLB/ or /M\d{3}$/) {
             $touched_by_sausage = 1;
         }
         my ($cmd, $id) = /(.+) +(\S+)....$/;
@@ -490,25 +518,27 @@ sub DOT {
         $cmd =~ s/\s+$//;
         my $id_index = "$id$index{$id}";
         $command{$id_index} .= $cmd;
-        $linenum{$id_index} = $. unless exists $linenum{$id_index}; # Perl file line number for <..>
+        $linenum{$id_index} = $.
+          unless exists $linenum{$id_index};    # Perl file line number for <..>
 
         # If there is no continuation character "," then DOT command is complete
-        $index{$id} = sprintf("%04d", $index{$id}+1) unless ($cmd =~ /,$/);
+        $index{$id} = sprintf("%04d", $index{$id} + 1) unless ($cmd =~ /,$/);
 
     }
     close $DOT;
 
     foreach (keys %command) {
-        %{$dot{$_}} = parse_params($command{$_});
-        $dot{$_}{time}  = date2time($dot{$_}{TIME}) if ($dot{$_}{TIME});
+        %{ $dot{$_} } = parse_params($command{$_});
+        $dot{$_}{time} = date2time($dot{$_}{TIME}) if ($dot{$_}{TIME});
 
-        # MANSTART is in the dot as a "relative" time like "000:00:00:00.000", so just pass it
+  # MANSTART is in the dot as a "relative" time like "000:00:00:00.000", so just pass it
         # to the rel_date2time routine designed to handle that.
-        $dot{$_}{time} += rel_date2time($dot{$_}{MANSTART}) if ($dot{$_}{TIME} && $dot{$_}{MANSTART});
+        $dot{$_}{time} += rel_date2time($dot{$_}{MANSTART})
+          if ($dot{$_}{TIME} && $dot{$_}{MANSTART});
         $dot{$_}{cmd_identifier} = "$dot{$_}{anon_param1}_$dot{$_}{anon_param2}"
-            if ($dot{$_}{anon_param1} and $dot{$_}{anon_param2});
+          if ($dot{$_}{anon_param1} and $dot{$_}{anon_param2});
         $dot{$_}{linenum} = $linenum{$_};
-        ($dot{$_}{oflsid}) = /^\S0*(\S+)\S{4}/;  # This will always succeed
+        ($dot{$_}{oflsid}) = /^\S0*(\S+)\S{4}/;    # This will always succeed
         $dot{$_}{id} = $_;
         $dot{$_}{command} = $command{$_};
     }
@@ -518,19 +548,15 @@ sub DOT {
 
     return (\%dot, $touched_by_sausage, \@ordered_dot);
 
-
 }
 
-
-
-
 ##***************************************************************************
-sub guide{
+sub guide {
 ##***************************************************************************
-# Take in name of guide star summary file
-# return hash that contains
-# target obsid, target dec, target ra, target roll
-# and an array of the lines of the catalog info
+    # Take in name of guide star summary file
+    # return hash that contains
+    # target obsid, target dec, target ra, target roll
+    # and an array of the lines of the catalog info
 
     my $guide_file = shift;
 
@@ -542,71 +568,73 @@ sub guide{
     # And then, let's split that file into chunks by processing request
     # By chunking I can guarantee that an error parsing the ID doesn't cause the
     # script to blindly overwrite the RA and DEC and keep adding to the starcat..
-    my @file_chunk = split /\n\n\n\*\*\*\* PROCESSING REQUEST \*\*\*\*\n/, $whole_guide_file;
+    my @file_chunk = split /\n\n\n\*\*\*\* PROCESSING REQUEST \*\*\*\*\n/,
+      $whole_guide_file;
 
     # Skip the first block in the file (which has no catalog) by using the index 1-end
 
-    for my $chunk_number (1 .. $#file_chunk){
+    for my $chunk_number (1 .. $#file_chunk) {
 
-	# Then, for each chunk, split into a line array
-	my @file_chunk_lines = split /\n/, $file_chunk[$chunk_number];
+        # Then, for each chunk, split into a line array
+        my @file_chunk_lines = split /\n/, $file_chunk[$chunk_number];
 
-	# Now, since my loop is chunk by chunk, I can clear these for every chunk.
-	my ($ra, $dec, $roll);
-	my ($oflsid, $gsumid);
+        # Now, since my loop is chunk by chunk, I can clear these for every chunk.
+        my ($ra, $dec, $roll);
+        my ($oflsid, $gsumid);
 
-	foreach my $line (@file_chunk_lines){
+        foreach my $line (@file_chunk_lines) {
 
-	    # Look for an obsid, ra, dec, or roll
-	    if ($line =~ /\s+ID:\s+([[:ascii:]]{5})\s+\((\S{3,5})\)/) {
-		my @field = ($1, $2);
-	    	($oflsid = $field[0]) =~ s/^0*//;
-		($gsumid = $field[1]) =~ s/^0*//;
-	    	$guidesumm{$oflsid}{guide_summ_obsid}= $gsumid;
-	    }
-	    if ($line =~ /\s+ID:\s+([[:ascii:]]{7})\s*$/) {
-		($oflsid = $1) =~ s/^0*//;
-		$oflsid =~ s/00$//;
-	    }
+            # Look for an obsid, ra, dec, or roll
+            if ($line =~ /\s+ID:\s+([[:ascii:]]{5})\s+\((\S{3,5})\)/) {
+                my @field = ($1, $2);
+                ($oflsid = $field[0]) =~ s/^0*//;
+                ($gsumid = $field[1]) =~ s/^0*//;
+                $guidesumm{$oflsid}{guide_summ_obsid} = $gsumid;
+            }
+            if ($line =~ /\s+ID:\s+([[:ascii:]]{7})\s*$/) {
+                ($oflsid = $1) =~ s/^0*//;
+                $oflsid =~ s/00$//;
+            }
 
-	    # Skip the rest of the block for each line if
-	    # oflsid hasn't been found/defined
+            # Skip the rest of the block for each line if
+            # oflsid hasn't been found/defined
 
-	    next unless (defined $oflsid);
+            next unless (defined $oflsid);
 
-	    if ($line =~ /\s+RA:\s*([^ ]+) DEG/){
-		$ra = $1;
-		$guidesumm{$oflsid}{ra}=$ra;
-	    }
-	    if ($line =~ /\s+DEC:\s*([^ ]+) DEG/){
-		$dec = $1;
-		$guidesumm{$oflsid}{dec}=$dec;
-	    }
-	    if ($line =~ /ROLL \(DEG\):\s*([^ ]+)/){
-		$roll = $1;
-		$guidesumm{$oflsid}{roll}=$roll;
-	    }
+            if ($line =~ /\s+RA:\s*([^ ]+) DEG/) {
+                $ra = $1;
+                $guidesumm{$oflsid}{ra} = $ra;
+            }
+            if ($line =~ /\s+DEC:\s*([^ ]+) DEG/) {
+                $dec = $1;
+                $guidesumm{$oflsid}{dec} = $dec;
+            }
+            if ($line =~ /ROLL \(DEG\):\s*([^ ]+)/) {
+                $roll = $1;
+                $guidesumm{$oflsid}{roll} = $roll;
+            }
 
-	    if ($line =~ /^(FID|ACQ|GUI|BOT)/) {
-		push @{$guidesumm{$oflsid}{info}},  $line;
+            if ($line =~ /^(FID|ACQ|GUI|BOT)/) {
+                push @{ $guidesumm{$oflsid}{info} }, $line;
 
-	    }
-	    if ($line =~ /^MON/){
-		my @l= split ' ', $line;
-		if (scalar(@l) == 8){
-		    push @{$guidesumm{$oflsid}{info}}, "MON --- $l[2] $l[3] --- $l[5] $l[6] $l[7]";
-		}
-		else{
-		    push @{$guidesumm{$oflsid}{info}}, "MON --- $l[2] $l[3] --- $l[5] $l[6]";
-		}
-	    }
-	}
+            }
+            if ($line =~ /^MON/) {
+                my @l = split ' ', $line;
+                if (scalar(@l) == 8) {
+                    push @{ $guidesumm{$oflsid}{info} },
+                      "MON --- $l[2] $l[3] --- $l[5] $l[6] $l[7]";
+                }
+                else {
+                    push @{ $guidesumm{$oflsid}{info} },
+                      "MON --- $l[2] $l[3] --- $l[5] $l[6]";
+                }
+            }
+        }
     }
 
     return %guidesumm;
 
 }
-
 
 ###############################################################
 sub OR {
@@ -616,21 +644,20 @@ sub OR {
     my %obs;
     my $obs;
 
-
-    open (my $OR, $or_file) || die "Couldn't open OR file $or_file\n";
+    open(my $OR, $or_file) || die "Couldn't open OR file $or_file\n";
     my $in_obs_statement = 0;
     while (<$OR>) {
-	chomp;
-	if ($in_obs_statement) {
-	    $obs .= $_;
-	    unless (/,\s*$/) {
-		%obs = OR_parse_obs($obs);
-		$or{$obs{obsid}} = { %obs };
-		$in_obs_statement = 0;
-		$obs = '';
-	    }
-	}
-	$in_obs_statement = 1 if (/^\s*OBS,\s*$/);
+        chomp;
+        if ($in_obs_statement) {
+            $obs .= $_;
+            unless (/,\s*$/) {
+                %obs = OR_parse_obs($obs);
+                $or{ $obs{obsid} } = {%obs};
+                $in_obs_statement = 0;
+                $obs = '';
+            }
+        }
+        $in_obs_statement = 1 if (/^\s*OBS,\s*$/);
     }
     close $OR;
     return %or;
@@ -640,45 +667,56 @@ sub OR {
 sub OR_parse_obs {
 ###############################################################
     $_ = shift;
-#    print STDERR "test $_ \n";
+
+    #    print STDERR "test $_ \n";
 
     my @obs_columns = qw(obsid TARGET_RA TARGET_DEC TARGET_NAME
-			 SI TARGET_OFFSET_Y TARGET_OFFSET_Z
-			 SIM_OFFSET_X SIM_OFFSET_Z GRATING MON_RA MON_DEC SS_OBJECT);
+      SI TARGET_OFFSET_Y TARGET_OFFSET_Z
+      SIM_OFFSET_X SIM_OFFSET_Z GRATING MON_RA MON_DEC SS_OBJECT);
+
     # Init some defaults
     my %obs = ();
-#    print STDERR "In OR_Parse_obs \n";
+
+    #    print STDERR "In OR_Parse_obs \n";
     foreach (@obs_columns) {
-	$obs{$_} = '';
+        $obs{$_} = '';
     }
     ($obs{TARGET_RA}, $obs{TARGET_DEC}) = (0.0, 0.0);
     ($obs{TARGET_OFFSET_Y}, $obs{TARGET_OFFSET_Z}) = (0.0, 0.0);
     ($obs{SIM_OFFSET_X}, $obs{SIM_OFFSET_Z}) = (0, 0);
 
-    $obs{obsid} = 0+$1 if (/ID=(\d+),/);
+    $obs{obsid} = 0 + $1 if (/ID=(\d+),/);
     ($obs{TARGET_RA}, $obs{TARGET_DEC}) = ($1, $2)
-	if (/TARGET=\(([^,]+),([^,\)]+)/);
+      if (/TARGET=\(([^,]+),([^,\)]+)/);
     ($obs{MON_RA}, $obs{MON_DEC}, $obs{HAS_MON}) = ($1, $2, 1)
-	if (/STAR=\(([^,]+),([^,\)]+)/);
+      if (/STAR=\(([^,]+),([^,\)]+)/);
     $obs{TARGET_NAME} = $3
-	if (/TARGET=\(([^,]+),([^,]+),\s*\{([^\}]+)\}\),/);
+      if (/TARGET=\(([^,]+),([^,]+),\s*\{([^\}]+)\}\),/);
     $obs{SS_OBJECT} = $1 if (/SS_OBJECT=([^,\)]+)/);
     $obs{SI} = $1 if (/SI=([^,]+)/);
- #   print STDERR "obsSI = $obs{SI} \n";
-    if (/TARGET_OFFSET=\((-?[\d\.]+),(-?[\d\.]+)\)/){
+
+    #   print STDERR "obsSI = $obs{SI} \n";
+    if (/TARGET_OFFSET=\((-?[\d\.]+),(-?[\d\.]+)\)/) {
         ($obs{TARGET_OFFSET_Y}, $obs{TARGET_OFFSET_Z}) = ($1, $2);
     }
-    elsif (/TARGET_OFFSET=\((-?[\d\.]+)\)/){
+    elsif (/TARGET_OFFSET=\((-?[\d\.]+)\)/) {
         $obs{TARGET_OFFSET_Y} = $1;
     }
-    ($obs{DITHER_ON},
-     $obs{DITHER_Y_AMP},$obs{DITHER_Y_FREQ}, $obs{DITHER_Y_PHASE},
-     $obs{DITHER_Z_AMP},$obs{DITHER_Z_FREQ}, $obs{DITHER_Z_PHASE}) = split ',', $1
-	 if (/DITHER=\(([^)]+)\)/);
+    (
+        $obs{DITHER_ON},
+        $obs{DITHER_Y_AMP},
+        $obs{DITHER_Y_FREQ},
+        $obs{DITHER_Y_PHASE},
+        $obs{DITHER_Z_AMP},
+        $obs{DITHER_Z_FREQ},
+        $obs{DITHER_Z_PHASE}
+      )
+      = split ',', $1
+      if (/DITHER=\(([^)]+)\)/);
     $obs{SIM_OFFSET_Z} = $1
-	if (/SIM_OFFSET=\(([^,\)]+)/);
+      if (/SIM_OFFSET=\(([^,\)]+)/);
     $obs{SIM_OFFSET_X} = $2
-	if (/SIM_OFFSET=\(([^,\)]+),([^,]+)\)/);
+      if (/SIM_OFFSET=\(([^,\)]+),([^,]+)\)/);
     $obs{GRATING} = $1 if (/GRATING=([^,]+)/);
 
     return %obs;
@@ -686,10 +724,11 @@ sub OR_parse_obs {
 
 ###############################################################
 sub PS {
-# Parse processing summary
-# Actually, just read in the juicy lines in the middle
-#   which are maneuvers or observations and store them
-#   to a line array
+
+    # Parse processing summary
+    # Actually, just read in the juicy lines in the middle
+    #   which are maneuvers or observations and store them
+    #   to a line array
 ###############################################################
     my $ps_file = shift;
     my @ps;
@@ -699,8 +738,8 @@ sub PS {
     my $date_re = '\d{4}:\d{3}:\d{2}:\d{2}:\d{2}\.\d{3}';
     my $rel_date_re = '\d{3}:\d{2}:\d{2}:\d{2}\.\d{3}';
 
-    for my $ps_line (@ps_all_lines){
-        if ($ps_line =~ /.*${date_re}\s+${date_re}\s+${rel_date_re}.*/){
+    for my $ps_line (@ps_all_lines) {
+        if ($ps_line =~ /.*${date_re}\s+${date_re}\s+${rel_date_re}.*/) {
             my @tmp = split ' ', $ps_line;
             if ($tmp[1] eq 'MANVR') {
                 push @ps, $ps_line;
@@ -716,61 +755,67 @@ sub PS {
     return @ps;
 }
 
-
-
 ###############################################################
 sub MM {
-# Parse maneuver management (?) file
-###############################################################
-# This accepts a reference to a hash as the only argument
-# the return type may be specified in the hash as 'hash' or 'array'
-# default return is hash
-# With regard to the return data:
 
+    # Parse maneuver management (?) file
+###############################################################
+    # This accepts a reference to a hash as the only argument
+    # the return type may be specified in the hash as 'hash' or 'array'
+    # default return is hash
+    # With regard to the return data:
 
     my $arg_ref = shift;
     my $mm_file = $arg_ref->{file};
     my $ret_type = 'hash';
 
-    if ( defined $arg_ref->{ret_type} ){
+    if (defined $arg_ref->{ret_type}) {
         $ret_type = $arg_ref->{ret_type};
     }
 
-    my $manvr_offset = 10; # seconds expected from AONMMODE to AOMANUVR
+    my $manvr_offset = 10;    # seconds expected from AONMMODE to AOMANUVR
 
     my @mm_array;
 
     my $mm_text = io($mm_file)->slurp;
+
     # split the file into maneuvers
     my @sections = split(/MANEUVER\sDATA\sSUMMARY\n/, $mm_text);
+
     # ignore pieces of the file without ATTITUDES
-    my @good_sect = grep {/INITIAL|FINAL/} @sections;
+    my @good_sect = grep { /INITIAL|FINAL/ } @sections;
 
     my $int_obsid = 'IN_IA';
-    for my $entry (@good_sect){
+    for my $entry (@good_sect) {
+
         # only keep the relevant bits of each entry (before OUTPUT DATA)
-        my @para = split( /\n\n/, $entry);
-        my @attitudes = grep {/ATTITUDE/} @para;
-        if (scalar(@attitudes) > 2){
+        my @para = split(/\n\n/, $entry);
+        my @attitudes = grep { /ATTITUDE/ } @para;
+        if (scalar(@attitudes) > 2) {
             croak("Maneuver Summary has too many attitudes in section\n");
         }
+
         # where final or initial attitude may be an intermediate attitude
-        my @output_data_match = grep {/OUTPUT\sDATA/} @para;
-	my $output_data = $output_data_match[0];
+        my @output_data_match = grep { /OUTPUT\sDATA/ } @para;
+        my $output_data = $output_data_match[0];
         my $initial_attitude = $attitudes[0];
         my $final_attitude = $attitudes[1];
 
         my %manvr_hash;
-        $manvr_hash{initial_obsid} = $1 if ($initial_attitude =~ /INITIAL ID:\s+(\S+)\S\S/);
-        $manvr_hash{final_obsid}   = $1 if ($final_attitude =~ /FINAL ID:\s+(\S+)\S\S/);
-        $manvr_hash{start_date}    = $1 if ($initial_attitude =~ /TIME\s*\(GMT\):\s+(\S+)/);
-        $manvr_hash{stop_date}     = $1 if ($final_attitude =~ /TIME\s*\(GMT\):\s+(\S+)/);
-        $manvr_hash{ra}            = $1 if ($final_attitude =~ /RA\s*\(deg\):\s+(\S+)/);
-        $manvr_hash{dec}           = $1 if ($final_attitude =~ /DEC\s*\(deg\):\s+(\S+)/);
-        $manvr_hash{roll}          = $1 if ($final_attitude =~ /ROLL\s*\(deg\):\s+(\S+)/);
-        $manvr_hash{dur}           = $1 if ($output_data =~ /Duration\s*\(sec\):\s+(\S+)/);
-        $manvr_hash{angle}         = $1 if ($output_data =~ /Maneuver Angle\s*\(deg\):\s+(\S+)/);
-        my @quat                   = ($1,$2,$3,$4) if ($final_attitude =~ /Quaternion:\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/);
+        $manvr_hash{initial_obsid} = $1
+          if ($initial_attitude =~ /INITIAL ID:\s+(\S+)\S\S/);
+        $manvr_hash{final_obsid} = $1 if ($final_attitude =~ /FINAL ID:\s+(\S+)\S\S/);
+        $manvr_hash{start_date} = $1
+          if ($initial_attitude =~ /TIME\s*\(GMT\):\s+(\S+)/);
+        $manvr_hash{stop_date} = $1 if ($final_attitude =~ /TIME\s*\(GMT\):\s+(\S+)/);
+        $manvr_hash{ra} = $1 if ($final_attitude =~ /RA\s*\(deg\):\s+(\S+)/);
+        $manvr_hash{dec} = $1 if ($final_attitude =~ /DEC\s*\(deg\):\s+(\S+)/);
+        $manvr_hash{roll} = $1 if ($final_attitude =~ /ROLL\s*\(deg\):\s+(\S+)/);
+        $manvr_hash{dur} = $1 if ($output_data =~ /Duration\s*\(sec\):\s+(\S+)/);
+        $manvr_hash{angle} = $1
+          if ($output_data =~ /Maneuver Angle\s*\(deg\):\s+(\S+)/);
+        my @quat = ($1, $2, $3, $4)
+          if ($final_attitude =~ /Quaternion:\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/);
         $manvr_hash{q1} = $quat[0];
         $manvr_hash{q2} = $quat[1];
         $manvr_hash{q3} = $quat[2];
@@ -778,15 +823,16 @@ sub MM {
         $manvr_hash{tstart} = date2time($manvr_hash{start_date});
         $manvr_hash{tstop} = date2time($manvr_hash{stop_date});
 
-	# let's just add those 10 seconds to the summary tstart so it lines up with
-	# AOMANUVR in backstop
-	$manvr_hash{tstart} += $manvr_offset;
-	$manvr_hash{start_date} = time2date($manvr_hash{tstart});
+        # let's just add those 10 seconds to the summary tstart so it lines up with
+        # AOMANUVR in backstop
+        $manvr_hash{tstart} += $manvr_offset;
+        $manvr_hash{start_date} = time2date($manvr_hash{tstart});
 
         # clean up obsids (remove prepended 0s)
         if (defined $manvr_hash{initial_obsid}) {
             $manvr_hash{initial_obsid} =~ s/^0+//;
         }
+
         # use a dummy or the last initial attitude if there isn't one
         else {
             $manvr_hash{initial_obsid} = $int_obsid;
@@ -795,46 +841,47 @@ sub MM {
         if (defined $manvr_hash{final_obsid}) {
             $manvr_hash{final_obsid} =~ s/^0+//;
         }
-        else{
+        else {
             $int_obsid = $manvr_hash{initial_obsid} . '_IA';
             $manvr_hash{final_obsid} = $int_obsid;
         }
 
-	$manvr_hash{obsid} = $manvr_hash{final_obsid};
+        $manvr_hash{obsid} = $manvr_hash{final_obsid};
         push @mm_array, \%manvr_hash;
 
     }
 
     # create a manvr_dest key to record the eventual destination of
     # all manvrs.
-    for my $i (0 .. $#mm_array){
-	# by default the destination is just the final_obsid
-	$mm_array[$i]->{manvr_dest} = $mm_array[$i]->{final_obsid};
-	# but if the final_obsid has the string that indicates it is
-	# an intermediate attitude, loop through the rest of the manvrs
-	# until we hit one that isn't an intermediate attitude
-	next unless ($mm_array[$i]->{final_obsid} =~ /_IA/);
-	for my $j ($i .. $#mm_array){
-	    next if ($mm_array[$j]->{final_obsid} =~ /_IA/);
-	    $mm_array[$i]->{manvr_dest} = $mm_array[$j]->{final_obsid};
-	    last;
-	}
+    for my $i (0 .. $#mm_array) {
+
+        # by default the destination is just the final_obsid
+        $mm_array[$i]->{manvr_dest} = $mm_array[$i]->{final_obsid};
+
+        # but if the final_obsid has the string that indicates it is
+        # an intermediate attitude, loop through the rest of the manvrs
+        # until we hit one that isn't an intermediate attitude
+        next unless ($mm_array[$i]->{final_obsid} =~ /_IA/);
+        for my $j ($i .. $#mm_array) {
+            next if ($mm_array[$j]->{final_obsid} =~ /_IA/);
+            $mm_array[$i]->{manvr_dest} = $mm_array[$j]->{final_obsid};
+            last;
+        }
     }
 
-    if ($ret_type eq 'array'){
+    if ($ret_type eq 'array') {
         return @mm_array;
     }
 
     my %mm_hash;
-    for my $manvr (0 ... $#mm_array ){
+    for my $manvr (0 ... $#mm_array) {
         my $obsid = $mm_array[$manvr]->{final_obsid};
-	$mm_hash{$obsid} = $mm_array[$manvr];
+        $mm_hash{$obsid} = $mm_array[$manvr];
     }
 
     return %mm_hash;
 
 }
-
 
 ##***************************************************************************
 sub mechcheck {
@@ -843,50 +890,55 @@ sub mechcheck {
     my @mc;
     my ($date, $time, $cmd, $dur, $text);
     my %evt;
-    my $SIM_FA_RATE = 90.0;	# Steps per seconds  18steps/shaft
+    my $SIM_FA_RATE = 90.0;    # Steps per seconds  18steps/shaft
 
     open my $MC, $mc_file or die "Couldn't open mech check file $mc_file\n";
     while (<$MC>) {
-	chomp;
+        chomp;
 
-	# Make continuity statements have similar format
-	$_ = "$3 $1$2" if (/^(SIMTRANS|SIMFOCUS)( [-\d]+ at )(.+)/);
+        # Make continuity statements have similar format
+        $_ = "$3 $1$2" if (/^(SIMTRANS|SIMFOCUS)( [-\d]+ at )(.+)/);
 
-	next unless (/^(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)(\d\d\d)(.+)/);
-	$date = "$1:$2:$3:$4:$5.$6";
-	$text = $7;
-	%evt = ();
-	$evt{time} = date2time($date);
-	if ($text =~ /NO_MATCH_NOW_FOR_OBSID\s+(\d+)/) {
-	    $evt{var} = "obsid";
-	    $evt{dur} = 0;
-	    $evt{val} = $1;
-	} elsif ($text =~ /SIMTRANS ([-\d]+) at/) {
-	    $evt{var} = "simtsc_continuity";
-	    $evt{dur} = 0;
-	    $evt{val} = $1;
-	} elsif ($text =~ /SIMFOCUS ([-\d]+) at/) {
-	    $evt{var} = "simfa_continuity";
-	    $evt{dur} = 0;
-	    $evt{val} = $1;
-	} elsif ($text =~ /SIMTRANS from ([-\d]+) to ([-\d]+) Dur (\d+)/) {
-	    $evt{var} = "simtsc";
-	    $evt{dur} = $3;
-	    $evt{val} = $2;
-	    $evt{from} = $1;
-	} elsif ($text =~ /SIMFOCUS from ([-\d]+) to ([-\d]+)/) {
-	    $evt{var} = "simfa";
-	    $evt{dur} = ceil(abs($2 - $1) / $SIM_FA_RATE);
-	    $evt{val} = $2;
-	    $evt{from} = $1;
-	} elsif ($text =~ /NO_MATCH_NOW_FOR_GRATINGS (.+) to (.+)/) {
-	    $evt{var} = "gratings";
-	    $evt{dur} = 160;
-	    $evt{val} = $2;
-	    $evt{from}= $1;
-	}
+        next unless (/^(\d\d\d\d)(\d\d\d)\.(\d\d)(\d\d)(\d\d)(\d\d\d)(.+)/);
+        $date = "$1:$2:$3:$4:$5.$6";
+        $text = $7;
+        %evt = ();
+        $evt{time} = date2time($date);
+        if ($text =~ /NO_MATCH_NOW_FOR_OBSID\s+(\d+)/) {
+            $evt{var} = "obsid";
+            $evt{dur} = 0;
+            $evt{val} = $1;
+        }
+        elsif ($text =~ /SIMTRANS ([-\d]+) at/) {
+            $evt{var} = "simtsc_continuity";
+            $evt{dur} = 0;
+            $evt{val} = $1;
+        }
+        elsif ($text =~ /SIMFOCUS ([-\d]+) at/) {
+            $evt{var} = "simfa_continuity";
+            $evt{dur} = 0;
+            $evt{val} = $1;
+        }
+        elsif ($text =~ /SIMTRANS from ([-\d]+) to ([-\d]+) Dur (\d+)/) {
+            $evt{var} = "simtsc";
+            $evt{dur} = $3;
+            $evt{val} = $2;
+            $evt{from} = $1;
+        }
+        elsif ($text =~ /SIMFOCUS from ([-\d]+) to ([-\d]+)/) {
+            $evt{var} = "simfa";
+            $evt{dur} = ceil(abs($2 - $1) / $SIM_FA_RATE);
+            $evt{val} = $2;
+            $evt{from} = $1;
+        }
+        elsif ($text =~ /NO_MATCH_NOW_FOR_GRATINGS (.+) to (.+)/) {
+            $evt{var} = "gratings";
+            $evt{dur} = 160;
+            $evt{val} = $2;
+            $evt{from} = $1;
+        }
 
-	push @mc, { %evt } if ($evt{var});
+        push @mc, {%evt} if ($evt{var});
     }
     close $MC;
 
@@ -896,56 +948,58 @@ sub mechcheck {
 ##***************************************************************************
 sub SOE {
 ##***************************************************************************
-    my    $soe_file = shift;
-# Taken from RAC's code /proj/sot/ska/ops/soe/soeA.pl
+    my $soe_file = shift;
 
-# read the SOE record formats into the hashes of lists $fld and $len
+    # Taken from RAC's code /proj/sot/ska/ops/soe/soeA.pl
+
+    # read the SOE record formats into the hashes of lists $fld and $len
     my (%fld, %len, $obsidx);
     my (%rlen, %templ);
     while (<DATA>) {
-	my ($rtype,$rfld,$rlen,$rdim1,$rdim2) = split;
-	for my $j (0 .. $rdim2-1) {
-	    for my $i (0 .. $rdim1-1) {
-		my $idx = '';
-		$idx .= "[$i]" if ($rdim1 > 1);
-		$idx .= "[$j]" if ($rdim2 > 1);
-		push @{ $fld{$rtype} },$rfld.$idx;
-		push @{ $len{$rtype} },$rlen;
-	    }
-	}
-	$obsidx = $#{ $fld{OBS} } if ($rtype eq "OBS" and $rfld =~ /odb_obs_id/);
-	$rlen{$rtype} += $rlen * $rdim1 * $rdim2;
-	$templ{$rtype} .= "a$rlen" x ($rdim1 * $rdim2);
+        my ($rtype, $rfld, $rlen, $rdim1, $rdim2) = split;
+        for my $j (0 .. $rdim2 - 1) {
+            for my $i (0 .. $rdim1 - 1) {
+                my $idx = '';
+                $idx .= "[$i]" if ($rdim1 > 1);
+                $idx .= "[$j]" if ($rdim2 > 1);
+                push @{ $fld{$rtype} }, $rfld . $idx;
+                push @{ $len{$rtype} }, $rlen;
+            }
+        }
+        $obsidx = $#{ $fld{OBS} } if ($rtype eq "OBS" and $rfld =~ /odb_obs_id/);
+        $rlen{$rtype} += $rlen * $rdim1 * $rdim2;
+        $templ{$rtype} .= "a$rlen" x ($rdim1 * $rdim2);
     }
 
-# read the SOE file from STDIN into $soe
+    # read the SOE file from STDIN into $soe
 
     open my $SOE, $soe_file or die "Couldn't open SOE file '$soe_file'\n";
     my $soe = (<$SOE>);
     my $l = length $soe;
 
-# unpack the SOE file
+    # unpack the SOE file
     my %SOE;
     my $p = 0;
     while ($p < $l) {
-	my $typ = substr $soe,$p,3;
-	if (exists $rlen{$typ}) {
-	    my $rec = substr $soe,$p,$rlen{$typ};
-	    my @rvals = unpack $templ{$typ},$rec;
-	    my @rflds = @{ $fld{$typ} };
-	    my @rlens = @{ $len{$typ} };
-	    my $obsid = ($typ eq "OBS" or $typ eq "CAL")? "$rvals[$obsidx] " : "";
-	    $obsid =~ s/^0+//;
-	    $obsid =~ s/\s//g;
-	    if ($obsid) {
-		foreach my $i (0 .. $#rvals) {
-		    $SOE{$obsid}{$rflds[$i]} = $rvals[$i];
-		}
-	    }
-	    $p += $rlen{$typ};
-	} else {
-	    die "Parse_CM_File::SOE: Cannot identify record of type $typ\n ";
-	}
+        my $typ = substr $soe, $p, 3;
+        if (exists $rlen{$typ}) {
+            my $rec = substr $soe, $p, $rlen{$typ};
+            my @rvals = unpack $templ{$typ}, $rec;
+            my @rflds = @{ $fld{$typ} };
+            my @rlens = @{ $len{$typ} };
+            my $obsid = ($typ eq "OBS" or $typ eq "CAL") ? "$rvals[$obsidx] " : "";
+            $obsid =~ s/^0+//;
+            $obsid =~ s/\s//g;
+            if ($obsid) {
+                foreach my $i (0 .. $#rvals) {
+                    $SOE{$obsid}{ $rflds[$i] } = $rvals[$i];
+                }
+            }
+            $p += $rlen{$typ};
+        }
+        else {
+            die "Parse_CM_File::SOE: Cannot identify record of type $typ\n ";
+        }
     }
 
     return %SOE;
@@ -961,23 +1015,23 @@ sub odb {
     my @words;
     my %odb;
 
-    open (my $ODB, $odb_file) || die "Couldn't open $odb_file\n";
+    open(my $ODB, $odb_file) || die "Couldn't open $odb_file\n";
     while (<$ODB>) {
-	next if (/^C/ || /^\s*\$/);
-	next unless (/\S/);
-	chomp;
-	s/!.*//;
-	s/^\s+//;
-	s/\s+$//;
-	@words = &parse_line(",", 0, $_);
-	foreach (@words) {
-	    next unless ($_);
-	    if (/(\S+)\s*=\s*(\S+)/) {
-		$odb_var = $1;
-		$_ = $2;
-	    }
-	    push @{$odb{$odb_var}}, $_ if ($odb_var);
-	}
+        next if (/^C/ || /^\s*\$/);
+        next unless (/\S/);
+        chomp;
+        s/!.*//;
+        s/^\s+//;
+        s/\s+$//;
+        @words = &parse_line(",", 0, $_);
+        foreach (@words) {
+            next unless ($_);
+            if (/(\S+)\s*=\s*(\S+)/) {
+                $odb_var = $1;
+                $_ = $2;
+            }
+            push @{ $odb{$odb_var} }, $_ if ($odb_var);
+        }
     }
 
     close $ODB;
@@ -985,10 +1039,8 @@ sub odb {
     return (%odb);
 }
 
-
-
 ##***************************************************************************
-sub parse_params{
+sub parse_params {
 ##***************************************************************************
 
     my @fields = split '\s*,\s*', shift;
@@ -996,12 +1048,13 @@ sub parse_params{
     my $pindex = 1;
 
     foreach (@fields) {
-	if (/(.+)= ?(.+)/) {
-	    $param{$1} = $2;
-	} else {
-	    $param{"anon_param$pindex"} = $_;
-	    $pindex++;
-	}
+        if (/(.+)= ?(.+)/) {
+            $param{$1} = $2;
+        }
+        else {
+            $param{"anon_param$pindex"} = $_;
+            $pindex++;
+        }
     }
 
     return %param;
