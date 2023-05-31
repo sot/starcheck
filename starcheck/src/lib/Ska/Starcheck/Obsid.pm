@@ -269,7 +269,6 @@ sub set_files {
         $self->{backstop},
         $self->{guide_summ},
         $self->{or_file},
-        $self->{mm_file},
         $self->{dot_file},
         $self->{tlr_file}
     ) = @_;
@@ -328,22 +327,21 @@ sub find_command {
 ##################################################################################
 sub set_maneuver {
     #
-    # Find the right obsid for each maneuver.  Note that obsids in mm_file don't
-    # always match those in DOT, etc
+    # Find the maneuver for each dot obsid.
     #
 ##################################################################################
     my $self = shift;
-    my %mm = @_;
+    my $mm = shift;
     my $n = 1;
     my $c;
     my $found;
 
     while ($c = find_command($self, "MP_TARGQUAT", $n++)) {
         $found = 0;
-        foreach my $m (values %mm) {
-            my $manvr_obsid = $m->{manvr_dest};
+        foreach my $m (@{$mm}) {
+            my $manvr_obsid = $m->{final_obsid};
 
-# where manvr_dest is either the final_obsid of a maneuver or the eventual destination obsid
+            # where manvr_dest is either the final_obsid of a maneuver or the eventual destination obsid
             # of a segmented maneuver
             if (   ($manvr_obsid eq $self->{dot_obsid})
                 && abs($m->{q1} - $c->{Q1}) < 1e-7
@@ -372,39 +370,12 @@ sub set_maneuver {
                       sprintf(
                         "Uplink quaternion norm value $norm is too far from 1.0\n");
                 }
-                my @c_quat_norm = (
-                    $c->{Q1} / $norm,
-                    $c->{Q2} / $norm,
-                    $c->{Q3} / $norm,
-                    $q4_obc / $norm
-                );
 
-               # Get quat from MANEUVER summary file.  This is correct to high precision
-                my $q_man = Quat->new($m->{ra}, $m->{dec}, $m->{roll});
-                my $q_obc = Quat->new(@c_quat_norm);
-                my @q_man = @{ $q_man->{q} };
-                my $q_diff = $q_man->divide($q_obc);
-
-                if (   abs($q_diff->{ra0} * 3600) > 1.0
-                    || abs($q_diff->{dec} * 3600) > 1.0
-                    || abs($q_diff->{roll0} * 3600) > 10.0)
-                {
-                    push @{ $self->{warn} },
-                      sprintf(
-"Target uplink precision problem for MP_TARGQUAT at $c->{date}\n"
-                          . "   Error is yaw, pitch, roll (arcsec) = %.2f  %.2f  %.2f\n"
-                          . "   Use Q1,Q2,Q3,Q4 = %.12f %.12f %.12f %.12f\n",
-                        $q_diff->{ra0} * 3600,
-                        $q_diff->{dec} * 3600,
-                        $q_diff->{roll0} * 3600,
-                        $q_man[0], $q_man[1], $q_man[2], $q_man[3]
-                      );
-                }
             }
 
         }
         push @{ $self->{yellow_warn} },
-          sprintf("Did not find match in MAN summary for MP_TARGQUAT at $c->{date}\n")
+          sprintf("Did not find match in maneuvers for MP_TARGQUAT at $c->{date}\n")
           unless ($found);
 
     }
@@ -2089,11 +2060,6 @@ sub print_report {
         $self->{STARCHECK}, basename($self->{or_file}),
         $self->{obsid}
     ) if ($self->{or_file});
-    $o .= sprintf(
-        "<A HREF=\"%s/%s.html#%s\">MANVR</A> ",
-        $self->{STARCHECK}, basename($self->{mm_file}),
-        $self->{dot_obsid}
-    );
     $o .= sprintf(
         "<A HREF=\"%s/%s.html#%s\">DOT</A> ",
         $self->{STARCHECK}, basename($self->{dot_file}),

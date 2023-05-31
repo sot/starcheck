@@ -2,9 +2,11 @@
 import re
 from astropy.table import Table
 import Quaternion
+from Quaternion import Quat
 
 from parse_cm import read_backstop, read_or_list
 from Chandra.Time import DateTime
+from agasc import sphere_dist
 import hopper
 
 
@@ -69,6 +71,71 @@ def recent_attitude_history(time, file):
             greta_time, q1, q2, q3, q4 = match.groups()
             if (DateTime(greta_time, format='greta').secs < time):
                 return greta_time, float(q1), float(q2), float(q3), float(q4)
+
+
+def get_maneuvers(backstop_file, attitude_file=None):
+    """
+    Use the hopper state machine to make a maneuver structure from initial
+    conditions and the backstop file.
+
+    This duplicates some of make_pcad_attitude_check_report.
+
+    :param backstop_file: backstop file
+    :param attitude_file: attitude history file
+    :returns: list of maneuvers
+    """
+
+    bs = read_backstop(backstop_file)
+
+    # Get initial state attitude and sim position from history
+    att_time, q1, q2, q3, q4 = recent_attitude_history(
+        DateTime(bs[0]['date']).secs,
+        attitude_file)
+    q = Quaternion.normalize([q1, q2, q3, q4])
+
+    initial_state = {'q1': q[0],
+                     'q2': q[1],
+                     'q3': q[2],
+                     'q4': q[3]}
+
+    sc = hopper.run_cmds(backstop_file, or_list=None, ofls_characteristics_file=None,
+                         initial_state=initial_state, starcheck=True)
+
+    mm = []
+    for m in sc.maneuvers:
+        q1 = Quaternion.normalize([m['initial']['q1'],
+                                    m['initial']['q2'],
+                                    m['initial']['q3'],
+                                    m['initial']['q4']])
+        q1 = Quat(q=q1)
+        q2 = Quaternion.normalize([m['final']['q1'],
+                                  m['final']['q2'],
+                                  m['final']['q3'],
+                                  m['final']['q4']])
+        q2 = Quat(q=q2)
+        angle = sphere_dist(q1.ra, q1.dec, q2.ra, q2.dec)
+
+        # Re-arrange the hopper maneuever structure to match the structure previously used
+        # from Parse_CM_File.pm
+        man = {'initial_obsid': m['initial']['obsid'],
+              'final_obsid': m['final']['obsid'],
+              'start_date': m['initial']['date'],
+              'stop_date': m['final']['date'],
+              'ra': q2.ra,
+              'dec': q2.dec,
+              'roll': q2.roll,
+              'dur': m['dur'],
+              'angle': angle,
+              'q1': m['final']['q1'],
+              'q2': m['final']['q2'],
+              'q3': m['final']['q3'],
+              'q4': m['final']['q4'],
+             'tstart': DateTime(m['initial']['date']).secs,
+             'tstop': DateTime(m['final']['date']).secs,
+             }
+        mm.append(man)
+
+    return mm
 
 
 def make_pcad_attitude_check_report(backstop_file, or_list_file=None, attitude_file=None,

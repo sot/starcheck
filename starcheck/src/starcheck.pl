@@ -146,7 +146,6 @@ my $backstop =
   get_file("$par{dir}/${sosa_dir_slash}*.backstop", 'backstop', 'required');
 my $guide_summ = get_file("$par{dir}/mps/mg*.sum", 'guide summary');
 my $or_file = get_file("$par{dir}/mps/or/*.or", 'OR');
-my $mm_file = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 my $dot_file = get_file("$par{dir}/mps/md*.dot", 'DOT', 'required');
 my $mech_file =
   get_file("$par{dir}/${sosa_dir_slash}output/${sosa_prefix}TEST_mechcheck.txt*",
@@ -254,11 +253,15 @@ my %dot = %{$dot_ref};
 print "Reading TLR file $tlr_file\n";
 my @load_segments = Ska::Parse_CM_File::TLR_load_segments($tlr_file);
 
-print "Reading MM file $mm_file\n";
+my $mm = call_python(
+            "pcad_att_check.get_maneuvers",
+            [],
+            {
+                backstop_file => $backstop,
+                attitude_file => $attitude_file,
+            }
+        );
 
-# Read momentum management (maneuvers + SIM move) summary file
-my %mm = Ska::Parse_CM_File::MM({ file => $mm_file, ret_type => 'hash' })
-  if ($mm_file);
 
 # Read maneuver management summary for handy obsid time checks
 print "Reading process summary $ps_file\n";
@@ -416,14 +419,13 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_obsid(\%guidesumm);    # Commanded obsid
     $obs{$obsid}->set_target();
     $obs{$obsid}->set_star_catalog();
-    $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
+    $obs{$obsid}->set_maneuver($mm);
     $obs{$obsid}->set_manerr(@manerr) if (@manerr);
     $obs{$obsid}->set_files(
         $STARCHECK,
         $backstop,
         $guide_summ,
         $or_file,
-        $mm_file,
         $dot_file,
         $tlr_file
     );
@@ -941,7 +943,6 @@ qq{<BODY><div id="overDiv" style="position:absolute; visibility:hidden; z-index:
     make_annotated_file('', ' ID=\s+', ', ', $backstop);
     make_annotated_file($guide_summ_start, '^\s+ID:\s+', '\S\S', $guide_summ);
     make_annotated_file('', '^ ID=', ', ', $or_file) if ($or_file);
-    make_annotated_file('', ' ID:\s+', '\S\S', $mm_file);
     make_annotated_file('', 'OBSID,ID=', ',', $dot_file);
     my $tlr_lines = add_obsid_to_tlr(\@bs, $tlr_file);
     make_annotated_file('', 'OBSERVATION ID\s*', '\s*\(', $tlr_file, $tlr_lines);
@@ -1051,7 +1052,6 @@ sub make_annotated_file {
     # $backstop   = get_file("$par{dir}/*.backstop",'backstop', 'required');
     # $guide_summ = get_file("$par{dir}/mg*.sum",   'guide summary');
     # $or_file    = get_file("$par{dir}/*.or",      'OR');
-    # $mm_file    = get_file("$par{dir}/*/mm*.sum", 'maneuver');
     # $dot_file   = get_file("$par{dir}/*.dot",     'DOT', 'required');
 
     my ($start_rexp, $id_pre, $id_post, $file_in, $lines) = @_;
