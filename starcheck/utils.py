@@ -246,8 +246,23 @@ def _yagzag_to_pixels(yag, zag):
 
 
 def _guide_count(mags, t_ccd, count_9th=False):
+    # Implement the dynamic background bonus here
+    # See sparkles/core for the reference code - this is a copy
+    # that should be retired with some shared code.
+    # It is also not configurable - the standard config is set with the
+    # three vars below.
+    dyn_bgd_n_faint = 2
+    min_dyn_bgd_anchor_stars = 3
+    dyn_bgd_dt_ccd = -4.0
     eff_t_ccd = get_effective_t_ccd(t_ccd)
-    return float(guide_count(np.array(mags), eff_t_ccd, count_9th))
+    t_ccds = np.full_like(mags, eff_t_ccd)
+    if dyn_bgd_n_faint > 0:
+        mags = np.sort(mags)
+        n_faint = min(dyn_bgd_n_faint, len(t_ccds))
+        idx_bonus = max(len(t_ccds) - n_faint, min_dyn_bgd_anchor_stars)
+        t_ccds[idx_bonus:] += dyn_bgd_dt_ccd
+    t_ccds_bonus = t_ccds
+    return float(guide_count(np.array(mags), t_ccds_bonus, count_9th))
 
 
 def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z):
