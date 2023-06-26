@@ -102,7 +102,7 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
 
     or_list = None if or_list_file is None else read_or_list(or_list_file)
     if or_list is None:
-        err_lines.append('ERROR: No OR list provided, cannot check attitudes')
+        lines.append('ERROR: No OR list provided, cannot check attitudes')
         all_ok = False
 
     # If dynamical offsets file is available then load was planned using
@@ -129,7 +129,7 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
         if not set(doffs['obsid']).issubset(set(or_map)):
             all_ok = False
             obsid_mismatch = set(doffs['obsid']) - set(or_map)
-            err_lines.append('WARNING: Obsid in dynamic offsets table but missing in OR list {}'
+            lines.append('WARNING: Obsid in dynamic offsets table but missing in OR list {}'
                          .format(list(obsid_mismatch)))
 
     # Run the commands and populate attributes in `sc`, the spacecraft state.
