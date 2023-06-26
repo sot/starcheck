@@ -84,8 +84,9 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
     bs = read_backstop(backstop_file)
 
     # Get initial state attitude and sim position from history
-    att_time, q1, q2, q3, q4 = recent_attitude_history(DateTime(bs[0]['date']).secs,
-                                            attitude_file)
+    att_time, q1, q2, q3, q4 = recent_attitude_history(
+        DateTime(bs[0]['date']).secs,
+        attitude_file)
     q = Quaternion.normalize([q1, q2, q3, q4])
     simfa_time, simfa = recent_sim_history(DateTime(bs[0]['date']).secs,
                                            simfocus_file)
@@ -141,36 +142,34 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
     # Make maneuver structure
     mm = []
     for m in sc.maneuvers:
-        q1 = Quaternion.normalize([m['initial']['q1'],
-                                    m['initial']['q2'],
-                                    m['initial']['q3'],
-                                    m['initial']['q4']])
+        q1 = Quaternion.normalize(
+            [m['initial']['q1'], m['initial']['q2'],
+             m['initial']['q3'], m['initial']['q4']])
         q1 = Quat(q=q1)
-        q2 = Quaternion.normalize([m['final']['q1'],
-                                  m['final']['q2'],
-                                  m['final']['q3'],
-                                  m['final']['q4']])
+        q2 = Quaternion.normalize(
+            [m['final']['q1'], m['final']['q2'],
+             m['final']['q3'], m['final']['q4']])
         q2 = Quat(q=q2)
         angle = sphere_dist(q1.ra, q1.dec, q2.ra, q2.dec)
 
         # Re-arrange the hopper maneuever structure to match the structure previously used
         # from Parse_CM_File.pm
         man = {'initial_obsid': m['initial']['obsid'],
-              'final_obsid': m['final']['obsid'],
-              'start_date': m['initial']['date'],
-              'stop_date': m['final']['date'],
-              'ra': q2.ra,
-              'dec': q2.dec,
-              'roll': q2.roll,
-              'dur': m['dur'],
-              'angle': angle,
-              'q1': m['final']['q1'],
-              'q2': m['final']['q2'],
-              'q3': m['final']['q3'],
-              'q4': m['final']['q4'],
-             'tstart': DateTime(m['initial']['date']).secs,
-             'tstop': DateTime(m['final']['date']).secs,
-             }
+               'final_obsid': m['final']['obsid'],
+               'start_date': m['initial']['date'],
+               'stop_date': m['final']['date'],
+               'ra': q2.ra,
+               'dec': q2.dec,
+               'roll': q2.roll,
+               'dur': m['dur'],
+               'angle': angle,
+               'q1': m['final']['q1'],
+               'q2': m['final']['q2'],
+               'q3': m['final']['q3'],
+               'q4': m['final']['q4'],
+               'tstart': DateTime(m['initial']['date']).secs,
+               'tstop': DateTime(m['final']['date']).secs,
+               }
         mm.append(man)
 
     # Do the attitude checks

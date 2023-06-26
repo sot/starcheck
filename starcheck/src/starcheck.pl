@@ -253,22 +253,21 @@ my %dot = %{$dot_ref};
 print "Reading TLR file $tlr_file\n";
 my @load_segments = Ska::Parse_CM_File::TLR_load_segments($tlr_file);
 
-
 my $att_report = "${STARCHECK}/pcad_att_check.txt";
 my $att_check = call_python(
-        "pcad_att_check.run",
-        [],
-        {
-            backstop_file => $backstop,
-            or_list_file => $or_file,
-            simtrans_file => $simtrans_file,
-            simfocus_file => $simfocus_file,
-            attitude_file => $attitude_file,
-            ofls_characteristics_file => $char_file,
-            dynamic_offsets_file => $aimpoint_file,
-            out => $att_report,
-        }
-    );
+    "pcad_att_check.run",
+    [],
+    {
+        backstop_file => $backstop,
+        or_list_file => $or_file,
+        simtrans_file => $simtrans_file,
+        simfocus_file => $simfocus_file,
+        attitude_file => $attitude_file,
+        ofls_characteristics_file => $char_file,
+        dynamic_offsets_file => $aimpoint_file,
+        out => $att_report,
+    }
+);
 
 my $mm = $att_check->{mm};
 
@@ -430,14 +429,8 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver($mm);
     $obs{$obsid}->set_manerr(@manerr) if (@manerr);
-    $obs{$obsid}->set_files(
-        $STARCHECK,
-        $backstop,
-        $guide_summ,
-        $or_file,
-        $dot_file,
-        $tlr_file
-    );
+    $obs{$obsid}
+      ->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $dot_file, $tlr_file);
     $obs{$obsid}->set_fids($fidsel);
     $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{ $or{$obsid} }

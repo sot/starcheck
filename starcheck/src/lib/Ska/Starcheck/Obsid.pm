@@ -341,7 +341,7 @@ sub set_maneuver {
         foreach my $m (@{$mm}) {
             my $manvr_obsid = $m->{final_obsid};
 
-            # where manvr_dest is either the final_obsid of a maneuver or the eventual destination obsid
+# where manvr_dest is either the final_obsid of a maneuver or the eventual destination obsid
             # of a segmented maneuver
             if (   ($manvr_obsid eq $self->{dot_obsid})
                 && abs($m->{q1} - $c->{Q1}) < 1e-7
