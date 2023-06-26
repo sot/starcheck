@@ -246,8 +246,7 @@ def _yagzag_to_pixels(yag, zag):
     return row.tolist(), col.tolist()
 
 
-def _guide_count(mags, t_ccd, count_9th=False):
-    dyn_bgd_n_faint = 2
+def _guide_count(mags, t_ccd, count_9th=False, dyn_bgd_n_faint=None):
     dyn_bgd_dt_ccd = -4.0
     eff_t_ccd = get_effective_t_ccd(t_ccd)
     t_ccds_bonus = get_t_ccds_bonus(mags, eff_t_ccd, dyn_bgd_n_faint, dyn_bgd_dt_ccd)

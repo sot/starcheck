@@ -325,6 +325,12 @@ sub find_command {
     return undef;
 }
 
+sub set_dyn_bgd_n_faint {
+    my $self = shift;
+    my $dyn_bgd_n_faint = shift;
+    $self->{dyn_bgd_n_faint} = $dyn_bgd_n_faint;
+}
+
 ##################################################################################
 sub set_maneuver {
     #
@@ -980,8 +986,13 @@ sub check_bright_perigee {
     }
 
     # Pass 1 to _guide_count as third arg to use the count_9th mode
-    my $bright_count = sprintf("%.1f",
-        call_python("utils._guide_count", [ \@mags, $self->{ccd_temp}, 1 ]));
+    my $bright_count = sprintf(
+        "%.1f",
+        call_python(
+            "utils._guide_count",
+            [ \@mags, $self->{ccd_temp}, 1, $self->{dyn_bgd_n_faint} ]
+        )
+    );
     if ($bright_count < $min_n_stars) {
         push @{ $self->{warn} }, "$bright_count star(s) brighter than scaled 9th mag. "
           . "Perigee requires at least $min_n_stars\n";
@@ -2825,8 +2836,13 @@ sub count_guide_stars {
             push @mags, $mag;
         }
     }
-    return
-      sprintf("%.1f", call_python("utils._guide_count", [ \@mags, $self->{ccd_temp} ]));
+    return sprintf(
+        "%.1f",
+        call_python(
+            "utils._guide_count",
+            [ \@mags, $self->{ccd_temp}, 0, $self->{dyn_bgd_n_faint} ]
+        )
+    );
 }
 
 ###################################################################################

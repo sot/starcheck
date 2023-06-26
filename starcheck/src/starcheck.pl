@@ -52,6 +52,7 @@ my %par = (
     verbose => 1,
     maude => 0,
     max_obsids => 0,
+    dyn_bgd_n_faint => 2,
 );
 
 GetOptions(
@@ -72,6 +73,7 @@ GetOptions(
     'run_start_time=s',
     'maude!',
     'max_obsids:i',
+    'dyn_bgd_n_faint:i',
 ) || exit(1);
 
 usage(1)
@@ -429,6 +431,7 @@ foreach my $obsid (@obsid_id) {
     );
     $obs{$obsid}->set_fids($fidsel);
     $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
+    $obs{$obsid}->set_dyn_bgd_n_faint($par{dyn_bgd_n_faint});
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{ $or{$obsid} }
       if (exists $or{$obsid});
 }
@@ -663,6 +666,7 @@ if ($cheta_source ne 'cxc') {
     $cheta_source = "${red_font_start}${cheta_source}${font_stop}";
 }
 $out .= " cheta data source: $cheta_source\n";
+$out .= " starcheck options: dyn_bgd_n_faint=$par{dyn_bgd_n_faint}\n";
 $out .= "\n";
 
 if ($mp_top_link) {
@@ -1311,6 +1315,10 @@ MAUDE will also be used if no AACCCDPT telemetry can be found in cheta archive f
 =item B<-max_obsids <N>>
 
 Limit starcheck review to first N obsids (for testing).
+
+=item B<-dyn_bgd_n_faint <N>>
+
+Set proseco/sparkles dyn_bgd_n_faint explicitly for guide_count checks.  Default is 2.
 
 =item B<-agasc_file <agasc>>
 
