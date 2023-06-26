@@ -13,6 +13,7 @@ import Quaternion
 from astropy.table import Table
 from Chandra.Time import DateTime
 from chandra_aca.star_probs import guide_count, mag_for_p_acq
+from sparkles import get_t_ccds_bonus
 from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to_pixels
 from kadi.commands import states
 from mica.archive import aca_dark
@@ -246,22 +247,10 @@ def _yagzag_to_pixels(yag, zag):
 
 
 def _guide_count(mags, t_ccd, count_9th=False):
-    # Implement the dynamic background bonus here
-    # See sparkles/core for the reference code - this is a copy
-    # that should be retired with some shared code.
-    # It is also not configurable - the standard config is set with the
-    # three vars below.
     dyn_bgd_n_faint = 2
-    min_dyn_bgd_anchor_stars = 3
     dyn_bgd_dt_ccd = -4.0
     eff_t_ccd = get_effective_t_ccd(t_ccd)
-    t_ccds = np.full_like(mags, eff_t_ccd)
-    if dyn_bgd_n_faint > 0:
-        mags = np.sort(mags)
-        n_faint = min(dyn_bgd_n_faint, len(t_ccds))
-        idx_bonus = max(len(t_ccds) - n_faint, min_dyn_bgd_anchor_stars)
-        t_ccds[idx_bonus:] += dyn_bgd_dt_ccd
-    t_ccds_bonus = t_ccds
+    t_ccds_bonus = get_t_ccds_bonus(mags, eff_t_ccd, dyn_bgd_n_faint, dyn_bgd_dt_ccd)
     return float(guide_count(np.array(mags), t_ccds_bonus, count_9th))
 
 
