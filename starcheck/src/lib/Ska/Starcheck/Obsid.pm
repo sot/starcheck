@@ -357,9 +357,6 @@ sub set_maneuver {
                 $c->{man_err} = (exists $c->{angle}) ? 35 + $c->{angle} / 2. : 85;
                 $c->{man_err} = 85 if ($c->{man_err} > 85);
 
-                # Now check for consistency between quaternion from MANUEVER summary
-                # file and the quat from backstop (MP_TARGQUAT cmd)
-
                 # Get quat from MP_TARGQUAT (backstop) command.
                 # Compute 4th component (as only first 3 are uplinked) and renormalize.
                 # Intent is to match OBC Target Reference subfunction
@@ -369,6 +366,36 @@ sub set_maneuver {
                     push @{ $self->{warn} },
                       sprintf(
                         "Uplink quaternion norm value $norm is too far from 1.0\n");
+                }
+
+                my @c_quat_norm = (
+                    $c->{Q1} / $norm,
+                    $c->{Q2} / $norm,
+                    $c->{Q3} / $norm,
+                    $q4_obc / $norm
+                );
+
+   # Compare to quaternion used in $m (which provides {ra} {dec} {roll}) which was built
+                # directly from the 4 components in Backstop
+                my $q_man = Quat->new($m->{ra}, $m->{dec}, $m->{roll});
+                my $q_obc = Quat->new(@c_quat_norm);
+                my @q_man = @{ $q_man->{q} };
+                my $q_diff = $q_man->divide($q_obc);
+
+                if (   abs($q_diff->{ra0} * 3600) > 1.0
+                    || abs($q_diff->{dec} * 3600) > 1.0
+                    || abs($q_diff->{roll0} * 3600) > 10.0)
+                {
+                    push @{ $self->{warn} },
+                      sprintf(
+"Target uplink precision problem for MP_TARGQUAT at $c->{date}\n"
+                          . "   Error is yaw, pitch, roll (arcsec) = %.2f  %.2f  %.2f\n"
+                          . "   Use Q1,Q2,Q3,Q4 = %.12f %.12f %.12f %.12f\n",
+                        $q_diff->{ra0} * 3600,
+                        $q_diff->{dec} * 3600,
+                        $q_diff->{roll0} * 3600,
+                        $q_man[0], $q_man[1], $q_man[2], $q_man[3]
+                      );
                 }
 
             }
