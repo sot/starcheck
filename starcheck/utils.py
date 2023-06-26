@@ -26,7 +26,6 @@ import starcheck
 from starcheck import __version__ as version
 from starcheck.calc_ccd_temps import get_ccd_temps
 from starcheck.check_ir_zone import ir_zone_ok
-from starcheck.pcad_att_check import make_pcad_attitude_check_report
 from starcheck.plot import make_plots_for_obsid
 
 ACQS = mica.stats.acq_stats.get_stats()
@@ -102,10 +101,6 @@ def get_kadi_scenario():
 def get_data_dir():
     sc_data = os.path.join(os.path.dirname(starcheck.__file__), "data")
     return sc_data if os.path.exists(sc_data) else ""
-
-
-def _make_pcad_attitude_check_report(**kwargs):
-    return make_pcad_attitude_check_report(**kwargs)
 
 
 def make_ir_check_report(**kwargs):

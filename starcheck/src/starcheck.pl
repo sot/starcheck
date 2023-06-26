@@ -253,15 +253,24 @@ my %dot = %{$dot_ref};
 print "Reading TLR file $tlr_file\n";
 my @load_segments = Ska::Parse_CM_File::TLR_load_segments($tlr_file);
 
-my $mm = call_python(
-            "pcad_att_check.get_maneuvers",
-            [],
-            {
-                backstop_file => $backstop,
-                attitude_file => $attitude_file,
-            }
-        );
 
+my $att_report = "${STARCHECK}/pcad_att_check.txt";
+my $att_check = call_python(
+        "pcad_att_check.run",
+        [],
+        {
+            backstop_file => $backstop,
+            or_list_file => $or_file,
+            simtrans_file => $simtrans_file,
+            simfocus_file => $simfocus_file,
+            attitude_file => $attitude_file,
+            ofls_characteristics_file => $char_file,
+            dynamic_offsets_file => $aimpoint_file,
+            out => $att_report,
+        }
+    );
+
+my $mm = $att_check->{mm};
 
 # Read maneuver management summary for handy obsid time checks
 print "Reading process summary $ps_file\n";
@@ -746,21 +755,7 @@ if (   (defined $char_file)
     }
     else {
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
-        my $att_ok = call_python(
-            "utils._make_pcad_attitude_check_report",
-            [],
-            {
-                backstop_file => $backstop,
-                or_list_file => $or_file,
-                simtrans_file => $simtrans_file,
-                simfocus_file => $simfocus_file,
-                attitude_file => $attitude_file,
-                ofls_characteristics_file => $char_file,
-                out => $att_report,
-                dynamic_offsets_file => $aimpoint_file
-            }
-        );
-        if ($att_ok) {
+        if ($att_check->{att_check_ok} == 1) {
             $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n";
         }
         else {

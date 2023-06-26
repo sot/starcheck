@@ -73,34 +73,72 @@ def recent_attitude_history(time, file):
                 return greta_time, float(q1), float(q2), float(q3), float(q4)
 
 
-def get_maneuvers(backstop_file, attitude_file=None):
-    """
-    Use the hopper state machine to make a maneuver structure from initial
-    conditions and the backstop file.
+def run(backstop_file, or_list_file=None, attitude_file=None,
+        simtrans_file=None, simfocus_file=None,
+        ofls_characteristics_file=None, out=None,
+        dynamic_offsets_file=None):
 
-    This duplicates some of make_pcad_attitude_check_report.
-
-    :param backstop_file: backstop file
-    :param attitude_file: attitude history file
-    :returns: list of maneuvers
-    """
+    all_ok = True
+    lines = []
 
     bs = read_backstop(backstop_file)
 
     # Get initial state attitude and sim position from history
-    att_time, q1, q2, q3, q4 = recent_attitude_history(
-        DateTime(bs[0]['date']).secs,
-        attitude_file)
+    att_time, q1, q2, q3, q4 = recent_attitude_history(DateTime(bs[0]['date']).secs,
+                                            attitude_file)
     q = Quaternion.normalize([q1, q2, q3, q4])
+    simfa_time, simfa = recent_sim_history(DateTime(bs[0]['date']).secs,
+                                           simfocus_file)
+    simpos_time, simpos = recent_sim_history(DateTime(bs[0]['date']).secs,
+                                             simtrans_file)
 
     initial_state = {'q1': q[0],
                      'q2': q[1],
                      'q3': q[2],
-                     'q4': q[3]}
+                     'q4': q[3],
+                     'simpos': simpos,
+                     'simfa_pos': simfa}
 
-    sc = hopper.run_cmds(backstop_file, or_list=None, ofls_characteristics_file=None,
+    or_list = None if or_list_file is None else read_or_list(or_list_file)
+    if or_list is None:
+        err_lines.append('ERROR: No OR list provided, cannot check attitudes')
+        all_ok = False
+
+    # If dynamical offsets file is available then load was planned using
+    # Matlab tools 2016_210 later, which implements the "Cycle 18 aimpoint
+    # transition plan".  This code injects new OR list attributes for the
+    # dynamical offset.
+    if dynamic_offsets_file is not None and or_list is not None:
+        # Existing OFLS characteristics file is not relevant for post 2016_210.
+        # Products are planned using the Matlab tools SI align which matches the
+        # baseline mission align matrix from pre-November 2015.
+        ofls_characteristics_file = None
+
+        lines.append('INFO: using dynamic offsets file {}'.format(dynamic_offsets_file))
+        or_map = {or_['obsid']: or_ for or_ in or_list}
+
+        doffs = Table.read(dynamic_offsets_file, format='ascii.basic', guess=False)
+        for doff in doffs:
+            obsid = doff['obsid']
+            if obsid in or_map:
+                or_map[obsid]['aca_offset_y'] = doff['aca_offset_y'] / 3600.
+                or_map[obsid]['aca_offset_z'] = doff['aca_offset_z'] / 3600.
+
+        # Check that obsids in dynamic offsets table are all in OR list
+        if not set(doffs['obsid']).issubset(set(or_map)):
+            all_ok = False
+            obsid_mismatch = set(doffs['obsid']) - set(or_map)
+            err_lines.append('WARNING: Obsid in dynamic offsets table but missing in OR list {}'
+                         .format(list(obsid_mismatch)))
+
+    # Run the commands and populate attributes in `sc`, the spacecraft state.
+    # In particular sc.checks is a dict of checks by obsid.
+    # Any state value (e.g. obsid or q_att) has a corresponding plural that
+    # gives the history of updates as a dict with a `value` and `date` key.
+    sc = hopper.run_cmds(backstop_file, or_list, ofls_characteristics_file,
                          initial_state=initial_state, starcheck=True)
 
+    # Make maneuver structure
     mm = []
     for m in sc.maneuvers:
         q1 = Quaternion.normalize([m['initial']['q1'],
@@ -135,78 +173,7 @@ def get_maneuvers(backstop_file, attitude_file=None):
              }
         mm.append(man)
 
-    return mm
-
-
-def make_pcad_attitude_check_report(backstop_file, or_list_file=None, attitude_file=None,
-                                    simtrans_file=None, simfocus_file=None,
-                                    ofls_characteristics_file=None, out=None,
-                                    dynamic_offsets_file=None,
-                                    ):
-    """
-    Make a report for checking PCAD attitudes
-
-    """
-    all_ok = True
-    lines = []  # output report lines
-
-    bs = read_backstop(backstop_file)
-
-    # Get initial state attitude and sim position from history
-    att_time, q1, q2, q3, q4 = recent_attitude_history(DateTime(bs[0]['date']).secs,
-                                            attitude_file)
-    q = Quaternion.normalize([q1, q2, q3, q4])
-    simfa_time, simfa = recent_sim_history(DateTime(bs[0]['date']).secs,
-                                           simfocus_file)
-    simpos_time, simpos = recent_sim_history(DateTime(bs[0]['date']).secs,
-                                             simtrans_file)
-
-    initial_state = {'q1': q[0],
-                     'q2': q[1],
-                     'q3': q[2],
-                     'q4': q[3],
-                     'simpos': simpos,
-                     'simfa_pos': simfa}
-
-    or_list = None if or_list_file is None else read_or_list(or_list_file)
-    if or_list is None:
-        lines.append('ERROR: No OR list provided, cannot check attitudes')
-        all_ok = False
-
-    # If dynamical offsets file is available then load was planned using
-    # Matlab tools 2016_210 later, which implements the "Cycle 18 aimpoint
-    # transition plan".  This code injects new OR list attributes for the
-    # dynamical offset.
-    if dynamic_offsets_file is not None and or_list is not None:
-        # Existing OFLS characteristics file is not relevant for post 2016_210.
-        # Products are planned using the Matlab tools SI align which matches the
-        # baseline mission align matrix from pre-November 2015.
-        ofls_characteristics_file = None
-
-        lines.append('INFO: using dynamic offsets file {}'.format(dynamic_offsets_file))
-        or_map = {or_['obsid']: or_ for or_ in or_list}
-
-        doffs = Table.read(dynamic_offsets_file, format='ascii.basic', guess=False)
-        for doff in doffs:
-            obsid = doff['obsid']
-            if obsid in or_map:
-                or_map[obsid]['aca_offset_y'] = doff['aca_offset_y'] / 3600.
-                or_map[obsid]['aca_offset_z'] = doff['aca_offset_z'] / 3600.
-
-        # Check that obsids in dynamic offsets table are all in OR list
-        if not set(doffs['obsid']).issubset(set(or_map)):
-            all_ok = False
-            obsid_mismatch = set(doffs['obsid']) - set(or_map)
-            lines.append('WARNING: Obsid in dynamic offsets table but missing in OR list {}'
-                         .format(list(obsid_mismatch)))
-
-    # Run the commands and populate attributes in `sc`, the spacecraft state.
-    # In particular sc.checks is a dict of checks by obsid.
-    # Any state value (e.g. obsid or q_att) has a corresponding plural that
-    # gives the history of updates as a dict with a `value` and `date` key.
-    sc = hopper.run_cmds(backstop_file, or_list, ofls_characteristics_file,
-                         initial_state=initial_state, starcheck=True)
-    # Iterate through checks by obsid to print status
+    # Do the attitude checks
     checks = sc.get_checks_by_obsid()
     for obsid in sc.obsids:
         for check in checks[obsid]:
@@ -220,8 +187,10 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, attitude_f
                     line = '{:5d}: {}'.format(obsid, message)
                 lines.append(line)
 
+    # Write the attitute report
     if out is not None:
         with open(out, 'w') as fh:
             fh.writelines("\n".join(lines))
 
-    return all_ok
+    # Return the attitude status check and the maneuver structure
+    return {'mm': mm, 'att_check_ok': all_ok}
