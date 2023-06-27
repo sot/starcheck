@@ -2115,6 +2115,7 @@ sub print_report {
 "  MANVR: Angle= %6.2f deg  Duration= %.0f sec  Slew err= %.1f arcsec  End= %s\n",
                     $c->{angle}, $c->{dur}, $c->{man_err},
                     substr(time2date($c->{tstop}), 0, 17));
+                $o .= sprintf("  MANVR: sphere_dist= %.2f deg\n", $c->{sphere_dist});
             }
             $o .= "\n";
         }

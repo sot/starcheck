@@ -1,6 +1,7 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 import re
 from astropy.table import Table
+import numpy as np
 import Quaternion
 from Quaternion import Quat
 
@@ -150,7 +151,10 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
             [m['final']['q1'], m['final']['q2'],
              m['final']['q3'], m['final']['q4']])
         q2 = Quat(q=q2)
-        angle = sphere_dist(q1.ra, q1.dec, q2.ra, q2.dec)
+        angle1 = sphere_dist(q1.ra, q1.dec, q2.ra, q2.dec)
+        angle2 = np.degrees(2 * np.arccos(q1.q.dot(q2.q)))
+        if angle2 > 180:
+            angle2 = 360 - angle2
 
         # Re-arrange the hopper maneuever structure to match the structure previously used
         # from Parse_CM_File.pm
@@ -162,7 +166,8 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
                'dec': q2.dec,
                'roll': q2.roll,
                'dur': m['dur'],
-               'angle': angle,
+               'angle': angle2,
+               'sphere_dist': angle1,
                'q1': m['final']['q1'],
                'q2': m['final']['q2'],
                'q3': m['final']['q3'],
