@@ -7,7 +7,6 @@ from Quaternion import Quat
 
 from parse_cm import read_backstop, read_or_list
 from Chandra.Time import DateTime
-from agasc import sphere_dist
 import hopper
 
 
