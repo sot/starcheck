@@ -1867,14 +1867,14 @@ sub check_monitor_commanding {
     }
 
     # Now check in backstop commands for :
-    #  Dither is disabled (AODSDITH) 1 min prior to the end of the maneuver (EOM)
+    #  Dither is disabled (AODSDITH) 1 min - 10s prior to the end of the maneuver (EOM)
     #    to the target attitude.
-    #  The OFP Aspect Camera Process is restarted (AOACRSET) 3 minutes after EOM.
-    #  Dither is enabled (AOENDITH) 5 min after EOM
+    #  The OFP Aspect Camera Process is restarted (AOACRSET) 3 minutes - 10s after EOM.
+    #  Dither is enabled (AOENDITH) 5 min - 10s after EOM
     # ACA-040
 
     my $t_manv = $manv->{tstop};
-    my %dt = (AODSDITH => -60, AOACRSET => 180, AOENDITH => 300);
+    my %dt = (AODSDITH => -70, AOACRSET => 170, AOENDITH => 290);
     my %cnt = map { $_ => 0 } keys %dt;
     foreach $bs (grep { $_->{cmd} eq 'COMMAND_SW' } @{$backstop}) {
         my %param = Ska::Parse_CM_File::parse_params($bs->{params});
