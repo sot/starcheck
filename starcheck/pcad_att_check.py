@@ -4,6 +4,7 @@ from astropy.table import Table
 import numpy as np
 import Quaternion
 from Quaternion import Quat
+import math
 
 from parse_cm import read_backstop, read_or_list
 from Chandra.Time import DateTime
@@ -149,9 +150,13 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
             [m['final']['q1'], m['final']['q2'],
              m['final']['q3'], m['final']['q4']]))
 
-        angle = np.degrees(2 * np.arccos(q1.q.dot(q2.q)))
-        if angle > 180:
-            angle = 360 - angle
+        # Calculate maneuver angle using code borrowed from kadi
+        q_manvr_3 = np.abs(-q2.q[0] * q1.q[0] - q2.q[1] * q1.q[1]
+                           - q2.q[2] * q1.q[2] + q2.q[3] * -q1.q[3])
+        # 4th component is cos(theta/2)
+        if q_manvr_3 > 1:
+            q_manvr_3 = 1
+        angle = np.degrees(2 * math.acos(q_manvr_3))
 
         # Re-arrange the hopper maneuever structure to match the structure previously used
         # from Parse_CM_File.pm
