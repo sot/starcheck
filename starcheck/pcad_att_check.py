@@ -143,18 +143,16 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
     # Make maneuver structure
     mm = []
     for m in sc.maneuvers:
-        q1 = Quaternion.normalize(
+        q1 = Quat(q=Quaternion.normalize(
             [m['initial']['q1'], m['initial']['q2'],
-             m['initial']['q3'], m['initial']['q4']])
-        q1 = Quat(q=q1)
-        q2 = Quaternion.normalize(
+             m['initial']['q3'], m['initial']['q4']]))
+        q2 = Quat(q=Quaternion.normalize(
             [m['final']['q1'], m['final']['q2'],
-             m['final']['q3'], m['final']['q4']])
-        q2 = Quat(q=q2)
-        angle1 = sphere_dist(q1.ra, q1.dec, q2.ra, q2.dec)
-        angle2 = np.degrees(2 * np.arccos(q1.q.dot(q2.q)))
-        if angle2 > 180:
-            angle2 = 360 - angle2
+             m['final']['q3'], m['final']['q4']]))
+
+        angle = np.degrees(2 * np.arccos(q1.q.dot(q2.q)))
+        if angle > 180:
+            angle = 360 - angle
 
         # Re-arrange the hopper maneuever structure to match the structure previously used
         # from Parse_CM_File.pm
@@ -166,8 +164,7 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
                'dec': q2.dec,
                'roll': q2.roll,
                'dur': m['dur'],
-               'angle': angle2,
-               'sphere_dist': angle1,
+               'angle': angle,
                'q1': m['final']['q1'],
                'q2': m['final']['q2'],
                'q3': m['final']['q3'],
