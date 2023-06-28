@@ -269,6 +269,7 @@ sub set_files {
         $self->{backstop},
         $self->{guide_summ},
         $self->{or_file},
+        $self->{mm_file},
         $self->{dot_file},
         $self->{tlr_file}
     ) = @_;
@@ -2087,6 +2088,11 @@ sub print_report {
         $self->{STARCHECK}, basename($self->{or_file}),
         $self->{obsid}
     ) if ($self->{or_file});
+    $o .= sprintf(
+        "<A HREF=\"%s/%s.html#%s\">MANVR</A> ",
+        $self->{STARCHECK}, basename($self->{mm_file}),
+        $self->{dot_obsid}
+    );
     $o .= sprintf(
         "<A HREF=\"%s/%s.html#%s\">DOT</A> ",
         $self->{STARCHECK}, basename($self->{dot_file}),

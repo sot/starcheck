@@ -146,6 +146,7 @@ my $backstop =
   get_file("$par{dir}/${sosa_dir_slash}*.backstop", 'backstop', 'required');
 my $guide_summ = get_file("$par{dir}/mps/mg*.sum", 'guide summary');
 my $or_file = get_file("$par{dir}/mps/or/*.or", 'OR');
+my $mm_file = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
 my $dot_file = get_file("$par{dir}/mps/md*.dot", 'DOT', 'required');
 my $mech_file =
   get_file("$par{dir}/${sosa_dir_slash}output/${sosa_prefix}TEST_mechcheck.txt*",
@@ -429,8 +430,15 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver($mm);
     $obs{$obsid}->set_manerr(@manerr) if (@manerr);
-    $obs{$obsid}
-      ->set_files($STARCHECK, $backstop, $guide_summ, $or_file, $dot_file, $tlr_file);
+    $obs{$obsid}->set_files(
+        $STARCHECK,
+        $backstop,
+        $guide_summ,
+        $or_file,
+        $mm_file,
+        $dot_file,
+        $tlr_file
+    );
     $obs{$obsid}->set_fids($fidsel);
     $obs{$obsid}->set_ps_times(@ps) if ($ps_file);
     map { $obs{$obsid}->{$_} = $or{$obsid}{$_} } keys %{ $or{$obsid} }
@@ -931,6 +939,7 @@ qq{<BODY><div id="overDiv" style="position:absolute; visibility:hidden; z-index:
     make_annotated_file('', ' ID=\s+', ', ', $backstop);
     make_annotated_file($guide_summ_start, '^\s+ID:\s+', '\S\S', $guide_summ);
     make_annotated_file('', '^ ID=', ', ', $or_file) if ($or_file);
+    make_annotated_file('', ' ID:\s+', '\S\S', $mm_file);
     make_annotated_file('', 'OBSID,ID=', ',', $dot_file);
     my $tlr_lines = add_obsid_to_tlr(\@bs, $tlr_file);
     make_annotated_file('', 'OBSERVATION ID\s*', '\s*\(', $tlr_file, $tlr_lines);
