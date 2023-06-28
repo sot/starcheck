@@ -29,7 +29,7 @@ def ir_zone_ok(backstop_file, out=None):
     out_text = ["IR ZONE CHECKING"]
     for perigee_time in perigee_cmds['time']:
 
-        # Current pad is from 30 minutes before to 20 minutes after
+        # Current high ir zone is from 30 minutes before to 20 minutes after
         ir_zone_start = perigee_time - 30 * 60
         ir_zone_stop = perigee_time + 20 * 60
         out_text.append(
