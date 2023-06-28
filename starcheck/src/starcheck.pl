@@ -254,11 +254,23 @@ my %dot = %{$dot_ref};
 print "Reading TLR file $tlr_file\n";
 my @load_segments = Ska::Parse_CM_File::TLR_load_segments($tlr_file);
 
-print "Reading MM file $mm_file\n";
+my $att_report = "${STARCHECK}/pcad_att_check.txt";
+my $att_check = call_python(
+    "pcad_att_check.run",
+    [],
+    {
+        backstop_file => $backstop,
+        or_list_file => $or_file,
+        simtrans_file => $simtrans_file,
+        simfocus_file => $simfocus_file,
+        attitude_file => $attitude_file,
+        ofls_characteristics_file => $char_file,
+        dynamic_offsets_file => $aimpoint_file,
+        out => $att_report,
+    }
+);
 
-# Read momentum management (maneuvers + SIM move) summary file
-my %mm = Ska::Parse_CM_File::MM({ file => $mm_file, ret_type => 'hash' })
-  if ($mm_file);
+my $mm = $att_check->{mm};
 
 # Read maneuver management summary for handy obsid time checks
 print "Reading process summary $ps_file\n";
@@ -416,7 +428,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_obsid(\%guidesumm);    # Commanded obsid
     $obs{$obsid}->set_target();
     $obs{$obsid}->set_star_catalog();
-    $obs{$obsid}->set_maneuver(%mm) if ($mm_file);
+    $obs{$obsid}->set_maneuver($mm);
     $obs{$obsid}->set_manerr(@manerr) if (@manerr);
     $obs{$obsid}->set_files(
         $STARCHECK,
@@ -744,21 +756,7 @@ if (   (defined $char_file)
     }
     else {
         my $att_report = "${STARCHECK}/pcad_att_check.txt";
-        my $att_ok = call_python(
-            "utils._make_pcad_attitude_check_report",
-            [],
-            {
-                backstop_file => $backstop,
-                or_list_file => $or_file,
-                simtrans_file => $simtrans_file,
-                simfocus_file => $simfocus_file,
-                attitude_file => $attitude_file,
-                ofls_characteristics_file => $char_file,
-                out => $att_report,
-                dynamic_offsets_file => $aimpoint_file
-            }
-        );
-        if ($att_ok) {
+        if ($att_check->{att_check_ok} == 1) {
             $out .= "<A HREF=\"${att_report}\">[OK] Coordinates as expected.</A>\n";
         }
         else {
@@ -1051,7 +1049,6 @@ sub make_annotated_file {
     # $backstop   = get_file("$par{dir}/*.backstop",'backstop', 'required');
     # $guide_summ = get_file("$par{dir}/mg*.sum",   'guide summary');
     # $or_file    = get_file("$par{dir}/*.or",      'OR');
-    # $mm_file    = get_file("$par{dir}/*/mm*.sum", 'maneuver');
     # $dot_file   = get_file("$par{dir}/*.dot",     'DOT', 'required');
 
     my ($start_rexp, $id_pre, $id_post, $file_in, $lines) = @_;

@@ -328,20 +328,19 @@ sub find_command {
 ##################################################################################
 sub set_maneuver {
     #
-    # Find the right obsid for each maneuver.  Note that obsids in mm_file don't
-    # always match those in DOT, etc
+    # Find the maneuver for each dot obsid.
     #
 ##################################################################################
     my $self = shift;
-    my %mm = @_;
+    my $mm = shift;
     my $n = 1;
     my $c;
     my $found;
 
     while ($c = find_command($self, "MP_TARGQUAT", $n++)) {
         $found = 0;
-        foreach my $m (values %mm) {
-            my $manvr_obsid = $m->{manvr_dest};
+        foreach my $m (@{$mm}) {
+            my $manvr_obsid = $m->{final_obsid};
 
 # where manvr_dest is either the final_obsid of a maneuver or the eventual destination obsid
             # of a segmented maneuver
@@ -359,9 +358,6 @@ sub set_maneuver {
                 $c->{man_err} = (exists $c->{angle}) ? 35 + $c->{angle} / 2. : 85;
                 $c->{man_err} = 85 if ($c->{man_err} > 85);
 
-                # Now check for consistency between quaternion from MANUEVER summary
-                # file and the quat from backstop (MP_TARGQUAT cmd)
-
                 # Get quat from MP_TARGQUAT (backstop) command.
                 # Compute 4th component (as only first 3 are uplinked) and renormalize.
                 # Intent is to match OBC Target Reference subfunction
@@ -372,6 +368,7 @@ sub set_maneuver {
                       sprintf(
                         "Uplink quaternion norm value $norm is too far from 1.0\n");
                 }
+
                 my @c_quat_norm = (
                     $c->{Q1} / $norm,
                     $c->{Q2} / $norm,
@@ -379,7 +376,8 @@ sub set_maneuver {
                     $q4_obc / $norm
                 );
 
-               # Get quat from MANEUVER summary file.  This is correct to high precision
+   # Compare to quaternion used in $m (which provides {ra} {dec} {roll}) which was built
+                # directly from the 4 components in Backstop
                 my $q_man = Quat->new($m->{ra}, $m->{dec}, $m->{roll});
                 my $q_obc = Quat->new(@c_quat_norm);
                 my @q_man = @{ $q_man->{q} };
@@ -400,11 +398,12 @@ sub set_maneuver {
                         $q_man[0], $q_man[1], $q_man[2], $q_man[3]
                       );
                 }
+
             }
 
         }
         push @{ $self->{yellow_warn} },
-          sprintf("Did not find match in MAN summary for MP_TARGQUAT at $c->{date}\n")
+          sprintf("Did not find match in maneuvers for MP_TARGQUAT at $c->{date}\n")
           unless ($found);
 
     }
@@ -1869,14 +1868,14 @@ sub check_monitor_commanding {
     }
 
     # Now check in backstop commands for :
-    #  Dither is disabled (AODSDITH) 1 min prior to the end of the maneuver (EOM)
+    #  Dither is disabled (AODSDITH) 1 min - 10s prior to the end of the maneuver (EOM)
     #    to the target attitude.
-    #  The OFP Aspect Camera Process is restarted (AOACRSET) 3 minutes after EOM.
-    #  Dither is enabled (AOENDITH) 5 min after EOM
+    #  The OFP Aspect Camera Process is restarted (AOACRSET) 3 minutes - 10s after EOM.
+    #  Dither is enabled (AOENDITH) 5 min - 10s after EOM
     # ACA-040
 
     my $t_manv = $manv->{tstop};
-    my %dt = (AODSDITH => -60, AOACRSET => 180, AOENDITH => 300);
+    my %dt = (AODSDITH => -70, AOACRSET => 170, AOENDITH => 290);
     my %cnt = map { $_ => 0 } keys %dt;
     foreach $bs (grep { $_->{cmd} eq 'COMMAND_SW' } @{$backstop}) {
         my %param = Ska::Parse_CM_File::parse_params($bs->{params});

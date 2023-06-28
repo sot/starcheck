@@ -1,7 +1,10 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 import re
 from astropy.table import Table
+import numpy as np
 import Quaternion
+from Quaternion import Quat
+import math
 
 from parse_cm import read_backstop, read_or_list
 from Chandra.Time import DateTime
@@ -71,23 +74,20 @@ def recent_attitude_history(time, file):
                 return greta_time, float(q1), float(q2), float(q3), float(q4)
 
 
-def make_pcad_attitude_check_report(backstop_file, or_list_file=None, attitude_file=None,
-                                    simtrans_file=None, simfocus_file=None,
-                                    ofls_characteristics_file=None, out=None,
-                                    dynamic_offsets_file=None,
-                                    ):
-    """
-    Make a report for checking PCAD attitudes
+def run(backstop_file, or_list_file=None, attitude_file=None,
+        simtrans_file=None, simfocus_file=None,
+        ofls_characteristics_file=None, out=None,
+        dynamic_offsets_file=None):
 
-    """
     all_ok = True
-    lines = []  # output report lines
+    lines = []
 
     bs = read_backstop(backstop_file)
 
     # Get initial state attitude and sim position from history
-    att_time, q1, q2, q3, q4 = recent_attitude_history(DateTime(bs[0]['date']).secs,
-                                            attitude_file)
+    att_time, q1, q2, q3, q4 = recent_attitude_history(
+        DateTime(bs[0]['date']).secs,
+        attitude_file)
     q = Quaternion.normalize([q1, q2, q3, q4])
     simfa_time, simfa = recent_sim_history(DateTime(bs[0]['date']).secs,
                                            simfocus_file)
@@ -139,7 +139,46 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, attitude_f
     # gives the history of updates as a dict with a `value` and `date` key.
     sc = hopper.run_cmds(backstop_file, or_list, ofls_characteristics_file,
                          initial_state=initial_state, starcheck=True)
-    # Iterate through checks by obsid to print status
+
+    # Make maneuver structure
+    mm = []
+    for m in sc.maneuvers:
+        q1 = Quat(q=Quaternion.normalize(
+            [m['initial']['q1'], m['initial']['q2'],
+             m['initial']['q3'], m['initial']['q4']]))
+        q2 = Quat(q=Quaternion.normalize(
+            [m['final']['q1'], m['final']['q2'],
+             m['final']['q3'], m['final']['q4']]))
+
+        # Calculate maneuver angle using code borrowed from kadi
+        q_manvr_3 = np.abs(-q2.q[0] * q1.q[0] - q2.q[1] * q1.q[1]
+                           - q2.q[2] * q1.q[2] + q2.q[3] * -q1.q[3])
+        # 4th component is cos(theta/2)
+        if q_manvr_3 > 1:
+            q_manvr_3 = 1
+        angle = np.degrees(2 * math.acos(q_manvr_3))
+
+        # Re-arrange the hopper maneuever structure to match the structure previously used
+        # from Parse_CM_File.pm
+        man = {'initial_obsid': m['initial']['obsid'],
+               'final_obsid': m['final']['obsid'],
+               'start_date': m['initial']['date'],
+               'stop_date': m['final']['date'],
+               'ra': q2.ra,
+               'dec': q2.dec,
+               'roll': q2.roll,
+               'dur': m['dur'],
+               'angle': angle,
+               'q1': m['final']['q1'],
+               'q2': m['final']['q2'],
+               'q3': m['final']['q3'],
+               'q4': m['final']['q4'],
+               'tstart': DateTime(m['initial']['date']).secs,
+               'tstop': DateTime(m['final']['date']).secs,
+               }
+        mm.append(man)
+
+    # Do the attitude checks
     checks = sc.get_checks_by_obsid()
     for obsid in sc.obsids:
         for check in checks[obsid]:
@@ -153,8 +192,10 @@ def make_pcad_attitude_check_report(backstop_file, or_list_file=None, attitude_f
                     line = '{:5d}: {}'.format(obsid, message)
                 lines.append(line)
 
+    # Write the attitude report
     if out is not None:
         with open(out, 'w') as fh:
             fh.writelines("\n".join(lines))
 
-    return all_ok
+    # Return the attitude status check and the maneuver structure
+    return {'mm': mm, 'att_check_ok': all_ok}
