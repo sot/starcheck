@@ -192,7 +192,7 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
                     line = '{:5d}: {}'.format(obsid, message)
                 lines.append(line)
 
-    # Write the attitute report
+    # Write the attitude report
     if out is not None:
         with open(out, 'w') as fh:
             fh.writelines("\n".join(lines))
