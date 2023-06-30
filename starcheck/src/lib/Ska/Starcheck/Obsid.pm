@@ -1218,7 +1218,8 @@ sub check_star_catalog {
                 $self->{ccd_temp},
                 $self->{date},
                 $dither_guide_y,
-                $dither_guide_z
+                $dither_guide_z,
+                $self->{dyn_bgd_n_faint},
             ]
         );
     };

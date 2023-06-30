@@ -13,6 +13,7 @@ import Quaternion
 from astropy.table import Table
 from Chandra.Time import DateTime
 from chandra_aca.star_probs import guide_count, mag_for_p_acq
+from chandra_aca.dark_model import dark_temp_scale
 from sparkles import get_t_ccds_bonus
 from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to_pixels
 from kadi.commands import states
@@ -245,15 +246,19 @@ def _yagzag_to_pixels(yag, zag):
     # Convert to lists or floats to avoid numpy types which are not JSON serializable
     return row.tolist(), col.tolist()
 
-
-def _guide_count(mags, t_ccd, count_9th=False, dyn_bgd_n_faint=None):
+def _t_ccds_bonus(mags, t_ccd, dyn_bgd_n_faint=None):
     dyn_bgd_dt_ccd = -4.0
     eff_t_ccd = get_effective_t_ccd(t_ccd)
     t_ccds_bonus = get_t_ccds_bonus(mags, eff_t_ccd, dyn_bgd_n_faint, dyn_bgd_dt_ccd)
+    return t_ccds_bonus
+
+def _guide_count(mags, t_ccd, count_9th=False, dyn_bgd_n_faint=None):
+    t_ccds_bonus = _t_ccds_bonus(mags, t_ccd, dyn_bgd_n_faint=dyn_bgd_n_faint)
     return float(guide_count(np.array(mags), t_ccds_bonus, count_9th))
 
 
-def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z):
+def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z,
+                  dyn_bgd_n_faint=None):
     """
     Return a list of info to make warnings on guide stars or fid lights with
     local dark map that gives an 'imposter_mag' that could perturb a centroid.
@@ -285,9 +290,11 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
              star or fid info to make a warning.
     """
 
-    eff_t_ccd = get_effective_t_ccd(t_ccd)
 
-    dark = aca_dark.get_dark_cal_image(date=date, t_ccd_ref=eff_t_ccd, aca_image=True)
+    dark_props = aca_dark.get_dark_cal_props(date=date, include_image=True,
+                                             aca_image=True)
+    dark = dark_props['image']
+    dark_t_ccd = dark_props['t_ccd']
 
     def imposter_offset(cand_mag, imposter_mag):
         """
@@ -300,12 +307,27 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
         spoil_counts = mag_to_count_rate(imposter_mag)
         return spoil_counts * 3 * 5 / (spoil_counts + cand_counts)
 
+    # Get the effective t_ccd for use for the fid lights
+    eff_t_ccd = get_effective_t_ccd(t_ccd)
+
+    # Get the t_ccd bonus for the guide stars
+    guide_mags = []
+    guide_idxs = []
+    for idx, mag, ctype in zip(idxs, mags, types):
+        if ctype in ["BOT", "GUI"]:
+            guide_mags.append(mag)
+            guide_idxs.append(idx)
+    guide_t_ccds = _t_ccds_bonus(guide_mags, t_ccd, dyn_bgd_n_faint=dyn_bgd_n_faint)
+    guide_t_ccd_dict = dict(zip(guide_idxs, guide_t_ccds))
+
     imposters = []
     for idx, yag, zag, mag, ctype in zip(idxs, yags, zags, mags, types):
         if ctype in ["BOT", "GUI", "FID"]:
             if ctype in ["BOT", "GUI"]:
+                t_ccd = guide_t_ccd_dict[idx]
                 dither = ACABox((dither_y, dither_z))
             else:
+                t_ccd = eff_t_ccd
                 dither = ACABox((5.0, 5.0))
             row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
             # Handle any errors in get_imposter_mags with a try/except.  This doesn't
@@ -317,7 +339,9 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
                 entries = Table(
                     [{"idx": idx, "row": row, "col": col, "mag": mag, "type": ctype}]
                 )
+                scale = dark_temp_scale(dark_t_ccd, t_ccd)
                 imp_mags, imp_rows, imp_cols = get_imposter_mags(entries, dark, dither)
+                imp_mags, imp_rows, imp_cols = get_imposter_mags(entries, dark * scale, dither)
                 offset = imposter_offset(mag, imp_mags[0])
                 imposters.append(
                     {
@@ -329,6 +353,7 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
                         "bad2_col": float(imp_cols[0]),
                         "bad2_mag": float(imp_mags[0]),
                         "offset": float(offset),
+                        "t_ccd": float(t_ccd),
                     }
                 )
             except Exception:
