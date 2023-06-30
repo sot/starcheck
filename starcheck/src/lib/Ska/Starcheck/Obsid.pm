@@ -1493,7 +1493,7 @@ sub check_star_catalog {
                 my $guide_mag_warn = sprintf "[%2d] Magnitude. Guide star %6.3f\n", $i,
                   $mag;
                 if (($mag > 10.3) or ($mag < 5.2)) {
-                    push @warn, $guide_mag_warn;
+                    push @orange_warn, $guide_mag_warn;
                 }
             }
             if ($type eq 'BOT' or $type eq 'ACQ') {
