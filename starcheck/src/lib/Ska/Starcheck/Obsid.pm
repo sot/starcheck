@@ -657,7 +657,7 @@ sub check_pixel_mode {
 
     unless (defined $obs_tstart) {
         push @{ $self->{warn} },
-          "Cannot determine obs start time for pixel mode not checking.\n";
+          "Cannot determine obs start time for pixel mode. Not checking.\n";
         return;
     }
 
