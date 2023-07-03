@@ -716,7 +716,7 @@ if (@global_warn) {
 $out .= "------------  HIGH IR ZONE CHECK  -----------------\n\n";
 my $ir_report = "${STARCHECK}/high_ir_check.txt";
 my $ir_ok = call_python(
-    "utils.make_ir_check_report",
+    "check_ir_zone.ir_zone_ok",
     [],
     {
         backstop_file => $backstop,

@@ -103,10 +103,6 @@ def get_data_dir():
     return sc_data if os.path.exists(sc_data) else ""
 
 
-def make_ir_check_report(**kwargs):
-    return ir_zone_ok(**kwargs)
-
-
 def get_dither_kadi_state(date):
     cols = [
         "dither",
