@@ -307,10 +307,10 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
         spoil_counts = mag_to_count_rate(imposter_mag)
         return spoil_counts * 3 * 5 / (spoil_counts + cand_counts)
 
-    # Get the effective t_ccd for use for the fid lights
+    # Get the effective t_ccd for use for the fid lights and some guide stars.
     eff_t_ccd = get_effective_t_ccd(t_ccd)
 
-    # Get the t_ccd bonus for the guide stars
+    # Get the t_ccd bonus for n=dyn_bgd_n_faint of the guide stars.
     guide_mags = []
     guide_idxs = []
     for idx, mag, ctype in zip(idxs, mags, types):
