@@ -601,6 +601,8 @@ if ($obsid_temps) {
     }
 }
 
+my $pixel_states = call_python("utils.get_pixel_states", [$backstop]);
+
 # Do main checking
 foreach my $obsid (@obsid_id) {
     $obs{$obsid}->get_agasc_stars($agasc_file);
@@ -639,6 +641,7 @@ foreach my $obsid (@obsid_id) {
         $obs{$obsid}->check_momentum_unload(\@bs);
         $obs{$obsid}->check_bright_perigee($radmon);
         $obs{$obsid}->check_guide_count();
+        $obs{$obsid}->check_pixel_mode($pixel_states);
     }
 
     # Make sure there is only one star catalog per obsid

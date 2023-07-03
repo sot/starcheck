@@ -643,6 +643,36 @@ sub set_star_catalog {
 }
 
 #############################################################################################
+sub check_pixel_mode {
+#############################################################################################
+    my $self = shift;
+    my $pixel_states = shift;
+
+    # if this is an ER, just return
+    return if (($self->{obsid} =~ /^\d+$/ && $self->{obsid} >= $ER_MIN_OBSID));
+
+    # set the observation start as the end of the maneuver
+    my $obs_tstart = $self->{obs_tstart};
+    my $obs_tstop = $self->{obs_tstop};
+
+    unless (defined $obs_tstart) {
+        push @{ $self->{warn} },
+          "Cannot determine obs start time for pixel mode not checking.\n";
+        return;
+    }
+
+    # Check pixel mode during the dwell
+    my $pixel_mode_ok =
+      call_python("utils.pixel_mode_ok", [ $obs_tstart, $obs_tstop, $pixel_states ],);
+
+    if (not $pixel_mode_ok) {
+        push @{ $self->{warn} },
+          "PEA pixel mode not set to ORIG for dwell.\n";
+    }
+
+}
+
+#############################################################################################
 sub check_dither {
 #############################################################################################
     my $self = shift;

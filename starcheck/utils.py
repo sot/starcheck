@@ -14,18 +14,20 @@ from astropy.table import Table
 from Chandra.Time import DateTime
 from chandra_aca.star_probs import guide_count, mag_for_p_acq
 from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to_pixels
-from kadi.commands import states
+from kadi.commands import states as kadi_states
+from kadi.commands.states import FixedTransition
+import kadi.commands
 from mica.archive import aca_dark
 from proseco.catalog import get_aca_catalog, get_effective_t_ccd
 from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
 from Ska.quatutil import radec2yagzag
 from testr import test_helper
+from cxotime import CxoTime
 
 import starcheck
 from starcheck import __version__ as version
 from starcheck.calc_ccd_temps import get_ccd_temps
-from starcheck.check_ir_zone import ir_zone_ok
 from starcheck.plot import make_plots_for_obsid
 
 ACQS = mica.stats.acq_stats.get_stats()
@@ -103,6 +105,76 @@ def get_data_dir():
     return sc_data if os.path.exists(sc_data) else ""
 
 
+class AlternatingPixelModeSelectTransition(FixedTransition):
+    command_attributes = {'tlmsid': 'AAC1CCSC', 'hex': '348E040'}
+    state_keys = ['pixel_mode']
+    transition_key = ['pixel_mode']
+    transition_val = ['ALT']
+
+
+class OriginalPixelModeSelectTransition(FixedTransition):
+    command_attributes = {'tlmsid': 'AAC1CCSC', 'hex': '3492040'}
+    state_keys = ['pixel_mode']
+    transition_key = ['pixel_mode']
+    transition_val = ['ORIG']
+
+
+def get_pixel_mode_kadi_continuity(backstop_file):
+    rltt, sched_stop = get_rltt_and_sched_stop(backstop_file)
+    if rltt.date < '2023:178':
+        return {'pixel_mode': 'ORIG'}
+    else:
+        state = kadi_states.get_continuity(rltt, ['pixel_mode'])
+        return {'pixel_mode': state['pixel_mode']}
+
+
+def get_rltt_and_sched_stop(backstop_file):
+    bs_cmds = kadi.commands.get_cmds_from_backstop(backstop_file)
+    bs_dates = bs_cmds['date']
+    ok = bs_cmds['event_type'] == 'RUNNING_LOAD_TERMINATION_TIME'
+    rltt = CxoTime(bs_dates[ok][0] if np.any(ok) else bs_dates[0])
+    ok = bs_cmds['event_type'] == 'SCHEDULED_STOP_TIME'
+    sched_stop = CxoTime(bs_dates[ok][0] if np.any(ok) else bs_dates[-1])
+    return rltt, sched_stop
+
+
+def get_kadi_states(backstop_file, state_keys, continuity=None):
+
+    rltt, sched_stop = get_rltt_and_sched_stop(backstop_file)
+    bs_cmds = kadi.commands.get_cmds_from_backstop(backstop_file)
+
+    # Get the states for available commands. This automatically gets continuity if
+    # not supplied.
+    states = kadi_states.get_states(cmds=bs_cmds, start=rltt, stop=sched_stop,
+                                    state_keys=state_keys, merge_identical=True,
+                                    continuity=continuity)
+    return states
+
+
+def get_pixel_states(backstop_file):
+    continuity = get_pixel_mode_kadi_continuity(backstop_file)
+    states = get_kadi_states(backstop_file, ['pixel_mode'], continuity=continuity)
+
+    # Remove transitions key
+    states.remove_column('trans_keys')
+
+    # Convert states to list of dictionaries
+    states_list = [dict(zip(states.dtype.names, row)) for row in states]
+    return states_list
+
+
+def pixel_mode_ok(tstart, tstop, pixel_states):
+    pixel_states = Table(pixel_states)
+    ok = ((pixel_states['datestop'] >= CxoTime(tstart).date)
+          & (pixel_states['datestart'] < CxoTime(tstop).date))
+
+    # And Perl doesn't like bool so convert to plain int
+    if np.all(pixel_states[ok]['pixel_mode'] == 'ORIG'):
+        return 1
+    else:
+        return 0
+
+
 def get_dither_kadi_state(date):
     cols = [
         "dither",
@@ -111,7 +183,7 @@ def get_dither_kadi_state(date):
         "dither_period_pitch",
         "dither_period_yaw",
     ]
-    state = states.get_continuity(date, cols)
+    state = kadi_states.get_continuity(date, cols)
     # Cast the numpy floats as plain floats
     for key in [
         "dither_ampl_pitch",

@@ -1,7 +1,5 @@
 import numpy as np
-
 import kadi.commands
-import kadi.commands.states
 from cxotime import CxoTime
 
 
