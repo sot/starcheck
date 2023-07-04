@@ -983,7 +983,14 @@ sub check_bright_perigee {
     my $bright_count = sprintf(
         "%.1f",
         call_python(
-            "utils._guide_count", [ \@mags, $self->{ccd_temp}, $self->{date}, 1 ]
+            "utils._guide_count",
+            [],
+            {
+                mags => \@mags,
+                t_ccd => $self->{ccd_temp},
+                count_9th => 1,
+                date => $self->{date},
+            }
         )
     );
     if ($bright_count < $min_n_stars) {
@@ -2832,7 +2839,14 @@ sub count_guide_stars {
     return sprintf(
         "%.1f",
         call_python(
-            "utils._guide_count", [ \@mags, $self->{ccd_temp}, $self->{date}, 0 ]
+            "utils._guide_count",
+            [],
+            {
+                mags => \@mags,
+                t_ccd => $self->{ccd_temp},
+                count_9th => 0,
+                date => $self->{date},
+            }
         )
     );
 }

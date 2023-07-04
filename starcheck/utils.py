@@ -250,16 +250,14 @@ def _yagzag_to_pixels(yag, zag):
 
 def _t_ccds_bonus(mags, t_ccd, date):
     dyn_bgd_dt_ccd = -4.0
-    if CxoTime(date).date < '2023:139':
-        dyn_bgd_n_faint = 0
-    else:
-        dyn_bgd_n_faint = 2
+    # Set dyn_bgd_n_faint to 2 after PEA patch uplink and activation on 2023:139
+    dyn_bgd_n_faint = 2 if CxoTime(date).date >= '2023:139' else 0
     eff_t_ccd = get_effective_t_ccd(t_ccd)
     t_ccds_bonus = get_t_ccds_bonus(mags, eff_t_ccd, dyn_bgd_n_faint, dyn_bgd_dt_ccd)
     return t_ccds_bonus
 
 
-def _guide_count(mags, t_ccd, date, count_9th=False):
+def _guide_count(mags, t_ccd, count_9th, date):
     t_ccds_bonus = _t_ccds_bonus(mags, t_ccd, date)
     return float(guide_count(np.array(mags), t_ccds_bonus, count_9th))
 
