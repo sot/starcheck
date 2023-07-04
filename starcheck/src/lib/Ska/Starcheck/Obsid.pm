@@ -325,12 +325,6 @@ sub find_command {
     return undef;
 }
 
-sub set_dyn_bgd_n_faint {
-    my $self = shift;
-    my $dyn_bgd_n_faint = shift;
-    $self->{dyn_bgd_n_faint} = $dyn_bgd_n_faint;
-}
-
 ##################################################################################
 sub set_maneuver {
     #
@@ -985,12 +979,11 @@ sub check_bright_perigee {
         }
     }
 
-    # Pass 1 to _guide_count as third arg to use the count_9th mode
+    # Pass 1 to _guide_count as fourth arg to use the count_9th mode
     my $bright_count = sprintf(
         "%.1f",
         call_python(
-            "utils._guide_count",
-            [ \@mags, $self->{ccd_temp}, 1, $self->{dyn_bgd_n_faint} ]
+            "utils._guide_count", [ \@mags, $self->{ccd_temp}, $self->{date}, 1 ]
         )
     );
     if ($bright_count < $min_n_stars) {
@@ -1219,7 +1212,6 @@ sub check_star_catalog {
                 $self->{date},
                 $dither_guide_y,
                 $dither_guide_z,
-                $self->{dyn_bgd_n_faint},
             ]
         );
     };
@@ -2840,8 +2832,7 @@ sub count_guide_stars {
     return sprintf(
         "%.1f",
         call_python(
-            "utils._guide_count",
-            [ \@mags, $self->{ccd_temp}, 0, $self->{dyn_bgd_n_faint} ]
+            "utils._guide_count", [ \@mags, $self->{ccd_temp}, $self->{date}, 0 ]
         )
     );
 }

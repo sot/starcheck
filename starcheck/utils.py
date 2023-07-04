@@ -23,6 +23,7 @@ from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
 from Ska.quatutil import radec2yagzag
 from testr import test_helper
+from cxotime import CxoTime
 
 import starcheck
 from starcheck import __version__ as version
@@ -246,19 +247,24 @@ def _yagzag_to_pixels(yag, zag):
     # Convert to lists or floats to avoid numpy types which are not JSON serializable
     return row.tolist(), col.tolist()
 
-def _t_ccds_bonus(mags, t_ccd, dyn_bgd_n_faint=None):
+
+def _t_ccds_bonus(mags, t_ccd, date):
     dyn_bgd_dt_ccd = -4.0
+    if CxoTime(date).date < '2023:139':
+        dyn_bgd_n_faint = 0
+    else:
+        dyn_bgd_n_faint = 2
     eff_t_ccd = get_effective_t_ccd(t_ccd)
     t_ccds_bonus = get_t_ccds_bonus(mags, eff_t_ccd, dyn_bgd_n_faint, dyn_bgd_dt_ccd)
     return t_ccds_bonus
 
-def _guide_count(mags, t_ccd, count_9th=False, dyn_bgd_n_faint=None):
-    t_ccds_bonus = _t_ccds_bonus(mags, t_ccd, dyn_bgd_n_faint=dyn_bgd_n_faint)
+
+def _guide_count(mags, t_ccd, date, count_9th=False):
+    t_ccds_bonus = _t_ccds_bonus(mags, t_ccd, date)
     return float(guide_count(np.array(mags), t_ccds_bonus, count_9th))
 
 
-def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z,
-                  dyn_bgd_n_faint=None):
+def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z):
     """
     Return a list of info to make warnings on guide stars or fid lights with
     local dark map that gives an 'imposter_mag' that could perturb a centroid.
@@ -290,7 +296,6 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
              star or fid info to make a warning.
     """
 
-
     dark_props = aca_dark.get_dark_cal_props(date=date, include_image=True,
                                              aca_image=True)
     dark = dark_props['image']
@@ -317,7 +322,7 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
         if ctype in ["BOT", "GUI"]:
             guide_mags.append(mag)
             guide_idxs.append(idx)
-    guide_t_ccds = _t_ccds_bonus(guide_mags, t_ccd, dyn_bgd_n_faint=dyn_bgd_n_faint)
+    guide_t_ccds = _t_ccds_bonus(guide_mags, t_ccd, date)
     guide_t_ccd_dict = dict(zip(guide_idxs, guide_t_ccds))
 
     imposters = []
