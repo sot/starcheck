@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+import warnings
 
 import agasc
 import cxotime
@@ -30,6 +31,12 @@ from starcheck.plot import make_plots_for_obsid
 
 ACQS = mica.stats.acq_stats.get_stats()
 GUIDES = mica.stats.guide_stats.get_stats()
+
+# Ignore warnings about clipping the acquisition model magnitudes
+# from chandra_aca.star_probs
+warnings.filterwarnings(
+    "ignore", category=UserWarning,
+    message=r"\nModel .* computed between .* clipping input mag\(s\) outside that range\.")
 
 
 def date2secs(val):
