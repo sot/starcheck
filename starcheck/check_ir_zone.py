@@ -5,9 +5,7 @@ import kadi.commands.states
 from cxotime import CxoTime
 
 
-def ir_zone_ok(backstop_file, out=None, pad_minutes=30):
-
-    pad_seconds = pad_minutes * 60
+def ir_zone_ok(backstop_file, out=None):
 
     bs_cmds = kadi.commands.get_cmds_from_backstop(backstop_file)
     bs_dates = bs_cmds['date']
@@ -30,8 +28,10 @@ def ir_zone_ok(backstop_file, out=None, pad_minutes=30):
     all_ok = True
     out_text = ["IR ZONE CHECKING"]
     for perigee_time in perigee_cmds['time']:
-        ir_zone_start = perigee_time - pad_seconds
-        ir_zone_stop = perigee_time
+
+        # Current high ir zone is from 30 minutes before to 20 minutes after
+        ir_zone_start = perigee_time - 30 * 60
+        ir_zone_stop = perigee_time + 20 * 60
         out_text.append(
             f"Checking perigee at {CxoTime(perigee_time).date}")
         out_text.append(
