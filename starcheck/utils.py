@@ -386,6 +386,7 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
                         "bad2_mag": float(imp_mags[0]),
                         "offset": float(offset),
                         "t_ccd": float(t_ccd),
+                        "dark_date": dark_props["date"],
                     }
                 )
             except Exception:
