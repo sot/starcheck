@@ -979,11 +979,11 @@ sub check_bright_perigee {
         }
     }
 
-    # Pass 1 to _guide_count as fourth arg to use the count_9th mode
+    # Pass 1 to guide_count as count_9th kwarg to use the count_9th mode
     my $bright_count = sprintf(
         "%.1f",
         call_python(
-            "utils._guide_count",
+            "utils.guide_count",
             [],
             {
                 mags => \@mags,
@@ -2839,7 +2839,7 @@ sub count_guide_stars {
     return sprintf(
         "%.1f",
         call_python(
-            "utils._guide_count",
+            "utils.guide_count",
             [],
             {
                 mags => \@mags,

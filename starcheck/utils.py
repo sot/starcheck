@@ -12,9 +12,10 @@ import proseco.characteristics as char
 import Quaternion
 from astropy.table import Table
 from Chandra.Time import DateTime
-from chandra_aca.star_probs import guide_count, mag_for_p_acq
+from chandra_aca.star_probs import mag_for_p_acq
+import chandra_aca.star_probs
 from chandra_aca.dark_model import dark_temp_scale
-from sparkles import get_t_ccds_bonus
+import sparkles
 from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to_pixels
 from kadi.commands import states
 from mica.archive import aca_dark
@@ -180,6 +181,7 @@ def config_logging(outdir, verbose, name):
     See http://docs.python.org/library/logging.html
               #logging-to-multiple-destinations
     """
+
     # Disable auto-configuration of root logger by adding a null handler.
     # This prevents other modules (e.g. Chandra.cmd_states) from generating
     # a streamhandler by just calling logging.info(..).
@@ -248,18 +250,44 @@ def _yagzag_to_pixels(yag, zag):
     return row.tolist(), col.tolist()
 
 
-def _t_ccds_bonus(mags, t_ccd, date):
+def apply_t_ccds_bonus(mags, t_ccd, date):
+    """
+    Calculate the dynamic background bonus temperatures for a given set of
+    magnitudes, t_ccd (which should be the effective t_ccd with any penalty applied),
+    and date. This applies values of dyn_bgd_n_faint and dyn_bgd_dt_ccd.
+    This calls chandra_aca.sparkles.get_t_ccds_bonus.
+
+    :param mags: list of magnitudes
+    :param t_ccd: effective t_ccd
+    :param date: date. Used to determine default value of dyn_bgd_n_faint and set
+                 dyn_bgd_n_faint to 2 after PEA patch uplink and activation on 2023:139.
+    :returns: list of dynamic background bonus temperatures (degC) in the order of mags
+    """
     dyn_bgd_dt_ccd = -4.0
     # Set dyn_bgd_n_faint to 2 after PEA patch uplink and activation on 2023:139
-    dyn_bgd_n_faint = 2 if CxoTime(date).date >= '2023:139' else 0
+    dyn_bgd_n_faint = 2 if CxoTime(date).date >= "2023:139" else 0
+    return sparkles.get_t_ccds_bonus(mags, t_ccd, dyn_bgd_n_faint, dyn_bgd_dt_ccd)
+
+
+def guide_count(mags, t_ccd, count_9th, date):
+    """
+    Return the fractional guide_count for a given set of magnitudes, estimated
+    t_ccd, count_9th (bool or 0 or 1), and date. This determines the effective
+    t_ccd, applies any dynamic background bonus, and then calls
+    chandra_aca.star_probs.guide_count.
+
+    :param mags: list of magnitudes
+    :param t_ccd: estimated t_ccd from thermal model (this function applies any
+                  penalty, so input t_ccd should not have penalty applied)
+    :param count_9th: bool or 0 or 1 for whether to use count_9th mode
+    :param date: date of observation
+    :returns: fractional guide_count as float
+    """
     eff_t_ccd = get_effective_t_ccd(t_ccd)
-    t_ccds_bonus = get_t_ccds_bonus(mags, eff_t_ccd, dyn_bgd_n_faint, dyn_bgd_dt_ccd)
-    return t_ccds_bonus
-
-
-def _guide_count(mags, t_ccd, count_9th, date):
-    t_ccds_bonus = _t_ccds_bonus(mags, t_ccd, date)
-    return float(guide_count(np.array(mags), t_ccds_bonus, count_9th))
+    t_ccds_bonus = apply_t_ccds_bonus(mags, eff_t_ccd, date)
+    return float(
+        chandra_aca.star_probs.guide_count(np.array(mags), t_ccds_bonus, count_9th)
+    )
 
 
 def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z):
@@ -294,10 +322,11 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
              star or fid info to make a warning.
     """
 
-    dark_props = aca_dark.get_dark_cal_props(date=date, include_image=True,
-                                             aca_image=True)
-    dark = dark_props['image']
-    dark_t_ccd = dark_props['t_ccd']
+    dark_props = aca_dark.get_dark_cal_props(
+        date=date, include_image=True, aca_image=True
+    )
+    dark = dark_props["image"]
+    dark_t_ccd = dark_props["t_ccd"]
 
     def imposter_offset(cand_mag, imposter_mag):
         """
@@ -320,7 +349,7 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
         if ctype in ["BOT", "GUI"]:
             guide_mags.append(mag)
             guide_idxs.append(idx)
-    guide_t_ccds = _t_ccds_bonus(guide_mags, t_ccd, date)
+    guide_t_ccds = apply_t_ccds_bonus(guide_mags, eff_t_ccd, date)
     guide_t_ccd_dict = dict(zip(guide_idxs, guide_t_ccds))
 
     imposters = []
@@ -344,7 +373,9 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
                 )
                 scale = dark_temp_scale(dark_t_ccd, t_ccd)
                 imp_mags, imp_rows, imp_cols = get_imposter_mags(entries, dark, dither)
-                imp_mags, imp_rows, imp_cols = get_imposter_mags(entries, dark * scale, dither)
+                imp_mags, imp_rows, imp_cols = get_imposter_mags(
+                    entries, dark * scale, dither
+                )
                 offset = imposter_offset(mag, imp_mags[0])
                 imposters.append(
                     {
