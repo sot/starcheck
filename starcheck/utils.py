@@ -314,8 +314,6 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
     :param date: observation date (str)
     :param dither_y: dither_y in arcsecs (guide dither)
     :param dither_z: dither_z in arcsecs (guide dither)
-    :param yellow_lim: yellow limit centroid offset threshold limit (in arcsecs)
-    :param red_lim: red limit centroid offset threshold limit (in arcsecs)
     :return imposters: list of dictionaries with keys that define the index, the
              imposter mag, a 'status' key that has value 0 if the code to get
              the imposter mag ran successfully, calculated centroid offset, and
