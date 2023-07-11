@@ -326,7 +326,7 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
         date=date, include_image=True, aca_image=True
     )
     dark = dark_props["image"]
-    dark_t_ccd = dark_props["t_ccd"]
+    dark_t_ccd = dark_props["ccd_temp"]
 
     def imposter_offset(cand_mag, imposter_mag):
         """
