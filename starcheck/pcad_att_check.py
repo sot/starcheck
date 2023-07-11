@@ -48,7 +48,7 @@ def recent_sim_history(time, file):
     parsing and the int cast of the parsed data.
     """
     for line in reversed(open(file).readlines()):
-        match = re.match('^(\d+\.\d+)\s+\|\s+(\S+)\s*$',
+        match = re.match(r'^(\d+\.\d+)\s+\|\s+(\S+)\s*$',
                          line)
         if match:
             greta_time, value = match.groups()
@@ -64,7 +64,7 @@ def recent_attitude_history(time, file):
     parsing.
     """
     for line in reversed(open(file).readlines()):
-        match = re.match('^(\d+\.\d+)\s+\|\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s*', line)
+        match = re.match(r'^(\d+\.\d+)\s+\|\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s*', line)
         if match:
             greta_time, q1, q2, q3, q4 = match.groups()
             if (DateTime(greta_time, format='greta').secs < time):
