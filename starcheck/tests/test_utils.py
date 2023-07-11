@@ -65,6 +65,15 @@ def test_check_dynamic_hot_pix():
         assert imposter1["idx"] == imposter2["idx"]
         assert imposter1["bad2_row"] == imposter2["bad2_row"]
         assert imposter1["bad2_col"] == imposter2["bad2_col"]
-        assert imposter1["bad2_mag"] <= imposter2["bad2_mag"]
-        assert imposter1["status"] == imposter2["status"]
-        assert imposter1["offset"] >= imposter2["offset"]
+        assert imposter1["t_ccd"] == t_ccd
+        assert imposter1["status"] == 0
+        assert imposter2["status"] == 0
+        if imposter1["idx"] < 7:
+            assert imposter2["t_ccd"] == imposter1["t_ccd"]
+            assert imposter1["bad2_mag"] == imposter2["bad2_mag"]
+            assert imposter1["offset"] == imposter2["offset"]
+        else:
+            assert imposter2["t_ccd"] == imposter1["t_ccd"] - dyn_bgd_dt_ccd        
+            assert imposter1["bad2_mag"] < imposter2["bad2_mag"]
+            assert imposter1["offset"] > imposter2["offset"]
+        
