@@ -978,9 +978,20 @@ sub check_bright_perigee {
         }
     }
 
-    # Pass 1 to _guide_count as third arg to use the count_9th mode
-    my $bright_count = sprintf("%.1f",
-        call_python("utils._guide_count", [ \@mags, $self->{ccd_temp}, 1 ]));
+    # Pass 1 to guide_count as count_9th kwarg to use the count_9th mode
+    my $bright_count = sprintf(
+        "%.1f",
+        call_python(
+            "utils.guide_count",
+            [],
+            {
+                mags => \@mags,
+                t_ccd => $self->{ccd_temp},
+                count_9th => 1,
+                date => $self->{date},
+            }
+        )
+    );
     if ($bright_count < $min_n_stars) {
         push @{ $self->{warn} }, "$bright_count star(s) brighter than scaled 9th mag. "
           . "Perigee requires at least $min_n_stars\n";
@@ -1206,7 +1217,7 @@ sub check_star_catalog {
                 $self->{ccd_temp},
                 $self->{date},
                 $dither_guide_y,
-                $dither_guide_z
+                $dither_guide_z,
             ]
         );
     };
@@ -1481,7 +1492,7 @@ sub check_star_catalog {
                 my $guide_mag_warn = sprintf "[%2d] Magnitude. Guide star %6.3f\n", $i,
                   $mag;
                 if (($mag > 10.3) or ($mag < 5.2)) {
-                    push @warn, $guide_mag_warn;
+                    push @orange_warn, $guide_mag_warn;
                 }
             }
             if ($type eq 'BOT' or $type eq 'ACQ') {
@@ -2824,8 +2835,19 @@ sub count_guide_stars {
             push @mags, $mag;
         }
     }
-    return
-      sprintf("%.1f", call_python("utils._guide_count", [ \@mags, $self->{ccd_temp} ]));
+    return sprintf(
+        "%.1f",
+        call_python(
+            "utils.guide_count",
+            [],
+            {
+                mags => \@mags,
+                t_ccd => $self->{ccd_temp},
+                count_9th => 0,
+                date => $self->{date},
+            }
+        )
+    );
 }
 
 ###################################################################################
