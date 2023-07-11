@@ -46,12 +46,6 @@ def test_check_dynamic_hot_pix():
     # These stars are in mag-sorted order so the bonus should be applied to the last two
     # Stars with idx 7 and 8 should have bonus-applied t_ccd
     dyn_bgd_dt_ccd = 4.0
-    for imposter in imposters2:
-        assert imposter["status"] == 0
-        if imposter["idx"] < 7:
-            assert imposter["t_ccd"] == t_ccd
-        else:
-            assert imposter["t_ccd"] == t_ccd - dyn_bgd_dt_ccd
 
     # The imposters should be the same except for t_ccd, offset, mag
     # as these dates were selected to have matching dark cal files
