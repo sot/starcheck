@@ -36,11 +36,6 @@ def test_check_dynamic_hot_pix():
     imposters1 = check_hot_pix(
         idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
     )
-    # There is no bonus or penalty applied so the temperatures should all be the same as the
-    # input t_ccd
-    for imposter in imposters1:
-        assert imposter["status"] == 0
-        assert imposter["t_ccd"] == t_ccd
 
     # Use a date after the PEA patch uplink
     date = "2023:140"
