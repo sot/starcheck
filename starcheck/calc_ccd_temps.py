@@ -520,7 +520,7 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
     logger.info('Making temperature check plots')
     for fig_id, msid in enumerate(('aca',)):
         temp_ymax = max(char.aca_t_ccd_planning_limit, np.max(temps))
-        temp_ymin = min(char.aca_t_ccd_penalty_limit, np.min(temps))
+        temp_ymin = min(char.aca_t_ccd_planning_limit - 1, np.min(temps))
         plots[msid] = plot_two(fig_id=fig_id + 1,
                                x=times,
                                y=temps,
