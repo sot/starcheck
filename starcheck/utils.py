@@ -20,6 +20,7 @@ import sparkles
 from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to_pixels
 from kadi.commands import states
 from mica.archive import aca_dark
+from parse_cm import read_backstop_as_list, write_backstop
 from proseco.catalog import get_aca_catalog, get_effective_t_ccd
 from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
@@ -543,3 +544,20 @@ def proseco_probs(**kw):
     ]
 
     return p_acqs, float(-np.log10(acq_cat.calc_p_safe())), float(np.sum(p_acqs))
+
+
+def vehicle_filter_backstop(backstop_file, outfile):
+    """
+    Filter the backstop file to remove SCS 131, 132, 133 except MP_OBSID commands.
+    This is basically equivalent to the vehicle backstop file, but the MP_OBSID
+    commands are useful for ACA to associate maneuvers with observations.
+    """
+    # Use parse_cm read_backstop_as_list instead of kadi.commands.read_backstop
+    # as we want the params to keep the SCS to write back later.
+    cmds = read_backstop_as_list(backstop_file, inline_params=False)
+    # Filter the commands to remove SCS 131, 132, 133 except MP_OBSID commands
+    filtered_cmds = [cmd for cmd in cmds
+                     if cmd["scs"] < 131
+                     or cmd["type"] == "MP_OBSID"]
+    # Write the filtered commands to the output file
+    write_backstop(filtered_cmds, outfile)
