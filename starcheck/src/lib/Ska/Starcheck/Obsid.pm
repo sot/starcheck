@@ -344,7 +344,7 @@ sub set_maneuver {
 
 # where manvr_dest is either the final_obsid of a maneuver or the eventual destination obsid
             # of a segmented maneuver
-            if (   ($manvr_obsid eq $self->{dot_obsid})
+            if (   ($manvr_obsid eq $self->{obsid})
                 && abs($m->{q1} - $c->{Q1}) < 1e-7
                 && abs($m->{q2} - $c->{Q2}) < 1e-7
                 && abs($m->{q3} - $c->{Q3}) < 1e-7)
