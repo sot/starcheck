@@ -142,8 +142,7 @@ my $sosa_prefix = $par{vehicle} ? "V_" : "";
 my @global_warn;
 
 # asterisk only include to make globs work correctly
-my $backstop =
-  get_file("$par{dir}/${sosa_dir_slash}*.backstop", 'backstop', 'required');
+
 my $guide_summ = get_file("$par{dir}/mps/mg*.sum", 'guide summary');
 my $or_file = get_file("$par{dir}/mps/or/*.or", 'OR');
 my $mm_file = get_file("$par{dir}/mps/mm*.sum", 'maneuver');
@@ -225,6 +224,26 @@ for my $data_file ('up.gif', 'down.gif', 'overlib.js') {
     copy("${Starcheck_Data}/${data_file}", "${STARCHECK}/${data_file}")
       or print STDERR
       "copy(${Starcheck_Data}/${data_file}, ${STARCHECK}/${data_file}) failed: $! \n";
+}
+
+# If in vehicle mode, make a filtered version of the backstop and write out to the output file.
+# Otherwise, use the backstop file found in the directory in $par{dir}.
+my $backstop;
+if ($par{vehicle}) {
+    my $backstop_source =
+      get_file("$par{dir}/*.backstop", 'backstop source file', 'required');
+    call_python(
+        "utils.vehicle_filter_backstop",
+        [],
+        {
+            backstop_file => $backstop_source,
+            outfile => "$STARCHECK/vehicle_filtered.backstop",
+        }
+    );
+    $backstop = get_file("$STARCHECK/*.backstop", 'vehicle backstop', 'required');
+}
+else {
+    $backstop = get_file("$par{dir}/*.backstop", 'backstop', 'required');
 }
 
 # First read the Backstop file, and split into components
@@ -577,7 +596,7 @@ $json_obsid_temps = call_python(
     "utils.ccd_temp_wrapper",
     [],
     {
-        oflsdir => $par{dir},
+        oflsdir => $par{vehicle} ? $STARCHECK : $par{dir},
         outdir => $STARCHECK,
         json_obsids => $json_text,
         orlist => $or_file,

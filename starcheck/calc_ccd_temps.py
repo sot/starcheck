@@ -407,7 +407,7 @@ def mock_telem_predict(states, stat=None):
 def get_bs_cmds(oflsdir):
     """Return commands for the backstop file in opt.oflsdir.
     """
-    backstop_file = globfile(os.path.join(oflsdir, 'CR*.backstop'))
+    backstop_file = globfile(os.path.join(oflsdir, '*.backstop'))
     logger.info('Using backstop file %s' % backstop_file)
     bs_cmds = kadi.commands.get_cmds_from_backstop(backstop_file)
     logger.info('Found %d backstop commands between %s and %s' %
