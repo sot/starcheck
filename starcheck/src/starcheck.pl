@@ -390,11 +390,6 @@ warning("Could not open bad AGASC file $bad_agasc_file\n")
 my (%dot_cmd, %dot_time_offset, %dot_tolerance);
 set_dot_cmd();
 
-# Go through records and set the time of MP_TARGQUAT commands to
-# the time of the subsequent cmd with COMMAND_SW | TLMSID= AOMANUVR
-
-fix_targquat_time();
-
 # Now go through records, pull out the interesting things, and assemble
 # into structures based on obsid.
 
@@ -1098,38 +1093,6 @@ sub make_annotated_file {
       or die "Couldn't open $file_out for writing\n";
     print $FILE2 $ptf->ptf2any('html', "\\fixed_start \n" . join('', @{$lines}));
     close $FILE2;
-}
-
-##***************************************************************************
-sub fix_targquat_time {
-##***************************************************************************
-    # Go through records and set the time of MP_TARGQUAT commands to
-    # the time of the subsequent cmd with COMMAND_SW | TLMSID= AOMANUVR
-    my $manv_time;
-    my $set = 0;
-
-    for my $i (reverse(0 .. $#cmd)) {
-        if ($cmd[$i] eq 'COMMAND_SW' and $params[$i] =~ /AOMANUVR/) {
-
-            #	    print STDERR "First: $cmd[$i], $time[$i], $date[$i] \n";
-            $manv_time = $time[$i];
-            $set = 1;
-        }
-        if ($cmd[$i] eq 'MP_TARGQUAT') {
-
-            #	    print STDERR "Second: $cmd[$i], $time[$i], $date[$i] \n";
-            if ($set eq 1) {
-                $time[$i] = $manv_time;
-
-         #		undef $manv_time;	# Make sure that each TARGQUAT gets a unique AOMANUVR time
-                $set = 0;
-            }
-            else {
-                warning(
-                    "Found MP_TARGQUAT at $date[$i] without corresponding AOMANUVR\n");
-            }
-        }
-    }
 }
 
 ##***************************************************************************
