@@ -552,3 +552,19 @@ def vehicle_filter_backstop(backstop_file, outfile):
                      or cmd["type"] == "MP_OBSID"]
     # Write the filtered commands to the output file
     write_backstop(filtered_cmds, outfile)
+
+def target_subfunction_q(q1, q2, q3):
+    q4_obc = np.sqrt(abs(1.0 - q1**2 - q2**2 - q3**2))
+    norm = np.sqrt(q1**2 + q2**2 + q3**2 + q4_obc**2)
+    q = [q1/norm, q2/norm, q3/norm, q4_obc/norm]
+    return q
+
+
+def replace_with_obc_quats(bs_cmds):
+    cmds = bs_cmds.copy()
+    for cmd in cmds:
+        if cmd['type'] == 'MP_TARGQUAT':
+            cmd['params']['q1'], cmd['params']['q2'], cmd['params']['q3'], cmd['params']['q4'] = target_subfunction_q(
+                cmd['q1'], cmd['q2'], cmd['q3']
+            )
+    return cmds
