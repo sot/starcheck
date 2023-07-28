@@ -30,8 +30,6 @@ from cxotime import CxoTime
 
 import starcheck
 from starcheck import __version__ as version
-from starcheck.calc_ccd_temps import get_ccd_temps
-from starcheck.check_ir_zone import ir_zone_ok
 from starcheck.plot import make_plots_for_obsid
 
 ACQS = mica.stats.acq_stats.get_stats()
@@ -74,10 +72,6 @@ def time2date(val):
     return out
 
 
-def ccd_temp_wrapper(**kwargs):
-    return get_ccd_temps(**kwargs)
-
-
 def plot_cat_wrapper(**kwargs):
     return make_plots_for_obsid(**kwargs)
 
@@ -99,6 +93,7 @@ def set_kadi_scenario_default():
 
 
 def get_cheta_source():
+    import starcheck.calc_ccd_temps
     sources = starcheck.calc_ccd_temps.fetch.data_source.sources()
     if len(sources) == 1 and sources[0] == "cxc":
         return "cxc"
@@ -113,10 +108,6 @@ def get_kadi_scenario():
 def get_data_dir():
     sc_data = os.path.join(os.path.dirname(starcheck.__file__), "data")
     return sc_data if os.path.exists(sc_data) else ""
-
-
-def make_ir_check_report(**kwargs):
-    return ir_zone_ok(**kwargs)
 
 
 def get_dither_kadi_state(date):

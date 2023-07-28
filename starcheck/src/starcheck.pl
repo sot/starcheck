@@ -588,7 +588,7 @@ my $json_text = json_obsids();
 my $obsid_temps;
 my $json_obsid_temps;
 $json_obsid_temps = call_python(
-    "utils.ccd_temp_wrapper",
+    "calc_ccd_temps.get_ccd_temps",
     [],
     {
         oflsdir => $par{vehicle} ? $STARCHECK : $par{dir},
@@ -730,7 +730,7 @@ if (@global_warn) {
 $out .= "------------  HIGH IR ZONE CHECK  -----------------\n\n";
 my $ir_report = "${STARCHECK}/high_ir_check.txt";
 my $ir_ok = call_python(
-    "utils.make_ir_check_report",
+    "check_ir_zone.ir_zone_ok",
     [],
     {
         backstop_file => $backstop,
