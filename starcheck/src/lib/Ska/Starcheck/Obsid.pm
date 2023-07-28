@@ -2133,10 +2133,10 @@ sub print_report {
             $o .= sprintf "MP_TARGQUAT at $c->{date} (VCDU count = $c->{vcdu})\n";
             $o .= sprintf(
                 "  Q1,Q2,Q3,Q4: %.8f  %.8f  %.8f  %.8f\n",
-                $c->{Q1},
-                $c->{Q2},
-                $c->{Q3},
-                $c->{Q4}
+                $self->{OBC_Q1},
+                $self->{OBC_Q2},
+                $self->{OBC_Q3},
+                $self->{OBC_Q4}
             );
             if (exists $c->{man_err} and exists $c->{dur} and exists $c->{angle}) {
                 $o .= sprintf(
