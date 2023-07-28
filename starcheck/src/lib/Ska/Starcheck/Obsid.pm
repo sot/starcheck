@@ -284,10 +284,16 @@ sub set_target {
 ##################################################################################
     my $self = shift;
 
+    # Get quat from MP_TARGQUAT (backstop) command.
     my $c = find_command($self, "MP_TARGQUAT", -1);    # Find LAST TARGQUAT cmd
     if (defined $c) {
 
-        # Get quat from MP_TARGQUAT (backstop) command.
+        # Check if it has numeric issues for Quaternion package
+        my $one_minus_xn2 = 1 - (2 * ($c->{Q1} * $c->{Q3} - $c->{Q2} * $c->{Q4}))**2;
+        if ($one_minus_xn2 < -1e-12){
+            push @{ $self->{warn} },
+              sprintf("Backstop 4-element quat not normalized for one_minus_xn2 test\n");
+        }
         # Compute 4th component (as only first 3 are uplinked) and renormalize.
         # Intent is to match OBC Target Reference subfunction
         my $q4_obc = sqrt(abs(1.0 - $c->{Q1}**2 - $c->{Q2}**2 - $c->{Q3}**2));
@@ -306,6 +312,13 @@ sub set_target {
         ($self->{ra}, $self->{dec}, $self->{roll}) = (undef, undef, undef);
         ($self->{OBC_Q1}, $self->{OBC_Q2}, $self->{OBC_Q3}, $self->{OBC_Q4}) =
           (undef, undef, undef, undef);
+    }
+
+
+    # Check abs declination MP guideline
+    if ((defined $self->{dec}) and (abs($self->{dec}) >= 89.7)){
+        push @{ $self->{warn} },
+          sprintf("Target abs(Dec) is %.1f degrees > 89.7 limit \n", abs($self->{dec}));
     }
 
 }
