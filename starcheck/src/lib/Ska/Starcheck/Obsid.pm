@@ -284,15 +284,29 @@ sub set_target {
 ##################################################################################
     my $self = shift;
 
-    my $manvr = find_command($self, "MP_TARGQUAT", -1);    # Find LAST TARGQUAT cmd
-    ($self->{ra}, $self->{dec}, $self->{roll}) =
-      $manvr
-      ? quat2radecroll($manvr->{Q1}, $manvr->{Q2}, $manvr->{Q3}, $manvr->{Q4})
-      : (undef, undef, undef);
+    my $c = find_command($self, "MP_TARGQUAT", -1);    # Find LAST TARGQUAT cmd
+    if (defined $c) {
 
-    $self->{ra} = defined $self->{ra} ? sprintf("%.6f", $self->{ra}) : undef;
-    $self->{dec} = defined $self->{dec} ? sprintf("%.6f", $self->{dec}) : undef;
-    $self->{roll} = defined $self->{roll} ? sprintf("%.6f", $self->{roll}) : undef;
+        # Get quat from MP_TARGQUAT (backstop) command.
+        # Compute 4th component (as only first 3 are uplinked) and renormalize.
+        # Intent is to match OBC Target Reference subfunction
+        my $q4_obc = sqrt(abs(1.0 - $c->{Q1}**2 - $c->{Q2}**2 - $c->{Q3}**2));
+        my $norm = sqrt($c->{Q1}**2 + $c->{Q2}**2 + $c->{Q3}**2 + $q4_obc**2);
+        if (abs(1.0 - $norm) > 1e-6) {
+            push @{ $self->{warn} },
+              sprintf("Uplink quaternion norm value $norm is too far from 1.0\n");
+        }
+        my @c_quat_norm =
+          ($c->{Q1} / $norm, $c->{Q2} / $norm, $c->{Q3} / $norm, $q4_obc / $norm);
+        ($self->{ra}, $self->{dec}, $self->{roll}) = quat2radecroll(@c_quat_norm);
+        ($self->{OBC_Q1}, $self->{OBC_Q2}, $self->{OBC_Q3}, $self->{OBC_Q4}) =
+          @c_quat_norm;
+    }
+    else {
+        ($self->{ra}, $self->{dec}, $self->{roll}) = (undef, undef, undef);
+        ($self->{OBC_Q1}, $self->{OBC_Q2}, $self->{OBC_Q3}, $self->{OBC_Q4}) =
+          (undef, undef, undef, undef);
+    }
 
 }
 
@@ -2995,10 +3009,10 @@ sub proseco_args {
         obsid => $self->{obsid},
         date => $targ_cmd->{stop_date},
         att => [
-            0 + $targ_cmd->{q1},
-            0 + $targ_cmd->{q2},
-            0 + $targ_cmd->{q3},
-            0 + $targ_cmd->{q4}
+            0 + $self->{OBC_Q1},
+            0 + $self->{OBC_Q2},
+            0 + $self->{OBC_Q3},
+            0 + $self->{OBC_Q4}
         ],
         man_angle => 0 + $targ_cmd->{angle},
         detector => $si,
