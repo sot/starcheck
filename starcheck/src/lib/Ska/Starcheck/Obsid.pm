@@ -2882,10 +2882,10 @@ sub set_ccd_temps {
     }
 
     # Add CRITICAL if OR and too cold as fid lights may be out of boxes
-    if (($self->{obsid} < 38000) and ($self->{ccd_temp_min} < -14.0)) {
+    if (($self->{obsid} < 38000) and ($self->{ccd_temp_acq} < -14.0)) {
         push @{ $self->{warn} },
-          sprintf("OR with min(t_ccd) %.1f < -14. Fid lights may not be tracked\n",
-            $self->{ccd_temp_min});
+          sprintf("OR with acq t_ccd %.1f < -14. Fid lights may not be tracked\n",
+            $self->{ccd_temp_acq});
     }
 
     # Add info for having a penalty temperature too
