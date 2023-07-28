@@ -650,7 +650,7 @@ foreach my $obsid (@obsid_id) {
         $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
         $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
         $obs{$obsid}->check_momentum_unload(\@bs);
-        $obs{$obsid}->check_bright_perigee($radmon);
+        $obs{$obsid}->check_bright_perigee($radmon, $par{vehicle});
         $obs{$obsid}->check_guide_count();
     }
 
