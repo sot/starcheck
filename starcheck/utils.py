@@ -39,8 +39,10 @@ GUIDES = mica.stats.guide_stats.get_stats()
 # Ignore warnings about clipping the acquisition model magnitudes
 # from chandra_aca.star_probs
 warnings.filterwarnings(
-    "ignore", category=UserWarning,
-    message=r"\nModel .* computed between .* clipping input mag\(s\) outside that range\.")
+    "ignore",
+    category=UserWarning,
+    message=r"\nModel .* computed between .* clipping input mag\(s\) outside that range\.",
+)
 
 
 def date2secs(val):
@@ -559,8 +561,8 @@ def vehicle_filter_backstop(backstop_file, outfile):
     # as we want the params to keep the SCS to write back later.
     cmds = read_backstop_as_list(backstop_file, inline_params=False)
     # Filter the commands to remove SCS 131, 132, 133 except MP_OBSID commands
-    filtered_cmds = [cmd for cmd in cmds
-                     if cmd["scs"] < 131
-                     or cmd["type"] == "MP_OBSID"]
+    filtered_cmds = [
+        cmd for cmd in cmds if cmd["scs"] < 131 or cmd["type"] == "MP_OBSID"
+    ]
     # Write the filtered commands to the output file
     write_backstop(filtered_cmds, outfile)
