@@ -535,8 +535,9 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
                                figsize=(9, 5),
                                )
         ax = plots[msid]['ax']
-        plots[msid]['ax'].axhline(y=char.aca_t_ccd_penalty_limit,
-                                  linestyle='--', color='g', linewidth=2.0)
+        if char.aca_t_ccd_penalty_limit is not None:
+            plots[msid]['ax'].axhline(y=char.aca_t_ccd_penalty_limit,
+                                      linestyle='--', color='g', linewidth=2.0)
         plots[msid]['ax'].axhline(y=char.aca_t_ccd_planning_limit,
                                   linestyle='--', color='r', linewidth=2.0)
         plt.subplots_adjust(bottom=0.1)

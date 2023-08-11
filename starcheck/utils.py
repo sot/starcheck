@@ -9,7 +9,6 @@ import mica.stats.acq_stats
 import mica.stats.guide_stats
 import numpy as np
 import proseco.characteristics as proseco_char
-import proseco.characteristics as char
 import Quaternion
 from astropy.table import Table
 from Chandra.Time import DateTime
@@ -88,6 +87,14 @@ def starcheck_version():
 
 def get_chandra_models_version():
     return proseco_char.chandra_models_version
+
+
+def get_aca_t_ccd_planning_limit():
+    return proseco_char.aca_t_ccd_planning_limit
+
+
+def get_aca_t_ccd_penalty_limit():
+    return proseco_char.aca_t_ccd_penalty_limit
 
 
 def set_kadi_scenario_default():
@@ -217,10 +224,6 @@ def config_logging(outdir, verbose, name):
     filehandler = logging.FileHandler(filename=outdir / "run.dat", mode="w")
     filehandler.setFormatter(formatter)
     logger.addHandler(filehandler)
-
-
-def _get_aca_limits():
-    return float(char.aca_t_ccd_planning_limit), float(char.aca_t_ccd_penalty_limit)
 
 
 def _pixels_to_yagzag(i, j):
