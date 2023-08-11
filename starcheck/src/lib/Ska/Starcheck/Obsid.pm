@@ -122,8 +122,8 @@ sub set_config {
     %config = %{$config_ref};
 
     # Set the ACA planning (red) and penalty (yellow) limits if defined.
-    $config{'ccd_temp_red_limit'} = call_python('utils.get_aca_t_ccd_planning_limit');
-    $config{'ccd_temp_yellow_limit'} = call_python('utils.get_aca_t_ccd_penalty_limit');
+    $config{'ccd_temp_red_limit'} = call_python('calc_ccd_temps.get_aca_t_ccd_planning_limit');
+    $config{'ccd_temp_yellow_limit'} = call_python('calc_ccd_temps.get_aca_t_ccd_penalty_limit');
 }
 
 ##################################################################################

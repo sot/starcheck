@@ -13,7 +13,6 @@ import os
 import glob
 import logging
 import time
-import shutil
 import numpy as np
 import json
 from pathlib import Path
@@ -39,8 +38,8 @@ import xija
 from chandra_aca import dark_model
 from parse_cm import read_or_list
 from chandra_aca.drift import get_aca_offsets
-import proseco.characteristics as proseco_char
-from xija.get_model_spec import get_xija_model_spec
+from ska_helpers import chandra_models
+
 
 from starcheck import __version__ as version
 
@@ -61,10 +60,28 @@ try:
 except Exception:
     VERSION = 'dev'
 
+CM_ACA_MODEL_DATA, CM_ACA_MODEL_INFO = (
+    chandra_models.get_data('chandra_models/xija/aca/aca_spec.json'))
+CM_ACA_MODEL_SPEC = json.loads(CM_ACA_MODEL_DATA)
+ACA_PLANNING_LIMIT = CM_ACA_MODEL_SPEC["limits"]["aacccdpt"].get("planning.warning.high")
+ACA_PENALTY_LIMIT = CM_ACA_MODEL_SPEC["limits"]["aacccdpt"].get("planning.penalty.high")
+
+
+def get_chandra_models_version():
+    return CM_ACA_MODEL_INFO["version"]
+
+
+def get_aca_t_ccd_planning_limit():
+    return ACA_PLANNING_LIMIT
+
+
+def get_aca_t_ccd_penalty_limit():
+    return ACA_PENALTY_LIMIT
+
 
 def get_ccd_temps(oflsdir, outdir='out',
                   json_obsids=None,
-                  model_spec=None, orlist=None,
+                  orlist=None,
                   run_start_time=None,
                   verbose=1, maude=None, **kwargs):
     """
@@ -76,7 +93,6 @@ def get_ccd_temps(oflsdir, outdir='out',
     :param outdir: output directory for plots
     :param json_obsids: file-like object or string containing JSON of
                         starcheck Obsid objects (default='<oflsdir>/starcheck/obsids.json')
-    :param model_spec: xija ACA model spec file (default=chandra_models current aca_spec.json)
     :param run_start_time: Chandra.Time date, clock time when starcheck was run,
                      or a user-provided value (usually for regression testing).
     :param verbose: Verbosity (0=quiet, 1=normal, 2=debug)
@@ -89,8 +105,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
-    if model_spec is None:
-        model_spec, chandra_models_version = get_xija_model_spec('aca')
+    model_spec = json.loads(CM_ACA_MODEL_DATA)
 
     if json_obsids is None:
         # Only happens in testing, so use existing obsids file in OFLS dir
@@ -110,7 +125,7 @@ def get_ccd_temps(oflsdir, outdir='out',
                 % (TASK_NAME, proc['execution_time'], proc['run_user']))
     logger.info("# Continuity run_start_time = {}".format(run_start_time.date))
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
-    logger.info(f'# chandra_models version = {proseco_char.chandra_models_version}')
+    logger.info(f'# chandra_models version = {CM_ACA_MODEL_INFO["version"]}')
     logger.info(f'# kadi version = {kadi.__version__}')
     logger.info('###############################'
                 '######################################\n')
@@ -129,12 +144,9 @@ def get_ccd_temps(oflsdir, outdir='out',
         use_maude = True
 
     # save model_spec in out directory
-    if isinstance(model_spec, dict):
-        with (Path(outdir) / 'aca_spec.json').open('w') as fh:
-            json.dump(model_spec, fh, sort_keys=True, indent=4,
-                      cls=NumpyAwareJSONEncoder)
-    else:
-        shutil.copy(model_spec, outdir)
+    with (Path(outdir) / 'aca_spec.json').open('w') as fh:
+        json.dump(model_spec, fh, sort_keys=True, indent=4,
+                  cls=NumpyAwareJSONEncoder)
 
     # json_obsids can be either a string or a file-like object.  Try those options in order.
     try:
@@ -211,7 +223,7 @@ def get_ccd_temps(oflsdir, outdir='out',
                                                   stat=None if use_maude else '5min')
 
     make_check_plots(outdir, states, ccd_times, ccd_temps,
-                     tstart=bs_start.secs, tstop=sched_stop.secs, char=proseco_char)
+                     tstart=bs_start.secs, tstop=sched_stop.secs)
     intervals = get_obs_intervals(sc_obsids)
     obsreqs = None if orlist is None else {obs['obsid']: obs for obs in read_or_list(orlist)}
     obstemps = get_interval_data(intervals, ccd_times, ccd_temps, obsreqs)
@@ -491,7 +503,7 @@ def plot_two(fig_id, x, y, x2, y2,
     return {'fig': fig, 'ax': ax, 'ax2': ax2}
 
 
-def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
+def make_check_plots(outdir, states, times, temps, tstart, tstop):
     """
     Make output plots.
 
@@ -518,9 +530,10 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
             id_labels.append(str(s1['obsid']))
 
     logger.info('Making temperature check plots')
+
     for fig_id, msid in enumerate(('aca',)):
-        temp_ymax = max(char.aca_t_ccd_planning_limit, np.max(temps))
-        temp_ymin = min(char.aca_t_ccd_planning_limit - 1, np.min(temps))
+        temp_ymax = max(ACA_PLANNING_LIMIT, np.max(temps))
+        temp_ymin = min(ACA_PLANNING_LIMIT - 1, np.min(temps))
         plots[msid] = plot_two(fig_id=fig_id + 1,
                                x=times,
                                y=temps,
@@ -535,10 +548,10 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop, char):
                                figsize=(9, 5),
                                )
         ax = plots[msid]['ax']
-        if char.aca_t_ccd_penalty_limit is not None:
-            plots[msid]['ax'].axhline(y=char.aca_t_ccd_penalty_limit,
+        if ACA_PENALTY_LIMIT is not None:
+            plots[msid]['ax'].axhline(y=ACA_PENALTY_LIMIT,
                                       linestyle='--', color='g', linewidth=2.0)
-        plots[msid]['ax'].axhline(y=char.aca_t_ccd_planning_limit,
+        plots[msid]['ax'].axhline(y=ACA_PLANNING_LIMIT,
                                   linestyle='--', color='r', linewidth=2.0)
         plt.subplots_adjust(bottom=0.1)
         pad = 1

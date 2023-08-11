@@ -8,7 +8,6 @@ import cxotime
 import mica.stats.acq_stats
 import mica.stats.guide_stats
 import numpy as np
-import proseco.characteristics as proseco_char
 import Quaternion
 from astropy.table import Table
 from Chandra.Time import DateTime
@@ -85,18 +84,6 @@ def plot_cat_wrapper(**kwargs):
 
 def starcheck_version():
     return version
-
-
-def get_chandra_models_version():
-    return proseco_char.chandra_models_version
-
-
-def get_aca_t_ccd_planning_limit():
-    return proseco_char.aca_t_ccd_planning_limit
-
-
-def get_aca_t_ccd_penalty_limit():
-    return proseco_char.aca_t_ccd_penalty_limit
 
 
 def set_kadi_scenario_default():
