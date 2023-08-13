@@ -15,6 +15,7 @@ import logging
 import time
 import numpy as np
 import json
+import functools
 from pathlib import Path
 
 # Matplotlib setup
@@ -60,23 +61,31 @@ try:
 except Exception:
     VERSION = 'dev'
 
-CM_ACA_MODEL_DATA, CM_ACA_MODEL_INFO = (
-    chandra_models.get_data('chandra_models/xija/aca/aca_spec.json'))
-CM_ACA_MODEL_SPEC = json.loads(CM_ACA_MODEL_DATA)
-ACA_PLANNING_LIMIT = CM_ACA_MODEL_SPEC["limits"]["aacccdpt"].get("planning.warning.high")
-ACA_PENALTY_LIMIT = CM_ACA_MODEL_SPEC["limits"]["aacccdpt"].get("planning.penalty.high")
 
+@functools.lru_cache()
+def aca_model_and_info():
+    model, info = chandra_models.get_data('chandra_models/xija/aca/aca_spec.json')
+    return model, info
 
-def get_chandra_models_version():
-    return CM_ACA_MODEL_INFO["version"]
+@functools.lru_cache()
+def aca_model_spec():
+    model, _ = aca_model_and_info()
+    return json.loads(model)
 
+@functools.lru_cache()
+def chandra_models_version():
+    _, info = aca_model_and_info()
+    return info["version"]
 
-def get_aca_t_ccd_planning_limit():
-    return ACA_PLANNING_LIMIT
+@functools.lru_cache()
+def aca_t_ccd_planning_limit():
+    model_spec = aca_model_spec()
+    return model_spec["limits"]["aacccdpt"].get("planning.warning.high")
 
-
-def get_aca_t_ccd_penalty_limit():
-    return ACA_PENALTY_LIMIT
+@functools.lru_cache()
+def aca_t_ccd_penalty_limit():
+    model_spec = aca_model_spec()
+    return model_spec["limits"]["aacccdpt"].get("planning.penalty.high")
 
 
 def get_ccd_temps(oflsdir, outdir='out',
@@ -105,7 +114,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
-    model_spec = json.loads(CM_ACA_MODEL_DATA)
+    model_spec = aca_model_spec()
 
     if json_obsids is None:
         # Only happens in testing, so use existing obsids file in OFLS dir
@@ -125,7 +134,7 @@ def get_ccd_temps(oflsdir, outdir='out',
                 % (TASK_NAME, proc['execution_time'], proc['run_user']))
     logger.info("# Continuity run_start_time = {}".format(run_start_time.date))
     logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
-    logger.info(f'# chandra_models version = {CM_ACA_MODEL_INFO["version"]}')
+    logger.info(f'# chandra_models version = {chandra_models_version()}')
     logger.info(f'# kadi version = {kadi.__version__}')
     logger.info('###############################'
                 '######################################\n')
@@ -532,8 +541,8 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop):
     logger.info('Making temperature check plots')
 
     for fig_id, msid in enumerate(('aca',)):
-        temp_ymax = max(ACA_PLANNING_LIMIT, np.max(temps))
-        temp_ymin = min(ACA_PLANNING_LIMIT - 1, np.min(temps))
+        temp_ymax = max(aca_t_ccd_planning_limit(), np.max(temps))
+        temp_ymin = min(aca_t_ccd_planning_limit() - 1, np.min(temps))
         plots[msid] = plot_two(fig_id=fig_id + 1,
                                x=times,
                                y=temps,
@@ -548,10 +557,10 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop):
                                figsize=(9, 5),
                                )
         ax = plots[msid]['ax']
-        if ACA_PENALTY_LIMIT is not None:
-            plots[msid]['ax'].axhline(y=ACA_PENALTY_LIMIT,
+        if aca_t_ccd_penalty_limit() is not None:
+            plots[msid]['ax'].axhline(y=aca_t_ccd_penalty_limit(),
                                       linestyle='--', color='g', linewidth=2.0)
-        plots[msid]['ax'].axhline(y=ACA_PLANNING_LIMIT,
+        plots[msid]['ax'].axhline(y=aca_t_ccd_planning_limit(),
                                   linestyle='--', color='r', linewidth=2.0)
         plt.subplots_adjust(bottom=0.1)
         pad = 1
