@@ -8,8 +8,6 @@ import cxotime
 import mica.stats.acq_stats
 import mica.stats.guide_stats
 import numpy as np
-import proseco.characteristics as proseco_char
-import proseco.characteristics as char
 import Quaternion
 from astropy.table import Table
 from Chandra.Time import DateTime
@@ -40,8 +38,10 @@ GUIDES = mica.stats.guide_stats.get_stats()
 # Ignore warnings about clipping the acquisition model magnitudes
 # from chandra_aca.star_probs
 warnings.filterwarnings(
-    "ignore", category=UserWarning,
-    message=r"\nModel .* computed between .* clipping input mag\(s\) outside that range\.")
+    "ignore",
+    category=UserWarning,
+    message=r"\nModel .* computed between .* clipping input mag\(s\) outside that range\.",
+)
 
 
 def date2secs(val):
@@ -84,10 +84,6 @@ def plot_cat_wrapper(**kwargs):
 
 def starcheck_version():
     return version
-
-
-def get_chandra_models_version():
-    return proseco_char.chandra_models_version
 
 
 def set_kadi_scenario_default():
@@ -217,10 +213,6 @@ def config_logging(outdir, verbose, name):
     filehandler = logging.FileHandler(filename=outdir / "run.dat", mode="w")
     filehandler.setFormatter(formatter)
     logger.addHandler(filehandler)
-
-
-def _get_aca_limits():
-    return float(char.aca_t_ccd_planning_limit), float(char.aca_t_ccd_penalty_limit)
 
 
 def _pixels_to_yagzag(i, j):
@@ -556,8 +548,8 @@ def vehicle_filter_backstop(backstop_file, outfile):
     # as we want the params to keep the SCS to write back later.
     cmds = read_backstop_as_list(backstop_file, inline_params=False)
     # Filter the commands to remove SCS 131, 132, 133 except MP_OBSID commands
-    filtered_cmds = [cmd for cmd in cmds
-                     if cmd["scs"] < 131
-                     or cmd["type"] == "MP_OBSID"]
+    filtered_cmds = [
+        cmd for cmd in cmds if cmd["scs"] < 131 or cmd["type"] == "MP_OBSID"
+    ]
     # Write the filtered commands to the output file
     write_backstop(filtered_cmds, outfile)

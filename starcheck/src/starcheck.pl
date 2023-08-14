@@ -682,7 +682,7 @@ my $hostname = hostname;
 $out .= "------------  Starcheck $version    -----------------\n";
 $out .= " Run on $date by $ENV{USER} from $hostname\n";
 $out .= " Configuration:  Using AGASC at $agasc_file\n";
-my $chandra_models_version = call_python("utils.get_chandra_models_version");
+my $chandra_models_version = call_python("calc_ccd_temps.chandra_models_version");
 $out .= " chandra_models version: $chandra_models_version\n";
 my $kadi_scenario = call_python("utils.get_kadi_scenario");
 if ($kadi_scenario ne "flight") {

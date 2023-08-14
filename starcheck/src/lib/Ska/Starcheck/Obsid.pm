@@ -121,11 +121,9 @@ sub set_config {
     my $config_ref = shift;
     %config = %{$config_ref};
 
-    # Set the ACA planning (red) and penalty (yellow) limits. Under the hood
-    # this uses proseco to get the relevant values from the current release of
-    # the ACA thermal model in chandra_models.
-    my $vals = call_python("utils._get_aca_limits");
-    ($config{'ccd_temp_red_limit'}, $config{'ccd_temp_yellow_limit'}) = @$vals;
+    # Set the ACA planning (red) and penalty (yellow) limits if defined.
+    $config{'ccd_temp_red_limit'} = call_python('calc_ccd_temps.aca_t_ccd_planning_limit');
+    $config{'ccd_temp_yellow_limit'} = call_python('calc_ccd_temps.aca_t_ccd_penalty_limit');
 }
 
 ##################################################################################
@@ -2889,17 +2887,19 @@ sub set_ccd_temps {
     }
 
     # Add info for having a penalty temperature too
-    if ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}) {
-        push @{ $self->{fyi} },
-          sprintf("Effective guide temperature %.1f C\n",
-            call_python("utils.get_effective_t_ccd", [ $self->{ccd_temp} ]));
+    if (defined $config{ccd_temp_yellow_limit}) {
+        if ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}) {
+            push @{ $self->{fyi} },
+              sprintf("Effective guide temperature %.1f C\n",
+                call_python("utils.get_effective_t_ccd", [ $self->{ccd_temp} ]));
 
-    }
-    if ($self->{ccd_temp_acq} > $config{ccd_temp_yellow_limit}) {
-        push @{ $self->{fyi} },
-          sprintf("Effective acq temperature %.1f C\n",
-            call_python("utils.get_effective_t_ccd", [ $self->{ccd_temp_acq} ]));
+        }
+        if ($self->{ccd_temp_acq} > $config{ccd_temp_yellow_limit}) {
+            push @{ $self->{fyi} },
+              sprintf("Effective acq temperature %.1f C\n",
+                call_python("utils.get_effective_t_ccd", [ $self->{ccd_temp_acq} ]));
 
+        }
     }
 
 # Clip the acq ccd temperature to the calibrated range of the grid acq probability model
