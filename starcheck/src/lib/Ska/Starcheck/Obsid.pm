@@ -2877,7 +2877,7 @@ sub set_ccd_temps {
 
     # Add info statement for limit violations
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}) {
-        push @{ $self->{fyi} },
+        push @{ $self->{warn} },
           sprintf("CCD temperature exceeds %.1f C\n", $config{ccd_temp_red_limit});
     }
 
