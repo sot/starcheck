@@ -2875,7 +2875,7 @@ sub set_ccd_temps {
     $self->{ccd_temp_acq} = $obsid_temps->{ $self->{obsid} }->{ccd_temp_acq};
     $self->{n100_warm_frac} = $obsid_temps->{ $self->{obsid} }->{n100_warm_frac};
 
-    # Add info statement for limit violations
+    # Add critical warning for ACA planning limit violation
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}) {
         push @{ $self->{warn} },
           sprintf("CCD temperature exceeds %.1f C\n", $config{ccd_temp_red_limit});
