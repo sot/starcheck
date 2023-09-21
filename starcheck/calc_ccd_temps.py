@@ -37,7 +37,7 @@ import kadi.commands
 import kadi.commands.states as kadi_states
 import xija
 from chandra_aca import dark_model
-from parse_cm import read_or_list
+from parse_cm import read_or_list_full
 from chandra_aca.drift import get_aca_offsets
 from ska_helpers import chandra_models
 
@@ -234,7 +234,10 @@ def get_ccd_temps(oflsdir, outdir='out',
     make_check_plots(outdir, states, ccd_times, ccd_temps,
                      tstart=bs_start.secs, tstop=sched_stop.secs)
     intervals = get_obs_intervals(sc_obsids)
-    obsreqs = None if orlist is None else {obs['obsid']: obs for obs in read_or_list(orlist)}
+    if orlist is None:
+        obsreqs = None
+    else:
+        obsreqs, _ = read_or_list_full(orlist)
     obstemps = get_interval_data(intervals, ccd_times, ccd_temps, obsreqs)
     return json.dumps(obstemps, sort_keys=True, indent=4,
                       cls=NumpyAwareJSONEncoder)
@@ -275,12 +278,12 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
             100, interval['tstart'], np.max(ok_temps))
         # If we have an OR list, the obsid is in that list, and the OR list has zero-offset keys
         if (obsreqs is not None and interval['obsid'] in obsreqs and
-                'chip_id' in obsreqs[interval['obsid']]):
+                'zero_offset' in obsreqs[interval['obsid']]):
             obsreq = obsreqs[interval['obsid']]
-            ddy, ddz = get_aca_offsets(obsreq['detector'],
-                                       obsreq['chip_id'],
-                                       obsreq['chipx'],
-                                       obsreq['chipy'],
+            ddy, ddz = get_aca_offsets(obsreq['zero_offset']['detector'],
+                                       obsreq['zero_offset']['chip_id'],
+                                       obsreq['zero_offset']['chipx'],
+                                       obsreq['zero_offset']['chipy'],
                                        time=ok_times,
                                        t_ccd=ok_temps)
             obs['aca_offset_y'] = np.mean(ddy)
