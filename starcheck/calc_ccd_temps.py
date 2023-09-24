@@ -234,10 +234,7 @@ def get_ccd_temps(oflsdir, outdir='out',
     make_check_plots(outdir, states, ccd_times, ccd_temps,
                      tstart=bs_start.secs, tstop=sched_stop.secs)
     intervals = get_obs_intervals(sc_obsids)
-    if orlist is None:
-        obsreqs = None
-    else:
-        obsreqs, _ = read_or_list_full(orlist)
+    obsreqs = None if orlist is None else read_or_list_full(orlist)[0]
     obstemps = get_interval_data(intervals, ccd_times, ccd_temps, obsreqs)
     return json.dumps(obstemps, sort_keys=True, indent=4,
                       cls=NumpyAwareJSONEncoder)

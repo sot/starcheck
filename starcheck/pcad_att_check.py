@@ -101,10 +101,7 @@ def run(backstop_file, or_list_file=None, attitude_file=None,
                      'simpos': simpos,
                      'simfa_pos': simfa}
 
-    if or_list_file is None:
-        obsreqs = None
-    else:
-        obsreqs, _ = read_or_list_full(or_list_file)
+    obsreqs = None if or_list_file is None else read_or_list_full(or_list_file)[0]
 
     if obsreqs is None:
         lines.append('ERROR: No OR list provided, cannot check attitudes')
