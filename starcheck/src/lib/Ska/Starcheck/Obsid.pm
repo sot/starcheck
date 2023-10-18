@@ -1922,7 +1922,7 @@ sub check_fids {
     my $c = shift;    # Star catalog command
     my $warn = shift;    # Array ref to warnings for this obsid
 
-    my $fid_hw = 35;
+    my $fid_hw = 40;
 
     my (@fid_ok, @fidsel_ok);
     my ($i, $i_fid);
