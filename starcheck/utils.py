@@ -141,7 +141,6 @@ def get_dither_kadi_state(date):
 
 
 def _get_fid_offset(date, t_ccd_acq):
-
     dy, dz = (0, 0)
 
     enable_fid_offset_env = os.environ.get("PROSECO_ENABLE_FID_OFFSET", "True")
