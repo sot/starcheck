@@ -1971,6 +1971,13 @@ sub check_fids {
             {
                 $fidsel_ok = 1;
                 $fid_ok[$i_fid] = 1;
+                # Add a warning if the match is within 5 arcsecs of the edge
+                if ((   abs($yag - $c->{"YANG$i"}) > ($fid_hw - 5))
+                    |  (abs($zag - $c->{"ZANG$i"}) > ($fid_hw - 5)))
+                {
+                    push @{$self->{orange_warn}},
+                      "Fid $self->{SI} FIDSEL $fid within 5 arcsec of fid search box edge\n";
+                }
                 last;
             }
         }
