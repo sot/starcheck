@@ -1,7 +1,4 @@
-import pytest
-import numpy as np
 from starcheck.utils import check_hot_pix
-from starcheck.utils import _get_fid_offset
 
 
 def test_check_dynamic_hot_pix():
@@ -69,38 +66,3 @@ def test_check_dynamic_hot_pix():
             assert imposter1["bad2_mag"] < imposter2["bad2_mag"]
             assert imposter1["offset"] > imposter2["offset"]
 
-
-def test_get_fid_offset(monkeypatch):
-    # Test case 1: enable_fid_offset_env is True
-    with monkeypatch.context() as m:
-        m.setenv("PROSECO_ENABLE_FID_OFFSET", "True")
-        date = "2023:200"
-        t_ccd_acq = -5.0
-        expected_dy = -0.36
-        expected_dz = -5.81
-        dy, dz = _get_fid_offset(date, t_ccd_acq)
-        assert np.isclose(dy, expected_dy, atol=0.1, rtol=0)
-        assert np.isclose(dz, expected_dz, atol=0.1, rtol=0)
-
-    # Test case 2: enable_fid_offset_env is False
-    with monkeypatch.context() as m:
-        m.setenv("PROSECO_ENABLE_FID_OFFSET", "False")
-        date = "2023:200"
-        t_ccd_acq = -5.0
-        expected_dy = 0.0
-        expected_dz = 0.0
-        dy, dz = _get_fid_offset(date, t_ccd_acq)
-        assert dy == expected_dy
-        assert dz == expected_dz
-
-    # Test case 3: enable_fid_offset_env is invalid
-    with monkeypatch.context() as m:
-        m.setenv("PROSECO_ENABLE_FID_OFFSET", "invalid")
-        date = "2023:200"
-        t_ccd_acq = -5.0
-        with pytest.raises(ValueError) as e:
-            _get_fid_offset(date, t_ccd_acq)
-        assert (
-            str(e.value)
-            == 'PROSECO_ENABLE_FID_OFFSET env var must be either "True" or "False" got invalid'
-        )

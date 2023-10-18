@@ -1955,7 +1955,7 @@ sub check_fids {
         }
         my $fidsel_ok = 0;
 
-        my $offsets = call_python("utils._get_fid_offset",
+        my $offsets = call_python("utils.get_fid_offset",
             [ $self->{date}, $self->{ccd_temp_acq} ]);
         my $dy = $offsets->[0];
         my $dz = $offsets->[1];
