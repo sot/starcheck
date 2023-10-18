@@ -122,8 +122,10 @@ sub set_config {
     %config = %{$config_ref};
 
     # Set the ACA planning (red) and penalty (yellow) limits if defined.
-    $config{'ccd_temp_red_limit'} = call_python('calc_ccd_temps.aca_t_ccd_planning_limit');
-    $config{'ccd_temp_yellow_limit'} = call_python('calc_ccd_temps.aca_t_ccd_penalty_limit');
+    $config{'ccd_temp_red_limit'} =
+      call_python('calc_ccd_temps.aca_t_ccd_planning_limit');
+    $config{'ccd_temp_yellow_limit'} =
+      call_python('calc_ccd_temps.aca_t_ccd_penalty_limit');
 }
 
 ##################################################################################
@@ -1920,12 +1922,13 @@ sub check_fids {
     my $c = shift;    # Star catalog command
     my $warn = shift;    # Array ref to warnings for this obsid
 
+    my $fid_hw = 35;
+
     my (@fid_ok, @fidsel_ok);
     my ($i, $i_fid);
 
     # If no star cat fids and no commanded fids, then return
-    my $fid_number = @{ $self->{fid} };
-    return if ($fid_number == 0 && @{ $self->{fidsel} } == 0);
+    return if (@{ $self->{fid} } == 0 && @{ $self->{fidsel} } == 0);
 
     # Make sure we have SI and SIM_OFFSET_Z to be able to calculate fid yang and zang
     unless (defined $self->{SI}) {
@@ -1937,10 +1940,10 @@ sub check_fids {
         return;
     }
 
+    # Catalog fids
     @fid_ok = map { 0 } @{ $self->{fid} };
 
-    # Calculate yang and zang for each commanded fid, then cross-correlate with
-    # all commanded fids.
+    # For each FIDSEL fid, confirm it is in the catalog with the correct position
     foreach my $fid (@{ $self->{fidsel} }) {
 
         my ($yag, $zag, $error) =
@@ -1952,12 +1955,20 @@ sub check_fids {
         }
         my $fidsel_ok = 0;
 
+        my $offsets = call_python("utils._get_fid_offset",
+            [ $self->{date}, $self->{ccd_temp_acq} ]);
+        my $dy = $offsets->[0];
+        my $dz = $offsets->[1];
+        $yag += $dy;
+        $zag += $dz;
+
         # Cross-correlate with all star cat fids
         for $i_fid (0 .. $#fid_ok) {
             $i = $self->{fid}[$i_fid];    # Index into star catalog entries
 
-            # Check if starcat fid matches fidsel fid position to within 10 arcsec
-            if (abs($yag - $c->{"YANG$i"}) < 10.0 && abs($zag - $c->{"ZANG$i"}) < 10.0)
+            # Check if any starcat fid matches fidsel fid position
+            if (   abs($yag - $c->{"YANG$i"}) < $fid_hw
+                && abs($zag - $c->{"ZANG$i"}) < $fid_hw)
             {
                 $fidsel_ok = 1;
                 $fid_ok[$i_fid] = 1;
@@ -1968,7 +1979,7 @@ sub check_fids {
         # ACA-034
         push @{$warn},
           sprintf(
-            "Fid $self->{SI} FIDSEL $fid not found within 10 arcsec of (%.1f, %.1f)\n",
+"Fid $self->{SI} FIDSEL $fid not found within $fid_hw arcsec of (%.1f, %.1f)\n",
             $yag, $zag)
           unless ($fidsel_ok);
     }
@@ -1976,7 +1987,7 @@ sub check_fids {
     # ACA-035
     for $i_fid (0 .. $#fid_ok) {
         push @{$warn},
-"Fid with IDX=\[$self->{fid}[$i_fid]\] is in star catalog but is not turned on via FIDSEL\n"
+"Fid IDX=\[$self->{fid}[$i_fid]\] not within $fid_hw arcsec of an ON FIDSEL fid\n",
           unless ($fid_ok[$i_fid]);
     }
 }
