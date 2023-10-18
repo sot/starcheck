@@ -1184,7 +1184,7 @@ sub check_star_catalog {
     # Match positions of fids in star catalog with expected, and verify a one to one
     # correspondance between FIDSEL command and star catalog.
     # Skip this for vehicle-only loads since fids will be turned off.
-    check_fids($self, $c, \@warn) unless $vehicle;
+    check_fids($self, $c) unless $vehicle;
 
     # store a list of the fid positions
     my @fid_positions =
@@ -1920,7 +1920,6 @@ sub check_fids {
 #############################################################################################
     my $self = shift;
     my $c = shift;    # Star catalog command
-    my $warn = shift;    # Array ref to warnings for this obsid
 
     my $fid_hw = 40;
 
@@ -1932,11 +1931,11 @@ sub check_fids {
 
     # Make sure we have SI and SIM_OFFSET_Z to be able to calculate fid yang and zang
     unless (defined $self->{SI}) {
-        push @{$warn}, "Unable to check fids because SI undefined\n";
+        push @{$self->{warn}}, "Unable to check fids because SI undefined\n";
         return;
     }
     unless (defined $self->{SIM_OFFSET_Z}) {
-        push @{$warn}, "Unable to check fids because SIM_OFFSET_Z undefined\n";
+        push @{$self->{warn}}, "Unable to check fids because SIM_OFFSET_Z undefined\n";
         return;
     }
 
@@ -1950,7 +1949,7 @@ sub check_fids {
           calc_fid_ang($fid, $self->{SI}, $self->{SIM_OFFSET_Z}, $self->{obsid});
 
         if ($error) {
-            push @{$warn}, "$error\n";
+            push @{$self->{warn}}, "$error\n";
             next;
         }
         my $fidsel_ok = 0;
@@ -1977,7 +1976,7 @@ sub check_fids {
         }
 
         # ACA-034
-        push @{$warn},
+        push @{$self->{warn}},
           sprintf(
 "Fid $self->{SI} FIDSEL $fid not found within $fid_hw arcsec of (%.1f, %.1f)\n",
             $yag, $zag)
@@ -1986,7 +1985,7 @@ sub check_fids {
 
     # ACA-035
     for $i_fid (0 .. $#fid_ok) {
-        push @{$warn},
+        push @{$self->{warn}},
 "Fid IDX=\[$self->{fid}[$i_fid]\] not within $fid_hw arcsec of an ON FIDSEL fid\n",
           unless ($fid_ok[$i_fid]);
     }
