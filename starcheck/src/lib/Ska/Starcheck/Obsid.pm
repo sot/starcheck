@@ -2890,10 +2890,11 @@ sub set_ccd_temps {
           sprintf("CCD temperature exceeds %.1f C\n", $config{ccd_temp_red_limit});
     }
 
-    # Add CRITICAL if OR and too cold as fid lights may be out of boxes
-    if (($self->{obsid} < 38000) and ($self->{ccd_temp_acq} < -14.0)) {
+    # Add CRITICAL if OR and temperature looks well out of range (fid drift model may be wrong)
+    if (($self->{obsid} < 38000) and
+        (($self->{ccd_temp_acq} <= -20.0) or ($self->{ccd_temp_acq} >= 5.0))) {
         push @{ $self->{warn} },
-          sprintf("OR with acq t_ccd %.1f < -14. Fid lights may not be tracked\n",
+          sprintf("OR with acq t_ccd %.1f not in -20 < t_ccd < 5. Fid positions uncalibrated.\n",
             $self->{ccd_temp_acq});
     }
 
