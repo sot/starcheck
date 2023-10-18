@@ -2892,7 +2892,7 @@ sub set_ccd_temps {
 
     # Add CRITICAL if OR and temperature looks well out of range (fid drift model may be wrong)
     if (($self->{obsid} < 38000) and
-        (($self->{ccd_temp_acq} <= -20.0) or ($self->{ccd_temp_acq} >= 5.0))) {
+        (($self->{ccd_temp_acq} < -20.0) or ($self->{ccd_temp_acq} > 5.0))) {
         push @{ $self->{warn} },
           sprintf("OR with acq t_ccd %.1f not in -20 < t_ccd < 5. Fid positions uncalibrated.\n",
             $self->{ccd_temp_acq});
