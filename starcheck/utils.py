@@ -14,6 +14,7 @@ from Chandra.Time import DateTime
 from chandra_aca.star_probs import mag_for_p_acq
 import chandra_aca.star_probs
 from chandra_aca.dark_model import dark_temp_scale
+import chandra_aca.drift
 import sparkles
 from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to_pixels
 from kadi.commands import states
@@ -137,6 +138,24 @@ def get_dither_kadi_state(date):
         np.max([DateTime(state["__dates__"][key]).secs for key in cols])
     )
     return state
+
+
+def _get_fid_offset(date, t_ccd_acq):
+
+    dy, dz = (0, 0)
+
+    enable_fid_offset_env = os.environ.get("PROSECO_ENABLE_FID_OFFSET", "True")
+    if enable_fid_offset_env not in ("True", "False"):
+        raise ValueError(
+            f'PROSECO_ENABLE_FID_OFFSET env var must be either "True" or "False" '
+            f"got {enable_fid_offset_env}"
+        )
+
+    # The env var is still just a string so do a string equals on it
+    if enable_fid_offset_env == "True":
+        dy, dz = chandra_aca.drift.get_fid_offset(date, t_ccd_acq)
+
+    return float(dy), float(dz)
 
 
 def get_run_start_time(run_start_time, backstop_start):
