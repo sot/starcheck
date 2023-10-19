@@ -1,4 +1,5 @@
 from astropy.table import Table, vstack
+import astropy.units as u
 from functools import lru_cache
 import numpy as np
 
@@ -43,7 +44,7 @@ def make_man_angles(backstop_file):
     # 10 days is more than enough: it doesn't matter.
     if states['pcad_mode'][0] != 'NPNT':
         pre_states = kadi_states.get_states(
-            start=CxoTime(states[0]['tstart']) - 10, stop=states[0]['tstart'],
+            start=CxoTime(states[0]['tstart']) - 10 * u.day, stop=states[0]['tstart'],
             state_keys=['pcad_mode'], merge_identical=True)
         states = vstack([pre_states, states])
 
