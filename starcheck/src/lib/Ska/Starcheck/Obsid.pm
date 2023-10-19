@@ -1184,11 +1184,9 @@ sub check_star_catalog {
     # Match positions of fids in star catalog with expected, and verify a one to one
     # correspondance between FIDSEL command and star catalog.
     # Skip this for vehicle-only loads since fids will be turned off.
-    check_fids($self, $c) unless $vehicle;
+    my $fid_positions = get_fid_positions($self, $c);
+    check_fids($self, $c, $fid_positions) unless $vehicle;
 
-    # store a list of the fid positions
-    my @fid_positions =
-      map { { 'y' => $c->{"YANG$_"}, 'z' => $c->{"ZANG$_"} } } @{ $self->{fid} };
 
     # Make arrays of the items that we need for the hot pixel region check
     my (@idxs, @yags, @zags, @mags, @types);
@@ -1528,7 +1526,7 @@ sub check_star_catalog {
             # of the 25 arcsec value here.
             my $fid_spoil_margin = $halfw + 25.0;
 
-            for my $fpos (@fid_positions) {
+            for my $fpos (@{$fid_positions}) {
                 if (    abs($fpos->{y} - $yag) < $fid_spoil_margin
                     and abs($fpos->{z} - $zag) < $fid_spoil_margin)
                 {
@@ -1916,35 +1914,28 @@ sub check_monitor_commanding {
 }
 
 #############################################################################################
-sub check_fids {
+sub get_fid_positions{
 #############################################################################################
+
     my $self = shift;
-    my $c = shift;    # Star catalog command
-
-    my $fid_hw = 40;
-
-    my (@fid_ok, @fidsel_ok);
-    my ($i, $i_fid);
+    my $c = shift;
+    my $fid_positions = [];
 
     # If no star cat fids and no commanded fids, then return
-    return if (@{ $self->{fid} } == 0 && @{ $self->{fidsel} } == 0);
+    return $fid_positions if (@{ $self->{fid} } == 0 && @{ $self->{fidsel} } == 0);
 
     # Make sure we have SI and SIM_OFFSET_Z to be able to calculate fid yang and zang
     unless (defined $self->{SI}) {
         push @{$self->{warn}}, "Unable to check fids because SI undefined\n";
-        return;
+        return $fid_positions;
     }
     unless (defined $self->{SIM_OFFSET_Z}) {
         push @{$self->{warn}}, "Unable to check fids because SIM_OFFSET_Z undefined\n";
-        return;
+        return $fid_positions;
     }
 
-    # Catalog fids
-    @fid_ok = map { 0 } @{ $self->{fid} };
-
-    # For each FIDSEL fid, confirm it is in the catalog with the correct position
+    # For each FIDSEL fid, calculate position
     foreach my $fid (@{ $self->{fidsel} }) {
-
         my ($yag, $zag, $error) =
           calc_fid_ang($fid, $self->{SI}, $self->{SIM_OFFSET_Z}, $self->{obsid});
 
@@ -1952,7 +1943,6 @@ sub check_fids {
             push @{$self->{warn}}, "$error\n";
             next;
         }
-        my $fidsel_ok = 0;
 
         my $offsets = call_python("utils.get_fid_offset",
             [ $self->{date}, $self->{ccd_temp_acq} ]);
@@ -1961,9 +1951,36 @@ sub check_fids {
         $yag += $dy;
         $zag += $dz;
 
+        push @{$fid_positions}, { y => $yag, z => $zag };
+    }
+    return $fid_positions;
+
+}
+
+#############################################################################################
+sub check_fids {
+#############################################################################################
+    my $self = shift;
+    my $c = shift;    # Star catalog command
+    my $fid_positions = shift;
+
+    my $fid_hw = 40;
+
+    # If no star cat fids and no commanded fids, then return
+    return if (@{ $self->{fid} } == 0 && @{ $self->{fidsel} } == 0);
+
+    # Catalog fids
+    my @fid_ok = map { 0 } @{ $self->{fid} };
+
+    # For each FIDSEL fid, confirm it is in a catalog search box
+    foreach my $fid (@{ $fid_positions }) {
+
+        my ($yag, $zag) = ($fid->{y}, $fid->{z});
+        my $fidsel_ok = 0;
+
         # Cross-correlate with all star cat fids
-        for $i_fid (0 .. $#fid_ok) {
-            $i = $self->{fid}[$i_fid];    # Index into star catalog entries
+        for my $i_fid (0 .. $#fid_ok) {
+            my $i = $self->{fid}[$i_fid];    # Index into star catalog entries
 
             # Check if any starcat fid matches fidsel fid position
             if (   abs($yag - $c->{"YANG$i"}) < $fid_hw
@@ -1991,7 +2008,7 @@ sub check_fids {
     }
 
     # ACA-035
-    for $i_fid (0 .. $#fid_ok) {
+    for my $i_fid (0 .. $#fid_ok) {
         push @{$self->{warn}},
 "Fid IDX=\[$self->{fid}[$i_fid]\] not within $fid_hw arcsec of an ON FIDSEL fid\n",
           unless ($fid_ok[$i_fid]);
