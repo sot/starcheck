@@ -1919,19 +1919,19 @@ sub get_fid_positions{
 
     my $self = shift;
     my $c = shift;
-    my $fid_positions = [];
+    my @fid_positions;
 
     # If no star cat fids and no commanded fids, then return
-    return $fid_positions if (@{ $self->{fid} } == 0 && @{ $self->{fidsel} } == 0);
+    return \@fid_positions if (@{ $self->{fid} } == 0 && @{ $self->{fidsel} } == 0);
 
     # Make sure we have SI and SIM_OFFSET_Z to be able to calculate fid yang and zang
     unless (defined $self->{SI}) {
         push @{$self->{warn}}, "Unable to check fids because SI undefined\n";
-        return $fid_positions;
+        return \@fid_positions;
     }
     unless (defined $self->{SIM_OFFSET_Z}) {
         push @{$self->{warn}}, "Unable to check fids because SIM_OFFSET_Z undefined\n";
-        return $fid_positions;
+        return \@fid_positions;
     }
 
     # For each FIDSEL fid, calculate position
@@ -1951,9 +1951,9 @@ sub get_fid_positions{
         $yag += $dy;
         $zag += $dz;
 
-        push @{$fid_positions}, { y => $yag, z => $zag };
+        push @fid_positions, { y => $yag, z => $zag };
     }
-    return $fid_positions;
+    return \@fid_positions;
 
 }
 
