@@ -2179,7 +2179,7 @@ sub print_report {
             if (    (defined $c->{man_angle_calc})
                 and (abs($c->{man_angle_calc} - $c->{angle}) > 10))
             {
-                $o .= sprintf("  MANVR: Calculated angle for proseco = %6.2f deg\n",
+                $o .= sprintf("  MANVR: Calculated angle for starcheck proseco = %6.2f deg\n",
                     $c->{man_angle_calc});
             }
             $o .= "\n";
