@@ -2981,7 +2981,7 @@ sub proseco_args {
         return \%proseco_args;
     }
 
-    my $man_angle = call_python("check_ir_zone.get_obs_man_angle",
+    my $man_angle = call_python("state_checks.get_obs_man_angle",
         [ $targ_cmd->{tstop}, $self->{backstop} ]);
     $targ_cmd->{man_angle_calc} = $man_angle;
 
