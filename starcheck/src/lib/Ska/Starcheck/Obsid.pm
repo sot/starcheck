@@ -37,7 +37,6 @@ use Carp;
 
 my $VERSION = '$Id$';    # '
 my $ER_MIN_OBSID = 38000;
-my $ACA_MANERR_PAD = 20;    # Maneuver error pad for ACA effects (arcsec)
 my $r2a = 3600. * 180. / 3.14159265;
 my $faint_plot_mag = 11.0;
 my %Default_SIM_Z = (
@@ -409,44 +408,6 @@ sub set_maneuver {
     }
 }
 
-##################################################################################
-sub set_manerr {
-    #
-    # Set the maneuver error for each MP_TARGQUAT command within the obsid
-    # using the more accurate values from Bill Davis' code
-    #
-##################################################################################
-    my $self = shift;
-    my @manerr = @_;
-    my $n = 1;
-    my $c;
-    while ($c = find_command($self, "MP_TARGQUAT", $n)) {
-
-        foreach my $me (@manerr) {
-
-        # There should be a one-to-one mapping between maneuver segments in the maneuver
-          # error file and those in the obsid records.  First, find what *should* be the
-            # match.  Then check quaternions to make sure
-
-            if ($self->{obsid} eq $me->{obsid} && $n == $me->{Seg}) {
-                if (   abs($me->{finalQ1} - $c->{Q1}) < 1e-7
-                    && abs($me->{finalQ2} - $c->{Q2}) < 1e-7
-                    && abs($me->{finalQ3} - $c->{Q3}) < 1e-7)
-                {
-                    $c->{man_err} = $me->{MaxErrYZ} + $ACA_MANERR_PAD;
-                    $c->{man_err_data} = $me;    # Save the whole record just in case
-                }
-                else {
-                    push @{ $self->{yellow_warn} },
-                      sprintf(
-"Mismatch in target quaternion ($c->{date}) and maneuver error file\n"
-                      );
-                }
-            }
-        }
-        $n++;
-    }
-}
 
 ##################################################################################
 sub set_ps_times {
@@ -1114,17 +1075,6 @@ sub check_star_catalog {
     my $oflsid = $self->{dot_obsid};
     my $obsid = $self->{obsid};
 
-    # Set slew error (arcsec) for this obsid, or 120 if not available
-    my $slew_err;
-    my $targquat;
-    if ($targquat = find_command($self, "MP_TARGQUAT", -1)) {
-        $slew_err = $targquat->{man_err};
-    }
-    else {
-        # if no target quaternion, warn and continue
-        push @{ $self->{warn} }, "No target/maneuver for obsid $obsid ($oflsid). \n";
-    }
-    $slew_err = 120 if not defined $slew_err;
 
     # ACA-004
     # if no starcat, warn and quit this subroutine
@@ -1287,8 +1237,6 @@ sub check_star_catalog {
         my $halfw = $c->{"HALFW$i"};
         my $db_stats = $c->{"GS_USEDBEFORE${i}"};
 
-    # Search error for ACQ is the slew error, for fid, guide or mon it is about 4 arcsec
-        my $search_err = ((defined $type) and ($type =~ /BOT|ACQ/)) ? $slew_err : 4.0;
 
         # Find position extrema for smallest rectangle check
         if ($type =~ /BOT|GUI/) {
@@ -1666,19 +1614,6 @@ sub check_star_catalog {
                 else { push @yellow_warn, $warn }
             }
 
-# Search box spoiler - star within search box + search error and within 1.0 mags ACA-023
-            if (    $type =~ /BOT|ACQ/
-                and $dz < $halfw + $search_err
-                and $dy < $halfw + $search_err
-                and $dm > -1.0)
-            {
-                my $warn =
-                  sprintf("[%2d] Search spoiler. %10d: "
-                      . "Y,Z,Radial,Mag seps: %3d %3d %3d %4s\n",
-                    $i, $star->{id}, $dy, $dz, $dr, $dm_string);
-                if ($dm > -0.2) { push @orange_warn, $warn }
-                else { push @yellow_warn, $warn }
-            }
 
            # Common column: dz within limit, spoiler is $col_sep_mag brighter than star,
             # and spoiler is located between star and readout ACA-026
@@ -2172,8 +2107,8 @@ sub print_report {
             );
             if (exists $c->{man_err} and exists $c->{dur} and exists $c->{angle}) {
                 $o .= sprintf(
-"  MANVR: Angle= %6.2f deg  Duration= %.0f sec  Slew err= %.1f arcsec  End= %s\n",
-                    $c->{angle}, $c->{dur}, $c->{man_err},
+"  MANVR: Angle= %6.2f deg  Duration= %.0f sec  End= %s\n",
+                    $c->{angle}, $c->{dur},
                     substr(time2date($c->{tstop}), 0, 17));
             }
             if (    (defined $c->{man_angle_calc})

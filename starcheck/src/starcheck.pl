@@ -335,13 +335,6 @@ Ska::Starcheck::Obsid::setcolors(
 my %odb = Ska::Parse_CM_File::odb($odb_file);
 Ska::Starcheck::Obsid::set_odb(%odb);
 
-# Read Maneuver error file containing more accurate maneuver errors
-print "Reading Maneuver Error file $manerr_file\n";
-my @manerr;
-if ($manerr_file) {
-    @manerr = Ska::Parse_CM_File::man_err($manerr_file);
-}
-else { warning("Could not find Maneuver Error file in output/ directory\n") }
 
 # Get an initial dither state from kadi.  Dither states are then built from backstop commands
 # after this time.  If the running loads will be terminated in advance of new commands in the loads
@@ -454,7 +447,6 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_target();
     $obs{$obsid}->set_star_catalog();
     $obs{$obsid}->set_maneuver($mm);
-    $obs{$obsid}->set_manerr(@manerr) if (@manerr);
     $obs{$obsid}->set_files(
         $STARCHECK,
         $backstop,
