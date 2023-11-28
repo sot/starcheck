@@ -177,13 +177,12 @@ def get_manvrs(obs_text):
                                        target_Q3=float(quat_re.group(3)),
                                        target_Q4=float(quat_re.group(4))))
             angle_re = re.match(
-                "\s+MANVR: Angle=\s+(\d+\.\d+)\sdeg\s+Duration=\s+(\d+)\ssec\s+Slew\serr=\s+(\d+\.\d)\sarcsec(\s+End=\s+(\S+))?",
+                "\s+MANVR: Angle=\s+(\d+\.\d+)\sdeg\s+Duration=\s+(\d+)\ssec(\s+Slew\serr=\s+(\d+\.\d)\sarcsec)?(\s+End=\s+(\S+))?",
                 mline)
             if angle_re:
                 curr_manvr.update(dict(angle_deg=float(angle_re.group(1)),
-                                       duration_sec=int(angle_re.group(2)),
-                                       slew_err_arcsec=float(angle_re.group(3)),
-                                       end_date=angle_re.group(5)))
+                                       duration_sec=int(angle_re.group(2)),,
+                                       end_date=angle_re.groups()[-1]))
                 if 'target_Q1' not in curr_manvr:
                     raise ValueError("No Q1,Q2,Q3,Q4 line found when parsing starcheck.txt")
         # If there is a real manvr, append to list
