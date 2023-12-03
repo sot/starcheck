@@ -33,38 +33,38 @@ def make_man_table():
     return Table([durations, angles], names=["duration", "angle"])
 
 
-def calc_pcad_state_nman_sums(states):
+def calc_pcad_states_nman_durations(states):
     """
     For each NPNT state in a monotonically increasing list of states,
-    calculate the sum of time in NMAN before it
+    calculate the duration of time in NMAN before it
     and interpolate into the man_table to calculate the equivalent
-    angle for a duration.
+    angle for this duration.
     """
     man_table = make_man_table()
 
-    nman_sums = []
-    single_nman_sum = 0
+    nman_durations = []
+    single_nman_duration = 0
     for state in states:
         if state["pcad_mode"] == "NMAN":
-            single_nman_sum += state["tstop"] - state["tstart"]
-        if (state["pcad_mode"] == "NPNT") & (single_nman_sum > 0):
-            nman_sums.append(
+            single_nman_duration += state["tstop"] - state["tstart"]
+        if (state["pcad_mode"] == "NPNT") & (single_nman_duration > 0):
+            nman_durations.append(
                 {
                     "tstart": state["tstart"],
-                    "nman_sum": single_nman_sum.copy(),
+                    "nman_sum": single_nman_duration.copy(),
                     "angle": np.interp(
-                        single_nman_sum, man_table["duration"], man_table["angle"]
+                        single_nman_duration, man_table["duration"], man_table["angle"]
                     ),
                 }
             )
             # Reset the sum of NMM time to 0 on any NPNT state
-            single_nman_sum = 0
+            single_nman_duration = 0
 
         # If in a funny state, just add a large "maneuver time" of 20ks
         if state["pcad_mode"] not in ["NMAN", "NPNT"]:
-            single_nman_sum += 20000
+            single_nman_duration += 20000
 
-    return Table(nman_sums)
+    return Table(nman_durations)
 
 
 @lru_cache
@@ -75,7 +75,7 @@ def make_man_angles(backstop_file):
     maneuver-equivalent-angle for each NMAN sum time.
 
     :param: backstop file
-    :returns: astropy time with columns 'tstart', 'nman_sum', 'angle'
+    :returns: astropy Table with columns 'tstart', 'nman_sum', 'angle'
     """
     states = get_states(backstop_file, state_keys=["pcad_mode"])
 
@@ -90,7 +90,8 @@ def make_man_angles(backstop_file):
         )
         states = vstack([pre_states, states])
 
-    return calc_pcad_state_nman_sums(states)
+    out = calc_pcad_states_nman_durations(states)
+    return out
 
 
 def get_obs_man_angle(npnt_tstart, backstop_file, default_large_angle=180):
@@ -121,14 +122,11 @@ def get_obs_man_angle(npnt_tstart, backstop_file, default_large_angle=180):
 
 def get_states(backstop_file, state_keys=None):
     bs_cmds = kadi_commands.get_cmds_from_backstop(backstop_file)
-    bs_dates = bs_cmds["date"]
-    ok = bs_cmds["event_type"] == "RUNNING_LOAD_TERMINATION_TIME"
-    rltt = CxoTime(bs_dates[ok][0] if np.any(ok) else bs_dates[0])
+    rltt = bs_cmds.get_rltt() or bs_cmds["date"][0]
 
     # Scheduled stop time is the end of propagation, either the explicit
     # time as a pseudo-command in the loads or the last backstop command time.
-    ok = bs_cmds["event_type"] == "SCHEDULED_STOP_TIME"
-    sched_stop = CxoTime(bs_dates[ok][0] if np.any(ok) else bs_dates[-1])
+    sched_stop = bs_cmds.get_scheduled_stop_time() or bs_cmds["date"][-1]
 
     # Get the states for available commands.  This automatically gets continuity.
     return kadi_states.get_states(
@@ -174,7 +172,7 @@ def ir_zone_ok(backstop_file, out=None):
             out_text.append(
                 f"  state {state['datestart']} {state['datestop']} {state['pcad_mode']}"
             )
-        if np.any(states[ok]["pcad_mode"] != "NMAN"):
+        if np.any(states["pcad_mode"][ok] != "NMAN"):
             all_ok = False
 
     if out is not None:
