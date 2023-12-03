@@ -1992,8 +1992,9 @@ sub check_fids {
                 if ((   abs($yag - $c->{"YANG$i"}) > ($fid_hw - 5))
                     |  (abs($zag - $c->{"ZANG$i"}) > ($fid_hw - 5)))
                 {
-                    push @{$self->{orange_warn}},
-                      "Fid $self->{SI} FIDSEL $fid within 5 arcsec of fid search box edge\n";
+                    push @{$self->{orange_warn}}, sprintf(
+                      "[%2d] expected fid pos within 5 arcsec of search box edge\n",
+                      $i);
                 }
                 last;
             }
@@ -2002,15 +2003,17 @@ sub check_fids {
         # ACA-034
         push @{$self->{warn}},
           sprintf(
-"Fid $self->{SI} FIDSEL $fid not found within $fid_hw arcsec of (%.1f, %.1f)\n",
+            "No catalog fid found within $fid_hw arcsec of fid turned on at (%.1f, %.1f)\n",
             $yag, $zag)
           unless ($fidsel_ok);
     }
 
     # ACA-035
     for my $i_fid (0 .. $#fid_ok) {
-        push @{$self->{warn}},
-"Fid IDX=\[$self->{fid}[$i_fid]\] not within $fid_hw arcsec of an ON FIDSEL fid\n",
+        push @{$self->{warn}}, sprintf(
+"[%2d] catalog fid not within $fid_hw arcsec of an expected fid pos\n",
+            $self->{fid}[$i_fid]
+            )
           unless ($fid_ok[$i_fid]);
     }
 }
