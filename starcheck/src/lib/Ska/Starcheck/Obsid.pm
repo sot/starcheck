@@ -1187,7 +1187,6 @@ sub check_star_catalog {
     my $fid_positions = get_fid_positions($self, $c);
     check_fids($self, $c, $fid_positions) unless $vehicle;
 
-
     # Make arrays of the items that we need for the hot pixel region check
     my (@idxs, @yags, @zags, @mags, @types);
     foreach my $i (1 .. 16) {
@@ -1914,7 +1913,7 @@ sub check_monitor_commanding {
 }
 
 #############################################################################################
-sub get_fid_positions{
+sub get_fid_positions {
 #############################################################################################
 
     my $self = shift;
@@ -1926,11 +1925,12 @@ sub get_fid_positions{
 
     # Make sure we have SI and SIM_OFFSET_Z to be able to calculate fid yang and zang
     unless (defined $self->{SI}) {
-        push @{$self->{warn}}, "Unable to check fids because SI undefined\n";
+        push @{ $self->{warn} }, "Unable to check fids because SI undefined\n";
         return \@fid_positions;
     }
     unless (defined $self->{SIM_OFFSET_Z}) {
-        push @{$self->{warn}}, "Unable to check fids because SIM_OFFSET_Z undefined\n";
+        push @{ $self->{warn} },
+          "Unable to check fids because SIM_OFFSET_Z undefined\n";
         return \@fid_positions;
     }
 
@@ -1940,12 +1940,12 @@ sub get_fid_positions{
           calc_fid_ang($fid, $self->{SI}, $self->{SIM_OFFSET_Z}, $self->{obsid});
 
         if ($error) {
-            push @{$self->{warn}}, "$error\n";
+            push @{ $self->{warn} }, "$error\n";
             next;
         }
 
-        my $offsets = call_python("utils.get_fid_offset",
-            [ $self->{date}, $self->{ccd_temp_acq} ]);
+        my $offsets =
+          call_python("utils.get_fid_offset", [ $self->{date}, $self->{ccd_temp_acq} ]);
         my $dy = $offsets->[0];
         my $dz = $offsets->[1];
         $yag += $dy;
@@ -1973,7 +1973,7 @@ sub check_fids {
     my @fid_ok = map { 0 } @{ $self->{fid} };
 
     # For each FIDSEL fid, confirm it is in a catalog search box
-    foreach my $fid (@{ $fid_positions }) {
+    foreach my $fid (@{$fid_positions}) {
 
         my ($yag, $zag) = ($fid->{y}, $fid->{z});
         my $fidsel_ok = 0;
@@ -1988,32 +1988,34 @@ sub check_fids {
             {
                 $fidsel_ok = 1;
                 $fid_ok[$i_fid] = 1;
+
                 # Add a warning if the match is within 5 arcsecs of the edge
-                if ((   abs($yag - $c->{"YANG$i"}) > ($fid_hw - 5))
-                    |  (abs($zag - $c->{"ZANG$i"}) > ($fid_hw - 5)))
+                if ((abs($yag - $c->{"YANG$i"}) > ($fid_hw - 5)) |
+                    (abs($zag - $c->{"ZANG$i"}) > ($fid_hw - 5)))
                 {
-                    push @{$self->{orange_warn}}, sprintf(
-                      "[%2d] expected fid pos within 5 arcsec of search box edge\n",
-                      $i);
+                    push @{ $self->{orange_warn} },
+                      sprintf(
+                        "[%2d] expected fid pos within 5 arcsec of search box edge\n",
+                        $i);
                 }
                 last;
             }
         }
 
         # ACA-034
-        push @{$self->{warn}},
+        push @{ $self->{warn} },
           sprintf(
-            "No catalog fid found within $fid_hw arcsec of fid turned on at (%.1f, %.1f)\n",
+"No catalog fid found within $fid_hw arcsec of fid turned on at (%.1f, %.1f)\n",
             $yag, $zag)
           unless ($fidsel_ok);
     }
 
     # ACA-035
     for my $i_fid (0 .. $#fid_ok) {
-        push @{$self->{warn}}, sprintf(
-"[%2d] catalog fid not within $fid_hw arcsec of an expected fid pos\n",
-            $self->{fid}[$i_fid]
-            )
+        push @{ $self->{warn} },
+          sprintf(
+            "[%2d] catalog fid not within $fid_hw arcsec of an expected fid pos\n",
+            $self->{fid}[$i_fid])
           unless ($fid_ok[$i_fid]);
     }
 }
@@ -2916,11 +2918,13 @@ sub set_ccd_temps {
           sprintf("CCD temperature exceeds %.1f C\n", $config{ccd_temp_red_limit});
     }
 
-    # Add CRITICAL if OR and temperature looks well out of range (fid drift model may be wrong)
-    if (($self->{obsid} < 38000) and
-        (($self->{ccd_temp_acq} < -20.0) or ($self->{ccd_temp_acq} > 5.0))) {
+# Add CRITICAL if OR and temperature looks well out of range (fid drift model may be wrong)
+    if (    ($self->{obsid} < 38000)
+        and (($self->{ccd_temp_acq} < -20.0) or ($self->{ccd_temp_acq} > 5.0)))
+    {
         push @{ $self->{warn} },
-          sprintf("OR with acq t_ccd %.1f not in -20 < t_ccd < 5. Fid positions uncalibrated.\n",
+          sprintf(
+"OR with acq t_ccd %.1f not in -20 < t_ccd < 5. Fid positions uncalibrated.\n",
             $self->{ccd_temp_acq});
     }
 
