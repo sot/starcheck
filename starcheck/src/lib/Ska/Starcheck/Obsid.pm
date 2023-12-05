@@ -122,8 +122,10 @@ sub set_config {
     %config = %{$config_ref};
 
     # Set the ACA planning (red) and penalty (yellow) limits if defined.
-    $config{'ccd_temp_red_limit'} = call_python('calc_ccd_temps.aca_t_ccd_planning_limit');
-    $config{'ccd_temp_yellow_limit'} = call_python('calc_ccd_temps.aca_t_ccd_penalty_limit');
+    $config{'ccd_temp_red_limit'} =
+      call_python('calc_ccd_temps.aca_t_ccd_planning_limit');
+    $config{'ccd_temp_yellow_limit'} =
+      call_python('calc_ccd_temps.aca_t_ccd_penalty_limit');
 }
 
 ##################################################################################
@@ -1179,14 +1181,14 @@ sub check_star_catalog {
       if ( (@{ $self->{mon} } > 1 && $is_science)
         || (@{ $self->{mon} } > 2 && $is_er));
 
-    # Match positions of fids in star catalog with expected, and verify a one to one
-    # correspondance between FIDSEL command and star catalog.
-    # Skip this for vehicle-only loads since fids will be turned off.
-    check_fids($self, $c, \@warn) unless $vehicle;
+    # Calculate the ON fid positions
+    my $fid_positions = get_fid_positions($self, $c);
 
-    # store a list of the fid positions
-    my @fid_positions =
-      map { { 'y' => $c->{"YANG$_"}, 'z' => $c->{"ZANG$_"} } } @{ $self->{fid} };
+    # If there are fids turned on and positions for them have been determined
+    # run fid checks.  Skip this in vehicle mode as fids are turned off.
+    if (scalar(@{$fid_positions}) > 0 && not $vehicle) {
+        check_fids($self, $c, $fid_positions);
+    }
 
     # Make arrays of the items that we need for the hot pixel region check
     my (@idxs, @yags, @zags, @mags, @types);
@@ -1526,7 +1528,7 @@ sub check_star_catalog {
             # of the 25 arcsec value here.
             my $fid_spoil_margin = $halfw + 25.0;
 
-            for my $fpos (@fid_positions) {
+            for my $fpos (@{$fid_positions}) {
                 if (    abs($fpos->{y} - $yag) < $fid_spoil_margin
                     and abs($fpos->{z} - $zag) < $fid_spoil_margin)
                 {
@@ -1914,69 +1916,112 @@ sub check_monitor_commanding {
 }
 
 #############################################################################################
-sub check_fids {
+sub get_fid_positions {
 #############################################################################################
-    my $self = shift;
-    my $c = shift;    # Star catalog command
-    my $warn = shift;    # Array ref to warnings for this obsid
 
-    my (@fid_ok, @fidsel_ok);
-    my ($i, $i_fid);
+    my $self = shift;
+    my $c = shift;
+    my @fid_positions;
 
     # If no star cat fids and no commanded fids, then return
-    my $fid_number = @{ $self->{fid} };
-    return if ($fid_number == 0 && @{ $self->{fidsel} } == 0);
+    return \@fid_positions if (@{ $self->{fid} } == 0 && @{ $self->{fidsel} } == 0);
 
     # Make sure we have SI and SIM_OFFSET_Z to be able to calculate fid yang and zang
     unless (defined $self->{SI}) {
-        push @{$warn}, "Unable to check fids because SI undefined\n";
-        return;
+        push @{ $self->{warn} }, "Unable to check fids because SI undefined\n";
+        return \@fid_positions;
     }
     unless (defined $self->{SIM_OFFSET_Z}) {
-        push @{$warn}, "Unable to check fids because SIM_OFFSET_Z undefined\n";
-        return;
+        push @{ $self->{warn} },
+          "Unable to check fids because SIM_OFFSET_Z undefined\n";
+        return \@fid_positions;
     }
 
-    @fid_ok = map { 0 } @{ $self->{fid} };
+    # Calculate fid offsets
+    my $offsets =
+      call_python("utils.get_fid_offset", [ $self->{date}, $self->{ccd_temp_acq} ]);
+    my $dy = $offsets->[0];
+    my $dz = $offsets->[1];
 
-    # Calculate yang and zang for each commanded fid, then cross-correlate with
-    # all commanded fids.
+    # For each FIDSEL fid, calculate position
     foreach my $fid (@{ $self->{fidsel} }) {
-
         my ($yag, $zag, $error) =
           calc_fid_ang($fid, $self->{SI}, $self->{SIM_OFFSET_Z}, $self->{obsid});
 
         if ($error) {
-            push @{$warn}, "$error\n";
+            push @{ $self->{warn} }, "$error\n";
             next;
         }
+
+        # Apply offsets
+        $yag += $dy;
+        $zag += $dz;
+
+        push @fid_positions, { y => $yag, z => $zag };
+    }
+    return \@fid_positions;
+
+}
+
+#############################################################################################
+sub check_fids {
+#############################################################################################
+    my $self = shift;
+    my $c = shift;    # Star catalog command
+    my $fid_positions = shift;
+
+    my $fid_hw = 40;
+
+    # If no star cat fids and no commanded fids, then return
+    return if (@{ $self->{fid} } == 0 && @{ $self->{fidsel} } == 0);
+
+    # Catalog fids
+    my @fid_ok = map { 0 } @{ $self->{fid} };
+
+    # For each FIDSEL fid, confirm it is in a catalog search box
+    foreach my $fid (@{$fid_positions}) {
+
+        my ($yag, $zag) = ($fid->{y}, $fid->{z});
         my $fidsel_ok = 0;
 
         # Cross-correlate with all star cat fids
-        for $i_fid (0 .. $#fid_ok) {
-            $i = $self->{fid}[$i_fid];    # Index into star catalog entries
+        for my $i_fid (0 .. $#fid_ok) {
+            my $i = $self->{fid}[$i_fid];    # Index into star catalog entries
 
-            # Check if starcat fid matches fidsel fid position to within 10 arcsec
-            if (abs($yag - $c->{"YANG$i"}) < 10.0 && abs($zag - $c->{"ZANG$i"}) < 10.0)
+            # Check if any starcat fid matches fidsel fid position
+            if (   abs($yag - $c->{"YANG$i"}) < $fid_hw
+                && abs($zag - $c->{"ZANG$i"}) < $fid_hw)
             {
                 $fidsel_ok = 1;
                 $fid_ok[$i_fid] = 1;
+
+                # Add a warning if the match is within 5 arcsecs of the edge
+                if ((abs($yag - $c->{"YANG$i"}) > ($fid_hw - 5)) |
+                    (abs($zag - $c->{"ZANG$i"}) > ($fid_hw - 5)))
+                {
+                    push @{ $self->{orange_warn} },
+                      sprintf(
+                        "[%2d] expected fid pos within 5 arcsec of search box edge\n",
+                        $i);
+                }
                 last;
             }
         }
 
         # ACA-034
-        push @{$warn},
+        push @{ $self->{warn} },
           sprintf(
-            "Fid $self->{SI} FIDSEL $fid not found within 10 arcsec of (%.1f, %.1f)\n",
+"No catalog fid found within $fid_hw arcsec of fid turned on at (%.1f, %.1f)\n",
             $yag, $zag)
           unless ($fidsel_ok);
     }
 
     # ACA-035
-    for $i_fid (0 .. $#fid_ok) {
-        push @{$warn},
-"Fid with IDX=\[$self->{fid}[$i_fid]\] is in star catalog but is not turned on via FIDSEL\n"
+    for my $i_fid (0 .. $#fid_ok) {
+        push @{ $self->{warn} },
+          sprintf(
+            "[%2d] catalog fid not within $fid_hw arcsec of an expected fid pos\n",
+            $self->{fid}[$i_fid])
           unless ($fid_ok[$i_fid]);
     }
 }
@@ -2877,13 +2922,6 @@ sub set_ccd_temps {
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}) {
         push @{ $self->{warn} },
           sprintf("CCD temperature exceeds %.1f C\n", $config{ccd_temp_red_limit});
-    }
-
-    # Add CRITICAL if OR and too cold as fid lights may be out of boxes
-    if (($self->{obsid} < 38000) and ($self->{ccd_temp_acq} < -14.0)) {
-        push @{ $self->{warn} },
-          sprintf("OR with acq t_ccd %.1f < -14. Fid lights may not be tracked\n",
-            $self->{ccd_temp_acq});
     }
 
     # Add info for having a penalty temperature too

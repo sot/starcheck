@@ -62,7 +62,7 @@ def test_check_dynamic_hot_pix():
             assert imposter1["bad2_mag"] == imposter2["bad2_mag"]
             assert imposter1["offset"] == imposter2["offset"]
         else:
-            assert imposter2["t_ccd"] == imposter1["t_ccd"] - dyn_bgd_dt_ccd        
+            assert imposter2["t_ccd"] == imposter1["t_ccd"] - dyn_bgd_dt_ccd
             assert imposter1["bad2_mag"] < imposter2["bad2_mag"]
             assert imposter1["offset"] > imposter2["offset"]
-        
+

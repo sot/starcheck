@@ -14,6 +14,7 @@ from Chandra.Time import DateTime
 from chandra_aca.star_probs import mag_for_p_acq
 import chandra_aca.star_probs
 from chandra_aca.dark_model import dark_temp_scale
+from chandra_aca.drift import get_fid_offset
 import sparkles
 from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to_pixels
 from kadi.commands import states
