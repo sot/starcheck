@@ -1181,11 +1181,14 @@ sub check_star_catalog {
       if ( (@{ $self->{mon} } > 1 && $is_science)
         || (@{ $self->{mon} } > 2 && $is_er));
 
-    # Match positions of fids in star catalog with expected, and verify a one to one
-    # correspondance between FIDSEL command and star catalog.
-    # Skip this for vehicle-only loads since fids will be turned off.
+    # Calculate the ON fid positions
     my $fid_positions = get_fid_positions($self, $c);
-    check_fids($self, $c, $fid_positions) unless $vehicle;
+
+    # If there are fids turned on and positions for them have been determined
+    # run fid checks.  Skip this in vehicle mode as fids are turned off.
+    if (scalar(@{$fid_positions}) > 0 && not $vehicle) {
+        check_fids($self, $c, $fid_positions);
+    }
 
     # Make arrays of the items that we need for the hot pixel region check
     my (@idxs, @yags, @zags, @mags, @types);
@@ -1934,6 +1937,12 @@ sub get_fid_positions {
         return \@fid_positions;
     }
 
+    # Calculate fid offsets
+    my $offsets =
+      call_python("utils.get_fid_offset", [ $self->{date}, $self->{ccd_temp_acq} ]);
+    my $dy = $offsets->[0];
+    my $dz = $offsets->[1];
+
     # For each FIDSEL fid, calculate position
     foreach my $fid (@{ $self->{fidsel} }) {
         my ($yag, $zag, $error) =
@@ -1944,10 +1953,7 @@ sub get_fid_positions {
             next;
         }
 
-        my $offsets =
-          call_python("utils.get_fid_offset", [ $self->{date}, $self->{ccd_temp_acq} ]);
-        my $dy = $offsets->[0];
-        my $dz = $offsets->[1];
+        # Apply offsets
         $yag += $dy;
         $zag += $dz;
 
@@ -2916,16 +2922,6 @@ sub set_ccd_temps {
     if ($self->{ccd_temp} > $config{ccd_temp_red_limit}) {
         push @{ $self->{warn} },
           sprintf("CCD temperature exceeds %.1f C\n", $config{ccd_temp_red_limit});
-    }
-
-# Add CRITICAL if OR and temperature looks well out of range (fid drift model may be wrong)
-    if (    ($self->{obsid} < 38000)
-        and (($self->{ccd_temp_acq} < -20.0) or ($self->{ccd_temp_acq} > 5.0)))
-    {
-        push @{ $self->{warn} },
-          sprintf(
-"OR with acq t_ccd %.1f not in -20 < t_ccd < 5. Fid positions uncalibrated.\n",
-            $self->{ccd_temp_acq});
     }
 
     # Add info for having a penalty temperature too
