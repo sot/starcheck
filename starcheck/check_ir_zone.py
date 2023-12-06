@@ -3,6 +3,7 @@ import numpy as np
 import kadi.commands
 import kadi.commands.states
 from cxotime import CxoTime
+from starcheck.utils import replace_with_obc_quats
 
 
 def ir_zone_ok(backstop_file, out=None):
@@ -19,6 +20,8 @@ def ir_zone_ok(backstop_file, out=None):
 
     # Get the states for available commands.  This automatically gets continuity.
     state_keys = ['pcad_mode', 'obsid']
+    bs_cmds = replace_with_obc_quats(bs_cmds)
+
     states = kadi.commands.states.get_states(cmds=bs_cmds, start=rltt, stop=sched_stop,
                                              state_keys=state_keys, merge_identical=True)
 

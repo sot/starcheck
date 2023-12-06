@@ -284,15 +284,42 @@ sub set_target {
 ##################################################################################
     my $self = shift;
 
-    my $manvr = find_command($self, "MP_TARGQUAT", -1);    # Find LAST TARGQUAT cmd
-    ($self->{ra}, $self->{dec}, $self->{roll}) =
-      $manvr
-      ? quat2radecroll($manvr->{Q1}, $manvr->{Q2}, $manvr->{Q3}, $manvr->{Q4})
-      : (undef, undef, undef);
+    # Get quat from MP_TARGQUAT (backstop) command.
+    my $c = find_command($self, "MP_TARGQUAT", -1);    # Find LAST TARGQUAT cmd
+    if (defined $c) {
 
-    $self->{ra} = defined $self->{ra} ? sprintf("%.6f", $self->{ra}) : undef;
-    $self->{dec} = defined $self->{dec} ? sprintf("%.6f", $self->{dec}) : undef;
-    $self->{roll} = defined $self->{roll} ? sprintf("%.6f", $self->{roll}) : undef;
+        # Check if it has numeric issues for Quaternion package
+        my $one_minus_xn2 = 1 - (2 * ($c->{Q1} * $c->{Q3} - $c->{Q2} * $c->{Q4}))**2;
+        if ($one_minus_xn2 < -1e-12){
+            push @{ $self->{warn} },
+              sprintf("Backstop 4-element quat not normalized for one_minus_xn2 test\n");
+        }
+        # Compute 4th component (as only first 3 are uplinked) and renormalize.
+        # Intent is to match OBC Target Reference subfunction
+        my $q4_obc = sqrt(abs(1.0 - $c->{Q1}**2 - $c->{Q2}**2 - $c->{Q3}**2));
+        my $norm = sqrt($c->{Q1}**2 + $c->{Q2}**2 + $c->{Q3}**2 + $q4_obc**2);
+        if (abs(1.0 - $norm) > 1e-6) {
+            push @{ $self->{warn} },
+              sprintf("Uplink quaternion norm value $norm is too far from 1.0\n");
+        }
+        my @c_quat_norm =
+          ($c->{Q1} / $norm, $c->{Q2} / $norm, $c->{Q3} / $norm, $q4_obc / $norm);
+        ($self->{ra}, $self->{dec}, $self->{roll}) = quat2radecroll(@c_quat_norm);
+        ($self->{OBC_Q1}, $self->{OBC_Q2}, $self->{OBC_Q3}, $self->{OBC_Q4}) =
+          @c_quat_norm;
+    }
+    else {
+        ($self->{ra}, $self->{dec}, $self->{roll}) = (undef, undef, undef);
+        ($self->{OBC_Q1}, $self->{OBC_Q2}, $self->{OBC_Q3}, $self->{OBC_Q4}) =
+          (undef, undef, undef, undef);
+    }
+
+
+    # Check abs declination MP guideline
+    if ((defined $self->{dec}) and (abs($self->{dec}) >= 89.7)){
+        push @{ $self->{warn} },
+          sprintf("Target abs(Dec) is %.1f degrees > 89.7 limit \n", abs($self->{dec}));
+    }
 
 }
 
@@ -325,6 +352,17 @@ sub find_command {
     return undef;
 }
 
+sub first_maneuver_after {
+    my $man_time = shift;
+    my $mm = shift;
+  MANVR:
+    foreach my $m (@{$mm}) {
+        next MANVR if $m->{tstart} < $man_time;
+        return $m;
+    }
+    return undef;
+}
+
 ##################################################################################
 sub set_maneuver {
     #
@@ -339,72 +377,58 @@ sub set_maneuver {
 
     while ($c = find_command($self, "MP_TARGQUAT", $n++)) {
         $found = 0;
-        foreach my $m (@{$mm}) {
-            my $manvr_obsid = $m->{final_obsid};
 
-# where manvr_dest is either the final_obsid of a maneuver or the eventual destination obsid
-            # of a segmented maneuver
-            if (   ($manvr_obsid eq $self->{dot_obsid})
-                && abs($m->{q1} - $c->{Q1}) < 1e-7
-                && abs($m->{q2} - $c->{Q2}) < 1e-7
-                && abs($m->{q3} - $c->{Q3}) < 1e-7)
+        my $m = first_maneuver_after($c->{time}, $mm);
+        if (   (defined $m)
+            && abs($m->{q1} - $c->{Q1}) < 1e-7
+            && abs($m->{q2} - $c->{Q2}) < 1e-7
+            && abs($m->{q3} - $c->{Q3}) < 1e-7)
+        {
+            $found = 1;
+            foreach my $key (
+                qw(initial_obsid final_obsid dur angle ra dec roll q1 q2 q3 q4 tstart start_date tstop stop_date)
+              )
             {
-                $found = 1;
-                foreach (keys %{$m}) {
-                    $c->{$_} = $m->{$_};
-                }
+                $c->{$key} = $m->{$key};
+            }
 
           # Set the default maneuver error (based on WS Davis data) and cap at 85 arcsec
-                $c->{man_err} = (exists $c->{angle}) ? 35 + $c->{angle} / 2. : 85;
-                $c->{man_err} = 85 if ($c->{man_err} > 85);
-
-                # Get quat from MP_TARGQUAT (backstop) command.
-                # Compute 4th component (as only first 3 are uplinked) and renormalize.
-                # Intent is to match OBC Target Reference subfunction
-                my $q4_obc = sqrt(abs(1.0 - $c->{Q1}**2 - $c->{Q2}**2 - $c->{Q3}**2));
-                my $norm = sqrt($c->{Q1}**2 + $c->{Q2}**2 + $c->{Q3}**2 + $q4_obc**2);
-                if (abs(1.0 - $norm) > 1e-6) {
-                    push @{ $self->{warn} },
-                      sprintf(
-                        "Uplink quaternion norm value $norm is too far from 1.0\n");
-                }
-
-                my @c_quat_norm = (
-                    $c->{Q1} / $norm,
-                    $c->{Q2} / $norm,
-                    $c->{Q3} / $norm,
-                    $q4_obc / $norm
-                );
+            $c->{man_err} = (exists $c->{angle}) ? 35 + $c->{angle} / 2. : 85;
+            $c->{man_err} = 85 if ($c->{man_err} > 85);
 
    # Compare to quaternion used in $m (which provides {ra} {dec} {roll}) which was built
-                # directly from the 4 components in Backstop
-                my $q_man = Quat->new($m->{ra}, $m->{dec}, $m->{roll});
-                my $q_obc = Quat->new(@c_quat_norm);
-                my @q_man = @{ $q_man->{q} };
-                my $q_diff = $q_man->divide($q_obc);
+            # directly from the 4 components in Backstop
+            my $q_man = Quat->new($m->{ra}, $m->{dec}, $m->{roll});
+            my @c_quat_norm =
+              ($self->{OBC_Q1}, $self->{OBC_Q2}, $self->{OBC_Q3}, $self->{OBC_Q4});
+            my $q_obc = Quat->new(@c_quat_norm);
+            my @q_man = @{ $q_man->{q} };
+            my $q_diff = $q_man->divide($q_obc);
 
-                if (   abs($q_diff->{ra0} * 3600) > 1.0
-                    || abs($q_diff->{dec} * 3600) > 1.0
-                    || abs($q_diff->{roll0} * 3600) > 10.0)
-                {
-                    push @{ $self->{warn} },
-                      sprintf(
-"Target uplink precision problem for MP_TARGQUAT at $c->{date}\n"
-                          . "   Error is yaw, pitch, roll (arcsec) = %.2f  %.2f  %.2f\n"
-                          . "   Use Q1,Q2,Q3,Q4 = %.12f %.12f %.12f %.12f\n",
-                        $q_diff->{ra0} * 3600,
-                        $q_diff->{dec} * 3600,
-                        $q_diff->{roll0} * 3600,
-                        $q_man[0], $q_man[1], $q_man[2], $q_man[3]
-                      );
-                }
-
+            if (   abs($q_diff->{ra0} * 3600) > 1.0
+                || abs($q_diff->{dec} * 3600) > 1.0
+                || abs($q_diff->{roll0} * 3600) > 10.0)
+            {
+                push @{ $self->{warn} },
+                  sprintf(
+                    "Target uplink precision problem for MP_TARGQUAT at $c->{date}\n"
+                      . "   Error is yaw, pitch, roll (arcsec) = %.2f  %.2f  %.2f\n"
+                      . "   Use Q1,Q2,Q3,Q4 = %.12f %.12f %.12f %.12f\n",
+                    $q_diff->{ra0} * 3600,
+                    $q_diff->{dec} * 3600,
+                    $q_diff->{roll0} * 3600,
+                    $q_man[0], $q_man[1], $q_man[2], $q_man[3]
+                  );
             }
 
         }
-        push @{ $self->{yellow_warn} },
-          sprintf("Did not find match in maneuvers for MP_TARGQUAT at $c->{date}\n")
-          unless ($found);
+
+        if (not $found) {
+            push @{ $self->{critical_warn} },
+              sprintf(
+                "Did not find match in maneuvers for MP_TARGQUAT at $c->{date}\n");
+
+        }
 
     }
 }
@@ -2165,10 +2189,10 @@ sub print_report {
             $o .= sprintf "MP_TARGQUAT at $c->{date} (VCDU count = $c->{vcdu})\n";
             $o .= sprintf(
                 "  Q1,Q2,Q3,Q4: %.8f  %.8f  %.8f  %.8f\n",
-                $c->{Q1},
-                $c->{Q2},
-                $c->{Q3},
-                $c->{Q4}
+                $self->{OBC_Q1},
+                $self->{OBC_Q2},
+                $self->{OBC_Q3},
+                $self->{OBC_Q4}
             );
             if (exists $c->{man_err} and exists $c->{dur} and exists $c->{angle}) {
                 $o .= sprintf(
@@ -3033,10 +3057,10 @@ sub proseco_args {
         obsid => $self->{obsid},
         date => $targ_cmd->{stop_date},
         att => [
-            0 + $targ_cmd->{q1},
-            0 + $targ_cmd->{q2},
-            0 + $targ_cmd->{q3},
-            0 + $targ_cmd->{q4}
+            0 + $self->{OBC_Q1},
+            0 + $self->{OBC_Q2},
+            0 + $self->{OBC_Q3},
+            0 + $self->{OBC_Q4}
         ],
         man_angle => 0 + $targ_cmd->{angle},
         detector => $si,

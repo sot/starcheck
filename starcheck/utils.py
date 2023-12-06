@@ -29,8 +29,6 @@ from cxotime import CxoTime
 
 import starcheck
 from starcheck import __version__ as version
-from starcheck.calc_ccd_temps import get_ccd_temps
-from starcheck.check_ir_zone import ir_zone_ok
 from starcheck.plot import make_plots_for_obsid
 
 ACQS = mica.stats.acq_stats.get_stats()
@@ -75,10 +73,6 @@ def time2date(val):
     return out
 
 
-def ccd_temp_wrapper(**kwargs):
-    return get_ccd_temps(**kwargs)
-
-
 def plot_cat_wrapper(**kwargs):
     return make_plots_for_obsid(**kwargs)
 
@@ -96,6 +90,7 @@ def set_kadi_scenario_default():
 
 
 def get_cheta_source():
+    import starcheck.calc_ccd_temps
     sources = starcheck.calc_ccd_temps.fetch.data_source.sources()
     if len(sources) == 1 and sources[0] == "cxc":
         return "cxc"
@@ -110,10 +105,6 @@ def get_kadi_scenario():
 def get_data_dir():
     sc_data = os.path.join(os.path.dirname(starcheck.__file__), "data")
     return sc_data if os.path.exists(sc_data) else ""
-
-
-def make_ir_check_report(**kwargs):
-    return ir_zone_ok(**kwargs)
 
 
 def get_dither_kadi_state(date):
@@ -554,3 +545,19 @@ def vehicle_filter_backstop(backstop_file, outfile):
     ]
     # Write the filtered commands to the output file
     write_backstop(filtered_cmds, outfile)
+
+def target_subfunction_q(q1, q2, q3):
+    q4_obc = np.sqrt(abs(1.0 - q1**2 - q2**2 - q3**2))
+    norm = np.sqrt(q1**2 + q2**2 + q3**2 + q4_obc**2)
+    q = [q1/norm, q2/norm, q3/norm, q4_obc/norm]
+    return q
+
+
+def replace_with_obc_quats(bs_cmds):
+    cmds = bs_cmds.copy()
+    for cmd in cmds:
+        if cmd['type'] == 'MP_TARGQUAT':
+            cmd['params']['q1'], cmd['params']['q2'], cmd['params']['q3'], cmd['params']['q4'] = target_subfunction_q(
+                cmd['q1'], cmd['q2'], cmd['q3']
+            )
+    return cmds

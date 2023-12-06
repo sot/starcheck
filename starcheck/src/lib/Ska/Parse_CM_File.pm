@@ -32,20 +32,6 @@ our @EXPORT_OK = qw( );
 %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ###############################################################
-sub rel_date2time {
-###############################################################
-
-    # Return seconds when suppled a "relative datetime" of the
-    # format 000:00:00:00.000 (DOY:HH:MM:SS.sss).
-    my $date = shift;
-
-    # The old code here uses reverse to just ignore a year if
-    # included in the string.
-    my ($sec, $min, $hr, $doy) = reverse split ":", $date;
-    return ($doy * 86400 + $hr * 3600 + $min * 60 + $sec);
-}
-
-###############################################################
 sub TLR_load_segments {
 ###############################################################
     my $tlr_file = shift;
@@ -531,10 +517,6 @@ sub DOT {
         %{ $dot{$_} } = parse_params($command{$_});
         $dot{$_}{time} = date2time($dot{$_}{TIME}) if ($dot{$_}{TIME});
 
-  # MANSTART is in the dot as a "relative" time like "000:00:00:00.000", so just pass it
-        # to the rel_date2time routine designed to handle that.
-        $dot{$_}{time} += rel_date2time($dot{$_}{MANSTART})
-          if ($dot{$_}{TIME} && $dot{$_}{MANSTART});
         $dot{$_}{cmd_identifier} = "$dot{$_}{anon_param1}_$dot{$_}{anon_param2}"
           if ($dot{$_}{anon_param1} and $dot{$_}{anon_param2});
         $dot{$_}{linenum} = $linenum{$_};
@@ -753,134 +735,6 @@ sub PS {
         }
     }
     return @ps;
-}
-
-###############################################################
-sub MM {
-
-    # Parse maneuver management (?) file
-###############################################################
-    # This accepts a reference to a hash as the only argument
-    # the return type may be specified in the hash as 'hash' or 'array'
-    # default return is hash
-    # With regard to the return data:
-
-    my $arg_ref = shift;
-    my $mm_file = $arg_ref->{file};
-    my $ret_type = 'hash';
-
-    if (defined $arg_ref->{ret_type}) {
-        $ret_type = $arg_ref->{ret_type};
-    }
-
-    my $manvr_offset = 10;    # seconds expected from AONMMODE to AOMANUVR
-
-    my @mm_array;
-
-    my $mm_text = io($mm_file)->slurp;
-
-    # split the file into maneuvers
-    my @sections = split(/MANEUVER\sDATA\sSUMMARY\n/, $mm_text);
-
-    # ignore pieces of the file without ATTITUDES
-    my @good_sect = grep { /INITIAL|FINAL/ } @sections;
-
-    my $int_obsid = 'IN_IA';
-    for my $entry (@good_sect) {
-
-        # only keep the relevant bits of each entry (before OUTPUT DATA)
-        my @para = split(/\n\n/, $entry);
-        my @attitudes = grep { /ATTITUDE/ } @para;
-        if (scalar(@attitudes) > 2) {
-            croak("Maneuver Summary has too many attitudes in section\n");
-        }
-
-        # where final or initial attitude may be an intermediate attitude
-        my @output_data_match = grep { /OUTPUT\sDATA/ } @para;
-        my $output_data = $output_data_match[0];
-        my $initial_attitude = $attitudes[0];
-        my $final_attitude = $attitudes[1];
-
-        my %manvr_hash;
-        $manvr_hash{initial_obsid} = $1
-          if ($initial_attitude =~ /INITIAL ID:\s+(\S+)\S\S/);
-        $manvr_hash{final_obsid} = $1 if ($final_attitude =~ /FINAL ID:\s+(\S+)\S\S/);
-        $manvr_hash{start_date} = $1
-          if ($initial_attitude =~ /TIME\s*\(GMT\):\s+(\S+)/);
-        $manvr_hash{stop_date} = $1 if ($final_attitude =~ /TIME\s*\(GMT\):\s+(\S+)/);
-        $manvr_hash{ra} = $1 if ($final_attitude =~ /RA\s*\(deg\):\s+(\S+)/);
-        $manvr_hash{dec} = $1 if ($final_attitude =~ /DEC\s*\(deg\):\s+(\S+)/);
-        $manvr_hash{roll} = $1 if ($final_attitude =~ /ROLL\s*\(deg\):\s+(\S+)/);
-        $manvr_hash{dur} = $1 if ($output_data =~ /Duration\s*\(sec\):\s+(\S+)/);
-        $manvr_hash{angle} = $1
-          if ($output_data =~ /Maneuver Angle\s*\(deg\):\s+(\S+)/);
-        my @quat = ($1, $2, $3, $4)
-          if ($final_attitude =~ /Quaternion:\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/);
-        $manvr_hash{q1} = $quat[0];
-        $manvr_hash{q2} = $quat[1];
-        $manvr_hash{q3} = $quat[2];
-        $manvr_hash{q4} = $quat[3];
-        $manvr_hash{tstart} = date2time($manvr_hash{start_date});
-        $manvr_hash{tstop} = date2time($manvr_hash{stop_date});
-
-        # let's just add those 10 seconds to the summary tstart so it lines up with
-        # AOMANUVR in backstop
-        $manvr_hash{tstart} += $manvr_offset;
-        $manvr_hash{start_date} = time2date($manvr_hash{tstart});
-
-        # clean up obsids (remove prepended 0s)
-        if (defined $manvr_hash{initial_obsid}) {
-            $manvr_hash{initial_obsid} =~ s/^0+//;
-        }
-
-        # use a dummy or the last initial attitude if there isn't one
-        else {
-            $manvr_hash{initial_obsid} = $int_obsid;
-        }
-
-        if (defined $manvr_hash{final_obsid}) {
-            $manvr_hash{final_obsid} =~ s/^0+//;
-        }
-        else {
-            $int_obsid = $manvr_hash{initial_obsid} . '_IA';
-            $manvr_hash{final_obsid} = $int_obsid;
-        }
-
-        $manvr_hash{obsid} = $manvr_hash{final_obsid};
-        push @mm_array, \%manvr_hash;
-
-    }
-
-    # create a manvr_dest key to record the eventual destination of
-    # all manvrs.
-    for my $i (0 .. $#mm_array) {
-
-        # by default the destination is just the final_obsid
-        $mm_array[$i]->{manvr_dest} = $mm_array[$i]->{final_obsid};
-
-        # but if the final_obsid has the string that indicates it is
-        # an intermediate attitude, loop through the rest of the manvrs
-        # until we hit one that isn't an intermediate attitude
-        next unless ($mm_array[$i]->{final_obsid} =~ /_IA/);
-        for my $j ($i .. $#mm_array) {
-            next if ($mm_array[$j]->{final_obsid} =~ /_IA/);
-            $mm_array[$i]->{manvr_dest} = $mm_array[$j]->{final_obsid};
-            last;
-        }
-    }
-
-    if ($ret_type eq 'array') {
-        return @mm_array;
-    }
-
-    my %mm_hash;
-    for my $manvr (0 ... $#mm_array) {
-        my $obsid = $mm_array[$manvr]->{final_obsid};
-        $mm_hash{$obsid} = $mm_array[$manvr];
-    }
-
-    return %mm_hash;
-
 }
 
 ##***************************************************************************

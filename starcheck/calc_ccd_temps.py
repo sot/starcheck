@@ -42,6 +42,8 @@ from chandra_aca.drift import get_aca_offsets
 from ska_helpers import chandra_models
 
 
+from starcheck.utils import replace_with_obc_quats
+
 from starcheck import __version__ as version
 
 MSID = {'aca': 'AACCCDPT'}
@@ -364,6 +366,8 @@ def get_week_states(rltt, sched_stop, bs_cmds, tlm):
 
     # Add in the backstop commands
     cmds = cmds.add_cmds(bs_cmds)
+
+    cmds = replace_with_obc_quats(cmds)
 
     # Get the states for available commands.  This automatically gets continuity.
     state_keys = ['obsid', 'pitch', 'q1', 'q2', 'q3', 'q4', 'eclipse']

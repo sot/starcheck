@@ -390,11 +390,6 @@ warning("Could not open bad AGASC file $bad_agasc_file\n")
 my (%dot_cmd, %dot_time_offset, %dot_tolerance);
 set_dot_cmd();
 
-# Go through records and set the time of MP_TARGQUAT commands to
-# the time of the subsequent cmd with COMMAND_SW | TLMSID= AOMANUVR
-
-fix_targquat_time();
-
 # Now go through records, pull out the interesting things, and assemble
 # into structures based on obsid.
 
@@ -593,7 +588,7 @@ my $json_text = json_obsids();
 my $obsid_temps;
 my $json_obsid_temps;
 $json_obsid_temps = call_python(
-    "utils.ccd_temp_wrapper",
+    "calc_ccd_temps.get_ccd_temps",
     [],
     {
         oflsdir => $par{vehicle} ? $STARCHECK : $par{dir},
@@ -735,7 +730,7 @@ if (@global_warn) {
 $out .= "------------  HIGH IR ZONE CHECK  -----------------\n\n";
 my $ir_report = "${STARCHECK}/high_ir_check.txt";
 my $ir_ok = call_python(
-    "utils.make_ir_check_report",
+    "check_ir_zone.ir_zone_ok",
     [],
     {
         backstop_file => $backstop,
@@ -1098,38 +1093,6 @@ sub make_annotated_file {
       or die "Couldn't open $file_out for writing\n";
     print $FILE2 $ptf->ptf2any('html', "\\fixed_start \n" . join('', @{$lines}));
     close $FILE2;
-}
-
-##***************************************************************************
-sub fix_targquat_time {
-##***************************************************************************
-    # Go through records and set the time of MP_TARGQUAT commands to
-    # the time of the subsequent cmd with COMMAND_SW | TLMSID= AOMANUVR
-    my $manv_time;
-    my $set = 0;
-
-    for my $i (reverse(0 .. $#cmd)) {
-        if ($cmd[$i] eq 'COMMAND_SW' and $params[$i] =~ /AOMANUVR/) {
-
-            #	    print STDERR "First: $cmd[$i], $time[$i], $date[$i] \n";
-            $manv_time = $time[$i];
-            $set = 1;
-        }
-        if ($cmd[$i] eq 'MP_TARGQUAT') {
-
-            #	    print STDERR "Second: $cmd[$i], $time[$i], $date[$i] \n";
-            if ($set eq 1) {
-                $time[$i] = $manv_time;
-
-         #		undef $manv_time;	# Make sure that each TARGQUAT gets a unique AOMANUVR time
-                $set = 0;
-            }
-            else {
-                warning(
-                    "Found MP_TARGQUAT at $date[$i] without corresponding AOMANUVR\n");
-            }
-        }
-    }
 }
 
 ##***************************************************************************
