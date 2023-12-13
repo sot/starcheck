@@ -2981,9 +2981,13 @@ sub proseco_args {
         return \%proseco_args;
     }
 
-    my $man_angle = call_python("state_checks.get_obs_man_angle",
+    my $man_angle_data = call_python("state_checks.get_obs_man_angle",
         [ $targ_cmd->{tstop}, $self->{backstop} ]);
+    my $man_angle = $man_angle_data->{'angle'};
     $targ_cmd->{man_angle_calc} = $man_angle;
+    if (defined $man_angle_data->{'warn'}){
+        push @{$self->{warn}}, $man_angle_data->{'warn'};
+    }
 
     # Use a default SI and offset for ERs (no effect without fid lights)
     my $is_OR = $self->{obsid} < $ER_MIN_OBSID;
