@@ -10,14 +10,14 @@ import Quaternion
 from starcheck.state_checks import (
     make_man_table,
     get_obs_man_angle,
-    calc_pcad_state_nman_sums,
+    calc_man_angle_for_duration,
 )
 
 
 @pytest.mark.parametrize("angle", [0, 45, 90, 135, 180])
 def test_make_man_table_durations(angle):
     """
-    Test that the calculated interpolated duractions in the maneuver angle duration
+    Test that the durations (and interpolated durations over them) in the maneuver angle duration
     table are reasonable using chandra_maneuver.duration directly as a reference.
     """
 
@@ -61,22 +61,6 @@ def test_get_obs_man_angle(tstart, expected_angle):
     backstop_file = (
         Path(parse_cm.tests.__file__).parent / "data" / "CR182_0803.backstop"
     )
-    angle = get_obs_man_angle(tstart, backstop_file)
-    assert np.isclose(angle, expected_angle, rtol=0, atol=0.1)
+    man_angle_data = get_obs_man_angle(tstart, backstop_file)
+    assert np.isclose(man_angle_data['angle'], expected_angle, rtol=0, atol=0.1)
 
-
-def test_calc_pcad_state_nman_sums():
-    # Make a synthetic table of pcad_mode states
-    states = [
-        {"tstart": 0, "tstop": 1000, "pcad_mode": "NPNT"},
-        {"tstart": 1000, "tstop": 2000, "pcad_mode": "NMAN"},
-        {"tstart": 2000, "tstop": 3000, "pcad_mode": "NMAN"},
-        {"tstart": 3000, "tstop": 4000, "pcad_mode": "NPNT"},
-        {"tstart": 4000, "tstop": 5000, "pcad_mode": "NMAN"},
-        {"tstart": 5000, "tstop": 6000, "pcad_mode": "NPNT"},
-    ]
-    states = Table(states)
-    nman_sums = calc_pcad_state_nman_sums(states)
-    # Confirm that the first NPNT after an NMAN has the appropriate sum of NMAN times before it
-    assert nman_sums[nman_sums["tstart"] == 3000]["nman_sum"][0] == 2000
-    assert nman_sums[nman_sums["tstart"] == 5000]["nman_sum"][0] == 1000
