@@ -56,7 +56,8 @@ def get_pcad_states(backstop_file):
     Notes:
     - This function just exists to make this easy to cache.
     """
-    return get_states(backstop_file, state_keys=["pcad_mode"])
+    states, rltt = get_states(backstop_file, state_keys=["pcad_mode"])
+    return states, rltt
 
 
 def get_states(backstop_file, state_keys=None):
@@ -68,7 +69,9 @@ def get_states(backstop_file, state_keys=None):
     - state_keys (list, optional): A list of state keys to filter the states. Defaults to None.
 
     Returns:
-    - states (astropy.Table): A Table states.
+    - tuple: A tuple containing (states, rltt)
+        - states (astropy Table): An Table of states for the available commands.
+        - rltt (float): The running load termination time from backstop file or first command time.
     """
     bs_cmds = kadi_commands.get_cmds_from_backstop(backstop_file)
     rltt = bs_cmds.get_rltt() or bs_cmds["date"][0]
@@ -85,7 +88,7 @@ def get_states(backstop_file, state_keys=None):
         state_keys=state_keys,
         merge_identical=True,
     )
-    return out
+    return out, rltt
 
 
 @lru_cache
@@ -119,13 +122,14 @@ def check_first_state_npnt(backstop_file):
 
     Returns
     -------
-    bool
-        True if the first state is NPNT, False otherwise.
+    integer
+        1 if the first state is NPNT, 0 otherwise.
     """
-    states = get_pcad_states(backstop_file)
-    if states['pcad_mode'][0] != 'NPNT':
-        return False
-    return True
+    _, rltt = get_pcad_states(backstop_file)
+    continuity_state = kadi_states.get_continuity(rltt, state_keys=['pcad_mode'])
+    if continuity_state['pcad_mode'] != 'NPNT':
+        return 0
+    return 1
 
 
 def get_obs_man_angle(npnt_tstart, backstop_file):
@@ -143,12 +147,23 @@ def get_obs_man_angle(npnt_tstart, backstop_file):
     Returns
     -------
     float
-        Value of an equavalent maneuver angle between 0 and 180.
+        Value of an equivalent maneuver angle between 0 and 180.
     """
-    states = get_pcad_states(backstop_file)
-    prev_state = states[np.searchsorted(states["tstop"], npnt_tstart)]
-    out = calc_man_angle_for_duration(prev_state['tstop'] - prev_state['tstart'])
-    return out
+    states, _ = get_pcad_states(backstop_file)
+    nman_states = states[states['pcad_mode'] == 'NMAN']
+    idx = np.argmin(np.abs(CxoTime(npnt_tstart).secs - nman_states['tstop']))
+    prev_state = nman_states[idx]
+
+    # If there is an issue with lining up an NMAN state with the beginning of an
+    # NPNT interval, use 180 as angle and pass a warning back to Perl.
+    if np.abs(CxoTime(npnt_tstart).secs - prev_state['tstop']) > 600:
+        warn = (
+            f"Maneuver angle err - no manvr ends within 600s of {CxoTime(npnt_tstart).date}\n")
+        return {'angle': 180,
+                'warn': warn}
+    dur = prev_state['tstop'] - prev_state['tstart']
+    angle = calc_man_angle_for_duration(dur)
+    return {'angle': angle}
 
 
 def ir_zone_ok(backstop_file, out=None):
@@ -168,9 +183,7 @@ def ir_zone_ok(backstop_file, out=None):
         True if the high IR zone time is all in NMM, False otherwise.
     """
 
-    # Here, we could use the get_pcad_states convenience function but then
-    # would lose the handy 'obsid' labels.
-    states = get_states(backstop_file, state_keys=["pcad_mode", "obsid"])
+    states, _ = get_pcad_states(backstop_file)
     bs_cmds = kadi_commands.get_cmds_from_backstop(backstop_file)
 
     perigee_cmds = bs_cmds[
@@ -183,17 +196,21 @@ def ir_zone_ok(backstop_file, out=None):
         # Current high ir zone is from 25 minutes before to 27 minutes after
         # These don't seem worth vars, but make sure to change in the text below
         # too when these are updated.
-        ir_zone_start = perigee_time - 25 * 60
-        ir_zone_stop = perigee_time + 27 * 60
+        ir_zone_start = perigee_time - (25 * 60)
+        ir_zone_stop = perigee_time + (27 * 60)
         out_text.append(f"Checking perigee at {CxoTime(perigee_time).date}")
         out_text.append(
             f"  High IR Zone from (perigee - 25m) {CxoTime(ir_zone_start).date} "
             f"to (perigee + 27m) {CxoTime(ir_zone_stop).date}"
         )
+
         ok = (states["tstart"] <= ir_zone_stop) & (states["tstop"] >= ir_zone_start)
         for state in states[ok]:
+            start_dtime_min = (state["tstart"] - perigee_time) / 60.
+            stop_dtime_min = (state["tstop"] - perigee_time) / 60.
             out_text.append(
-                f"  state {state['datestart']} {state['datestop']} {state['pcad_mode']}"
+                f"  state {state['datestart']} (perigee + {start_dtime_min:.1f} min) "
+                f"{state['datestop']} (perigee + {stop_dtime_min:.1f}) {state['pcad_mode']}"
             )
         if np.any(states["pcad_mode"][ok] != "NMAN"):
             all_ok = False
