@@ -62,5 +62,4 @@ def test_get_obs_man_angle(tstart, expected_angle):
         Path(parse_cm.tests.__file__).parent / "data" / "CR182_0803.backstop"
     )
     man_angle_data = get_obs_man_angle(tstart, backstop_file)
-    assert np.isclose(man_angle_data['angle'], expected_angle, rtol=0, atol=0.1)
-
+    assert np.isclose(man_angle_data["angle"], expected_angle, rtol=0, atol=0.1)

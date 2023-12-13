@@ -107,7 +107,7 @@ def calc_man_angle_for_duration(duration):
         The maneuver-equivalent-angle corresponding to the given duration.
     """
     man_table = make_man_table()
-    out = np.interp(duration, man_table['duration'], man_table['angle'])
+    out = np.interp(duration, man_table["duration"], man_table["angle"])
     return out
 
 
@@ -126,8 +126,8 @@ def check_first_state_npnt(backstop_file):
         1 if the first state is NPNT, 0 otherwise.
     """
     _, rltt = get_pcad_states(backstop_file)
-    continuity_state = kadi_states.get_continuity(rltt, state_keys=['pcad_mode'])
-    if continuity_state['pcad_mode'] != 'NPNT':
+    continuity_state = kadi_states.get_continuity(rltt, state_keys=["pcad_mode"])
+    if continuity_state["pcad_mode"] != "NPNT":
         return 0
     return 1
 
@@ -150,20 +150,18 @@ def get_obs_man_angle(npnt_tstart, backstop_file):
         Value of an equivalent maneuver angle between 0 and 180.
     """
     states, _ = get_pcad_states(backstop_file)
-    nman_states = states[states['pcad_mode'] == 'NMAN']
-    idx = np.argmin(np.abs(CxoTime(npnt_tstart).secs - nman_states['tstop']))
+    nman_states = states[states["pcad_mode"] == "NMAN"]
+    idx = np.argmin(np.abs(CxoTime(npnt_tstart).secs - nman_states["tstop"]))
     prev_state = nman_states[idx]
 
     # If there is an issue with lining up an NMAN state with the beginning of an
     # NPNT interval, use 180 as angle and pass a warning back to Perl.
-    if np.abs(CxoTime(npnt_tstart).secs - prev_state['tstop']) > 600:
-        warn = (
-            f"Maneuver angle err - no manvr ends within 600s of {CxoTime(npnt_tstart).date}\n")
-        return {'angle': 180,
-                'warn': warn}
-    dur = prev_state['tstop'] - prev_state['tstart']
+    if np.abs(CxoTime(npnt_tstart).secs - prev_state["tstop"]) > 600:
+        warn = f"Maneuver angle err - no manvr ends within 600s of {CxoTime(npnt_tstart).date}\n"
+        return {"angle": 180, "warn": warn}
+    dur = prev_state["tstop"] - prev_state["tstart"]
     angle = calc_man_angle_for_duration(dur)
-    return {'angle': angle}
+    return {"angle": angle}
 
 
 def ir_zone_ok(backstop_file, out=None):
@@ -206,8 +204,8 @@ def ir_zone_ok(backstop_file, out=None):
 
         ok = (states["tstart"] <= ir_zone_stop) & (states["tstop"] >= ir_zone_start)
         for state in states[ok]:
-            start_dtime_min = (state["tstart"] - perigee_time) / 60.
-            stop_dtime_min = (state["tstop"] - perigee_time) / 60.
+            start_dtime_min = (state["tstart"] - perigee_time) / 60.0
+            stop_dtime_min = (state["tstop"] - perigee_time) / 60.0
             out_text.append(
                 f"  state {state['datestart']} (perigee + {start_dtime_min:.1f} min) "
                 f"{state['datestop']} (perigee + {stop_dtime_min:.1f}) {state['pcad_mode']}"
