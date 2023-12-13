@@ -318,7 +318,7 @@ if ($dot_touched_by_sausage == 0) {
 }
 
 # Check that the first state is NPNT
-my $first_state_npnt = call_python("state_checks.check_first_state_npnt", [ $backstop ]);
+my $first_state_npnt = call_python("state_checks.check_continuity_state_npnt", [ $backstop ]);
 if ($first_state_npnt == 0) {
     warning("Continuity kadi pcad_mode state is not NPNT\n");
 }

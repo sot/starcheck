@@ -62,7 +62,7 @@ def get_pcad_states(backstop_file):
 
 def get_states(backstop_file, state_keys=None):
     """
-    Get the states for available commands within a specified time range.
+    Get the kadi commands states for given backstop file.
 
     Parameters:
     - backstop_file (str): The path to the backstop file.
@@ -111,9 +111,9 @@ def calc_man_angle_for_duration(duration):
     return out
 
 
-def check_first_state_npnt(backstop_file):
+def check_continuity_state_npnt(backstop_file):
     """
-    Check that the first state is NPNT.
+    Check that the kadi continuity state (at RLTT) is NPNT.
 
     Parameters
     ----------
@@ -123,7 +123,7 @@ def check_first_state_npnt(backstop_file):
     Returns
     -------
     integer
-        1 if the first state is NPNT, 0 otherwise.
+        1 if the kadi continuity state is NPNT, 0 otherwise.
     """
     _, rltt = get_pcad_states(backstop_file)
     continuity_state = kadi_states.get_continuity(rltt, state_keys=["pcad_mode"])
