@@ -48,13 +48,18 @@ def get_pcad_states(backstop_file):
     and continuity).
 
     Parameters:
-    - backstop_file (str): The path to the backstop file.
+    ----------
+    backstop_file : str
+        The path to the backstop file.
 
     Returns:
-    - states (astropy Table): An Table of states for the available commands.
+    -------
+    states : astropy Table
+        An Table of states for the available commands.
 
     Notes:
-    - This function just exists to make this easy to cache.
+    ------
+    This function just exists to make this easy to cache.
     """
     states, rltt = get_states(backstop_file, state_keys=["pcad_mode"])
     return states, rltt
@@ -64,14 +69,21 @@ def get_states(backstop_file, state_keys=None):
     """
     Get the kadi commands states for given backstop file.
 
-    Parameters:
-    - backstop_file (str): The path to the backstop file.
-    - state_keys (list, optional): A list of state keys to filter the states. Defaults to None.
+    Parameters
+    ----------
+    backstop_file : str
+        The path to the backstop file.
+    state_keys : list, optional
+        A list of state keys to filter the states. Defaults to None.
 
-    Returns:
-    - tuple: A tuple containing (states, rltt)
-        - states (astropy Table): An Table of states for the available commands.
-        - rltt (float): The running load termination time from backstop file or first command time.
+    Returns
+    -------
+    tuple
+        A tuple containing (states, rltt)
+        states : astropy Table
+            An Table of states for the available commands.
+        rltt : float
+            The running load termination time from backstop file or first command time.
     """
     bs_cmds = kadi_commands.get_cmds_from_backstop(backstop_file)
     rltt = bs_cmds.get_rltt() or bs_cmds["date"][0]
@@ -146,8 +158,9 @@ def get_obs_man_angle(npnt_tstart, backstop_file):
 
     Returns
     -------
-    float
-        Value of an equivalent maneuver angle between 0 and 180.
+    dict
+        with key 'angle' value float equivalent maneuver angle between 0 and 180.
+        optional key 'warn' value string warning message if there is an issue.
     """
     states, _ = get_pcad_states(backstop_file)
     nman_states = states[states["pcad_mode"] == "NMAN"]
