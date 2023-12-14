@@ -122,14 +122,14 @@ def check_continuity_state_npnt(backstop_file):
 
     Returns
     -------
-    integer
-        1 if the kadi continuity state is NPNT, 0 otherwise.
+    bool
+        True if the kadi continuity state is NPNT, 0 otherwise.
     """
     _, rltt = get_pcad_states(backstop_file)
     continuity_state = kadi_states.get_continuity(rltt, state_keys=["pcad_mode"])
     if continuity_state["pcad_mode"] != "NPNT":
-        return 0
-    return 1
+        return False
+    return True
 
 
 def get_obs_man_angle(npnt_tstart, backstop_file):
