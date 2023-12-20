@@ -204,24 +204,27 @@ def ir_zone_ok(backstop_file, out=None):
     all_ok = True
     out_text = ["IR ZONE CHECKING"]
     for perigee_time in perigee_cmds["time"]:
-        # Current high ir zone is from 25 minutes before to 27 minutes after
-        # These don't seem worth vars, but make sure to change in the text below
-        # too when these are updated.
-        ir_zone_start = perigee_time - (25 * 60)
-        ir_zone_stop = perigee_time + (27 * 60)
-        out_text.append(f"Checking perigee at {CxoTime(perigee_time).date}")
+        # High IR zone is from zone_minus_mins before perigee to zone_plus_mins after perigee
+        zone_minus_mins = 25
+        zone_plus_mins = 27
+        ir_zone_start = perigee_time - (zone_minus_mins * 60)
+        ir_zone_stop = perigee_time + (zone_plus_mins * 60)
         out_text.append(
-            f"  High IR Zone from (perigee - 25m) {CxoTime(ir_zone_start).date} "
-            f"to (perigee + 27m) {CxoTime(ir_zone_stop).date}"
+            "Checking perigee states at "
+            f"{CxoTime(perigee_time).date} (delta times relative to perigee)"
         )
-
+        out_text.append(
+            f"  High IR zone req't: NMAN: -{zone_minus_mins}m to {zone_plus_mins}m "
+            f"({CxoTime(ir_zone_start).date} to {CxoTime(ir_zone_stop).date}"
+        )
         ok = (states["tstart"] <= ir_zone_stop) & (states["tstop"] >= ir_zone_start)
         for state in states[ok]:
             start_dtime_min = (state["tstart"] - perigee_time) / 60.0
             stop_dtime_min = (state["tstop"] - perigee_time) / 60.0
+            ok_status = "  [OK]" if state["pcad_mode"] == "NMAN" else "  [NOT OK]"
             out_text.append(
-                f"  state {state['datestart']} (perigee + {start_dtime_min:.1f} min) "
-                f"{state['datestop']} (perigee + {stop_dtime_min:.1f}) {state['pcad_mode']}"
+                f"{ok_status} {state['pcad_mode']}: {start_dtime_min:.1f}m to {stop_dtime_min:.1f}m "
+                f"({CxoTime(state['tstart']).date} to {CxoTime(state['tstop']).date})"
             )
         if np.any(states["pcad_mode"][ok] != "NMAN"):
             all_ok = False
