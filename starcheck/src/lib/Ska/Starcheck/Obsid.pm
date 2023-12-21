@@ -2983,11 +2983,23 @@ sub proseco_args {
 
     my $man_angle_data = call_python("state_checks.get_obs_man_angle",
         [ $targ_cmd->{tstop}, $self->{backstop} ]);
-    my $man_angle = $man_angle_data->{'angle'};
-    $targ_cmd->{man_angle_calc} = $man_angle;
+    $targ_cmd->{man_angle_calc} = $man_angle_data->{'angle'};
+
     if (defined $man_angle_data->{'warn'}){
         push @{$self->{warn}}, $man_angle_data->{'warn'};
     }
+
+    # Set a maneuver angle to be used by the proseco acquisition probability calculation.
+    # Here the goal is to be conservative and use the angle that is derived from the
+    # time in NMM before acquisition (the man_angle_calc from state_checks.get_obs_man_angle)
+    # if needed but not introduce spurious warnings for cases where the angle as derived
+    # from the time in NMM is in a neighboring bin for proseco maneuver error probabilities.
+    # To satisfy those goals, use the derived-from-NMM-time angle if it is more than 5 degrees
+    # different from the actual maneuver angle.  Otherwise use the actual maneuver angle.
+    # This also lines up with what is printed in the starcheck maneuver output.
+    my $man_angle = (abs($targ_cmd->{man_angle_calc} - $targ_cmd->{angle}) > 5)
+                              ? $targ_cmd->{man_angle_calc} : $targ_cmd->{angle};
+
 
     # Use a default SI and offset for ERs (no effect without fid lights)
     my $is_OR = $self->{obsid} < $ER_MIN_OBSID;
