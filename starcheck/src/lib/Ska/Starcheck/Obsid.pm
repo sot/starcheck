@@ -2177,9 +2177,9 @@ sub print_report {
                     substr(time2date($c->{tstop}), 0, 17));
             }
             if (    (defined $c->{man_angle_calc})
-                and (abs($c->{man_angle_calc} - $c->{angle}) > 5))
+                and (($c->{man_angle_calc} - $c->{angle}) > 5))
             {
-                $o .= sprintf("  MANVR: Calculated angle for starcheck proseco = %6.2f deg\n",
+                $o .= sprintf("  MANVR: Calculated angle from NMM time = %6.2f deg\n",
                     $c->{man_angle_calc});
             }
             $o .= "\n";
@@ -2995,9 +2995,9 @@ sub proseco_args {
     # if needed but not introduce spurious warnings for cases where the angle as derived
     # from the time in NMM is in a neighboring bin for proseco maneuver error probabilities.
     # To satisfy those goals, use the derived-from-NMM-time angle if it is more than 5 degrees
-    # different from the actual maneuver angle.  Otherwise use the actual maneuver angle.
+    # larger than the  actual maneuver angle.  Otherwise use the actual maneuver angle.
     # This also lines up with what is printed in the starcheck maneuver output.
-    my $man_angle = (abs($targ_cmd->{man_angle_calc} - $targ_cmd->{angle}) > 5)
+    my $man_angle = (($targ_cmd->{man_angle_calc} - $targ_cmd->{angle}) > 5)
                               ? $targ_cmd->{man_angle_calc} : $targ_cmd->{angle};
 
 
