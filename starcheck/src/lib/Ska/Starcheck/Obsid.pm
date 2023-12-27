@@ -3001,6 +3001,16 @@ sub proseco_args {
                               ? $targ_cmd->{man_angle_calc} : $targ_cmd->{angle};
 
 
+
+    # If the angle calculated from NMM time is more than 5 degrees less than the maneuver
+    # angle, this is an unexpected condition that should have a critical warning.
+    if ($targ_cmd->{man_angle_calc} < ($targ_cmd->{angle} - 5)){
+        push @{$self->{warn}},
+        sprintf("Manvr angle from NMM time %4.1f ", $targ_cmd->{man_angle_calc})
+        . sprintf("< (manvr angle %4.1f - 5 deg).\n", $targ_cmd->{angle});
+    }
+
+
     # Use a default SI and offset for ERs (no effect without fid lights)
     my $is_OR = $self->{obsid} < $ER_MIN_OBSID;
     my $si = $is_OR ? $self->{SI} : 'ACIS-S';
