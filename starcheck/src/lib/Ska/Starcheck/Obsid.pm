@@ -2176,6 +2176,12 @@ sub print_report {
                     $c->{angle}, $c->{dur}, $c->{man_err},
                     substr(time2date($c->{tstop}), 0, 17));
             }
+            if (    (defined $c->{man_angle_calc})
+                and (($c->{man_angle_calc} - $c->{angle}) > 5))
+            {
+                $o .= sprintf("  MANVR: Calculated angle from NMM time = %6.2f deg\n",
+                    $c->{man_angle_calc});
+            }
             $o .= "\n";
         }
     }
@@ -2975,6 +2981,36 @@ sub proseco_args {
         return \%proseco_args;
     }
 
+    my $man_angle_data = call_python("state_checks.get_obs_man_angle",
+        [ $targ_cmd->{tstop}, $self->{backstop} ]);
+    $targ_cmd->{man_angle_calc} = $man_angle_data->{'angle'};
+
+    if (defined $man_angle_data->{'warn'}){
+        push @{$self->{warn}}, $man_angle_data->{'warn'};
+    }
+
+    # Set a maneuver angle to be used by the proseco acquisition probability calculation.
+    # Here the goal is to be conservative and use the angle that is derived from the
+    # time in NMM before acquisition (the man_angle_calc from state_checks.get_obs_man_angle)
+    # if needed but not introduce spurious warnings for cases where the angle as derived
+    # from the time in NMM is in a neighboring bin for proseco maneuver error probabilities.
+    # To satisfy those goals, use the derived-from-NMM-time angle if it is more than 5 degrees
+    # larger than the  actual maneuver angle.  Otherwise use the actual maneuver angle.
+    # This also lines up with what is printed in the starcheck maneuver output.
+    my $man_angle = (($targ_cmd->{man_angle_calc} - $targ_cmd->{angle}) > 5)
+                              ? $targ_cmd->{man_angle_calc} : $targ_cmd->{angle};
+
+
+
+    # If the angle calculated from NMM time is more than 5 degrees less than the maneuver
+    # angle, this is an unexpected condition that should have a critical warning.
+    if ($targ_cmd->{man_angle_calc} < ($targ_cmd->{angle} - 5)){
+        push @{$self->{warn}},
+        sprintf("Manvr angle from NMM time %4.1f ", $targ_cmd->{man_angle_calc})
+        . sprintf("< (manvr angle %4.1f - 5 deg).\n", $targ_cmd->{angle});
+    }
+
+
     # Use a default SI and offset for ERs (no effect without fid lights)
     my $is_OR = $self->{obsid} < $ER_MIN_OBSID;
     my $si = $is_OR ? $self->{SI} : 'ACIS-S';
@@ -3038,7 +3074,7 @@ sub proseco_args {
             0 + $targ_cmd->{q3},
             0 + $targ_cmd->{q4}
         ],
-        man_angle => 0 + $targ_cmd->{angle},
+        man_angle => 0 + $man_angle,
         detector => $si,
         sim_offset => 0 + $offset,
         dither_acq => [ $self->{dither_acq}->{ampl_y}, $self->{dither_acq}->{ampl_p} ],

@@ -317,6 +317,12 @@ if ($dot_touched_by_sausage == 0) {
     warning("DOT file not modified by SAUSAGE! \n");
 }
 
+# Check that the first state is NPNT
+my $first_state_npnt = call_python("state_checks.check_continuity_state_npnt", [ $backstop ]);
+if (not $first_state_npnt) {
+    warning("Continuity kadi pcad_mode state is not NPNT\n");
+}
+
 Ska::Starcheck::Obsid::setcolors(
     {
         red => $red_font_start,

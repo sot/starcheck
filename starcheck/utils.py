@@ -17,7 +17,6 @@ from chandra_aca.dark_model import dark_temp_scale
 from chandra_aca.drift import get_fid_offset
 import sparkles
 from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to_pixels
-from kadi.commands import states
 from mica.archive import aca_dark
 from parse_cm import read_backstop_as_list, write_backstop
 from proseco.catalog import get_aca_catalog, get_effective_t_ccd
@@ -27,10 +26,12 @@ from Ska.quatutil import radec2yagzag
 from testr import test_helper
 from cxotime import CxoTime
 
+import kadi.commands.states as kadi_states
+
 import starcheck
 from starcheck import __version__ as version
 from starcheck.calc_ccd_temps import get_ccd_temps
-from starcheck.check_ir_zone import ir_zone_ok
+from starcheck.state_checks import ir_zone_ok
 from starcheck.plot import make_plots_for_obsid
 
 ACQS = mica.stats.acq_stats.get_stats()
@@ -124,7 +125,7 @@ def get_dither_kadi_state(date):
         "dither_period_pitch",
         "dither_period_yaw",
     ]
-    state = states.get_continuity(date, cols)
+    state = kadi_states.get_continuity(date, cols)
     # Cast the numpy floats as plain floats
     for key in [
         "dither_ampl_pitch",
