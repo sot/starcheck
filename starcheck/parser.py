@@ -181,7 +181,7 @@ def get_manvrs(obs_text):
                 mline)
             if angle_re:
                 curr_manvr.update(dict(angle_deg=float(angle_re.group(1)),
-                                       duration_sec=int(angle_re.group(2)),,
+                                       duration_sec=int(angle_re.group(2)),
                                        end_date=angle_re.groups()[-1]))
                 if 'target_Q1' not in curr_manvr:
                     raise ValueError("No Q1,Q2,Q3,Q4 line found when parsing starcheck.txt")
