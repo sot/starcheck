@@ -6,9 +6,9 @@ ACA Load Review Checklist
    file in the starcheck git project
 
 
-Date: 2022-Oct-26
+Date: 2024-Jan-17
 
-Version: 3.9
+Version: 3.10
 
 Author: E. Martin, S. Hurley, T. Aldcroft, J. Connelly, J. Gonzalez
 
@@ -52,8 +52,6 @@ Load Input Files
   - Dither: ./History/DITHER.txt
 
   - Radmon: ./History/RADMON.txt
-
-  - Maneuver Error: ./output/MMMddyyv_ManErr.txt
 
   - Processing Summ: ./mps/msddd:hhvv.sum
 
@@ -236,9 +234,12 @@ Checks
 |ACA-021|ACA field-of-view |X|X|FL: Z at least half-width inside           |n/a |Reduced aspect  |
 |       |limits            | | |field-of-view limits                       |    |quality         |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
-|       |                  |X|X|AS: spoiled by another object brighter than|    |Possible Bright |
-|ACA-022|Spoiler stars     | | |mag(AS) + 0.2, that lies closer than       |n/a |Star Hold       |
-|       |                  | | |maneuver uncertainty to the AS search box  |    |                |
+|       |                  | | |AS: Impact of spoilers on acquisition      |    |                |
+|       |                  | | |probability is calculated in proseco.      |    |                |
+|ACA-022|Spoiler stars     |X|X|Previously this was handled as a red warn  |n/a |Possible Bright |
+|       |                  | | |for AS spoiled by another object brighter  |    |Star Hold       |
+|       |                  | | |than mag(AS) + 0.2, that lies closer than  |    |                |
+|       |                  | | |maneuver uncertainty to the AS search box. |    |                |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
 |       |                  |X|X|GS: spoiled by another object brighter than|    |Reduced aspect  |
 |ACA-023|Spoiler stars     | | |mag(GS) + 0.2, that lies closer than       |n/a |quality         |
