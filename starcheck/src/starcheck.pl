@@ -192,7 +192,6 @@ my $odb_file = get_file("$Starcheck_Data/$par{fid_char}*", 'odb', 'required');
 
 my $agasc_file = get_file("$par{agasc_file}", "agasc_file");
 
-my $manerr_file = get_file("$par{dir}/output/*_ManErr.txt", 'manerr');
 my $ps_file = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
 my $tlr_file = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required');
 
