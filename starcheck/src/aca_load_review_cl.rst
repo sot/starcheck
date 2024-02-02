@@ -234,12 +234,8 @@ Checks
 |ACA-021|ACA field-of-view |X|X|FL: Z at least half-width inside           |n/a |Reduced aspect  |
 |       |limits            | | |field-of-view limits                       |    |quality         |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
-|       |                  | | |AS: Impact of spoilers on acquisition      |    |                |
-|       |                  | | |probability is calculated in proseco.      |    |                |
-|ACA-022|Spoiler stars     |X|X|Previously this was handled as a red warn  |n/a |Possible Bright |
-|       |                  | | |for AS spoiled by another object brighter  |    |Star Hold       |
-|       |                  | | |than mag(AS) + 0.2, that lies closer than  |    |                |
-|       |                  | | |maneuver uncertainty to the AS search box. |    |                |
+|ACA-022|Spoiler stars     |X|X|AS: Impact of acquisition spoilers included|n/a |Possible Bright |
+|       |                  | | |in acquisition probability calculation     |    |Star Hold       |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
 |       |                  |X|X|GS: spoiled by another object brighter than|    |Reduced aspect  |
 |ACA-023|Spoiler stars     | | |mag(GS) + 0.2, that lies closer than       |n/a |quality         |
