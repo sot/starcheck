@@ -1181,13 +1181,18 @@ sub check_star_catalog {
       if ( (@{ $self->{mon} } > 1 && $is_science)
         || (@{ $self->{mon} } > 2 && $is_er));
 
-    # Calculate the ON fid positions
-    my $fid_positions = get_fid_positions($self, $c);
 
-    # If there are fids turned on and positions for them have been determined
-    # run fid checks.  Skip this in vehicle mode as fids are turned off.
-    if (scalar(@{$fid_positions}) > 0 && not $vehicle) {
-        check_fids($self, $c, $fid_positions);
+    my $fid_positions = [];
+
+    # Skip fid position calculations and fid checks on vehicle products
+    if (not $vehicle) {
+        $fid_positions = get_fid_positions($self, $c);
+
+        # If there are fids turned on and positions for them have been determined
+        # run fid checks.
+        if (scalar(@{$fid_positions}) > 0 ){
+            check_fids($self, $c, $fid_positions);
+        }
     }
 
     # Make arrays of the items that we need for the hot pixel region check
