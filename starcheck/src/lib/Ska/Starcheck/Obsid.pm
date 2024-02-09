@@ -1482,9 +1482,7 @@ sub check_star_catalog {
             push @orange_warn, sprintf "[%2d] Acq Off (padded) CCD by > 60 arcsec.\n",
               $i;
         }
-        elsif (($type =~ /BOT|ACQ/) and ($acq_edge_delta < 0)) {
-            push @{ $self->{fyi} }, sprintf "[%2d] Acq Off (padded) CCD\n", $i;
-        }
+
 
         # Faint and bright limits ~ACA-009 ACA-010
         if ($mag ne '---') {
@@ -1500,12 +1498,6 @@ sub check_star_catalog {
                   $mag;
                 if ($mag < 5.2) {
                     push @warn, $acq_mag_warn;
-                }
-                elsif ($mag > $self->{mag_faint_red}) {
-                    push @orange_warn, $acq_mag_warn;
-                }
-                elsif ($mag > $self->{mag_faint_yellow}) {
-                    push @yellow_warn, $acq_mag_warn;
                 }
             }
         }
@@ -1543,7 +1535,7 @@ sub check_star_catalog {
             }
         }
 
-        if ($type =~ /BOT|GUI|ACQ/) {
+        if ($type =~ /BOT|GUI/) {
             if (($maxmag =~ /---/) or ($mag =~ /---/)) {
                 push @warn, sprintf "[%2d] Magnitude.  MAG or MAGMAX not defined \n",
                   $i;

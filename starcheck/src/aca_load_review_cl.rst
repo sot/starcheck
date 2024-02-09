@@ -302,10 +302,7 @@ Checks
 |ACA-040|Monitor commanding|X|X|Dither is disabled and enabled with correct|n/a |Failure to track|
 |       |                  | | |timing                                     |    |                |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
-|       |                  |X|X|                                           |    |AS: Reduced     |
-|       |                  | | |                                           |    |acq probability |
-|       |                  | | |                                           |    |of star         |
-|ACA-041|Magnitude         | | |Slot MAXMAG (faint limit) - star MAG >= 0.3|n/a |GS: Increased   |
+|ACA-041|Magnitude         |X|X|Slot MAXMAG (faint limit) - star MAG >= 0.3|n/a |GS: Increased   |
 |       |                  | | |                                           |    |risk of loss of |
 |       |                  | | |                                           |    |track of star   |
 +-------+------------------+-+-+-------------------------------------------+----+----------------+
