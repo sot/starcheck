@@ -33,7 +33,6 @@ use JSON ();
 
 use Cwd qw( abs_path );
 
-use HTML::TableExtract;
 use Carp 'verbose';
 $SIG{__DIE__} = sub { Carp::confess(@_) };
 
@@ -965,41 +964,10 @@ qq{<BODY><div id="overDiv" style="position:absolute; visibility:hidden; z-index:
 
 if ($par{text}) {
 
+
     my $textout = io("${STARCHECK}.txt");
-
-    my $te = HTML::TableExtract->new();
-    $te->parse($out);
-
-    my %table;
-    foreach my $ts ($te->table_states) {
-
-        #	print "Table (", join(',', $ts->coords), "):\n";
-        my $table_text = qq{};
-        my ($depth, $count) = $ts->coords;
-        foreach my $row ($ts->rows) {
-            $table_text .= $row->[0] . "\n" if defined $row->[0];
-        }
-        if ($table_text =~ /OBSID/s) {
-            $table{$depth}{$count} = $table_text;
-        }
-    }
-
-    #    use Data::Dumper;
-    #    print Dumper %table;
-    for my $depth (sort { $a <=> $b } (keys %table)) {
-        for my $count (sort { $a <=> $b } (keys %{ $table{$depth} })) {
-
-            #	    print " $depth $count \n";
-            my $chunk = $table{$depth}{$count};
-            chomp($chunk);
-            $chunk =~ s/\s+$/\n/;
-            $textout->print("$chunk");
-            $textout->print(
-"==================================================================================== \n"
-            );
-        }
-    }
-
+    $textout->print(call_python("utils.prehtml2text", [ $out ]));
+    $textout->close;
     print STDERR "Wrote text report to $STARCHECK.txt\n";
 
 }

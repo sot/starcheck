@@ -2,6 +2,7 @@ import logging
 import os
 from pathlib import Path
 import warnings
+from bs4 import BeautifulSoup
 
 import agasc
 import cxotime
@@ -44,6 +45,21 @@ warnings.filterwarnings(
     category=UserWarning,
     message=r"\nModel .* computed between .* clipping input mag\(s\) outside that range\.",
 )
+
+def prehtml2text(html_text):
+    """Convert the starcheck report html to plain text."""
+
+    soup = BeautifulSoup(html_text, "lxml")
+
+    # All of the report is basically in the pre tags
+    pres = list(soup.find_all("pre"))
+    out = []
+    for pre in pres:
+        out.append(pre.get_text())
+        # And include a line of equals to separate the sections
+        out.append("=" * 84)
+
+    return "\n".join(out)
 
 
 def date2secs(val):
