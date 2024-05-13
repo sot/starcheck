@@ -55,7 +55,7 @@ def prehtml2text(html_text):
     section_separator = "\n" + "=" * 84
     outs = [pre.get_text() + section_separator for pre in soup.find_all("pre")]
 
-    return "\n".join(out)
+    return "\n".join(outs)
 
 
 def date2secs(val):
