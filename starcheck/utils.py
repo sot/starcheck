@@ -52,12 +52,8 @@ def prehtml2text(html_text):
     soup = BeautifulSoup(html_text, "lxml")
 
     # All of the report is basically in the pre tags
-    pres = list(soup.find_all("pre"))
-    out = []
-    for pre in pres:
-        out.append(pre.get_text())
-        # And include a line of equals to separate the sections
-        out.append("=" * 84)
+section_separator = "\n" + "=" * 84
+outs = [pre.get_text() + section_separator for pre in soup.find_all("pre")]
 
     return "\n".join(out)
 
