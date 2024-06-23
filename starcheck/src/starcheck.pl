@@ -45,7 +45,6 @@ my %par = (
     html => 1,
     text => 1,
     yaml => 1,
-    agasc_file => "${SKA}/data/agasc/proseco_agasc_1p7.h5",
     config_file => "characteristics.yaml",
     fid_char => "fid_CHARACTERISTICS",
     verbose => 1,
@@ -112,6 +111,8 @@ print SERVER "$par{verbose}\n";
 my $MAX_OBSIDS = $par{max_obsids} > 0 ? $par{max_obsids} : undef;
 
 my $version = call_python("utils.starcheck_version");
+
+my $agasc_file_name = $par{agasc_file} ||= call_python("utils.get_agasc_file");
 
 my $Starcheck_Data = $par{sc_data} || call_python("utils.get_data_dir");
 my $STARCHECK = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
@@ -189,7 +190,7 @@ my $mp_top_link = guess_mp_toplevel(
 
 my $odb_file = get_file("$Starcheck_Data/$par{fid_char}*", 'odb', 'required');
 
-my $agasc_file = get_file("$par{agasc_file}", "agasc_file");
+my $agasc_file = get_file($agasc_file_name, "agasc_file");
 
 my $ps_file = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
 my $tlr_file = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required');
@@ -1295,7 +1296,8 @@ Limit starcheck review to first N obsids (for testing).
 
 =item B<-agasc_file <agasc>>
 
-Specify location of agasc h5 file.  Default is SKA/data/agasc/agasc1p7.h5 .
+Specify location of agasc h5 file.  Default is Python agasc module default (most recent
+SKA/data/agasc/proseco_agasc_* ) .
 
 =item B<-fid_char <fid characteristics file>>
 
