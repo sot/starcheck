@@ -63,7 +63,6 @@ GetOptions(
     'yaml!',
     'vehicle!',
     'verbose=s',
-    'agasc_file=s',
     'sc_data=s',
     'fid_char=s',
     'config_file=s',
@@ -111,8 +110,6 @@ print SERVER "$par{verbose}\n";
 my $MAX_OBSIDS = $par{max_obsids} > 0 ? $par{max_obsids} : undef;
 
 my $version = call_python("utils.starcheck_version");
-
-my $agasc_file_name = $par{agasc_file} ||= call_python("utils.get_agasc_file");
 
 my $Starcheck_Data = $par{sc_data} || call_python("utils.get_data_dir");
 my $STARCHECK = $par{out} || ($par{vehicle} ? 'v_starcheck' : 'starcheck');
@@ -190,7 +187,7 @@ my $mp_top_link = guess_mp_toplevel(
 
 my $odb_file = get_file("$Starcheck_Data/$par{fid_char}*", 'odb', 'required');
 
-my $agasc_file = get_file($agasc_file_name, "agasc_file");
+my $agasc_file = get_file(call_python("utils.get_agasc_file"), "agasc_file");
 
 my $ps_file = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
 my $tlr_file = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required');
@@ -1294,11 +1291,6 @@ MAUDE will also be used if no AACCCDPT telemetry can be found in cheta archive f
 
 Limit starcheck review to first N obsids (for testing).
 
-=item B<-agasc_file <agasc>>
-
-Specify location of agasc h5 file.  Default is Python agasc module default (most recent
-SKA/data/agasc/proseco_agasc_* ) .
-
 =item B<-fid_char <fid characteristics file>>
 
 Specify file name of the fid characteristics file to use.  This must be in the SKA/data/starcheck/ directory.
@@ -1340,7 +1332,7 @@ is found, a warning is produced but processing continues.  Multiple matches
 results in a fatal error, however.
 
 Starcheck uses the SKA environment variable to locate the default agasc file
-"${SKA}/data/agasc/proseco_agasc_1p7.h5".  If SKA is not set this defaults to
+"${SKA}/data/agasc/proseco_agasc_*.h5".  If SKA is not set this defaults to
 '/proj/sot/ska'.
 
 Starcheck uses the PROSECO_OR_IMAGE_SIZE environment variable if available to
