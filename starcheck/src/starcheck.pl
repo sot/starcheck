@@ -1332,9 +1332,8 @@ is found, a warning is produced but processing continues.  Multiple matches
 results in a fatal error, however.
 
 Starcheck uses the SKA environment variable to locate the default agasc file
-"${SKA}/data/agasc/proseco_agasc_*.h5".  If SKA is not set this defaults to
-'/proj/sot/ska'.  The agasc file location can be controlled with the agasc module
-environment variables AGASC_DIR and AGASC_HDF5_FILE.
+"${SKA}/data/agasc/proseco_agasc_*.h5".  The agasc file location can be controlled
+with the agasc module environment variables AGASC_DIR and AGASC_HDF5_FILE.
 
 Starcheck uses the PROSECO_OR_IMAGE_SIZE environment variable if available to
 set up the check for the appropriate readout image size in pixels for science
