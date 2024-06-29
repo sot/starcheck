@@ -1265,7 +1265,7 @@ sub check_star_catalog {
             {
                 push @orange_warn,
                   sprintf("[%2d] Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n",
-                      $i, $type, $c->{"GS_ASPQ$i"});
+                      $i, $sid, $c->{"GS_ASPQ$i"});
             }
         }
 
