@@ -1264,7 +1264,8 @@ sub check_star_catalog {
                 or (($type =~ /BOT|ACQ/) && ($c->{"GS_ASPQ$i"} > 40)))
             {
                 push @orange_warn,
-                  sprintf "[%2d] Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n",;
+                  sprintf("[%2d] Centroid Perturbation Warning.  %s: ASPQ1 = %2d\n",
+                      $i, $sid, $c->{"GS_ASPQ$i"});
             }
         }
 

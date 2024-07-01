@@ -45,7 +45,6 @@ my %par = (
     html => 1,
     text => 1,
     yaml => 1,
-    agasc_file => "${SKA}/data/agasc/proseco_agasc_1p7.h5",
     config_file => "characteristics.yaml",
     fid_char => "fid_CHARACTERISTICS",
     verbose => 1,
@@ -64,7 +63,6 @@ GetOptions(
     'yaml!',
     'vehicle!',
     'verbose=s',
-    'agasc_file=s',
     'sc_data=s',
     'fid_char=s',
     'config_file=s',
@@ -189,7 +187,7 @@ my $mp_top_link = guess_mp_toplevel(
 
 my $odb_file = get_file("$Starcheck_Data/$par{fid_char}*", 'odb', 'required');
 
-my $agasc_file = get_file("$par{agasc_file}", "agasc_file");
+my $agasc_file = get_file(call_python("utils.get_agasc_file"), "agasc_file");
 
 my $ps_file = get_file("$par{dir}/mps/ms*.sum", 'processing summary');
 my $tlr_file = get_file("$par{dir}/${sosa_dir_slash}*.tlr", 'TLR', 'required');
@@ -1293,10 +1291,6 @@ MAUDE will also be used if no AACCCDPT telemetry can be found in cheta archive f
 
 Limit starcheck review to first N obsids (for testing).
 
-=item B<-agasc_file <agasc>>
-
-Specify location of agasc h5 file.  Default is SKA/data/agasc/agasc1p7.h5 .
-
 =item B<-fid_char <fid characteristics file>>
 
 Specify file name of the fid characteristics file to use.  This must be in the SKA/data/starcheck/ directory.
@@ -1338,8 +1332,8 @@ is found, a warning is produced but processing continues.  Multiple matches
 results in a fatal error, however.
 
 Starcheck uses the SKA environment variable to locate the default agasc file
-"${SKA}/data/agasc/proseco_agasc_1p7.h5".  If SKA is not set this defaults to
-'/proj/sot/ska'.
+"${SKA}/data/agasc/proseco_agasc_*.h5".  The agasc file location can be controlled
+with the agasc module environment variables AGASC_DIR and AGASC_HDF5_FILE.
 
 Starcheck uses the PROSECO_OR_IMAGE_SIZE environment variable if available to
 set up the check for the appropriate readout image size in pixels for science

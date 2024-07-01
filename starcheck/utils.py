@@ -46,6 +46,11 @@ warnings.filterwarnings(
     message=r"\nModel .* computed between .* clipping input mag\(s\) outside that range\.",
 )
 
+
+def get_agasc_file():
+    return agasc.get_agasc_filename()
+
+
 def prehtml2text(html_text):
     """Convert the starcheck report html to plain text."""
 
