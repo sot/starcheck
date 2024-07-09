@@ -2407,7 +2407,11 @@ sub print_report {
             $o .= "\n";
         }
 
-        $o .= sprintf("Predicted Max CCD temperature: %.1f C ", $self->{ccd_temp});
+        $o .= sprintf(
+            "Predicted Max CCD temperature: %.1f C (%.3f C)",
+            $self->{ccd_temp},
+            $self->{ccd_temp}
+        );
         if (defined $self->{n100_warm_frac}) {
             $o .= sprintf("\t N100 Warm Pix Frac %.3f", $self->{n100_warm_frac});
         }
@@ -2857,10 +2861,13 @@ sub set_ccd_temps {
     $self->{ccd_temp_acq} = $obsid_temps->{ $self->{obsid} }->{ccd_temp_acq};
     $self->{n100_warm_frac} = $obsid_temps->{ $self->{obsid} }->{n100_warm_frac};
 
-    # Add critical warning for ACA planning limit violation
-    if ($self->{ccd_temp} > $config{ccd_temp_red_limit}) {
+    # Add critical warning for ACA planning limit violation. Round both the temperature
+    # and the limit to 1 decimal place for comparison.
+    my $ccd_temp_round = sprintf("%.1f", $self->{ccd_temp});
+    my $ccd_temp_red_limit_round = sprintf("%.1f", $config{ccd_temp_red_limit});
+    if ($ccd_temp_round > $ccd_temp_red_limit_round) {
         push @{ $self->{warn} },
-          sprintf("CCD temperature exceeds %.1f C\n", $config{ccd_temp_red_limit});
+          sprintf("CCD temperature exceeds %.1f C\n", $ccd_temp_red_limit_round);
     }
 
     # Add info for having a penalty temperature too
