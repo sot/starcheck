@@ -205,7 +205,7 @@ def ir_zone_ok(backstop_file, out=None):
     out_text = ["IR ZONE CHECKING"]
     for perigee_time in perigee_cmds["time"]:
         # High IR zone is from zone_minus_mins before perigee to zone_plus_mins after perigee
-        zone_minus_mins = 10
+        zone_minus_mins = 5
         zone_plus_mins = 35
         ir_zone_start = perigee_time - (zone_minus_mins * 60)
         ir_zone_stop = perigee_time + (zone_plus_mins * 60)
