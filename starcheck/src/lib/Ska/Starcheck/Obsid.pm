@@ -890,14 +890,13 @@ sub check_bright_perigee {
 #############################################################################################
     my $self = shift;
     my $radmon = shift;
-    my $vehicle = shift;
     my $min_n_stars = 3;
 
     # if this is an OR, just return
     return if (($self->{obsid} =~ /^\d+$/ && $self->{obsid} < $ER_MIN_OBSID));
 
     # if radmon is undefined, warn and return
-    if ((not defined $radmon) or ($vehicle)) {
+    if (not defined $radmon) {
         push @{ $self->{warn} },
           "Perigee bright stars not being checked, no rad zone info available\n";
         return;
