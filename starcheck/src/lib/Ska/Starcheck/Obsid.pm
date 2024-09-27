@@ -2888,13 +2888,13 @@ sub set_ccd_temps {
 
 # Clip the acq ccd temperature to the calibrated range of the grid acq probability model
     # and add a yellow warning to let the user know this has happened.
-    if (($self->{ccd_temp_acq} > -1.0) or ($self->{ccd_temp_acq} < -16.0)) {
+    if (($self->{ccd_temp_acq} > 2.0) or ($self->{ccd_temp_acq} < -15.0)) {
         push @{ $self->{yellow_warn} },
-          sprintf("acq t_ccd %.1f outside range -16.0 to -1.0. Clipped.\n",
+          sprintf("acq t_ccd %.1f outside range -15.0 to 2.0. Clipped.\n",
             $self->{ccd_temp_acq});
         $self->{ccd_temp_acq} =
-            $self->{ccd_temp_acq} > -1.0 ? -1.0
-          : $self->{ccd_temp_acq} < -16.0 ? -16.0
+            $self->{ccd_temp_acq} > 2.0 ? 2.0
+          : $self->{ccd_temp_acq} < -15.0 ? -15.0
           : $self->{ccd_temp_acq};
     }
 }
