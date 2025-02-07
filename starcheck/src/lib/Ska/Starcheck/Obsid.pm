@@ -2510,27 +2510,14 @@ sub get_report_footer_html {
 
 sub get_report_images_html {
     my $self = shift;
+    my $img_size = 600;
 
-    my $pict1 = qq{};
-    my $pict2 = qq{};
-    my $pict3 = qq{};
+    my $out = "";
     if ($self->{plot_file}) {
         my $obs = $self->{obsid};
-        my $obsmap = $self->star_image_map();
-        $pict1 = qq{$obsmap <img src="$self->{plot_file}" usemap=\#starmap_${obs}
-						width=426 height=426 border=0> };
+        $out .= $self->star_image_map($img_size);
+        $out .= qq{<img src="$self->{plot_file}" usemap=\#starmap_${obs} width=$img_size height=$img_size border=0> };
     }
-    if ($self->{plot_field_file}) {
-        $pict2 =
-qq{Star Field<BR /><img align="top" src="$self->{plot_field_file}" width=231 height=231>};
-    }
-    if ($self->{compass_file}) {
-        $pict3 =
-qq{Compass<BR /><img align="top" src="$self->{compass_file}" width=154 height=154>};
-    }
-
-    my $out =
-"<TABLE CELLPADDING=0><TR><TD ROWSPAN=2>$pict1</TD><TD ALIGN=CENTER>$pict2</TD></TR><TR><TD ALIGN=CENTER>$pict3</TD></TR></TABLE>\n";
     return $out;
 }
 

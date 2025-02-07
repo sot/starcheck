@@ -48,19 +48,11 @@ def make_plots_for_obsid(obsid, ra, dec, roll, starcat_time, catalog, outdir,
 
     bad_stars = bad_acq_stars(stars)
 
-    f_plot = plot_stars(attitude=[ra, dec, roll], catalog=None, stars=stars,
-                        title=None, starcat_time=starcat_time, duration=duration,
-                        bad_stars=bad_stars, red_mag_lim=None)
-    f_plot.savefig(os.path.join(outdir, 'star_view_{}.png'.format(obsid)), dpi=80)
-    plt.close(f_plot)
     cat_plot = plot_stars(attitude=[ra, dec, roll], catalog=catalog, stars=stars,
                           title="RA=%.6f Dec=%.6f Roll=%.6f" % (ra, dec, roll),
                           starcat_time=starcat_time, duration=duration,
                           bad_stars=bad_stars, red_mag_lim=red_mag_lim)
-    cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)), dpi=80)
+    cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)), dpi=150)
     plt.close(cat_plot)
-    compass_plot = plot_compass(roll)
-    compass_plot.savefig(os.path.join(outdir, 'compass{}.png'.format(obsid)), dpi=80)
-    plt.close(compass_plot)
 
 
