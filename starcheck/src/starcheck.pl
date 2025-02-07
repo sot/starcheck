@@ -900,7 +900,7 @@ $out .= "\n";
 # For each obsid, print star report, errors, and generate star plot
 
 foreach $obsid (@obsid_id) {
-    $out .= "<HR>";
+    $out .= "<HR>\n";
     $out .= $obs{$obsid}->get_report_html();
 }
 

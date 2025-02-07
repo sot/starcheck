@@ -2021,33 +2021,37 @@ sub get_report_html {
     my $c;
     my $o = '';    # Output
 
+    my $obsid = $self->{obsid};
+
     # Internal reference link
-    $o .= sprintf(
-        "<A NAME=\"obsid%s\">%s</A>",
-        $self->{obsid},
-        $self->get_report_prev_next_buttons_html()
-    );
+    $o .= "<!-- Start of HTML report content for obsid $obsid -->\n";
 
     # Main table for per-obsid report
+    $o .= "<!-- Main table for per-obsid report for obsid $obsid -->\n";
     $o .= "<TABLE CELLPADDING=0>\n";
-    $o .= "<TR>\n";
 
-    # Left side of table with pre-formatted text
-    $o .= "<TD VALIGN=TOP WIDTH=810>";
-    $o .= "<PRE>";
+    # Left side of table with nav links and pre-formatted text
+    $o .= "<TD VALIGN=TOP WIDTH=810>\n";
+    my $nav_buttons = $self->get_report_prev_next_buttons_html();
+    $o .= qq{<A NAME="obsid$obsid">$nav_buttons</A>\n};
+    $o .= "<BR>\n";
+    $o .= "<!-- Star catalog preformatted information and table for obsid $obsid -->\n";
+    $o .= "<PRE>\n";
     $o .= $self->get_report_header_html();
     $o .= $self->get_report_starcat_table_html();
     $o .= $self->get_report_footer_html();
-    $o .= "</PRE>";
-    $o .= "</TD>";
+    $o .= "</PRE>\n";
+    $o .= "</TD>\n";
 
     # Right side with images: starfield big, starfield small, compass
-    $o .= "<TD VALIGN=TOP>";
+    $o .= "<!-- Star field plot for obsid $obsid -->\n";
+    $o .= "<TD VALIGN=TOP>\n";
     $o .= $self->get_report_images_html();
-    $o .= "</TD>";
-    $o .= "</TR>";
-    $o .= "</TABLE>";
+    $o .= "</TD>\n";
 
+    $o .= "</TR>\n";
+    $o .= "</TABLE>\n";
+    $o .= "<!-- End of HTML report content for obsid $obsid -->\n";
     return $o;
 }
 
