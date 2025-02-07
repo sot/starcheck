@@ -2819,7 +2819,7 @@ sub star_image_map {
           . 'ONMOUSEOUT="return nd();"' . "\n"
           . 'SHAPE="circle"' . "\n"
           . 'ALT=""' . "\n"
-          . "COORDS=\"$image_x,$image_y,2\">" . "\n";
+          . "COORDS=\"$image_x,$image_y,3\">" . "\n";
         $map .= $star;
     }
     $map .= "</map> \n";
