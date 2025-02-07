@@ -2746,6 +2746,7 @@ sub star_dbhist {
 sub star_image_map {
 #############################################################################################
     my $self = shift;
+    my $img_size = shift;
     my $c;
     return unless ($c = find_command($self, 'MP_STARCAT'));
     return
@@ -2777,12 +2778,13 @@ sub star_image_map {
         $star_count++;
     }
 
-    # notes for pixel scaling.
-    # these will need to change if we resize the images.
-    # top right +384+39
-    # top left +54+39
-    # 2900x2900
-    my $pix_scale = 330 / (2900. * 2);
+    # For a 798x798 image (native with dpi=150), -2900 to 2900 arcsec is 619 pixels.
+    # The top left corner is at x=100, y=63 pixels.
+    my $img_size_ref = 798;  # pixels
+    my $img_size_scale = $img_size / $img_size_ref;
+    my $pix_scale = 619 / (2900. * 2) * $img_size_scale;
+    my $x_offset = 100 * $img_size_scale;
+    my $y_offset = 63 * $img_size_scale;
 
     # Convert all the yag/zags to pixel rows/cols
     my @yags = map { $self->{agasc_hash}->{$_}->{yag} } keys %plot_ids;
@@ -2800,8 +2802,8 @@ sub star_image_map {
         my $sid = $cat_star->{id};
         my $yag = $cat_star->{yag};
         my $zag = $cat_star->{zag};
-        my $image_x = 54 + ((2900 - $yag) * $pix_scale);
-        my $image_y = 39 + ((2900 - $zag) * $pix_scale);
+        my $image_x = $x_offset + (2900 - $yag) * $pix_scale;
+        my $image_y = $y_offset + (2900 - $zag) * $pix_scale;
         my $star =
             '<area href="javascript:void(0);"' . "\n"
           . 'ONMOUSEOVER="return overlib ('
