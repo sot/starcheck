@@ -665,9 +665,12 @@ open(my $JSON_OUT, "> $STARCHECK/obsids.json")
 print $JSON_OUT $final_json;
 close($JSON_OUT);
 
-# Produce final report
-
-my $out = '<TABLE><TD><PRE> ';
+######################################################################
+# Produce final HTML report
+######################################################################
+my $out = '';
+# $out .= '<TABLE><TD>';
+$out .= '<PRE>';
 my $date = `date`;
 chomp $date;
 
@@ -897,33 +900,14 @@ $out .= "\n";
 # For each obsid, print star report, errors, and generate star plot
 
 foreach $obsid (@obsid_id) {
-    $out .= "<HR>\n";
-    $out .= $obs{$obsid}->print_report();
-    my $pict1 = qq{};
-    my $pict2 = qq{};
-    my $pict3 = qq{};
-    if ($obs{$obsid}->{plot_file}) {
-        my $obs = $obs{$obsid}->{obsid};
-        my $obsmap = $obs{$obsid}->star_image_map();
-        $pict1 = qq{$obsmap <img src="$obs{$obsid}->{plot_file}" usemap=\#starmap_${obs}
-						width=426 height=426 border=0> };
-    }
-    if ($obs{$obsid}->{plot_field_file}) {
-        $pict2 =
-qq{Star Field<BR /><img align="top" src="$obs{$obsid}->{plot_field_file}" width=231 height=231>};
-    }
-    if ($obs{$obsid}->{compass_file}) {
-        $pict3 =
-qq{Compass<BR /><img align="top" src="$obs{$obsid}->{compass_file}" width=154 height=154>};
-    }
-
-    $out .=
-"<TABLE CELLPADDING=0><TR><TD ROWSPAN=2>$pict1</TD><TD ALIGN=CENTER>$pict2</TD></TR><TR><TD ALIGN=CENTER>$pict3</TD></TR></TABLE>\n";
+    $out .= "<HR>";
+    $out .= $obs{$obsid}->get_report_html();
 }
 
 # Finish up and format it
 
-$out .= '</PRE></TD></TABLE> ';
+$out .= '</PRE>';
+# $out .= '</TD></TABLE> ';
 
 #print $out;
 

@@ -2015,7 +2015,93 @@ sub calc_fid_ang {
 }
 
 #############################################################################################
-sub print_report {
+sub get_report_html {
+#############################################################################################
+    my $self = shift;
+    my $c;
+    my $o = '';    # Output
+
+    # Internal reference link
+    $o .= sprintf(
+        "<A NAME=\"obsid%s\">%s</A>",
+        $self->{obsid},
+        $self->get_report_prev_next_buttons_html()
+    );
+
+    # Main table for per-obsid report
+    $o .= "<TABLE CELLPADDING=0>\n";
+    $o .= "<TR>\n";
+
+    # Left side of table with pre-formatted text
+    $o .= "<TD VALIGN=TOP WIDTH=810>";
+    $o .= "<PRE>";
+    $o .= $self->get_report_header_html();
+    $o .= $self->get_report_starcat_table_html();
+    $o .= $self->get_report_footer_html();
+    $o .= "</PRE>";
+    $o .= "</TD>";
+
+    # Right side with images: starfield big, starfield small, compass
+    $o .= "<TD VALIGN=TOP>";
+    $o .= $self->get_report_images_html();
+    $o .= "</TD>";
+    $o .= "</TR>";
+    $o .= "</TABLE>";
+
+    return $o;
+}
+
+#############################################################################################
+sub get_report_prev_next_buttons_html {
+#############################################################################################
+    my $self = shift;
+    my $o = '';
+
+    if (defined $self->{prev}->{obsid} or defined $self->{next}->{obsid}) {
+        $o .= " <TABLE WIDTH=43><TR>";
+        if (defined $self->{prev}->{obsid}) {
+            $o .= sprintf(
+"<TD><A HREF=\"#obsid%s\"><img align=\"top\" src=\"%s/up.gif\" ></A></TD>",
+                $self->{prev}->{obsid},
+                $self->{STARCHECK}
+            );
+            $o .= sprintf("<TD><A HREF=\"#obsid%s\">PREV</A> </TD>",
+                $self->{prev}->{obsid});
+        }
+        else {
+            $o .= sprintf("<TD><img align=\"top\" src=\"%s/up.gif\" ></TD>",
+                $self->{STARCHECK});
+            $o .= sprintf("<TD>PREV</TD>");
+        }
+        $o .= sprintf("<TD>&nbsp; &nbsp;</TD>");
+        if (defined $self->{next}->{obsid}) {
+            $o .= sprintf(
+"<TD><A HREF=\"#obsid%s\"><img align=\"top\" src=\"%s/down.gif\" ></A></TD>",
+                $self->{next}->{obsid},
+                $self->{STARCHECK}
+            );
+            $o .= sprintf("<TD><A HREF=\"#obsid%s\">NEXT</A> </TD>",
+                $self->{next}->{obsid});
+        }
+        $o .= " </TR></TABLE>";
+    }
+    return $o;
+}
+
+
+#############################################################################################
+sub get_report_header_html {
+# Make the bit like this:
+#
+# OBSID: 30182  NGC5134                ACIS-S SIM Z offset:0     (0.00mm) Grating: NONE
+# RA, Dec, Roll (deg):   201.336746   -21.137976    62.841900
+# Dither: ON Y_amp=16.0  Z_amp=16.0  Y_period=1414.0  Z_period=2000.0
+# BACKSTOP GUIDE_SUMM OR MANVR DOT TLR
+#
+# MP_TARGQUAT at 2025:041:02:29:09.263 (VCDU count = 9219318)
+#   Q1,Q2,Q3,Q4: 0.24868922  -0.47464310  -0.84208447  0.06132982
+#   MANVR: Angle= 152.43 deg  Duration= 2692 sec  End= 2025:041:03:14:07
+#
 #############################################################################################
     my $self = shift;
     my $c;
@@ -2024,9 +2110,6 @@ sub print_report {
     my $target_name =
       ($self->{TARGET_NAME}) ? $self->{TARGET_NAME} : $self->{SS_OBJECT};
 
-    $o .= sprintf(
-"<TABLE WIDTH=853 CELLPADDING=0><TD VALIGN=TOP WIDTH=810><PRE><A NAME=\"obsid%s\"></A>",
-        $self->{obsid});
     $o .= sprintf("${blue_font_start}OBSID: %-5s  ", $self->{obsid});
     $o .= sprintf(
         "%-22s %-6s SIM Z offset:%-5d (%-.2fmm) Grating: %-5s",
@@ -2118,44 +2201,32 @@ sub print_report {
             $o .= "\n";
         }
     }
+    return $o;
+}
 
+#############################################################################################
+sub get_report_starcat_table_html {
+# Make this:
+#
+# MP_STARCAT at 2025:041:02:29:10.906 (VCDU count = 9219324)
+# ---------------------------------------------------------------------------------------------
+#  IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES
+# ---------------------------------------------------------------------------------------------
+# [ 1]  0           1   FID  8x8     ---   7.000   8.000    932  -1739   1   1   25
+#      ...
+# [12]  7   803738368   ACQ  8x8   0.586  10.222  11.203   1020   1893  20   1  120
+#############################################################################################
+    my $self = shift;
+    my $c;
+    my $table = '';
     my $star_stat_lookup = "http://kadi.cfa.harvard.edu/star_hist/?agasc_id=";
 
-    my $table;
     if ($c = find_command($self, "MP_STARCAT")) {
 
-        my @fid_fields =
+        my @fields =
           qw (TYPE  SIZE P_ACQ GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
-        my @fid_format = (
-            '%6s',
-            '%5s',
-            '%8.3f',
-            '%8s',
-            '%8.3f',
-            '%7d',
-            '%7d',
-            '%4d',
-            '%4d',
-            '%5d',
-            '%6s',
-            '%4s'
-        );
-        my @star_fields =
-          qw (   TYPE  SIZE P_ACQ GS_MAG MAXMAG YANG ZANG DIMDTS RESTRK HALFW GS_PASS GS_NOTES);
-        my @star_format = (
-            '%6s',
-            '%5s',
-            '%8.3f',
-            '%8s',
-            '%8.3f',
-            '%7d',
-            '%7d',
-            '%4d',
-            '%4d',
-            '%5d',
-            '%6s',
-            '%4s'
-        );
+        my @format =
+          qw(%6s    %5s  %8.3f  %8s   %8.3f  %7d  %7d   %4d    %4d    %5d    %6s     %4s);
 
         $table .= sprintf "MP_STARCAT at $c->{date} (VCDU count = $c->{vcdu})\n";
         $table .= sprintf
@@ -2168,13 +2239,7 @@ sub print_report {
 "---------------------------------------------------------------------------------------------\n";
 
         foreach my $i (1 .. 16) {
-            my @fields = @star_fields;
-            my @format = @star_format;
             next if ($c->{"TYPE$i"} eq 'NUL');
-            if ($c->{"TYPE$i"} eq 'FID') {
-                @fields = @fid_fields;
-                @format = @fid_format;
-            }
 
             # Define the color of output star catalog line based on NOTES:
             #   Yellow if NOTES is non-trivial.
@@ -2207,9 +2272,8 @@ sub print_report {
             # Get a string for acquisition probability in the hover-over
             my $acq_prob = "";
             if ($c->{"TYPE$i"} =~ /BOT|ACQ/) {
-
                 # Fetch this slot's acq probability for the hover-over string,
-               # but if the probability is not defined (expected for weird cases such as
+                # but if the probability is not defined (expected for weird cases such as
                 # replan/reopen) just leave $acq_prob as the initialized empty string.
                 if (defined $self->{acq_probs}->{ $c->{"IMNUM${i}"} }) {
                     $acq_prob = sprintf("Prob Acq Success %5.3f",
@@ -2348,7 +2412,25 @@ sub print_report {
         $table = sprintf(" " x 93 . "\n");
     }
 
-    $o .= $table;
+    return $table;
+}
+
+#############################################################################################
+sub get_report_footer_html {
+# Make this:
+#
+# >> WARNING : [ 6] Imposter mag 11.0 centroid offset 2.9 row, col ( 422,  171) star ( 430,  179)
+#
+# Probability of acquiring 2 or fewer stars (10^-x):	3.4
+# Acquisition Stars Expected  : 6.24
+# Guide star count: 5.0
+# Predicted Max CCD temperature: -7.0 C (-7.007 C)	 N100 Warm Pix Frac 0.446
+# Dynamic Mag Limits: Yellow 9.96 	 Red 10.37
+#
+#############################################################################################
+    my $self = shift;
+    my $c;
+    my $o = '';    # Output
 
     $o .= "\n"
       if ( @{ $self->{warn} }
@@ -2423,42 +2505,33 @@ sub print_report {
         );
     }
 
-    # cute little table for buttons for previous and next obsid
-    $o .= "</PRE></TD><TD VALIGN=TOP>\n";
-    if (defined $self->{prev}->{obsid} or defined $self->{next}->{obsid}) {
-        $o .= " <TABLE WIDTH=43><TR>";
-        if (defined $self->{prev}->{obsid}) {
-            $o .= sprintf(
-"<TD><A HREF=\"#obsid%s\"><img align=\"top\" src=\"%s/up.gif\" ></A></TD>",
-                $self->{prev}->{obsid},
-                $self->{STARCHECK}
-            );
-            $o .= sprintf("<TD><A HREF=\"#obsid%s\">PREV</A> </TD>",
-                $self->{prev}->{obsid});
-        }
-        else {
-            $o .= sprintf("<TD><img align=\"top\" src=\"%s/up.gif\" ></TD>",
-                $self->{STARCHECK});
-            $o .= sprintf("<TD>PREV</TD>");
-        }
-        $o .= sprintf("<TD>&nbsp; &nbsp;</TD>");
-        if (defined $self->{next}->{obsid}) {
-            $o .= sprintf(
-"<TD><A HREF=\"#obsid%s\"><img align=\"top\" src=\"%s/down.gif\" ></A></TD>",
-                $self->{next}->{obsid},
-                $self->{STARCHECK}
-            );
-            $o .= sprintf("<TD><A HREF=\"#obsid%s\">NEXT</A> </TD>",
-                $self->{next}->{obsid});
-        }
-        $o .= " </TR></TABLE>";
+    return $o;
+}
 
+sub get_report_images_html {
+    my $self = shift;
+
+    my $pict1 = qq{};
+    my $pict2 = qq{};
+    my $pict3 = qq{};
+    if ($self->{plot_file}) {
+        my $obs = $self->{obsid};
+        my $obsmap = $self->star_image_map();
+        $pict1 = qq{$obsmap <img src="$self->{plot_file}" usemap=\#starmap_${obs}
+						width=426 height=426 border=0> };
+    }
+    if ($self->{plot_field_file}) {
+        $pict2 =
+qq{Star Field<BR /><img align="top" src="$self->{plot_field_file}" width=231 height=231>};
+    }
+    if ($self->{compass_file}) {
+        $pict3 =
+qq{Compass<BR /><img align="top" src="$self->{compass_file}" width=154 height=154>};
     }
 
-    # end of whole obsid table
-    $o .= " </TD></TABLE>";
-
-    return $o;
+    my $out =
+"<TABLE CELLPADDING=0><TR><TD ROWSPAN=2>$pict1</TD><TD ALIGN=CENTER>$pict2</TD></TR><TR><TD ALIGN=CENTER>$pict3</TD></TR></TABLE>\n";
+    return $out;
 }
 
 #############################################################################################
