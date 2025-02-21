@@ -1,13 +1,16 @@
 #!/bin/bash
 
-# Don't unset LD_LIBRARY_PATH and SYBASE because 'perl' below
-# is no longer a wrapper
-#unset LD_LIBRARY_PATH
-#unset SYBASE
-
 # Unset PYTHONPATH because custom PYTHONPATH should never be allowed
 # for flight starcheck
 unset PYTHONPATH
+
+# If this script is being run from inside the starcheck git repo, exit
+# with an informative message.
+if [[ -f starcheck/__init__.py ]];
+then
+    echo "Do not run flight starcheck from the source repo. (found ./starcheck/__init__.py)"
+    exit 1
+fi
 
 PYTHON_EXE=`which python`
 PYTHON_DIR=`dirname $PYTHON_EXE`
