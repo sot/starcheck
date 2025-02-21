@@ -2024,10 +2024,10 @@ sub get_report_html {
     my $obsid = $self->{obsid};
 
     # Internal reference link
-    $o .= "<!-- Start of HTML report content for obsid $obsid -->\n";
+    $o .= "<!-- Start of HTML report content for obsid $obsid -->";
 
     # Main table for per-obsid report
-    $o .= "<!-- Main table for per-obsid report for obsid $obsid -->\n";
+    $o .= "<!-- Main table for per-obsid report for obsid $obsid -->";
     $o .= "<TABLE CELLPADDING=0>\n";
 
     # Left side of table with nav links and pre-formatted text
@@ -2036,7 +2036,7 @@ sub get_report_html {
     $o .= qq{<A NAME="obsid$obsid">$nav_buttons</A>\n};
     $o .= "<BR>\n";
     $o .= "<!-- Star catalog preformatted information and table for obsid $obsid -->\n";
-    $o .= "<PRE>\n";
+    $o .= "<PRE>";
     $o .= $self->get_report_header_html();
     $o .= $self->get_report_starcat_table_html();
     $o .= $self->get_report_footer_html();
