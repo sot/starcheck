@@ -1,7 +1,7 @@
 import numpy as np
 from cxotime import CxoTime
 
-from astropy.table import Table, vstack
+from astropy.table import Table
 import astropy.units as u
 from functools import lru_cache
 import numpy as np
@@ -175,62 +175,3 @@ def get_obs_man_angle(npnt_tstart, backstop_file):
     dur = prev_state["tstop"] - prev_state["tstart"]
     angle = calc_man_angle_for_duration(dur)
     return {"angle": angle}
-
-
-def ir_zone_ok(backstop_file, out=None):
-    """
-    Check that the high IR zone is all in NMM.
-
-    Parameters
-    ----------
-    backstop_file : str
-        The path to the backstop file.
-    out : str, optional
-        The path to the output file for the plain text report.
-
-    Returns
-    -------
-    bool
-        True if the high IR zone time is all in NMM, False otherwise.
-    """
-
-    states, _ = get_pcad_states(backstop_file)
-    bs_cmds = kadi_commands.get_cmds_from_backstop(backstop_file)
-
-    perigee_cmds = bs_cmds[
-        (bs_cmds["type"] == "ORBPOINT") & (bs_cmds["event_type"] == "EPERIGEE")
-    ]
-
-    all_ok = True
-    out_text = ["IR ZONE CHECKING"]
-    for perigee_time in perigee_cmds["time"]:
-        # High IR zone is from zone_minus_mins before perigee to zone_plus_mins after perigee
-        zone_minus_mins = 5
-        zone_plus_mins = 35
-        ir_zone_start = perigee_time - (zone_minus_mins * 60)
-        ir_zone_stop = perigee_time + (zone_plus_mins * 60)
-        out_text.append(
-            "Checking perigee states at "
-            f"{CxoTime(perigee_time).date} (delta times relative to perigee)"
-        )
-        out_text.append(
-            f"  High IR zone req't: NMAN: -{zone_minus_mins}m to {zone_plus_mins}m "
-            f"({CxoTime(ir_zone_start).date} to {CxoTime(ir_zone_stop).date}"
-        )
-        ok = (states["tstart"] <= ir_zone_stop) & (states["tstop"] >= ir_zone_start)
-        for state in states[ok]:
-            start_dtime_min = (state["tstart"] - perigee_time) / 60.0
-            stop_dtime_min = (state["tstop"] - perigee_time) / 60.0
-            ok_status = "  [OK]" if state["pcad_mode"] == "NMAN" else "  [NOT OK]"
-            out_text.append(
-                f"{ok_status} {state['pcad_mode']}: {start_dtime_min:.1f}m to {stop_dtime_min:.1f}m "
-                f"({CxoTime(state['tstart']).date} to {CxoTime(state['tstop']).date})"
-            )
-        if np.any(states["pcad_mode"][ok] != "NMAN"):
-            all_ok = False
-
-    if out is not None:
-        with open(out, "w") as fh:
-            fh.writelines("\n".join(out_text))
-
-    return all_ok

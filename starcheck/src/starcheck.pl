@@ -728,24 +728,6 @@ if (@global_warn) {
     $out .= qq{${font_stop}\n};
 }
 
-# Check for just NMAN during high IR Zone
-$out .= "------------  HIGH IR ZONE CHECK  -----------------\n\n";
-my $ir_report = "${STARCHECK}/high_ir_check.txt";
-my $ir_ok = call_python(
-    "utils.make_ir_check_report",
-    [],
-    {
-        backstop_file => $backstop,
-        out => $ir_report
-    }
-);
-if ($ir_ok) {
-    $out .= "<A HREF=\"${ir_report}\">[OK] In NMAN during High IR Zones.</A>\n";
-}
-else {
-    $out .= "<A HREF=\"${ir_report}\">[${red_font_start}NOT OK${font_stop}]";
-    $out .= " Not in NMAN during High IR Zone.</A>\n";
-}
 
 # Run independent attitude checker
 my $ATT_CHECK_AFTER = '2015:315:00:00:00.000';
