@@ -32,7 +32,6 @@ import kadi.commands.states as kadi_states
 import starcheck
 from starcheck import __version__ as version
 from starcheck.calc_ccd_temps import get_ccd_temps
-from starcheck.state_checks import ir_zone_ok
 from starcheck.plot import make_plots_for_obsid
 
 ACQS = mica.stats.acq_stats.get_stats()
@@ -128,10 +127,6 @@ def get_kadi_scenario():
 def get_data_dir():
     sc_data = os.path.join(os.path.dirname(starcheck.__file__), "data")
     return sc_data if os.path.exists(sc_data) else ""
-
-
-def make_ir_check_report(**kwargs):
-    return ir_zone_ok(**kwargs)
 
 
 def get_dither_kadi_state(date):
