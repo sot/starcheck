@@ -153,6 +153,8 @@ def get_dither_kadi_state(date):
 
 def get_run_start_time(run_start_time, backstop_start):
     """
+    Get run start time.
+
     Determine a reasonable reference run start time based on the supplied
     run start time and the time of the first backstop command.  This
     code uses a small hack so that a negative number is interpreted
@@ -189,6 +191,7 @@ def get_run_start_time(run_start_time, backstop_start):
 
 def config_logging(outdir, verbose, name):
     """Set up file and console logger.
+
     See http://docs.python.org/library/logging.html
               #logging-to-multiple-destinations
     """
@@ -230,6 +233,7 @@ def config_logging(outdir, verbose, name):
 def _pixels_to_yagzag(i, j):
     """
     Call chandra_aca.transform.pixels_to_yagzag.
+
     This wrapper is set to pass allow_bad=True, as exceptions from the Python side
     in this case would not be helpful, and the very small bad pixel list should be
     on the CCD.
@@ -245,6 +249,7 @@ def _pixels_to_yagzag(i, j):
 def _yagzag_to_pixels(yag, zag):
     """
     Call chandra_aca.transform.yagzag_to_pixels.
+
     This wrapper is set to pass allow_bad=True, as exceptions from the Python side
     in this case would not be helpful, and the boundary checks and such will work fine
     on the Perl side even if the returned row/col is off the CCD.
@@ -259,6 +264,8 @@ def _yagzag_to_pixels(yag, zag):
 
 def apply_t_ccds_bonus(mags, t_ccd, date):
     """
+    Apply dynamic background bonus temperatures.
+
     Calculate the dynamic background bonus temperatures for a given set of
     magnitudes, t_ccd (which should be the effective t_ccd with any penalty applied),
     and date. This applies values of dyn_bgd_n_faint and dyn_bgd_dt_ccd.
@@ -278,6 +285,8 @@ def apply_t_ccds_bonus(mags, t_ccd, date):
 
 def guide_count(mags, t_ccd, count_9th, date):
     """
+    Get guide count.
+
     Return the fractional guide_count for a given set of magnitudes, estimated
     t_ccd, count_9th (bool or 0 or 1), and date. This determines the effective
     t_ccd, applies any dynamic background bonus, and then calls
@@ -299,6 +308,8 @@ def guide_count(mags, t_ccd, count_9th, date):
 
 def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z):
     """
+    Check for hot pixels.
+
     Return a list of info to make warnings on guide stars or fid lights with
     local dark map that gives an 'imposter_mag' that could perturb a centroid.
     The potential worst-case offsets (ignoring effects at the background pixels)
@@ -335,6 +346,8 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
 
     def imposter_offset(cand_mag, imposter_mag):
         """
+        Calculate imposter offset.
+
         For a given candidate star and the pseudomagnitude of the brightest 2x2
         imposter calculate the max offset of the imposter counts are at the edge
         of the 6x6 (as if they were in one pixel).  This is somewhat the inverse
@@ -403,7 +416,9 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
 
 def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
     """
-    Fetch the cone of agasc stars.  Update the table with the yag and zag of each star.
+    Fetch the cone of agasc stars.
+
+    Update the table with the yag and zag of each star.
     Return as a dictionary with the agasc ids as keys and all of the values as
     simple Python types (int, float)
     """
@@ -448,6 +463,7 @@ def _get_agasc_stars(ra, dec, roll, radius, date, agasc_file):
 def get_mica_star_stats(agasc_id, time):
     """
     Get the acq and guide star statistics for a star before a given time.
+
     The time filter is just there to make this play well when run in regression.
     The mica acq and guide stats are fetched into globals ACQS and GUIDES
     and this method just filters for the relevant ones for a star and returns
@@ -498,6 +514,8 @@ def _mag_for_p_acq(p_acq, date, t_ccd):
 
 def proseco_probs(**kw):
     """
+    Calculate proseco acquisition probabilities.
+
     Call proseco's get_acq_catalog with the parameters supplied in `kwargs` for
     a specific obsid catalog and return the individual acq star probabilities,
     the P2 value for the catalog, and the expected number of acq stars.
@@ -520,24 +538,24 @@ def proseco_probs(**kw):
 
     """
 
-    args = dict(
-        obsid=0,
-        att=Quaternion.normalize(kw["att"]),
-        date=kw["date"],
-        n_acq=kw["n_acq"],
-        man_angle=kw["man_angle"],
-        t_ccd_acq=kw["t_ccd_acq"],
-        t_ccd_guide=kw["t_ccd_guide"],
-        dither_acq=ACABox(kw["dither_acq"]),
-        dither_guide=ACABox(kw["dither_guide"]),
-        include_ids_acq=kw["include_ids_acq"],
-        include_halfws_acq=kw["include_halfws_acq"],
-        detector=kw["detector"],
-        sim_offset=kw["sim_offset"],
-        n_fid=0,
-        n_guide=0,
-        focus_offset=0,
-    )
+    args = {
+        "obsid": 0,
+        "att": Quaternion.normalize(kw["att"]),
+        "date": kw["date"],
+        "n_acq": kw["n_acq"],
+        "man_angle": kw["man_angle"],
+        "t_ccd_acq": kw["t_ccd_acq"],
+        "t_ccd_guide": kw["t_ccd_guide"],
+        "dither_acq": ACABox(kw["dither_acq"]),
+        "dither_guide": ACABox(kw["dither_guide"]),
+        "include_ids_acq": kw["include_ids_acq"],
+        "include_halfws_acq": kw["include_halfws_acq"],
+        "detector": kw["detector"],
+        "sim_offset": kw["sim_offset"],
+        "n_fid": 0,
+        "n_guide": 0,
+        "focus_offset": 0,
+    }
     aca = get_aca_catalog(**args)
     acq_cat = aca.acqs
 
@@ -553,6 +571,7 @@ def proseco_probs(**kw):
 def vehicle_filter_backstop(backstop_file, outfile):
     """
     Filter the backstop file to remove SCS 131, 132, 133 except MP_OBSID commands.
+
     This is basically equivalent to the vehicle backstop file, but the MP_OBSID
     commands are useful for ACA to associate maneuvers with observations.
     """

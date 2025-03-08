@@ -1,14 +1,6 @@
 #!/usr/bin/env python
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 
-"""
-========================
-load_check
-========================
-
-This code generates backstop load review outputs for checking a Xija model.
-"""
-
 import functools
 import glob
 import json
@@ -91,7 +83,7 @@ def aca_t_ccd_penalty_limit():
     return model_spec["limits"]["aacccdpt"].get("planning.penalty.high")
 
 
-def get_ccd_temps(
+def get_ccd_temps( # noqa: PLR0915 Too many statements
     oflsdir,
     outdir="out",
     json_obsids=None,
@@ -102,6 +94,8 @@ def get_ccd_temps(
     **kwargs,
 ):
     """
+    Calculate xija ACA model temperatures.
+
     Using the cmds and cmd_states tables, available telemetry, and
     the pitches determined from the planning products, calculate xija ACA model
     temperatures for the given week.
@@ -316,6 +310,8 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
 
 def get_obs_intervals(sc_obsids):
     """
+    Calculate obsid intervals.
+
     For the list of Obsid objects from starcheck, determine the interval of
     each star catalog (as in, for obsids with no following maneuver, the catalog
     will apply to an interval that spans that obsid and the next one)
@@ -413,6 +409,7 @@ def get_week_states(rltt, sched_stop, bs_cmds, tlm):
 def make_week_predict(model_spec, states, tstop):
     """
     Get model predictions over the desired states
+
     :param opt: options dictionary containing at least opt['model_spec']
     :param states: states from get_states()
     :param tstop: stop time for model calculation
@@ -443,6 +440,8 @@ def make_week_predict(model_spec, states, tstop):
 
 def mock_telem_predict(states, stat=None):
     """
+    Get AACCCDPT telem over the week.
+
     Fetch AACCCDPT telem over the interval of the given states and return values
     as if they had been calculated by the xija ThermalModel.
 
@@ -480,8 +479,7 @@ def get_bs_cmds(oflsdir):
 
 def get_telem_values(tstop, msids, days=7, stat=None):
     """
-    Fetch last ``days`` of available ``msids`` telemetry values before
-    time ``tstop``.
+    Fetch last ``days`` of available ``msids`` telemetry values before time ``tstop``.
 
     :param tstop: start time for telemetry (secs)
     :param msids: fetch msids list
@@ -667,8 +665,9 @@ def pointpair(x, y=None):
 
 
 def globfile(pathglob):
-    """Return the one file name matching ``pathglob``.  Zero or multiple
-    matches raises an IOError exception."""
+    """Return the one file name matching ``pathglob``.
+
+    Zero or multiple matches raises an IOError exception."""
 
     files = glob.glob(pathglob)
     if len(files) == 0:

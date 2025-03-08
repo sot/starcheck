@@ -5,22 +5,20 @@ Parser of starcheck text output.  Formally lived in mica/starcheck/starcheck_par
 """
 
 import re
-from itertools import count
 
 from astropy.table import Table
-from six.moves import zip
 
 SC1 = (
     " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW"
 )
 SC2 = " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW NOTES"
-SC3 = " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES"
-SC4 = " IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES"
+SC3 = " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES" # noqa: E501
+SC4 = " IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES" # noqa: E501
 
 HDRS = [
-    dict(
-        pattern=SC1,
-        hdrs=[
+    {
+        "pattern": SC1,
+        "hdrs": [
             "idx",
             "slot",
             "id",
@@ -35,9 +33,9 @@ HDRS = [
             "res",
             "halfw",
         ],
-        col_starts=(1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76),
-        col_ends=(2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 82),
-        final_dtype=[
+        "col_starts": (1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76),
+        "col_ends": (2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 82),
+        "final_dtype": [
             ("idx", "<i8"),
             ("slot", "<i8"),
             ("idnote", "|S3"),
@@ -53,10 +51,10 @@ HDRS = [
             ("res", "<i8"),
             ("halfw", "<i8"),
         ],
-    ),
-    dict(
-        pattern=SC2,
-        hdrs=[
+    },
+    {
+        "pattern": SC2,
+        "hdrs": [
             "idx",
             "slot",
             "id",
@@ -73,9 +71,9 @@ HDRS = [
             "pass",
         ],
         # notes explicitly renamed 'pass' for these catalogs
-        col_starts=(1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76, 81),
-        col_ends=(2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 80, 92),
-        final_dtype=[
+        "col_starts": (1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76, 81),
+        "col_ends": (2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 80, 92),
+        "final_dtype": [
             ("idx", "<i8"),
             ("slot", "<i8"),
             ("idnote", "|S3"),
@@ -92,10 +90,10 @@ HDRS = [
             ("halfw", "<i8"),
             ("pass", "|S10"),
         ],
-    ),
-    dict(
-        pattern=SC3,
-        hdrs=[
+    },
+    {
+        "pattern": SC3,
+        "hdrs": [
             "idx",
             "slot",
             "id",
@@ -112,9 +110,9 @@ HDRS = [
             "pass",
             "notes",
         ],
-        col_starts=(1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76, 81, 87),
-        col_ends=(2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 80, 86, 92),
-        final_dtype=[
+        "col_starts": (1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76, 81, 87),
+        "col_ends": (2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 80, 86, 92),
+        "final_dtype": [
             ("idx", "<i8"),
             ("slot", "<i8"),
             ("idnote", "|S3"),
@@ -132,10 +130,10 @@ HDRS = [
             ("pass", "|S5"),
             ("notes", "|S5"),
         ],
-    ),
-    dict(
-        pattern=SC4,
-        hdrs=[
+    },
+    {
+        "pattern": SC4,
+        "hdrs": [
             "idx",
             "slot",
             "id",
@@ -152,9 +150,9 @@ HDRS = [
             "pass",
             "notes",
         ],
-        col_starts=(1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76, 81, 87),
-        col_ends=(2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 80, 86, 92),
-        final_dtype=[
+        "col_starts": (1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76, 81, 87),
+        "col_ends": (2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 80, 86, 92),
+        "final_dtype": [
             ("idx", "<i8"),
             ("slot", "<i8"),
             ("idnote", "|S3"),
@@ -172,29 +170,29 @@ HDRS = [
             ("pass", "|S5"),
             ("notes", "|S5"),
         ],
-    ),
+    },
 ]
 
 
 # Expected type for each of the columns in the catalog table
-OKTYPE = dict(
-    idx=int,
-    slot=int,
-    idnote=str,
-    id=int,
-    type=str,
-    sz=str,
-    minmag=float,
-    mag=float,
-    maxmag=float,
-    p_acq=float,
-    yang=int,
-    zang=int,
-    dim=int,
-    res=int,
-    halfw=int,
-    notes=str,
-)
+OKTYPE = {
+    "idx": int,
+    "slot": int,
+    "idnote": str,
+    "id": int,
+    "type": str,
+    "sz": str,
+    "minmag": float,
+    "mag": float,
+    "maxmag": float,
+    "p_acq": float,
+    "yang": int,
+    "zang": int,
+    "dim": int,
+    "res": int,
+    "halfw": int,
+    "notes": str,
+}
 OKTYPE["pass"] = str
 
 
@@ -216,24 +214,24 @@ def get_targ(obs_text):
                 oline,
             )
             if form0:
-                return dict(
-                    target_id=form0.group(1).strip(),
-                    sci_instr=form0.group(2),
-                    sim_z_offset_steps=int(form0.group(3)),
-                    grating=form0.group(4),
-                )
+                return {
+                    "target_id": form0.group(1).strip(),
+                    "sci_instr": form0.group(2),
+                    "sim_z_offset_steps": int(form0.group(3)),
+                    "grating": form0.group(4),
+                }
             form1 = re.match(
                 r"OBSID:\s*\S{1,5}\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+\((-*.+)mm\)\s+Grating:\s*(\S+)\s*",
                 oline,
             )
             if form1:
-                return dict(
-                    target_id=form1.group(1).strip(),
-                    sci_instr=form1.group(2),
-                    sim_z_offset_steps=int(form1.group(3)),
-                    sim_z_offset_mm=float(form1.group(4)),
-                    grating=form1.group(5),
-                )
+                return {
+                    "target_id": form1.group(1).strip(),
+                    "sci_instr": form1.group(2),
+                    "sim_z_offset_steps": int(form1.group(3)),
+                    "sim_z_offset_mm": float(form1.group(4)),
+                    "grating": form1.group(5),
+                }
 
 
 def get_dither(obs_text):
@@ -246,22 +244,22 @@ def get_dither(obs_text):
             oline,
         )
         if dither_re:
-            return dict(
-                dither_state=dither_re.group(1),
-                dither_y_amp=float(dither_re.group(2)),
-                dither_z_amp=float(dither_re.group(3)),
-                dither_y_period=float(dither_re.group(4)),
-                dither_z_period=float(dither_re.group(5)),
-            )
+            return {
+                "dither_state": dither_re.group(1),
+                "dither_y_amp": float(dither_re.group(2)),
+                "dither_z_amp": float(dither_re.group(3)),
+                "dither_y_period": float(dither_re.group(4)),
+                "dither_z_period": float(dither_re.group(5)),
+            }
         dis_dither_re = re.match(r"Dither:\sOFF\s*", oline)
         if dis_dither_re:
-            return dict(
-                dither_state="OFF",
-                dither_y_amp=float(0),
-                dither_z_amp=float(0),
-                dither_y_period=None,
-                dither_z_period=None,
-            )
+            return {
+                "dither_state": "OFF",
+                "dither_y_amp": float(0),
+                "dither_z_amp": float(0),
+                "dither_y_period": None,
+                "dither_z_period": None,
+            }
 
     return {}
 
@@ -272,11 +270,11 @@ def get_coords(obs_text):
     )
     if not coord_search:
         return {}
-    return dict(
-        point_ra=float(coord_search.group(1)),
-        point_dec=float(coord_search.group(2)),
-        point_roll=float(coord_search.group(3)),
-    )
+    return {
+        "point_ra": float(coord_search.group(1)),
+        "point_dec": float(coord_search.group(2)),
+        "point_roll": float(coord_search.group(3)),
+    }
 
 
 def get_starcat_header(obs_text):
@@ -285,10 +283,10 @@ def get_starcat_header(obs_text):
     )
     if not starcat_header:
         return {}
-    return dict(
-        mp_starcat_time=starcat_header.group(1),
-        mp_starcat_vcdu_cnt=int(starcat_header.group(2)),
-    )
+    return {
+        "mp_starcat_time": starcat_header.group(1),
+        "mp_starcat_vcdu_cnt": int(starcat_header.group(2)),
+    }
 
 
 def get_manvrs(obs_text):
@@ -307,10 +305,10 @@ def get_manvrs(obs_text):
             )
             if targquat_re:
                 curr_manvr.update(
-                    dict(
-                        mp_targquat_time=targquat_re.group(1),
-                        mp_targquat_vcdu_cnt=int(targquat_re.group(2)),
-                    )
+                    {
+                        "mp_targquat_time": targquat_re.group(1),
+                        "mp_targquat_vcdu_cnt": int(targquat_re.group(2)),
+                    }
                 )
             quat_re = re.match(
                 r"\s+Q1,Q2,Q3,Q4:\s+(-?\d\.\d+)\s+(-?\d\.\d+)\s+(-?\d\.\d+)\s+(-?\d\.\d+).*",
@@ -318,24 +316,24 @@ def get_manvrs(obs_text):
             )
             if quat_re:
                 curr_manvr.update(
-                    dict(
-                        target_Q1=float(quat_re.group(1)),
-                        target_Q2=float(quat_re.group(2)),
-                        target_Q3=float(quat_re.group(3)),
-                        target_Q4=float(quat_re.group(4)),
-                    )
+                    {
+                        "target_Q1": float(quat_re.group(1)),
+                        "target_Q2": float(quat_re.group(2)),
+                        "target_Q3": float(quat_re.group(3)),
+                        "target_Q4": float(quat_re.group(4)),
+                    }
                 )
             angle_re = re.match(
-                r"\s+MANVR: Angle=\s+(\d+\.\d+)\sdeg\s+Duration=\s+(\d+)\ssec(\s+Slew\serr=\s+(\d+\.\d)\sarcsec)?(\s+End=\s+(\S+))?",
+                r"\s+MANVR: Angle=\s+(\d+\.\d+)\sdeg\s+Duration=\s+(\d+)\ssec(\s+Slew\serr=\s+(\d+\.\d)\sarcsec)?(\s+End=\s+(\S+))?", # noqa: E501
                 mline,
             )
             if angle_re:
                 curr_manvr.update(
-                    dict(
-                        angle_deg=float(angle_re.group(1)),
-                        duration_sec=int(angle_re.group(2)),
-                        end_date=angle_re.groups()[-1],
-                    )
+                    {
+                        "angle_deg": float(angle_re.group(1)),
+                        "duration_sec": int(angle_re.group(2)),
+                        "end_date": angle_re.groups()[-1],
+                    }
                 )
                 if "target_Q1" not in curr_manvr:
                     raise ValueError(
@@ -371,8 +369,8 @@ def get_catalog(obs_text):
         names=hdrformat["hdrs"],
     )
     cat = []
-    for row, idx in zip(rawcat, count()):
-        catrow = dict()
+    for row in rawcat:
+        catrow = {}
         for field in row.dtype.names:
             if field not in OKTYPE:
                 continue
@@ -413,28 +411,30 @@ def get_warnings(obs_text):
         if form0:
             # append two warnings for this format
             warn.append(
-                dict(
-                    warning_type=form0.group(2),
-                    idx=form0.group(4),
-                    warning="%s -> %s" % (form0.group(3), form0.group(6)),
-                )
+                {
+                    "warning_type": form0.group(2),
+                    "idx": form0.group(4),
+                    "warning": "%s -> %s" % (form0.group(3), form0.group(6)),
+                }
             )
             warn.append(
-                dict(
-                    warning_type=form0.group(2),
-                    idx=form0.group(5),
-                    warning="%s -> %s" % (form0.group(3), form0.group(6)),
-                )
+                {
+                    "warning_type": form0.group(2),
+                    "idx": form0.group(5),
+                    "warning": "%s -> %s" % (form0.group(3), form0.group(6)),
+                }
             )
             continue
-        form1 = re.match(r".*{}.*\[\s?(\d+)\]([\w\s]+)\.(.*)$".format(warn_types), wline)
+        form1 = re.match(
+            r".*{}.*\[\s?(\d+)\]([\w\s]+)\.(.*)$".format(warn_types), wline
+        )
         if form1:
             warn.append(
-                dict(
-                    warning_type=form1.group(3),
-                    idx=form1.group(2),
-                    warning=form1.group(4),
-                )
+                {
+                    "warning_type": form1.group(3),
+                    "idx": form1.group(2),
+                    "warning": form1.group(4),
+                }
             )
             continue
         form2 = re.match(
@@ -443,16 +443,16 @@ def get_warnings(obs_text):
         )
         if form2:
             warn.append(
-                dict(
-                    warning_type=form2.group(2),
-                    idx=form2.group(3),
-                    warning=form2.group(4),
-                )
+                {
+                    "warning_type": form2.group(2),
+                    "idx": form2.group(3),
+                    "warning": form2.group(4),
+                }
             )
             continue
         form3 = re.match(r"^\>\>\s+{}\s*:\s+(.+)".format(warn_types), wline)
         if form3:
-            warn.append(dict(warning_type=None, idx=None, warning=form3.group(2)))
+            warn.append({"warning_type": None, "idx": None, "warning": form3.group(2)})
     return warn
 
 
@@ -476,7 +476,7 @@ def get_cat(obs_text):
     if not obsmatch:
         return {}
     # join the top level stuff into one dictionary
-    obs = dict(obsid=int(obsmatch.group(1)))
+    obs = {"obsid": int(obsmatch.group(1))}
     obs.update(get_targ(obs_text))
     obs.update(get_coords(obs_text))
     obs.update(get_dither(obs_text))
@@ -484,21 +484,21 @@ def get_cat(obs_text):
     # the whole catalog should be broken up into
     # the obs/manvrs/catalog/warnings keys
     fix_obs(obs)
-    return dict(
-        obsid=obs["obsid"],
-        obs=obs,
-        manvrs=get_manvrs(obs_text),
-        catalog=get_catalog(obs_text),
-        warnings=get_warnings(obs_text),
-        pred_ccd_temp=get_pred_temp(obs_text),
-    )
+    return {
+        "obsid": obs["obsid"],
+        "obs": obs,
+        "manvrs": get_manvrs(obs_text),
+        "catalog": get_catalog(obs_text),
+        "warnings": get_warnings(obs_text),
+        "pred_ccd_temp": get_pred_temp(obs_text),
+    }
 
 
 def read_starcheck(starcheck_file):
     sc_text = open(starcheck_file, "r").read()
     chunks = re.split("={20,}\\s?\n?\n", sc_text)
     catalogs = []
-    for chunk, idx in zip(chunks, count()):
+    for chunk in chunks:
         obs = get_cat(chunk)
         if obs:
             catalogs.append(obs)

@@ -22,6 +22,7 @@ def make_plots_for_obsid(
 ):
     """
     Make standard starcheck plots for obsid and save as pngs with standard names.
+
     Writes out to stars_{obsid}.png and star_view_{obsid}.png in supplied outdir.
 
     :param obsid:  Obsid used for file names

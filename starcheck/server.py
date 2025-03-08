@@ -82,7 +82,7 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
 
 def main():
-    global KEY
+    global KEY  # noqa: PLW0603 Using the global statement to update `KEY` is discouraged
 
     # Read a line from STDIN
     port = int(sys.stdin.readline().strip())

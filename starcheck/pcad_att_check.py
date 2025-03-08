@@ -29,24 +29,26 @@ def test_check_characteristics_date():
     ok = check_characteristics_date(
         "blah/blah/L_blah_CHARACTERIS_01OCT15", "2015Oct30 at 00:00:00.000"
     )
-    assert ok is True
+    assert ok is True  # noqa: S101 (this is in a test function)
 
     ok = check_characteristics_date(
         "blah/blah/L_blah_CHARACTERIS_01OCT15", "2015Nov02 at 00:00:00.000"
     )
-    assert ok is False
+    assert ok is False  # noqa: S101 (this is in a test function)
 
     ok = check_characteristics_date(
         "blah/blah/L_blah_CHARACTERIS_99OCT15", "1999Oct20 at 00:00:00.000"
     )
-    assert ok is True
+    assert ok is True  # noqa: S101 (this is in a test function)
 
     ok = check_characteristics_date("blah/blah/L_blah", "2015Nov02 at 00:00:00.000")
-    assert ok is False
+    assert ok is False  # noqa: S101 (this is in a test function)
 
 
 def recent_sim_history(time, file):
     """
+    Get recent SIM history.
+
     Read from the end of the a SIM history file and return the
     first (last) time and value before the given time.  Specific
     to SIM focus and transition history based on the regex for
@@ -62,6 +64,8 @@ def recent_sim_history(time, file):
 
 def recent_attitude_history(time, file):
     """
+    Get recent ATTITUDE history.
+
     Read from the end of the a ATTITUDE history file and return the
     first (last) time and value before the given time.  Specific
     to ATTITUDE and transition history based on the regex for
@@ -75,7 +79,7 @@ def recent_attitude_history(time, file):
                 return greta_time, float(q1), float(q2), float(q3), float(q4)
 
 
-def run(
+def run(  # noqa: PLR0912 Too many branches
     backstop_file,
     or_list_file=None,
     attitude_file=None,
