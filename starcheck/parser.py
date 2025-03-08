@@ -12,8 +12,8 @@ SC1 = (
     " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW"
 )
 SC2 = " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW NOTES"
-SC3 = " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES" # noqa: E501
-SC4 = " IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES" # noqa: E501
+SC3 = " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES"  # noqa: E501
+SC4 = " IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES"  # noqa: E501
 
 HDRS = [
     {
@@ -324,7 +324,7 @@ def get_manvrs(obs_text):
                     }
                 )
             angle_re = re.match(
-                r"\s+MANVR: Angle=\s+(\d+\.\d+)\sdeg\s+Duration=\s+(\d+)\ssec(\s+Slew\serr=\s+(\d+\.\d)\sarcsec)?(\s+End=\s+(\S+))?", # noqa: E501
+                r"\s+MANVR: Angle=\s+(\d+\.\d+)\sdeg\s+Duration=\s+(\d+)\ssec(\s+Slew\serr=\s+(\d+\.\d)\sarcsec)?(\s+End=\s+(\S+))?",  # noqa: E501
                 mline,
             )
             if angle_re:

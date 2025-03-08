@@ -82,7 +82,7 @@ def aca_t_ccd_penalty_limit():
     return model_spec["limits"]["aacccdpt"].get("planning.penalty.high")
 
 
-def get_ccd_temps( # noqa: PLR0915 Too many statements
+def get_ccd_temps(  # noqa: PLR0915 Too many statements
     oflsdir,
     outdir="out",
     json_obsids=None,
