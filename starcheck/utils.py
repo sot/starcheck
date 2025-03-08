@@ -16,6 +16,7 @@ from astropy.table import Table
 from bs4 import BeautifulSoup
 from Chandra.Time import DateTime
 from chandra_aca.dark_model import dark_temp_scale
+from chandra_aca.drift import get_fid_offset  # noqa: F401 - need import for starcheck server
 from chandra_aca.star_probs import mag_for_p_acq
 from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to_pixels
 from cxotime import CxoTime
