@@ -1,15 +1,11 @@
-import numpy as np
-from cxotime import CxoTime
-
-from astropy.table import Table
-import astropy.units as u
 from functools import lru_cache
-import numpy as np
 
 import kadi.commands as kadi_commands
 import kadi.commands.states as kadi_states
-from cxotime import CxoTime
+import numpy as np
+from astropy.table import Table
 from chandra_maneuver import duration
+from cxotime import CxoTime
 from Quaternion import Quat
 
 
@@ -44,8 +40,9 @@ def make_man_table():
 @lru_cache
 def get_pcad_states(backstop_file):
     """
-    Get the pcad_mode kadi command states for the products in review (as defined by the backstop_file
-    and continuity).
+    Get the pcad_mode kadi command states for the products in review.
+
+    These states are defined by the backstop_file and continuity.
 
     Parameters:
     ----------
@@ -146,6 +143,8 @@ def check_continuity_state_npnt(backstop_file):
 
 def get_obs_man_angle(npnt_tstart, backstop_file):
     """
+    Calculate the maneuver-equivalent-angle for a given NPNT dwell.
+
     For the dwell that starts at npnt_tstart, get the maneuver-equivalent-angle
     that corresponds to the NMAN time before the dwell start.
 

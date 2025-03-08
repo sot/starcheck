@@ -1,16 +1,14 @@
-import numpy as np
 from pathlib import Path
-import pytest
 
-from astropy.table import Table
 import chandra_maneuver
+import numpy as np
 import parse_cm.tests
+import pytest
 import Quaternion
 
 from starcheck.state_checks import (
-    make_man_table,
     get_obs_man_angle,
-    calc_man_angle_for_duration,
+    make_man_table,
 )
 
 
