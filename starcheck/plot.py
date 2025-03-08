@@ -51,10 +51,10 @@ def make_plots_for_obsid(
     # and we can save looking up the yang/zang positions twice if we add that content
     # to the stars in this wrapper
     yags, zags = radec2yagzag(
-        stars['RA_PMCORR'], stars['DEC_PMCORR'], Quaternion.Quat([ra, dec, roll])
+        stars["RA_PMCORR"], stars["DEC_PMCORR"], Quaternion.Quat([ra, dec, roll])
     )
-    stars['yang'] = yags * 3600
-    stars['zang'] = zags * 3600
+    stars["yang"] = yags * 3600
+    stars["zang"] = zags * 3600
 
     bad_stars = bad_acq_stars(stars)
 
@@ -68,5 +68,5 @@ def make_plots_for_obsid(
         bad_stars=bad_stars,
         red_mag_lim=red_mag_lim,
     )
-    cat_plot.savefig(os.path.join(outdir, 'stars_{}.png'.format(obsid)), dpi=150)
+    cat_plot.savefig(os.path.join(outdir, "stars_{}.png".format(obsid)), dpi=150)
     plt.close(cat_plot)

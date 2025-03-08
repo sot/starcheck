@@ -11,166 +11,166 @@ from six.moves import zip
 
 
 SC1 = (
-    ' IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW'
+    " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW"
 )
-SC2 = ' IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW NOTES'
-SC3 = ' IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES'
-SC4 = ' IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES'
+SC2 = " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW NOTES"
+SC3 = " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES"
+SC4 = " IDX SLOT        ID  TYPE   SZ   P_ACQ    MAG   MAXMAG   YANG   ZANG DIM RES HALFW PASS NOTES"
 
 HDRS = [
     dict(
         pattern=SC1,
         hdrs=[
-            'idx',
-            'slot',
-            'id',
-            'type',
-            'sz',
-            'minmag',
-            'mag',
-            'maxmag',
-            'yang',
-            'zang',
-            'dim',
-            'res',
-            'halfw',
+            "idx",
+            "slot",
+            "id",
+            "type",
+            "sz",
+            "minmag",
+            "mag",
+            "maxmag",
+            "yang",
+            "zang",
+            "dim",
+            "res",
+            "halfw",
         ],
         col_starts=(1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76),
         col_ends=(2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 82),
         final_dtype=[
-            ('idx', '<i8'),
-            ('slot', '<i8'),
-            ('idnote', '|S3'),
-            ('id', '<i8'),
-            ('type', '|S3'),
-            ('sz', '|S3'),
-            ('minmag', '<f8'),
-            ('mag', '<f8'),
-            ('maxmag', '<f8'),
-            ('yang', '<i8'),
-            ('zang', '<i8'),
-            ('dim', '<i8'),
-            ('res', '<i8'),
-            ('halfw', '<i8'),
+            ("idx", "<i8"),
+            ("slot", "<i8"),
+            ("idnote", "|S3"),
+            ("id", "<i8"),
+            ("type", "|S3"),
+            ("sz", "|S3"),
+            ("minmag", "<f8"),
+            ("mag", "<f8"),
+            ("maxmag", "<f8"),
+            ("yang", "<i8"),
+            ("zang", "<i8"),
+            ("dim", "<i8"),
+            ("res", "<i8"),
+            ("halfw", "<i8"),
         ],
     ),
     dict(
         pattern=SC2,
         hdrs=[
-            'idx',
-            'slot',
-            'id',
-            'type',
-            'sz',
-            'minmag',
-            'mag',
-            'maxmag',
-            'yang',
-            'zang',
-            'dim',
-            'res',
-            'halfw',
-            'pass',
+            "idx",
+            "slot",
+            "id",
+            "type",
+            "sz",
+            "minmag",
+            "mag",
+            "maxmag",
+            "yang",
+            "zang",
+            "dim",
+            "res",
+            "halfw",
+            "pass",
         ],
         # notes explicitly renamed 'pass' for these catalogs
         col_starts=(1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76, 81),
         col_ends=(2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 80, 92),
         final_dtype=[
-            ('idx', '<i8'),
-            ('slot', '<i8'),
-            ('idnote', '|S3'),
-            ('id', '<i8'),
-            ('type', '|S3'),
-            ('sz', '|S3'),
-            ('minmag', '<f8'),
-            ('mag', '<f8'),
-            ('maxmag', '<f8'),
-            ('yang', '<i8'),
-            ('zang', '<i8'),
-            ('dim', '<i8'),
-            ('res', '<i8'),
-            ('halfw', '<i8'),
-            ('pass', '|S10'),
+            ("idx", "<i8"),
+            ("slot", "<i8"),
+            ("idnote", "|S3"),
+            ("id", "<i8"),
+            ("type", "|S3"),
+            ("sz", "|S3"),
+            ("minmag", "<f8"),
+            ("mag", "<f8"),
+            ("maxmag", "<f8"),
+            ("yang", "<i8"),
+            ("zang", "<i8"),
+            ("dim", "<i8"),
+            ("res", "<i8"),
+            ("halfw", "<i8"),
+            ("pass", "|S10"),
         ],
     ),
     dict(
         pattern=SC3,
         hdrs=[
-            'idx',
-            'slot',
-            'id',
-            'type',
-            'sz',
-            'minmag',
-            'mag',
-            'maxmag',
-            'yang',
-            'zang',
-            'dim',
-            'res',
-            'halfw',
-            'pass',
-            'notes',
+            "idx",
+            "slot",
+            "id",
+            "type",
+            "sz",
+            "minmag",
+            "mag",
+            "maxmag",
+            "yang",
+            "zang",
+            "dim",
+            "res",
+            "halfw",
+            "pass",
+            "notes",
         ],
         col_starts=(1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76, 81, 87),
         col_ends=(2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 80, 86, 92),
         final_dtype=[
-            ('idx', '<i8'),
-            ('slot', '<i8'),
-            ('idnote', '|S3'),
-            ('id', '<i8'),
-            ('type', '|S3'),
-            ('sz', '|S3'),
-            ('minmag', '<f8'),
-            ('mag', '<f8'),
-            ('maxmag', '<f8'),
-            ('yang', '<i8'),
-            ('zang', '<i8'),
-            ('dim', '<i8'),
-            ('res', '<i8'),
-            ('halfw', '<i8'),
-            ('pass', '|S5'),
-            ('notes', '|S5'),
+            ("idx", "<i8"),
+            ("slot", "<i8"),
+            ("idnote", "|S3"),
+            ("id", "<i8"),
+            ("type", "|S3"),
+            ("sz", "|S3"),
+            ("minmag", "<f8"),
+            ("mag", "<f8"),
+            ("maxmag", "<f8"),
+            ("yang", "<i8"),
+            ("zang", "<i8"),
+            ("dim", "<i8"),
+            ("res", "<i8"),
+            ("halfw", "<i8"),
+            ("pass", "|S5"),
+            ("notes", "|S5"),
         ],
     ),
     dict(
         pattern=SC4,
         hdrs=[
-            'idx',
-            'slot',
-            'id',
-            'type',
-            'sz',
-            'p_acq',
-            'mag',
-            'maxmag',
-            'yang',
-            'zang',
-            'dim',
-            'res',
-            'halfw',
-            'pass',
-            'notes',
+            "idx",
+            "slot",
+            "id",
+            "type",
+            "sz",
+            "p_acq",
+            "mag",
+            "maxmag",
+            "yang",
+            "zang",
+            "dim",
+            "res",
+            "halfw",
+            "pass",
+            "notes",
         ],
         col_starts=(1, 4, 7, 19, 25, 30, 38, 46, 54, 61, 68, 72, 76, 81, 87),
         col_ends=(2, 7, 18, 24, 29, 37, 45, 53, 60, 67, 71, 75, 80, 86, 92),
         final_dtype=[
-            ('idx', '<i8'),
-            ('slot', '<i8'),
-            ('idnote', '|S3'),
-            ('id', '<i8'),
-            ('type', '|S3'),
-            ('sz', '|S3'),
-            ('p_acq', '<f8'),
-            ('mag', '<f8'),
-            ('maxmag', '<f8'),
-            ('yang', '<i8'),
-            ('zang', '<i8'),
-            ('dim', '<i8'),
-            ('res', '<i8'),
-            ('halfw', '<i8'),
-            ('pass', '|S5'),
-            ('notes', '|S5'),
+            ("idx", "<i8"),
+            ("slot", "<i8"),
+            ("idnote", "|S3"),
+            ("id", "<i8"),
+            ("type", "|S3"),
+            ("sz", "|S3"),
+            ("p_acq", "<f8"),
+            ("mag", "<f8"),
+            ("maxmag", "<f8"),
+            ("yang", "<i8"),
+            ("zang", "<i8"),
+            ("dim", "<i8"),
+            ("res", "<i8"),
+            ("halfw", "<i8"),
+            ("pass", "|S5"),
+            ("notes", "|S5"),
         ],
     ),
 ]
@@ -195,7 +195,7 @@ OKTYPE = dict(
     halfw=int,
     notes=str,
 )
-OKTYPE['pass'] = str
+OKTYPE["pass"] = str
 
 
 def get_targ(obs_text):
@@ -256,7 +256,7 @@ def get_dither(obs_text):
         dis_dither_re = re.match("Dither:\sOFF\s*", oline)
         if dis_dither_re:
             return dict(
-                dither_state='OFF',
+                dither_state="OFF",
                 dither_y_amp=float(0),
                 dither_z_amp=float(0),
                 dither_y_period=None,
@@ -298,7 +298,7 @@ def get_manvrs(obs_text):
     manvr_block = man_search.group(1)
     manvrs = []
     for manvr in manvr_block.split("\n\n"):
-        if manvr == '':
+        if manvr == "":
             continue
         curr_manvr = {}
         for mline in manvr.split("\n"):
@@ -337,15 +337,15 @@ def get_manvrs(obs_text):
                         end_date=angle_re.groups()[-1],
                     )
                 )
-                if 'target_Q1' not in curr_manvr:
+                if "target_Q1" not in curr_manvr:
                     raise ValueError(
                         "No Q1,Q2,Q3,Q4 line found when parsing starcheck.txt"
                     )
         # If there is a real manvr, append to list
-        if ('mp_targquat_time' in curr_manvr) and ('target_Q1' in curr_manvr):
+        if ("mp_targquat_time" in curr_manvr) and ("target_Q1" in curr_manvr):
             manvrs.append(curr_manvr)
     for idx, manvr in enumerate(manvrs):
-        manvr['instance'] = idx
+        manvr["instance"] = idx
     return manvrs
 
 
@@ -357,7 +357,7 @@ def get_catalog(obs_text):
     hdrmatch = re.search("-{20,}\n(.*)\n-{20,}", obs_text)
     hdr = hdrmatch.group(1)
     for posshdr in HDRS:
-        if posshdr['pattern'] == hdr:
+        if posshdr["pattern"] == hdr:
             hdrformat = posshdr
     if hdrformat is None:
         raise ValueError
@@ -365,10 +365,10 @@ def get_catalog(obs_text):
     catlines = [t for t in obs_text.split("\n") if re.compile("^\[.*").match(t)]
     rawcat = Table.read(
         catlines,
-        format='ascii.fixed_width_no_header',
-        col_starts=hdrformat['col_starts'],
-        col_ends=hdrformat['col_ends'],
-        names=hdrformat['hdrs'],
+        format="ascii.fixed_width_no_header",
+        col_starts=hdrformat["col_starts"],
+        col_ends=hdrformat["col_ends"],
+        names=hdrformat["hdrs"],
     )
     cat = []
     for row, idx in zip(rawcat, count()):
@@ -376,14 +376,14 @@ def get_catalog(obs_text):
         for field in row.dtype.names:
             if field not in OKTYPE.keys():
                 continue
-            if field == 'id':
+            if field == "id":
                 idmatch = re.match("(\D+)?(\d+)?", str(row[field]))
-                catrow['idnote'] = idmatch.group(1)
-                catrow['id'] = idmatch.group(2)
-                if catrow['id'] is not None:
-                    catrow['id'] = int(catrow['id'])
+                catrow["idnote"] = idmatch.group(1)
+                catrow["id"] = idmatch.group(2)
+                if catrow["id"] is not None:
+                    catrow["id"] = int(catrow["id"])
                 continue
-            if row[field] == '---':
+            if row[field] == "---":
                 catrow[field] = None
                 continue
 
@@ -405,7 +405,7 @@ def get_warnings(obs_text):
     warn = []
     for wline in warnlines:
         form0 = re.match(
-            '^\>\>\s+{}\s*:\s+(.+)\.\s+(\[\s?(\d+)\]\-\[\s?(\d+)\]).?\s*(.*)'.format(
+            "^\>\>\s+{}\s*:\s+(.+)\.\s+(\[\s?(\d+)\]\-\[\s?(\d+)\]).?\s*(.*)".format(
                 warn_types
             ),
             wline,
@@ -427,7 +427,7 @@ def get_warnings(obs_text):
                 )
             )
             continue
-        form1 = re.match('.*{}.*\[\s?(\d+)\]([\w\s]+)\.(.*)$'.format(warn_types), wline)
+        form1 = re.match(".*{}.*\[\s?(\d+)\]([\w\s]+)\.(.*)$".format(warn_types), wline)
         if form1:
             warn.append(
                 dict(
@@ -438,7 +438,7 @@ def get_warnings(obs_text):
             )
             continue
         form2 = re.match(
-            '^\>\>\s+{}\s*:\s+(.+)\.\s+(?:\[ |\[)(\d+)\].?\s*(.*)'.format(warn_types),
+            "^\>\>\s+{}\s*:\s+(.+)\.\s+(?:\[ |\[)(\d+)\].?\s*(.*)".format(warn_types),
             wline,
         )
         if form2:
@@ -450,7 +450,7 @@ def get_warnings(obs_text):
                 )
             )
             continue
-        form3 = re.match('^\>\>\s+{}\s*:\s+(.+)'.format(warn_types), wline)
+        form3 = re.match("^\>\>\s+{}\s*:\s+(.+)".format(warn_types), wline)
         if form3:
             warn.append(dict(warning_type=None, idx=None, warning=form3.group(2)))
     return warn
@@ -467,8 +467,8 @@ def fix_obs(obs):
     # Fix broken starcheck.txt manually
     # obsid 11866 has non-ascii characters in the starcheck.txt file
     # (and python complains if I copy them here for reference)
-    if obs['obsid'] == 11866:
-        obs['target_id'] = 'cl0422-5009'
+    if obs["obsid"] == 11866:
+        obs["target_id"] = "cl0422-5009"
 
 
 def get_cat(obs_text):
@@ -485,7 +485,7 @@ def get_cat(obs_text):
     # the obs/manvrs/catalog/warnings keys
     fix_obs(obs)
     return dict(
-        obsid=obs['obsid'],
+        obsid=obs["obsid"],
         obs=obs,
         manvrs=get_manvrs(obs_text),
         catalog=get_catalog(obs_text),
@@ -495,7 +495,7 @@ def get_cat(obs_text):
 
 
 def read_starcheck(starcheck_file):
-    sc_text = open(starcheck_file, 'r').read()
+    sc_text = open(starcheck_file, "r").read()
     chunks = re.split("={20,}\s?\n?\n", sc_text)
     catalogs = []
     for chunk, idx in zip(chunks, count()):

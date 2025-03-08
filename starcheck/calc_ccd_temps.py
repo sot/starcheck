@@ -22,7 +22,7 @@ from pathlib import Path
 # Use Agg backend for command-line (non-interactive) operation
 import matplotlib
 
-matplotlib.use('Agg')
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches
 
@@ -45,12 +45,12 @@ from ska_helpers import chandra_models
 
 from starcheck import __version__ as version
 
-MSID = {'aca': 'AACCCDPT'}
+MSID = {"aca": "AACCCDPT"}
 TASK_DATA = os.path.dirname(__file__)
-TASK_NAME = 'calc_ccd_temps'
-MSID_PLOT_NAME = {'aca': 'ccd_temperature.png'}
+TASK_NAME = "calc_ccd_temps"
+MSID_PLOT_NAME = {"aca": "ccd_temperature.png"}
 # the model is reasonable from around Jan-2011
-MODEL_VALID_FROM = '2011:001:00:00:00.000'
+MODEL_VALID_FROM = "2011:001:00:00:00.000"
 logger = logging.getLogger(TASK_NAME)
 
 plt.rc("axes", labelsize=10, titlesize=12)
@@ -60,12 +60,12 @@ plt.rc("ytick", labelsize=10)
 try:
     VERSION = str(version)
 except Exception:
-    VERSION = 'dev'
+    VERSION = "dev"
 
 
 @functools.lru_cache()
 def aca_model_and_info():
-    model, info = chandra_models.get_data('chandra_models/xija/aca/aca_spec.json')
+    model, info = chandra_models.get_data("chandra_models/xija/aca/aca_spec.json")
     return model, info
 
 
@@ -95,7 +95,7 @@ def aca_t_ccd_penalty_limit():
 
 def get_ccd_temps(
     oflsdir,
-    outdir='out',
+    outdir="out",
     json_obsids=None,
     orlist=None,
     run_start_time=None,
@@ -128,45 +128,45 @@ def get_ccd_temps(
 
     if json_obsids is None:
         # Only happens in testing, so use existing obsids file in OFLS dir
-        json_obsids = Path(oflsdir, 'starcheck', 'obsids.json').read_text()
+        json_obsids = Path(oflsdir, "starcheck", "obsids.json").read_text()
 
     run_start_time = DateTime(run_start_time)
     config_logging(outdir, verbose, TASK_NAME)
 
     # Store info relevant to processing for use in outputs
     proc = {
-        'run_user': os.environ.get('USER'),
-        'execution_time': time.ctime(),
-        'run_start_time': run_start_time,
-        'errors': [],
+        "run_user": os.environ.get("USER"),
+        "execution_time": time.ctime(),
+        "run_start_time": run_start_time,
+        "errors": [],
     }
-    logger.info('#####################################################################')
+    logger.info("#####################################################################")
     logger.info(
-        '# %s run at %s by %s' % (TASK_NAME, proc['execution_time'], proc['run_user'])
+        "# %s run at %s by %s" % (TASK_NAME, proc["execution_time"], proc["run_user"])
     )
     logger.info("# Continuity run_start_time = {}".format(run_start_time.date))
-    logger.info('# {} version = {}'.format(TASK_NAME, VERSION))
-    logger.info(f'# chandra_models version = {chandra_models_version()}')
-    logger.info(f'# kadi version = {kadi.__version__}')
+    logger.info("# {} version = {}".format(TASK_NAME, VERSION))
+    logger.info(f"# chandra_models version = {chandra_models_version()}")
+    logger.info(f"# kadi version = {kadi.__version__}")
     logger.info(
-        '#####################################################################\n'
+        "#####################################################################\n"
     )
 
     have_cxc_telem = True
     try:
-        fetch.get_time_range('aacccdpt')
+        fetch.get_time_range("aacccdpt")
     except KeyError:
         logger.info("AACCCDPT not found in cheta archive.")
         have_cxc_telem = False
 
     use_maude = False
     if maude or not have_cxc_telem:
-        fetch.data_source.set('maude allow_subset=False')
+        fetch.data_source.set("maude allow_subset=False")
         logger.info("Setting to use maude")
         use_maude = True
 
     # save model_spec in out directory
-    with (Path(outdir) / 'aca_spec.json').open('w') as fh:
+    with (Path(outdir) / "aca_spec.json").open("w") as fh:
         json.dump(model_spec, fh, sort_keys=True, indent=4, cls=NumpyAwareJSONEncoder)
 
     # json_obsids can be either a string or a file-like object.  Try those options in order.
@@ -177,14 +177,14 @@ def get_ccd_temps(
 
     # Get commands from backstop file in oflsdir
     bs_cmds = get_bs_cmds(oflsdir)
-    bs_dates = bs_cmds['date']
+    bs_dates = bs_cmds["date"]
 
     # Running loads termination time is the last time of "current running loads"
     # (or in the case of a safing action, "current approved load commands" in
     # kadi commands) which should be included in propagation. Starting from
     # around 2020-April this is included as a commmand in the loads, while prior
     # to that we just use the first command in the backstop loads.
-    ok = bs_cmds['event_type'] == 'RUNNING_LOAD_TERMINATION_TIME'
+    ok = bs_cmds["event_type"] == "RUNNING_LOAD_TERMINATION_TIME"
     rltt = DateTime(bs_dates[ok][0] if np.any(ok) else bs_dates[0])
 
     # First actual command in backstop loads (all the NOT-RLTT commands)
@@ -192,19 +192,19 @@ def get_ccd_temps(
 
     # Scheduled stop time is the end of propagation, either the explicit
     # time as a pseudo-command in the loads or the last backstop command time.
-    ok = bs_cmds['event_type'] == 'SCHEDULED_STOP_TIME'
+    ok = bs_cmds["event_type"] == "SCHEDULED_STOP_TIME"
     sched_stop = DateTime(bs_dates[ok][0] if np.any(ok) else bs_dates[-1])
 
-    if 'test_rltt' in kwargs:
-        rltt = DateTime(kwargs['test_rltt'])
-    if 'test_sched_stop' in kwargs:
-        sched_stop = DateTime(kwargs['test_sched_stop'])
+    if "test_rltt" in kwargs:
+        rltt = DateTime(kwargs["test_rltt"])
+    if "test_sched_stop" in kwargs:
+        sched_stop = DateTime(kwargs["test_sched_stop"])
 
-    logger.info(f'RLTT = {rltt.date}')
-    logger.info(f'sched_stop = {sched_stop.date}')
+    logger.info(f"RLTT = {rltt.date}")
+    logger.info(f"sched_stop = {sched_stop.date}")
 
-    proc['datestart'] = bs_start.date
-    proc['datestop'] = sched_stop.date
+    proc["datestart"] = bs_start.date
+    proc["datestop"] = sched_stop.date
 
     if use_maude:
         import maude
@@ -212,7 +212,7 @@ def get_ccd_temps(
         dat = maude.get_msids("aacccdpt")  # returns the latest sample
         tlm_end_time = dat["data"][0]["times"][0]
     else:
-        times = fetch.get_time_range('aacccdpt', format='secs')
+        times = fetch.get_time_range("aacccdpt", format="secs")
         tlm_end_time = times[1]
 
     # Get temperature telemetry for 1 day prior to min(last available telem,
@@ -220,7 +220,7 @@ def get_ccd_temps(
     # testing.
     end_time = min(tlm_end_time, bs_start.secs, run_start_time.secs)
     tlm = get_telem_values(
-        end_time, ['aacccdpt'], days=1, stat=None if use_maude else '5min'
+        end_time, ["aacccdpt"], days=1, stat=None if use_maude else "5min"
     )
     states = get_week_states(rltt, sched_stop, bs_cmds, tlm)
 
@@ -233,18 +233,18 @@ def get_ccd_temps(
     # run.
     last_state = states[-1]
     last_sc_obsid = sc_obsids[-1]
-    if (last_state['obsid'] == last_sc_obsid['obsid']) & (
-        last_sc_obsid['obs_tstop'] > last_state['tstop']
+    if (last_state["obsid"] == last_sc_obsid["obsid"]) & (
+        last_sc_obsid["obs_tstop"] > last_state["tstop"]
     ):
-        obs_tstop = last_sc_obsid['obs_tstop']
-        last_state['tstop'] = obs_tstop
-        last_state['datestop'] = DateTime(obs_tstop).date
+        obs_tstop = last_sc_obsid["obs_tstop"]
+        last_state["tstop"] = obs_tstop
+        last_state["datestop"] = DateTime(obs_tstop).date
 
     if rltt.date > DateTime(MODEL_VALID_FROM).date:
         ccd_times, ccd_temps = make_week_predict(model_spec, states, sched_stop)
     else:
         ccd_times, ccd_temps = mock_telem_predict(
-            states, stat=None if use_maude else '5min'
+            states, stat=None if use_maude else "5min"
         )
 
     make_check_plots(
@@ -279,40 +279,40 @@ def get_interval_data(intervals, times, ccd_temp, obsreqs=None):
     for interval in intervals:
         # treat the model samples as temperature intervals
         # and find the max during each obsid npnt interval
-        obs = {'ccd_temp': None}
+        obs = {"ccd_temp": None}
         obs.update(interval)
-        stop_idx = 1 + np.searchsorted(times, interval['tstop'])
-        start_idx = -1 + np.searchsorted(times, interval['tstart'])
+        stop_idx = 1 + np.searchsorted(times, interval["tstop"])
+        start_idx = -1 + np.searchsorted(times, interval["tstart"])
         ok_temps = ccd_temp[start_idx:stop_idx]
         ok_times = times[start_idx:stop_idx]
         # If there are no good samples, put the times in the output dict and go to the next interval
         if len(ok_temps) == 0:
-            obstemps[str(interval['obsid'])] = obs
+            obstemps[str(interval["obsid"])] = obs
             continue
-        obs['ccd_temp'] = np.max(ok_temps)
-        obs['ccd_temp_min'] = np.min(ok_temps)
-        obs['ccd_temp_acq'] = np.max(ok_temps[:2])
-        obs['n100_warm_frac'] = dark_model.get_warm_fracs(
-            100, interval['tstart'], np.max(ok_temps)
+        obs["ccd_temp"] = np.max(ok_temps)
+        obs["ccd_temp_min"] = np.min(ok_temps)
+        obs["ccd_temp_acq"] = np.max(ok_temps[:2])
+        obs["n100_warm_frac"] = dark_model.get_warm_fracs(
+            100, interval["tstart"], np.max(ok_temps)
         )
         # If we have an OR list, the obsid is in that list, and the OR list has zero-offset keys
         if (
             obsreqs is not None
-            and interval['obsid'] in obsreqs
-            and 'zero_offset' in obsreqs[interval['obsid']]
+            and interval["obsid"] in obsreqs
+            and "zero_offset" in obsreqs[interval["obsid"]]
         ):
-            obsreq = obsreqs[interval['obsid']]
+            obsreq = obsreqs[interval["obsid"]]
             ddy, ddz = get_aca_offsets(
-                obsreq['zero_offset']['detector'],
-                obsreq['zero_offset']['chip_id'],
-                obsreq['zero_offset']['chipx'],
-                obsreq['zero_offset']['chipy'],
+                obsreq["zero_offset"]["detector"],
+                obsreq["zero_offset"]["chip_id"],
+                obsreq["zero_offset"]["chipx"],
+                obsreq["zero_offset"]["chipy"],
                 time=ok_times,
                 t_ccd=ok_temps,
             )
-            obs['aca_offset_y'] = np.mean(ddy)
-            obs['aca_offset_z'] = np.mean(ddz)
-        obstemps[str(interval['obsid'])] = obs
+            obs["aca_offset_y"] = np.mean(ddy)
+            obs["aca_offset_z"] = np.mean(ddz)
+        obstemps[str(interval["obsid"])] = obs
     return obstemps
 
 
@@ -329,16 +329,16 @@ def get_obs_intervals(sc_obsids):
     for idx, obs in enumerate(sc_obsids):
         # if the range is undefined, just don't make
         # an entry / interval for the obsid
-        if ('obs_tstart' not in obs) or 'obs_tstop' not in obs:
+        if ("obs_tstart" not in obs) or "obs_tstop" not in obs:
             continue
         interval = {
-            'obsid': obs['obsid'],
-            'tstart': obs['obs_tstart'],
-            'tstop': obs['obs_tstop'],
+            "obsid": obs["obsid"],
+            "tstart": obs["obs_tstart"],
+            "tstop": obs["obs_tstop"],
         }
-        if 'no_following_manvr' in obs:
-            interval['tstop'] = sc_obsids[idx + 1]['obs_tstop']
-            interval['text'] = '(max through following obsid)'
+        if "no_following_manvr" in obs:
+            interval["tstop"] = sc_obsids[idx + 1]["obs_tstop"]
+            interval["text"] = "(max through following obsid)"
         intervals.append(interval)
     return intervals
 
@@ -358,12 +358,12 @@ def calc_model(model_spec, states, start, stop, aacccdpt=None, aacccdpt_times=No
     :returns: xija.Thermalmodel
     """
 
-    model = xija.ThermalModel('aca', start=start, stop=stop, model_spec=model_spec)
-    times = np.array([states['tstart'], states['tstop']])
-    model.comp['pitch'].set_data(states['pitch'], times)
-    model.comp['eclipse'].set_data(states['eclipse'] != 'DAY', times)
-    model.comp['aca0'].set_data(aacccdpt, aacccdpt_times)
-    model.comp['aacccdpt'].set_data(aacccdpt, aacccdpt_times)
+    model = xija.ThermalModel("aca", start=start, stop=stop, model_spec=model_spec)
+    times = np.array([states["tstart"], states["tstop"]])
+    model.comp["pitch"].set_data(states["pitch"], times)
+    model.comp["eclipse"].set_data(states["eclipse"] != "DAY", times)
+    model.comp["aca0"].set_data(aacccdpt, aacccdpt_times)
+    model.comp["aacccdpt"].set_data(aacccdpt, aacccdpt_times)
     model.make()
     model.calc()
     return model
@@ -380,10 +380,10 @@ def get_week_states(rltt, sched_stop, bs_cmds, tlm):
     :returns: numpy recarray of states
     """
     # Get temperature data at the end of available telemetry
-    times = tlm['time']
+    times = tlm["time"]
     i0 = np.searchsorted(times, times[-1] - 1400)
-    init_aacccdpt = np.mean(tlm['aacccdpt'][i0:])
-    init_tlm_time = np.mean(tlm['time'][i0:])
+    init_aacccdpt = np.mean(tlm["aacccdpt"][i0:])
+    init_tlm_time = np.mean(tlm["time"][i0:])
 
     # Get currently running (or approved) commands from last telemetry up to
     # and including commands at RLTT
@@ -393,7 +393,7 @@ def get_week_states(rltt, sched_stop, bs_cmds, tlm):
     cmds = cmds.add_cmds(bs_cmds)
 
     # Get the states for available commands.  This automatically gets continuity.
-    state_keys = ['obsid', 'pitch', 'q1', 'q2', 'q3', 'q4', 'eclipse']
+    state_keys = ["obsid", "pitch", "q1", "q2", "q3", "q4", "eclipse"]
     states = kadi_states.get_states(
         cmds=cmds,
         start=init_tlm_time,
@@ -402,12 +402,12 @@ def get_week_states(rltt, sched_stop, bs_cmds, tlm):
         merge_identical=True,
     )
 
-    states['tstart'] = DateTime(states['datestart']).secs
-    states['tstop'] = DateTime(states['datestop']).secs
+    states["tstart"] = DateTime(states["datestart"]).secs
+    states["tstop"] = DateTime(states["datestop"]).secs
 
     # Add a state column for temperature and pre-fill to be initial temperature
     # (the first state temperature is the only one used anyway).
-    states['aacccdpt'] = init_aacccdpt
+    states["aacccdpt"] = init_aacccdpt
 
     return states
 
@@ -424,23 +424,23 @@ def make_week_predict(model_spec, states, tstop):
     state0 = states[0]
 
     # Create array of times at which to calculate ACA temps, then do it.
-    logger.info('Calculating ACA thermal model')
+    logger.info("Calculating ACA thermal model")
     logger.info(
-        'Propagation initial time and ACA: {} {:.2f}'.format(
-            DateTime(state0['tstart']).date, state0['aacccdpt']
+        "Propagation initial time and ACA: {} {:.2f}".format(
+            DateTime(state0["tstart"]).date, state0["aacccdpt"]
         )
     )
 
     model = calc_model(
         model_spec,
         states,
-        state0['tstart'],
+        state0["tstart"],
         tstop,
-        state0['aacccdpt'],
-        state0['tstart'],
+        state0["aacccdpt"],
+        state0["tstart"],
     )
 
-    return model.times, model.comp['aacccdpt'].mvals
+    return model.times, model.comp["aacccdpt"].mvals
 
 
 def mock_telem_predict(states, stat=None):
@@ -456,25 +456,25 @@ def mock_telem_predict(states, stat=None):
     # Use the last state tstart instead of tstop because the last state
     # from cmd_states is extended to 2099
     logger.info(
-        'Fetching telemetry between %s and %s'
-        % (states[0]['tstart'], states[-1]['tstart'])
+        "Fetching telemetry between %s and %s"
+        % (states[0]["tstart"], states[-1]["tstart"])
     )
 
     tlm = fetch.MSIDset(
-        ['aacccdpt'], states[0]['tstart'], states[-1]['tstart'], stat=stat
+        ["aacccdpt"], states[0]["tstart"], states[-1]["tstart"], stat=stat
     )
 
-    return tlm['aacccdpt'].times, tlm['aacccdpt'].vals
+    return tlm["aacccdpt"].times, tlm["aacccdpt"].vals
 
 
 def get_bs_cmds(oflsdir):
     """Return commands for the backstop file in opt.oflsdir."""
-    backstop_file = globfile(os.path.join(oflsdir, '*.backstop'))
-    logger.info('Using backstop file %s' % backstop_file)
+    backstop_file = globfile(os.path.join(oflsdir, "*.backstop"))
+    logger.info("Using backstop file %s" % backstop_file)
     bs_cmds = kadi.commands.get_cmds_from_backstop(backstop_file)
     logger.info(
-        'Found %d backstop commands between %s and %s'
-        % (len(bs_cmds), bs_cmds[0]['date'], bs_cmds[-1]['date'])
+        "Found %d backstop commands between %s and %s"
+        % (len(bs_cmds), bs_cmds[0]["date"], bs_cmds[-1]["date"])
     )
 
     return bs_cmds
@@ -494,17 +494,17 @@ def get_telem_values(tstop, msids, days=7, stat=None):
     tstop = DateTime(tstop).secs
     start = DateTime(tstop - days * 86400).date
     stop = DateTime(tstop).date
-    logger.info('Fetching telemetry between %s and %s' % (start, stop))
+    logger.info("Fetching telemetry between %s and %s" % (start, stop))
 
     msidset = fetch.MSIDset(msids, start, stop, stat=stat)
     msidset.interpolate(328.0)  # 328 for '5min' stat, still OK for None
 
     # Finished when we found at least 4 good records (20 mins)
     if len(msidset.times) < 4:
-        raise ValueError(f'Found no telemetry within {days} days of {stop}')
+        raise ValueError(f"Found no telemetry within {days} days of {stop}")
 
     vals = {msid: msidset[msid].vals for msid in msids}
-    vals['time'] = msidset.times
+    vals["time"] = msidset.times
     out = Table(vals)
 
     return out
@@ -512,7 +512,7 @@ def get_telem_values(tstop, msids, days=7, stat=None):
 
 class NumpyAwareJSONEncoder(json.JSONEncoder):
     def default(self, obj):
-        if hasattr(obj, 'tolist'):
+        if hasattr(obj, "tolist"):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
@@ -523,13 +523,13 @@ def plot_two(
     y,
     x2,
     y2,
-    color='blue',
-    color2='magenta',
+    color="blue",
+    color2="magenta",
     ylim=None,
     ylim2=None,
-    xlabel='',
-    ylabel='',
-    ylabel2='',
+    xlabel="",
+    ylabel="",
+    ylabel2="",
     figsize=(7, 3.5),
 ):
     """Plot two quantities with a date x-axis"""
@@ -537,7 +537,7 @@ def plot_two(
     fig = plt.figure(fig_id, figsize=figsize)
     fig.clf()
     ax = fig.add_subplot(1, 1, 1)
-    ax.plot_date(xt, y, fmt='-', color=color)
+    ax.plot_date(xt, y, fmt="-", color=color)
     ax.set_xlim(min(xt), max(xt))
     if ylim:
         ax.set_ylim(*ylim)
@@ -548,7 +548,7 @@ def plot_two(
     ax2 = ax.twinx()
 
     xt2 = Ska.Matplotlib.cxctime2plotdate(x2)
-    ax2.plot_date(xt2, y2, fmt='-', color=color2)
+    ax2.plot_date(xt2, y2, fmt="-", color=color2)
     pad = 1
     ax2.set_xlim(min(xt) - pad, max(xt) + pad)
     if ylim2:
@@ -560,7 +560,7 @@ def plot_two(
     [label.set_rotation(30) for label in ax.xaxis.get_ticklabels()]
     [label.set_color(color2) for label in ax2.yaxis.get_ticklabels()]
 
-    return {'fig': fig, 'ax': ax, 'ax2': ax2}
+    return {"fig": fig, "ax": ax, "ax2": ax2}
 
 
 def make_check_plots(outdir, states, times, temps, tstart, tstop):
@@ -582,27 +582,27 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop):
     load_stop = cxc2pd([tstop])[0]
 
     # Add labels for obsids
-    id_xs = [cxc2pd([states[0]['tstart']])[0]]
-    id_labels = [str(states[0]['obsid'])]
+    id_xs = [cxc2pd([states[0]["tstart"]])[0]]
+    id_labels = [str(states[0]["obsid"])]
     for s0, s1 in zip(states[:-1], states[1:]):
-        if s0['obsid'] != s1['obsid']:
-            id_xs.append(cxc2pd([s1['tstart']])[0])
-            id_labels.append(str(s1['obsid']))
+        if s0["obsid"] != s1["obsid"]:
+            id_xs.append(cxc2pd([s1["tstart"]])[0])
+            id_labels.append(str(s1["obsid"]))
 
-    logger.info('Making temperature check plots')
+    logger.info("Making temperature check plots")
 
-    for fig_id, msid in enumerate(('aca',)):
+    for fig_id, msid in enumerate(("aca",)):
         temp_ymax = max(aca_t_ccd_planning_limit(), np.max(temps))
         temp_ymin = min(aca_t_ccd_planning_limit() - 1, np.min(temps))
         plots[msid] = plot_two(
             fig_id=fig_id + 1,
             x=times,
             y=temps,
-            x2=pointpair(states['tstart'], states['tstop']),
-            y2=pointpair(states['pitch']),
-            xlabel='Date',
-            ylabel='Temperature (C)',
-            ylabel2='Pitch (deg)',
+            x2=pointpair(states["tstart"], states["tstop"]),
+            y2=pointpair(states["pitch"]),
+            xlabel="Date",
+            ylabel="Temperature (C)",
+            ylabel2="Pitch (deg)",
             ylim=(
                 temp_ymin - 0.05 * (temp_ymax - temp_ymin),
                 temp_ymax + 0.05 * (temp_ymax - temp_ymin),
@@ -610,13 +610,13 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop):
             ylim2=(40, 180),
             figsize=(9, 5),
         )
-        ax = plots[msid]['ax']
+        ax = plots[msid]["ax"]
         if aca_t_ccd_penalty_limit() is not None:
-            plots[msid]['ax'].axhline(
-                y=aca_t_ccd_penalty_limit(), linestyle='--', color='g', linewidth=2.0
+            plots[msid]["ax"].axhline(
+                y=aca_t_ccd_penalty_limit(), linestyle="--", color="g", linewidth=2.0
             )
-        plots[msid]['ax'].axhline(
-            y=aca_t_ccd_planning_limit(), linestyle='--', color='r', linewidth=2.0
+        plots[msid]["ax"].axhline(
+            y=aca_t_ccd_planning_limit(), linestyle="--", color="r", linewidth=2.0
         )
         plt.subplots_adjust(bottom=0.1)
         pad = 1
@@ -639,8 +639,8 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop):
             load_start - xlims[0],
             ylims[1] - ylims[0],
             alpha=0.1,
-            facecolor='black',
-            edgecolor='none',
+            facecolor="black",
+            edgecolor="none",
         )
         ax.add_patch(pre_rect)
         post_rect = matplotlib.patches.Rectangle(
@@ -648,16 +648,16 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop):
             xlims[-1] - load_stop,
             ylims[1] - ylims[0],
             alpha=0.1,
-            facecolor='black',
-            edgecolor='none',
+            facecolor="black",
+            edgecolor="none",
         )
         ax.add_patch(post_rect)
 
         filename = MSID_PLOT_NAME[msid]
         outfile = os.path.join(outdir, filename)
-        logger.info('Writing plot file %s' % outfile)
-        plots[msid]['fig'].savefig(outfile)
-        plots[msid]['filename'] = filename
+        logger.info("Writing plot file %s" % outfile)
+        plots[msid]["fig"].savefig(outfile)
+        plots[msid]["filename"] = filename
 
     return plots
 
@@ -665,7 +665,7 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop):
 def pointpair(x, y=None):
     if y is None:
         y = x
-    return np.array([x, y]).reshape(-1, order='F')
+    return np.array([x, y]).reshape(-1, order="F")
 
 
 def globfile(pathglob):
@@ -674,8 +674,8 @@ def globfile(pathglob):
 
     files = glob.glob(pathglob)
     if len(files) == 0:
-        raise IOError('No files matching %s' % pathglob)
+        raise IOError("No files matching %s" % pathglob)
     elif len(files) > 1:
-        raise IOError('Multiple files matching %s' % pathglob)
+        raise IOError("Multiple files matching %s" % pathglob)
     else:
         return files[0]

@@ -89,7 +89,7 @@ def main():
     KEY = sys.stdin.readline().strip()
     loglevel = sys.stdin.readline().strip()
 
-    logmap = {'0': logging.CRITICAL, '1': logging.WARNING, '2': logging.INFO}
+    logmap = {"0": logging.CRITICAL, "1": logging.WARNING, "2": logging.INFO}
     if loglevel in logmap:
         logger.setLevel(logmap[loglevel])
     if int(loglevel) > 2:
