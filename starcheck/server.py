@@ -20,8 +20,10 @@ class PythonServer(socketserver.TCPServer):
     timeout = 180
 
     def handle_timeout(self) -> None:
-        print(f"SERVER: starcheck python server timeout after {self.timeout}s idle",
-              file=sys.stderr)
+        print(
+            f"SERVER: starcheck python server timeout after {self.timeout}s idle",
+            file=sys.stderr,
+        )
         # self.shutdown()  # DOES NOT WORK, just hangs
         sys.exit(1)
 
@@ -81,22 +83,20 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
 def main():
     global KEY
-    
+
     # Read a line from STDIN
     port = int(sys.stdin.readline().strip())
     KEY = sys.stdin.readline().strip()
     loglevel = sys.stdin.readline().strip()
-    
-    logmap = {'0': logging.CRITICAL,
-              '1': logging.WARNING,
-              '2': logging.INFO}
+
+    logmap = {'0': logging.CRITICAL, '1': logging.WARNING, '2': logging.INFO}
     if loglevel in logmap:
         logger.setLevel(logmap[loglevel])
     if int(loglevel) > 2:
         logger.setLevel(logging.DEBUG)
-        
-    logger.info(f"SERVER: starting on port {port}")    
-    
+
+    logger.info(f"SERVER: starting on port {port}")
+
     # Create the server, binding to localhost on supplied port
     with PythonServer((HOST, port), MyTCPHandler) as server:
         # Activate the server; this will keep running until you
