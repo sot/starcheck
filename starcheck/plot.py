@@ -5,7 +5,7 @@ import agasc
 import matplotlib.pyplot as plt
 import Quaternion
 from chandra_aca.plot import bad_acq_stars, plot_stars
-from Ska.quatutil import radec2yagzag
+from ska_quatutil import radec2yagzag
 
 
 def make_plots_for_obsid(

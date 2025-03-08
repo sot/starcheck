@@ -15,23 +15,22 @@ import matplotlib
 import numpy as np
 
 matplotlib.use("Agg")
+import cheta.fetch_sci as fetch
 import kadi
 import kadi.commands
 import kadi.commands.states as kadi_states
 import matplotlib.patches
 import matplotlib.pyplot as plt
-import Ska.DBI
-import Ska.engarchive.fetch_sci as fetch
-import Ska.Matplotlib
+import ska_matplotlib
 import xija
 from astropy.table import Table
 from Chandra.Time import DateTime
 from chandra_aca import dark_model
 from chandra_aca.drift import get_aca_offsets
 from parse_cm import read_or_list_full
-from Ska.Matplotlib import cxctime2plotdate as cxc2pd
-from Ska.Matplotlib import lineid_plot
 from ska_helpers import chandra_models
+from ska_matplotlib import cxctime2plotdate as cxc2pd
+from ska_matplotlib import lineid_plot
 
 from starcheck import __version__ as version
 
@@ -529,7 +528,7 @@ def plot_two(
     figsize=(7, 3.5),
 ):
     """Plot two quantities with a date x-axis"""
-    xt = Ska.Matplotlib.cxctime2plotdate(x)
+    xt = ska_matplotlib.cxctime2plotdate(x)
     fig = plt.figure(fig_id, figsize=figsize)
     fig.clf()
     ax = fig.add_subplot(1, 1, 1)
@@ -543,7 +542,7 @@ def plot_two(
 
     ax2 = ax.twinx()
 
-    xt2 = Ska.Matplotlib.cxctime2plotdate(x2)
+    xt2 = ska_matplotlib.cxctime2plotdate(x2)
     ax2.plot_date(xt2, y2, fmt="-", color=color2)
     pad = 1
     ax2.set_xlim(min(xt) - pad, max(xt) + pad)
@@ -552,7 +551,7 @@ def plot_two(
     ax2.set_ylabel(ylabel2, color=color2)
     ax2.xaxis.set_visible(False)
 
-    Ska.Matplotlib.set_time_ticks(ax)
+    ska_matplotlib.set_time_ticks(ax)
     [label.set_rotation(30) for label in ax.xaxis.get_ticklabels()]
     [label.set_color(color2) for label in ax2.yaxis.get_ticklabels()]
 
