@@ -9,39 +9,37 @@ load_check
 This code generates backstop load review outputs for checking a Xija model.
 """
 
-import os
-import glob
-import logging
-import time
-import numpy as np
-import json
 import functools
+import glob
+import json
+import logging
+import os
+import time
 from pathlib import Path
 
 # Matplotlib setup
 # Use Agg backend for command-line (non-interactive) operation
 import matplotlib
+import numpy as np
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import matplotlib.patches
-
-from astropy.table import Table
-import Ska.Matplotlib
-from Ska.Matplotlib import cxctime2plotdate as cxc2pd
-from Ska.Matplotlib import lineid_plot
-import Ska.DBI
-import Ska.engarchive.fetch_sci as fetch
-from Chandra.Time import DateTime
 import kadi
 import kadi.commands
 import kadi.commands.states as kadi_states
+import matplotlib.patches
+import matplotlib.pyplot as plt
+import Ska.DBI
+import Ska.engarchive.fetch_sci as fetch
+import Ska.Matplotlib
 import xija
+from astropy.table import Table
+from Chandra.Time import DateTime
 from chandra_aca import dark_model
-from parse_cm import read_or_list_full
 from chandra_aca.drift import get_aca_offsets
+from parse_cm import read_or_list_full
+from Ska.Matplotlib import cxctime2plotdate as cxc2pd
+from Ska.Matplotlib import lineid_plot
 from ska_helpers import chandra_models
-
 
 from starcheck import __version__ as version
 
@@ -584,7 +582,7 @@ def make_check_plots(outdir, states, times, temps, tstart, tstop):
     # Add labels for obsids
     id_xs = [cxc2pd([states[0]["tstart"]])[0]]
     id_labels = [str(states[0]["obsid"])]
-    for s0, s1 in zip(states[:-1], states[1:]):
+    for s0, s1 in zip(states[:-1], states[1:], strict=False):
         if s0["obsid"] != s1["obsid"]:
             id_xs.append(cxc2pd([s1["tstart"]])[0])
             id_labels.append(str(s1["obsid"]))

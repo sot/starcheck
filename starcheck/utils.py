@@ -1,23 +1,24 @@
 import logging
 import os
-from pathlib import Path
 import warnings
-from bs4 import BeautifulSoup
+from pathlib import Path
 
 import agasc
+import chandra_aca.star_probs
 import cxotime
+import kadi.commands.states as kadi_states
 import mica.stats.acq_stats
 import mica.stats.guide_stats
 import numpy as np
 import Quaternion
-from astropy.table import Table
-from Chandra.Time import DateTime
-from chandra_aca.star_probs import mag_for_p_acq
-import chandra_aca.star_probs
-from chandra_aca.dark_model import dark_temp_scale
-from chandra_aca.drift import get_fid_offset
 import sparkles
+from astropy.table import Table
+from bs4 import BeautifulSoup
+from Chandra.Time import DateTime
+from chandra_aca.dark_model import dark_temp_scale
+from chandra_aca.star_probs import mag_for_p_acq
 from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to_pixels
+from cxotime import CxoTime
 from mica.archive import aca_dark
 from parse_cm import read_backstop_as_list, write_backstop
 from proseco.catalog import get_aca_catalog, get_effective_t_ccd
@@ -25,9 +26,6 @@ from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
 from Ska.quatutil import radec2yagzag
 from testr import test_helper
-from cxotime import CxoTime
-
-import kadi.commands.states as kadi_states
 
 import starcheck
 from starcheck import __version__ as version
@@ -352,15 +350,15 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
     # Get the t_ccd bonus for n=dyn_bgd_n_faint of the guide stars.
     guide_mags = []
     guide_idxs = []
-    for idx, mag, ctype in zip(idxs, mags, types):
+    for idx, mag, ctype in zip(idxs, mags, types, strict=False):
         if ctype in ["BOT", "GUI"]:
             guide_mags.append(mag)
             guide_idxs.append(idx)
     guide_t_ccds = apply_t_ccds_bonus(guide_mags, eff_t_ccd, date)
-    guide_t_ccd_dict = dict(zip(guide_idxs, guide_t_ccds))
+    guide_t_ccd_dict = dict(zip(guide_idxs, guide_t_ccds, strict=False))
 
     imposters = []
-    for idx, yag, zag, mag, ctype in zip(idxs, yags, zags, mags, types):
+    for idx, yag, zag, mag, ctype in zip(idxs, yags, zags, mags, types, strict=False):
         if ctype in ["BOT", "GUI", "FID"]:
             if ctype in ["BOT", "GUI"]:
                 t_ccd = guide_t_ccd_dict[idx]

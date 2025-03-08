@@ -1,15 +1,11 @@
-import numpy as np
-from cxotime import CxoTime
-
-from astropy.table import Table
-import astropy.units as u
 from functools import lru_cache
-import numpy as np
 
 import kadi.commands as kadi_commands
 import kadi.commands.states as kadi_states
-from cxotime import CxoTime
+import numpy as np
+from astropy.table import Table
 from chandra_maneuver import duration
+from cxotime import CxoTime
 from Quaternion import Quat
 
 

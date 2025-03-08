@@ -1,12 +1,11 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 import os
-import matplotlib.pyplot as plt
 
 import agasc
-from Chandra.Time import DateTime
+import matplotlib.pyplot as plt
 import Quaternion
+from chandra_aca.plot import bad_acq_stars, plot_stars
 from Ska.quatutil import radec2yagzag
-from chandra_aca.plot import bad_acq_stars, plot_stars, plot_compass
 
 
 def make_plots_for_obsid(

@@ -49,7 +49,7 @@ def test_check_dynamic_hot_pix():
 
     # The imposters should be the same except for t_ccd, offset, mag
     # as these dates were selected to have matching dark cal files
-    for imposter1, imposter2 in zip(imposters1, imposters2):
+    for imposter1, imposter2 in zip(imposters1, imposters2, strict=False):
         assert imposter1["dark_date"] == imposter2["dark_date"]
         assert imposter1["idx"] == imposter2["idx"]
         assert imposter1["bad2_row"] == imposter2["bad2_row"]

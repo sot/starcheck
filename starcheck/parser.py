@@ -6,9 +6,9 @@ Parser of starcheck text output.  Formally lived in mica/starcheck/starcheck_par
 
 import re
 from itertools import count
+
 from astropy.table import Table
 from six.moves import zip
-
 
 SC1 = (
     " IDX SLOT        ID  TYPE   SZ  MINMAG    MAG   MAXMAG   YANG   ZANG DIM RES HALFW"
@@ -203,16 +203,16 @@ def get_targ(obs_text):
     if not targ_search:
         raise ValueError("No OBSID found for this catalog")
     for oline in targ_search.group(1).split("\n"):
-        short_re = re.match("^OBSID:\s(\S{1,5})\s*$", oline)
+        short_re = re.match(r"^OBSID:\s(\S{1,5})\s*$", oline)
         if short_re:
             return {}
         long_re = re.match(
-            "OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s.*\sGrating:\s*(\S+)\s*",
+            r"OBSID:\s*(\S{1,5})\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s.*\sGrating:\s*(\S+)\s*",
             oline,
         )
         if long_re:
             form0 = re.match(
-                "OBSID:\s*\S{1,5}\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+Grating:\s*(\S+)\s*",
+                r"OBSID:\s*\S{1,5}\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+Grating:\s*(\S+)\s*",
                 oline,
             )
             if form0:
@@ -223,7 +223,7 @@ def get_targ(obs_text):
                     grating=form0.group(4),
                 )
             form1 = re.match(
-                "OBSID:\s*\S{1,5}\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+\((-*.+)mm\)\s+Grating:\s*(\S+)\s*",
+                r"OBSID:\s*\S{1,5}\s+(.*)\s+(\S+)\s+SIM\sZ\soffset:\s*(-*\d+)\s+\((-*.+)mm\)\s+Grating:\s*(\S+)\s*",
                 oline,
             )
             if form1:
@@ -242,7 +242,7 @@ def get_dither(obs_text):
         raise ValueError("No OBSID found for this catalog")
     for oline in targ_search.group(1).split("\n"):
         dither_re = re.match(
-            "Dither:\s(\S+)\s+Y_amp=\s*(\S+)\s+Z_amp=\s*(\S+)\s+Y_period=\s*(\S+)\s+Z_period=\s*(\S+)\s*",
+            r"Dither:\s(\S+)\s+Y_amp=\s*(\S+)\s+Z_amp=\s*(\S+)\s+Y_period=\s*(\S+)\s+Z_period=\s*(\S+)\s*",
             oline,
         )
         if dither_re:
@@ -253,7 +253,7 @@ def get_dither(obs_text):
                 dither_y_period=float(dither_re.group(4)),
                 dither_z_period=float(dither_re.group(5)),
             )
-        dis_dither_re = re.match("Dither:\sOFF\s*", oline)
+        dis_dither_re = re.match(r"Dither:\sOFF\s*", oline)
         if dis_dither_re:
             return dict(
                 dither_state="OFF",
@@ -268,7 +268,7 @@ def get_dither(obs_text):
 
 def get_coords(obs_text):
     coord_search = re.search(
-        "RA, Dec, Roll \(deg\):\s+(\d+\.\d+)\s+(-?\d+\.\d+)\s+(\d+\.\d+)\s*", obs_text
+        r"RA, Dec, Roll \(deg\):\s+(\d+\.\d+)\s+(-?\d+\.\d+)\s+(\d+\.\d+)\s*", obs_text
     )
     if not coord_search:
         return {}
@@ -281,7 +281,7 @@ def get_coords(obs_text):
 
 def get_starcat_header(obs_text):
     starcat_header = re.search(
-        "MP_STARCAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)", obs_text
+        r"MP_STARCAT\sat\s(\S+)\s\(VCDU\scount\s=\s(\d+)\)", obs_text
     )
     if not starcat_header:
         return {}
@@ -303,7 +303,7 @@ def get_manvrs(obs_text):
         curr_manvr = {}
         for mline in manvr.split("\n"):
             targquat_re = re.match(
-                "MP_TARGQUAT at (\S+) \(VCDU count = (\d+)\).*", mline
+                r"MP_TARGQUAT at (\S+) \(VCDU count = (\d+)\).*", mline
             )
             if targquat_re:
                 curr_manvr.update(
@@ -313,7 +313,7 @@ def get_manvrs(obs_text):
                     )
                 )
             quat_re = re.match(
-                "\s+Q1,Q2,Q3,Q4:\s+(-?\d\.\d+)\s+(-?\d\.\d+)\s+(-?\d\.\d+)\s+(-?\d\.\d+).*",
+                r"\s+Q1,Q2,Q3,Q4:\s+(-?\d\.\d+)\s+(-?\d\.\d+)\s+(-?\d\.\d+)\s+(-?\d\.\d+).*",
                 mline,
             )
             if quat_re:
@@ -326,7 +326,7 @@ def get_manvrs(obs_text):
                     )
                 )
             angle_re = re.match(
-                "\s+MANVR: Angle=\s+(\d+\.\d+)\sdeg\s+Duration=\s+(\d+)\ssec(\s+Slew\serr=\s+(\d+\.\d)\sarcsec)?(\s+End=\s+(\S+))?",
+                r"\s+MANVR: Angle=\s+(\d+\.\d+)\sdeg\s+Duration=\s+(\d+)\ssec(\s+Slew\serr=\s+(\d+\.\d)\sarcsec)?(\s+End=\s+(\S+))?",
                 mline,
             )
             if angle_re:
@@ -362,7 +362,7 @@ def get_catalog(obs_text):
     if hdrformat is None:
         raise ValueError
     # get the lines that start with an [
-    catlines = [t for t in obs_text.split("\n") if re.compile("^\[.*").match(t)]
+    catlines = [t for t in obs_text.split("\n") if re.compile(r"^\[.*").match(t)]
     rawcat = Table.read(
         catlines,
         format="ascii.fixed_width_no_header",
@@ -374,10 +374,10 @@ def get_catalog(obs_text):
     for row, idx in zip(rawcat, count()):
         catrow = dict()
         for field in row.dtype.names:
-            if field not in OKTYPE.keys():
+            if field not in OKTYPE:
                 continue
             if field == "id":
-                idmatch = re.match("(\D+)?(\d+)?", str(row[field]))
+                idmatch = re.match(r"(\D+)?(\d+)?", str(row[field]))
                 catrow["idnote"] = idmatch.group(1)
                 catrow["id"] = idmatch.group(2)
                 if catrow["id"] is not None:
@@ -400,12 +400,12 @@ def get_warnings(obs_text):
     warnlines = [
         t
         for t in obs_text.split("\n")
-        if re.compile("^\>\>\s+{}.*".format(warn_types)).match(t)
+        if re.compile(r"^\>\>\s+{}.*".format(warn_types)).match(t)
     ]
     warn = []
     for wline in warnlines:
         form0 = re.match(
-            "^\>\>\s+{}\s*:\s+(.+)\.\s+(\[\s?(\d+)\]\-\[\s?(\d+)\]).?\s*(.*)".format(
+            r"^\>\>\s+{}\s*:\s+(.+)\.\s+(\[\s?(\d+)\]\-\[\s?(\d+)\]).?\s*(.*)".format(
                 warn_types
             ),
             wline,
@@ -427,7 +427,7 @@ def get_warnings(obs_text):
                 )
             )
             continue
-        form1 = re.match(".*{}.*\[\s?(\d+)\]([\w\s]+)\.(.*)$".format(warn_types), wline)
+        form1 = re.match(r".*{}.*\[\s?(\d+)\]([\w\s]+)\.(.*)$".format(warn_types), wline)
         if form1:
             warn.append(
                 dict(
@@ -438,7 +438,7 @@ def get_warnings(obs_text):
             )
             continue
         form2 = re.match(
-            "^\>\>\s+{}\s*:\s+(.+)\.\s+(?:\[ |\[)(\d+)\].?\s*(.*)".format(warn_types),
+            r"^\>\>\s+{}\s*:\s+(.+)\.\s+(?:\[ |\[)(\d+)\].?\s*(.*)".format(warn_types),
             wline,
         )
         if form2:
@@ -450,14 +450,14 @@ def get_warnings(obs_text):
                 )
             )
             continue
-        form3 = re.match("^\>\>\s+{}\s*:\s+(.+)".format(warn_types), wline)
+        form3 = re.match(r"^\>\>\s+{}\s*:\s+(.+)".format(warn_types), wline)
         if form3:
             warn.append(dict(warning_type=None, idx=None, warning=form3.group(2)))
     return warn
 
 
 def get_pred_temp(obs_text):
-    pred_line = re.search("Predicted Max CCD temperature: (-?\d+\.\d)\sC", obs_text)
+    pred_line = re.search(r"Predicted Max CCD temperature: (-?\d+\.\d)\sC", obs_text)
     if not pred_line:
         return None
     return float(pred_line.group(1))
@@ -472,7 +472,7 @@ def fix_obs(obs):
 
 
 def get_cat(obs_text):
-    obsmatch = re.match("^OBSID:\s(\d+).*", obs_text)
+    obsmatch = re.match(r"^OBSID:\s(\d+).*", obs_text)
     if not obsmatch:
         return {}
     # join the top level stuff into one dictionary
@@ -496,7 +496,7 @@ def get_cat(obs_text):
 
 def read_starcheck(starcheck_file):
     sc_text = open(starcheck_file, "r").read()
-    chunks = re.split("={20,}\s?\n?\n", sc_text)
+    chunks = re.split("={20,}\\s?\n?\n", sc_text)
     catalogs = []
     for chunk, idx in zip(chunks, count()):
         obs = get_cat(chunk)

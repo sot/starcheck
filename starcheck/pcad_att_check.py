@@ -1,14 +1,14 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
+import math
 import re
-from astropy.table import Table
+
+import hopper
 import numpy as np
 import Quaternion
-from Quaternion import Quat
-import math
-
-from parse_cm import read_backstop, read_or_list_full
+from astropy.table import Table
 from Chandra.Time import DateTime
-import hopper
+from parse_cm import read_backstop, read_or_list_full
+from Quaternion import Quat
 
 
 def check_characteristics_date(ofls_characteristics_file, ref_date=None):
