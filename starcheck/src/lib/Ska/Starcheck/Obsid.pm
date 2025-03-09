@@ -2861,7 +2861,26 @@ sub quat2radecroll {
 sub check_guide_count {
 ###################################################################################
     my $self = shift;
-    my $guide_count = $self->count_guide_stars();
+
+    # Disable dynamic background if guide dither is disabled or amplitude is zero
+    my $guide_dither = $self->{dither_guide};
+    my $dyn_bgd;
+    if (   ($guide_dither->{state} eq 'DISAB')
+        or ($guide_dither->{ampl_y} == 0)
+        and ($guide_dither->{ampl_p} == 0))
+    {
+        $dyn_bgd = 0;
+    }
+    else {
+        $dyn_bgd = 1;
+    }
+
+    # If dyn_bgd is disabled, push an info statement
+    if ($dyn_bgd == 0) {
+        push @{ $self->{fyi} }, "Dynamic background bonus disabled - OFF or 0 guide dither.\n";
+    }
+
+    my $guide_count = $self->count_guide_stars($dyn_bgd);
 
     my $min_num_gui = ($self->{obsid} >= 38000) ? 6.0 : 4.0;
 
@@ -2877,6 +2896,7 @@ sub check_guide_count {
 sub count_guide_stars {
 ###################################################################################
     my $self = shift;
+    my $dyn_bgd = shift;
     my $c;
 
     return 0.0 unless ($c = find_command($self, 'MP_STARCAT'));
@@ -2887,6 +2907,7 @@ sub count_guide_stars {
             push @mags, $mag;
         }
     }
+
     return sprintf(
         "%.1f",
         call_python(
@@ -2897,6 +2918,7 @@ sub count_guide_stars {
                 t_ccd => $self->{ccd_temp},
                 count_9th => 0,
                 date => $self->{date},
+                dyn_bgd => $dyn_bgd,
             }
         )
     );

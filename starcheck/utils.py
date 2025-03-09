@@ -286,7 +286,7 @@ def apply_t_ccds_bonus(mags, t_ccd, date):
     return sparkles.get_t_ccds_bonus(mags, t_ccd, dyn_bgd_n_faint, dyn_bgd_dt_ccd)
 
 
-def guide_count(mags, t_ccd, count_9th, date):
+def guide_count(mags, t_ccd, count_9th, date, dyn_bgd=True):
     """
     Get guide count.
 
@@ -302,8 +302,11 @@ def guide_count(mags, t_ccd, count_9th, date):
     :param date: date of observation
     :returns: fractional guide_count as float
     """
-    eff_t_ccd = get_effective_t_ccd(t_ccd)
-    t_ccds_bonus = apply_t_ccds_bonus(mags, eff_t_ccd, date)
+    if dyn_bgd:
+        eff_t_ccd = get_effective_t_ccd(t_ccd)
+        t_ccds_bonus = apply_t_ccds_bonus(mags, eff_t_ccd, date)
+    else:
+        t_ccds_bonus = [t_ccd] * len(mags)
     return float(
         chandra_aca.star_probs.guide_count(np.array(mags), t_ccds_bonus, count_9th)
     )
