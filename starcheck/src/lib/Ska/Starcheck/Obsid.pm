@@ -2866,8 +2866,8 @@ sub check_guide_count {
     my $guide_dither = $self->{dither_guide};
     my $dyn_bgd;
     if (   ($guide_dither->{state} eq 'DISA')
-        or ($guide_dither->{ampl_y} == 0)
-        and ($guide_dither->{ampl_p} == 0))
+        or (($guide_dither->{ampl_y} == 0)
+        and ($guide_dither->{ampl_p} == 0)))
     {
         $dyn_bgd = 0;
     }
