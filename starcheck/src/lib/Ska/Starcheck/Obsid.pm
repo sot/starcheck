@@ -810,12 +810,12 @@ sub standard_dither {
     my %standard_dither_y = (
         20 => 1087.0,
         16 => 1414.2,
-        8 => 1000.0
+        8 => 707.1
     );
     my %standard_dither_p = (
         20 => 768.6,
         16 => 2000.0,
-        8 => 707.1
+        8 => 1000.0
     );
 
     my $ampl_p = int($dthr->{ampl_p} + 0.5);
