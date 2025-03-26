@@ -688,7 +688,6 @@ sub check_dither {
 
     # Small dither check for with creep-away
     my $targ_cmd = find_command($self, "MP_TARGQUAT", -1);
-    my $cat_cmd = find_command($self, "MP_STARCAT");
     my $man_angle_next_data = call_python("state_checks.get_obs_man_angle_next",
                 [ $targ_cmd->{tstop}, $self->{backstop} ]);
 
