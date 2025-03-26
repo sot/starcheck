@@ -300,6 +300,7 @@ def guide_count(mags, t_ccd, count_9th, date, dyn_bgd=True):
                   penalty, so input t_ccd should not have penalty applied)
     :param count_9th: bool or 0 or 1 for whether to use count_9th mode
     :param date: date of observation
+    :param dyn_bgd: whether to apply dynamic background bonus
     :returns: fractional guide_count as float
     """
     if dyn_bgd:
