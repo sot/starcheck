@@ -2900,12 +2900,13 @@ sub check_guide_count {
 ###################################################################################
     my $self = shift;
 
-    # Disable dynamic background if guide dither is disabled or amplitude is zero
+    # Disable dynamic background if guide dither is disabled or amplitude is small
     my $guide_dither = $self->{dither_guide};
     my $dyn_bgd;
+    my $guide_dither_ampl_y = int($guide_dither->{ampl_y} + 0.5);
+    my $guide_dither_ampl_p = int($guide_dither->{ampl_p} + 0.5);
     if (   ($guide_dither->{state} eq 'DISA')
-        or (($guide_dither->{ampl_y} == 0)
-        and ($guide_dither->{ampl_p} == 0)))
+        or (($guide_dither_ampl_y == 0) and ($guide_dither_ampl_p == 0)))
     {
         $dyn_bgd = 0;
     }
@@ -2915,7 +2916,8 @@ sub check_guide_count {
 
     # If dyn_bgd is disabled, push an info statement
     if ($dyn_bgd == 0) {
-        push @{ $self->{fyi} }, "Dynamic background bonus disabled - OFF or 0 guide dither.\n";
+        push @{ $self->{fyi} },
+        "Dither disabled or 0 - dynamic background bonus disabled for guide count.\n";
     }
 
     my $guide_count = $self->count_guide_stars($dyn_bgd);
