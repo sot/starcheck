@@ -695,33 +695,23 @@ sub check_dither {
     my $guide_dither_ampl_p = int($guide_dither->{ampl_p} + 0.5);
     my $guide_dither_ampl_y = int($guide_dither->{ampl_y} + 0.5);
 
-    # If not creep-away
-    if ($man_angle_next_data->{"angle"} > 5.0){
-        if (($guide_dither->{state} eq 'DISA')
-            or (($guide_dither_ampl_y == 0) and ($guide_dither_ampl_p == 0))){
-                push @{ $self->{warn} }, "Maneuver angle away > 5.0 degrees and 0 or DISA dither\n";
-        }
-        else{
-            if (($guide_dither_ampl_y < 8) and ($guide_dither_ampl_p < 8)){
-                push @{ $self->{warn}}, "Small dither but no creep-away - double-check config\n"
-            }
-        }
-    }
-    # If creep away and no dither
-    else{
-        if (($guide_dither->{state} eq 'DISA')
-            or (($guide_dither_ampl_y == 0) and ($guide_dither_ampl_p < 0))){
-                push @{ $self->{fyi} }, "Dither disabled or 0 - properly configured with creep-away\n";
-        }
-    }
+    my $creep_away = ($man_angle_next_data->{"angle"} < 5.0);
+    my $no_dither = (($guide_dither->{state} eq 'DISA')
+            or (($guide_dither_ampl_y == 0) and ($guide_dither_ampl_p == 0)));
+    my $small_dither = ($guide_dither_ampl_y < 8) and ($guide_dither_ampl_p < 8) and (not $no_dither);
 
-    # If dither between 0 and 8, that's unexpected overall at this point enough to get orange warn.
-    if (($guide_dither->{state} eq 'ENAB') and
-        (($guide_dither_ampl_y < 8) and ($guide_dither_ampl_p < 8))
-        & (($guide_dither_ampl_y> 0) or ($guide_dither_ampl_p > 0))){
-        push @{ $self->{orange_warn} }, "Unexpected small but not zero dither\n";
+    if ($no_dither) {
+        if ($creep_away) {
+            push @{ $self->{fyi} }, "No dither but with proper creep-away\n";
+        } else {
+            push @{ $self->{warn} }, "Creep-away required with no dither\n";
+        }
+    } elsif ($small_dither) {
+        if ($creep_away) {
+            push @{ $self->{warn}}, "Small (< 8 arcsec) dither but no creep-away - double-check\n"
+        }
+        push @{ $self->{orange_warn} }, "Small (< 8 arcsec) dither -- double-check\n";
     }
-
 
     # Check for dither changes during the observation
     # ACA-003
