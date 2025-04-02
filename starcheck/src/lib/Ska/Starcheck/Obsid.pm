@@ -698,7 +698,7 @@ sub check_dither {
     my $creep_away = ($man_angle_next_data->{"angle"} < 5.0);
     my $no_dither = (($guide_dither->{state} eq 'DISA')
             or (($guide_dither_ampl_y == 0) and ($guide_dither_ampl_p == 0)));
-    my $small_dither = ($guide_dither_ampl_y < 8) and ($guide_dither_ampl_p < 8) and (not $no_dither);
+    my $small_dither = (($guide_dither_ampl_y < 8) and ($guide_dither_ampl_p < 8) and (not $no_dither));
 
     if ($no_dither) {
         if ($creep_away) {
