@@ -707,7 +707,7 @@ sub check_dither {
             push @{ $self->{warn} }, "Creep-away required with no dither\n";
         }
     } elsif ($small_dither) {
-        if ($creep_away) {
+        if (not $creep_away) {
             push @{ $self->{warn}}, "Small (< 8 arcsec) dither but no creep-away - double-check\n"
         }
         push @{ $self->{orange_warn} }, "Small (< 8 arcsec) dither -- double-check\n";
