@@ -702,7 +702,7 @@ sub check_dither {
 
     if ($no_dither) {
         if ($creep_away) {
-            push @{ $self->{fyi} }, "No dither but with proper creep-away\n";
+            push @{ $self->{fyi} }, "Dither disabled or 0 - properly configured with creep-away\n";
         } else {
             push @{ $self->{warn} }, "Creep-away required with no dither\n";
         }
