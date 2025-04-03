@@ -792,27 +792,20 @@ sub check_dither {
     }
 }
 
-sub is_within_threshold {
-    my ($value, $allowed_values, $threshold) = @_;
-    foreach my $allowed (@$allowed_values) {
-        return 1 if abs($value - $allowed) <= $threshold;
-    }
-    return 0;
-}
 
 #############################################################################################
 sub standard_dither {
 #############################################################################################
     my $dthr = shift;
     my %standard_dither_y = (
-        20 => [1087.0],
-        16 => [1414.2],
-        8 => [707.1, 1000],
+        20 => 1087.0,
+        16 => 1414.2,
+        8 => 707.1,
     );
     my %standard_dither_p = (
-        20 => [768.6],
-        16 => [2000.0],
-        8 => [707.1, 1000.0],
+        20 => 768.6,
+        16 => 2000.0,
+        8 => 1000.0,
     );
 
     my $ampl_p = int($dthr->{ampl_p} + 0.5);
@@ -823,8 +816,8 @@ sub standard_dither {
     return 0 unless exists $standard_dither_y{$ampl_y};
 
     # Check if periods are within the threshold for the given amplitudes
-    return 0 unless is_within_threshold($dthr->{period_p}, $standard_dither_p{$ampl_p}, 10);
-    return 0 unless is_within_threshold($dthr->{period_y}, $standard_dither_y{$ampl_y}, 10);
+    return 0 unless abs($dthr->{period_p} - $standard_dither_p{$ampl_p}) < 10;
+    return 0 unless abs($dthr->{period_y} - $standard_dither_y{$ampl_y}) < 10;
 
     # If those tests passed, the dither is standard
     return (($ampl_y == 20) && ($ampl_p == 20)) ? 'hrc' : 'acis';
