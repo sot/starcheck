@@ -270,12 +270,11 @@ def apply_t_ccds_bonus(mags, t_ccd, date):
     Apply dynamic background bonus temperatures.
 
     Calculate the dynamic background bonus temperatures for a given set of
-    magnitudes, t_ccd (which should be the effective t_ccd with any penalty applied),
-    and date. This applies values of dyn_bgd_n_faint and dyn_bgd_dt_ccd.
+    magnitudes, t_ccd and date. This applies values of dyn_bgd_n_faint and dyn_bgd_dt_ccd.
     This calls chandra_aca.sparkles.get_t_ccds_bonus.
 
     :param mags: list of magnitudes
-    :param t_ccd: effective t_ccd
+    :param t_ccd: t_ccd
     :param date: date. Used to determine default value of dyn_bgd_n_faint and set
                  dyn_bgd_n_faint to 2 after PEA patch uplink and activation on 2023:139.
     :returns: list of dynamic background bonus temperatures (degC) in the order of mags
