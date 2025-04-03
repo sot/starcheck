@@ -2987,13 +2987,13 @@ sub set_ccd_temps {
         if ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}) {
             push @{ $self->{fyi} },
               sprintf("Effective guide temperature %.1f C\n",
-                call_python("utils.get_effective_t_ccd", [ $self->{ccd_temp} ]));
+                $self->{ccd_temp});
 
         }
         if ($self->{ccd_temp_acq} > $config{ccd_temp_yellow_limit}) {
             push @{ $self->{fyi} },
               sprintf("Effective acq temperature %.1f C\n",
-                call_python("utils.get_effective_t_ccd", [ $self->{ccd_temp_acq} ]));
+                $self->{ccd_temp_acq});
 
         }
     }

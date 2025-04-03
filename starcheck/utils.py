@@ -24,7 +24,7 @@ from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to
 from cxotime import CxoTime
 from mica.archive import aca_dark
 from parse_cm import read_backstop_as_list, write_backstop
-from proseco.catalog import get_aca_catalog, get_effective_t_ccd
+from proseco.catalog import get_aca_catalog
 from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
 from ska_quatutil import radec2yagzag
@@ -291,9 +291,8 @@ def guide_count(mags, t_ccd, count_9th, date, dyn_bgd=True):
     Get guide count.
 
     Return the fractional guide_count for a given set of magnitudes, estimated
-    t_ccd, count_9th (bool or 0 or 1), and date. This determines the effective
-    t_ccd, applies any dynamic background bonus, and then calls
-    chandra_aca.star_probs.guide_count.
+    t_ccd, count_9th (bool or 0 or 1), and date. This applies any dynamic
+    background bonus, and then calls chandra_aca.star_probs.guide_count.
 
     :param mags: list of magnitudes
     :param t_ccd: estimated t_ccd from thermal model (this function applies any
@@ -304,8 +303,7 @@ def guide_count(mags, t_ccd, count_9th, date, dyn_bgd=True):
     :returns: fractional guide_count as float
     """
     if dyn_bgd:
-        eff_t_ccd = get_effective_t_ccd(t_ccd)
-        t_ccds_bonus = apply_t_ccds_bonus(mags, eff_t_ccd, date)
+        t_ccds_bonus = apply_t_ccds_bonus(mags, t_ccd, date)
     else:
         t_ccds_bonus = [t_ccd] * len(mags)
     return float(
@@ -364,9 +362,6 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
         spoil_counts = mag_to_count_rate(imposter_mag)
         return spoil_counts * 3 * 5 / (spoil_counts + cand_counts)
 
-    # Get the effective t_ccd for use for the fid lights and some guide stars.
-    eff_t_ccd = get_effective_t_ccd(t_ccd)
-
     # Get the t_ccd bonus for n=dyn_bgd_n_faint of the guide stars.
     guide_mags = []
     guide_idxs = []
@@ -374,17 +369,17 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
         if ctype in ["BOT", "GUI"]:
             guide_mags.append(mag)
             guide_idxs.append(idx)
-    guide_t_ccds = apply_t_ccds_bonus(guide_mags, eff_t_ccd, date)
+    guide_t_ccds = apply_t_ccds_bonus(guide_mags, t_ccd, date)
     guide_t_ccd_dict = dict(zip(guide_idxs, guide_t_ccds, strict=False))
 
     imposters = []
     for idx, yag, zag, mag, ctype in zip(idxs, yags, zags, mags, types, strict=False):
         if ctype in ["BOT", "GUI", "FID"]:
             if ctype in ["BOT", "GUI"]:
-                t_ccd = guide_t_ccd_dict[idx]
+                t_ccd_i = guide_t_ccd_dict[idx]
                 dither = ACABox((dither_y, dither_z))
             else:
-                t_ccd = eff_t_ccd
+                t_ccd_i = t_ccd
                 dither = ACABox((5.0, 5.0))
             row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
             # Handle any errors in get_imposter_mags with a try/except.  This doesn't
@@ -396,7 +391,7 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
                 entries = Table(
                     [{"idx": idx, "row": row, "col": col, "mag": mag, "type": ctype}]
                 )
-                scale = dark_temp_scale(dark_t_ccd, t_ccd)
+                scale = dark_temp_scale(dark_t_ccd, t_ccd_i)
                 imp_mags, imp_rows, imp_cols = get_imposter_mags(entries, dark, dither)
                 imp_mags, imp_rows, imp_cols = get_imposter_mags(
                     entries, dark * scale, dither
@@ -412,7 +407,7 @@ def check_hot_pix(idxs, yags, zags, mags, types, t_ccd, date, dither_y, dither_z
                         "bad2_col": float(imp_cols[0]),
                         "bad2_mag": float(imp_mags[0]),
                         "offset": float(offset),
-                        "t_ccd": float(t_ccd),
+                        "t_ccd": float(t_ccd_i),
                         "dark_date": dark_props["date"],
                     }
                 )
@@ -515,8 +510,7 @@ def _mag_for_p_acq(p_acq, date, t_ccd):
     """
     Call mag_for_p_acq, but cast p_acq and t_ccd as floats.
     """
-    eff_t_ccd = get_effective_t_ccd(t_ccd)
-    return mag_for_p_acq(float(p_acq), date, float(eff_t_ccd))
+    return mag_for_p_acq(float(p_acq), date, float(t_ccd))
 
 
 def proseco_probs(**kw):
