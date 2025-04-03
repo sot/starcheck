@@ -820,7 +820,7 @@ sub standard_dither {
     return 0 unless abs($dthr->{period_y} - $standard_dither_y{$ampl_y}) < 10;
 
     # If those tests passed, the dither is standard
-    return (($ampl_y == 20) && ($ampl_p == 20)) ? 'hrc' : 'acis';
+    return (($ampl_y == 20) and ($ampl_p == 20)) ? 'hrc' : 'acis';
 
 }
 
