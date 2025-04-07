@@ -686,7 +686,6 @@ sub check_dither {
         }
     }
 
-    # Small dither check for with creep-away
     my $targ_cmd = find_command($self, "MP_TARGQUAT", -1);
     my $man_angle_next_data = call_python("state_checks.get_obs_man_angle_next",
                 [ $targ_cmd->{tstop}, $self->{backstop} ]);
@@ -695,11 +694,15 @@ sub check_dither {
     my $guide_dither_ampl_p = int($guide_dither->{ampl_p} + 0.5);
     my $guide_dither_ampl_y = int($guide_dither->{ampl_y} + 0.5);
 
+    # Add a check that for small or zero dither amplitudes, that creep-away is used.
+    # The idea is that dynamic background is less effective for small or zero dither
+    # and such observations could end in larger roll errors.  Check added in PR #452.
+    # Operationally, we also do not expect to use, for example, 4x4 dither, so this
+    # adds a CAUTION for unexpected small dither patterns.
     my $creep_away = ($man_angle_next_data->{"angle"} < 5.0);
     my $no_dither = (($guide_dither->{state} eq 'DISA')
             or (($guide_dither_ampl_y == 0) and ($guide_dither_ampl_p == 0)));
     my $small_dither = (($guide_dither_ampl_y < 8) and ($guide_dither_ampl_p < 8) and (not $no_dither));
-
     if ($no_dither) {
         if ($creep_away) {
             push @{ $self->{fyi} }, "Dither disabled or 0 - properly configured with creep-away\n";
