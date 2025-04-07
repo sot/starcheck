@@ -2982,22 +2982,6 @@ sub set_ccd_temps {
           sprintf("CCD temperature exceeds %.1f C\n", $ccd_temp_red_limit_round);
     }
 
-    # Add info for having a penalty temperature too
-    if (defined $config{ccd_temp_yellow_limit}) {
-        if ($self->{ccd_temp} > $config{ccd_temp_yellow_limit}) {
-            push @{ $self->{fyi} },
-              sprintf("Effective guide temperature %.1f C\n",
-                $self->{ccd_temp});
-
-        }
-        if ($self->{ccd_temp_acq} > $config{ccd_temp_yellow_limit}) {
-            push @{ $self->{fyi} },
-              sprintf("Effective acq temperature %.1f C\n",
-                $self->{ccd_temp_acq});
-
-        }
-    }
-
 # Clip the acq ccd temperature to the calibrated range of the grid acq probability model
     # and add a yellow warning to let the user know this has happened.
     if (($self->{ccd_temp_acq} > 2.0) or ($self->{ccd_temp_acq} < -15.0)) {
