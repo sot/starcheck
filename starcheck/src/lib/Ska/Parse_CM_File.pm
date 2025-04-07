@@ -160,7 +160,9 @@ sub dither {
         'state' => $dither_enab,
         'source' => 'kadi',
         'ampl_p' => $dither_ampl_p,
+        'ampl_p_int' => int($dither_ampl_p + 0.5), # rounded for convenience in checks
         'ampl_y' => $dither_ampl_y,
+        'ampl_y_int' => int($dither_ampl_y + 0.5), # rounded for convenience in checks
         'period_p' => $dither_period_p,
         'period_y' => $dither_period_y
       };
@@ -186,15 +188,21 @@ sub dither {
                 $dither_period_y = 1 / ($params{RATEY} / (2 * $pi))
                   if defined $params{RATEP};
 
-         # If disabled, reset the amplitudes to be 0.  The params may be nonzero onboard
+                # If disabled, reset the amplitudes to be 0.  The params may be nonzero onboard
                 # but we're more interested in the effective amplitudes for starcheck.
+                my $ampl_p = $dither_enab eq 'DISA' ? 0 : $dither_ampl_p;
+                my $ampl_y = $dither_enab eq 'DISA' ? 0 : $dither_ampl_y;
+
+                # Push the new dither state to the array
                 push @dither,
                   {
                     time => $bs->{time},
                     state => $dither_enab,
                     source => 'backstop',
-                    ampl_p => $dither_enab eq 'DISA' ? 0 : $dither_ampl_p,
-                    ampl_y => $dither_enab eq 'DISA' ? 0 : $dither_ampl_y,
+                    ampl_p => $ampl_p,
+                    ampl_y => $ampl_y,
+                    ampl_p_int => int($ampl_p + 0.5),
+                    ampl_y_int => int($ampl_y + 0.5),
                     period_p => $dither_period_p,
                     period_y => $dither_period_y,
                     tlmsid => $params{TLMSID},
