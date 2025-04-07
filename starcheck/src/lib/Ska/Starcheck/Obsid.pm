@@ -652,10 +652,41 @@ sub check_dither {
         }
     }
 
+    # Seed the max dither amplitude with the amplitude 8 minutes into the observation
+    $guide_dither->{ampl_y_max} = $guide_dither->{ampl_y};
+    $guide_dither->{ampl_p_max} = $guide_dither->{ampl_p};
+
+    # Check for dither changes during the observation.
+    # This also updates the maximum amplitude for any observation that has dither
+    # changes.
+    # ACA-003
+    if (not defined $obs_tstop) {
+        push @{ $self->{warn} },
+"Unable to determine obs tstop; could not check for dither changes during obs\n";
+    }
+    else {
+        foreach my $dither (reverse @{$dthr}) {
+            if ($dither->{time} < $obs_tstop) {
+                $guide_dither->{ampl_p_max} =
+                  max(($dither->{ampl_p}, $guide_dither->{ampl_p_max}));
+                $guide_dither->{ampl_y_max} =
+                  max(($dither->{ampl_y}, $guide_dither->{ampl_y_max}));
+            }
+            if (   $dither->{time} > ($obs_tstart + $obs_beg_pad)
+                && $dither->{time} <= $obs_tstop - $obs_end_pad)
+            {
+                push @{ $self->{warn} },
+                  "Dither commanding at $dither->{time}.  During observation.\n";
+            }
+            if ($dither->{time} < $obs_tstart) {
+                last;
+            }
+        }
+    }
+
+    # Save these to self for use by any checks outside this method.
     $self->{dither_acq} = $acq_dither;
     $self->{dither_guide} = $guide_dither;
-    $self->{dither_guide}->{ampl_y_max} = $guide_dither->{ampl_y};
-    $self->{dither_guide}->{ampl_p_max} = $guide_dither->{ampl_p};
 
     # Check for standard dither
     if ($guide_dither->{state} eq 'ENAB') {
@@ -690,9 +721,6 @@ sub check_dither {
     my $man_angle_next_data = call_python("state_checks.get_obs_man_angle_next",
                 [ $targ_cmd->{tstop}, $self->{backstop} ]);
 
-    # Round dither to nearest int
-    my $guide_dither_ampl_p = int($guide_dither->{ampl_p} + 0.5);
-    my $guide_dither_ampl_y = int($guide_dither->{ampl_y} + 0.5);
 
     # Add a check that for small or zero dither amplitudes, that creep-away is used.
     # The idea is that dynamic background is less effective for small or zero dither
@@ -701,8 +729,9 @@ sub check_dither {
     # adds a CAUTION for unexpected small dither patterns.
     my $creep_away = ($man_angle_next_data->{"angle"} < 5.0);
     my $no_dither = (($guide_dither->{state} eq 'DISA')
-            or (($guide_dither_ampl_y == 0) and ($guide_dither_ampl_p == 0)));
-    my $small_dither = (($guide_dither_ampl_y < 8) and ($guide_dither_ampl_p < 8) and (not $no_dither));
+            or (($guide_dither->{ampl_y_int} == 0) and ($guide_dither->{ampl_p_int}== 0)));
+    my $small_dither = (($guide_dither->{ampl_y_int} < 8) and ($guide_dither->{ampl_p_int} < 8)
+            and (not $no_dither));
     if ($no_dither) {
         if ($creep_away) {
             push @{ $self->{fyi} }, "Dither disabled or 0 - properly configured with creep-away\n";
@@ -716,40 +745,15 @@ sub check_dither {
         push @{ $self->{orange_warn} }, "Small (< 8 arcsec) dither -- double-check\n";
     }
 
-    # Check for dither changes during the observation
-    # ACA-003
-    if (not defined $obs_tstop) {
-        push @{ $self->{warn} },
-"Unable to determine obs tstop; could not check for dither changes during obs\n";
-    }
-    else {
-        foreach my $dither (reverse @{$dthr}) {
-            if ($dither->{time} < $obs_tstop) {
-                $self->{dither_guide}->{ampl_p_max} =
-                  max(($dither->{ampl_p}, $self->{dither_guide}->{ampl_p_max}));
-                $self->{dither_guide}->{ampl_y_max} =
-                  max(($dither->{ampl_y}, $self->{dither_guide}->{ampl_y_max}));
-            }
-            if (   $dither->{time} > ($obs_tstart + $obs_beg_pad)
-                && $dither->{time} <= $obs_tstop - $obs_end_pad)
-            {
-                push @{ $self->{warn} },
-                  "Dither commanding at $dither->{time}.  During observation.\n";
-            }
-            if ($dither->{time} < $obs_tstart) {
-                last;
-            }
-        }
-    }
 
-    if (   ($self->{dither_guide}->{ampl_y_max} != $self->{dither_guide}->{ampl_y})
-        or ($self->{dither_guide}->{ampl_p_max} != $self->{dither_guide}->{ampl_p}))
+    if (   ($guide_dither->{ampl_y_max} != $guide_dither->{ampl_y})
+        or ($guide_dither->{ampl_p_max} != $guide_dither->{ampl_p}))
     {
         push @{ $self->{fyi} },
           sprintf(
             "Max Y Z ampl during guide used for checking Y=%.1f Z=%.1f \n",
-            $self->{dither_guide}->{ampl_y_max} + 0.0,
-            $self->{dither_guide}->{ampl_p_max} + 0.0
+            $guide_dither->{ampl_y_max} + 0.0,
+            $guide_dither->{ampl_p_max} + 0.0
           );
     }
 
@@ -811,8 +815,8 @@ sub standard_dither {
         8 => 1000.0,
     );
 
-    my $ampl_p = int($dthr->{ampl_p} + 0.5);
-    my $ampl_y = int($dthr->{ampl_y} + 0.5);
+    my $ampl_p = $dthr->{ampl_p_int};
+    my $ampl_y = $dthr->{ampl_y_int};
 
     # Check if amplitudes are valid
     return 0 unless exists $standard_dither_p{$ampl_p};
@@ -2892,8 +2896,8 @@ sub check_guide_count {
     # "bonus" should not be applied to the guide count.  Introduced in PR #452.
     my $guide_dither = $self->{dither_guide};
     my $dyn_bgd;
-    my $guide_dither_ampl_y = int($guide_dither->{ampl_y} + 0.5);
-    my $guide_dither_ampl_p = int($guide_dither->{ampl_p} + 0.5);
+    my $guide_dither_ampl_y = $guide_dither->{ampl_y_int};
+    my $guide_dither_ampl_p = $guide_dither->{ampl_p_int};
     if (   ($guide_dither->{state} eq 'DISA')
         or (($guide_dither_ampl_y == 0) and ($guide_dither_ampl_p == 0)))
     {
