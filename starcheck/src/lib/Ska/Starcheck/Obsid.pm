@@ -2887,7 +2887,9 @@ sub check_guide_count {
 ###################################################################################
     my $self = shift;
 
-    # Disable dynamic background if guide dither is disabled or amplitude is small
+    # Disable dynamic background if guide dither is disabled or amplitude is small.
+    # The dynamic background isn't as effective with small dither so the temperature
+    # "bonus" should not be applied to the guide count.  Introduced in PR #452.
     my $guide_dither = $self->{dither_guide};
     my $dyn_bgd;
     my $guide_dither_ampl_y = int($guide_dither->{ampl_y} + 0.5);
