@@ -174,3 +174,20 @@ def get_obs_man_angle(npnt_tstart, backstop_file):
     dur = prev_state["tstop"] - prev_state["tstart"]
     angle = calc_man_angle_for_duration(dur)
     return {"angle": angle}
+
+
+def get_obs_man_angle_next(npnt_tstart, backstop_file):
+    states, _ = get_pcad_states(backstop_file)
+    nman_states = states[states["pcad_mode"] == "NMAN"]
+    idx = np.argmin(np.abs(CxoTime(npnt_tstart).secs - nman_states["tstop"]))
+    if idx == len(nman_states) - 1:
+        next_state = None
+    else:
+        next_state = nman_states[idx + 1]
+
+    if next_state is None:
+        warn = f"No NMAN state after {CxoTime(npnt_tstart).date}\n"
+        return {"angle": 180, "warn": warn}
+    dur = next_state["tstop"] - next_state["tstart"]
+    angle = calc_man_angle_for_duration(dur)
+    return {"angle": angle}
