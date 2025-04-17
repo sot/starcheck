@@ -656,33 +656,6 @@ sub check_dither {
     $guide_dither->{ampl_y_max} = $guide_dither->{ampl_y};
     $guide_dither->{ampl_p_max} = $guide_dither->{ampl_p};
 
-    # Check for dither changes during the observation.
-    # This also updates the maximum amplitude for any observation that has dither
-    # changes.
-    # ACA-003
-    if (not defined $obs_tstop) {
-        push @{ $self->{warn} },
-"Unable to determine obs tstop; could not check for dither changes during obs\n";
-    }
-    else {
-        foreach my $dither (reverse @{$dthr}) {
-            if ($dither->{time} < $obs_tstop) {
-                $guide_dither->{ampl_p_max} =
-                  max(($dither->{ampl_p}, $guide_dither->{ampl_p_max}));
-                $guide_dither->{ampl_y_max} =
-                  max(($dither->{ampl_y}, $guide_dither->{ampl_y_max}));
-            }
-            if (   $dither->{time} > ($obs_tstart + $obs_beg_pad)
-                && $dither->{time} <= $obs_tstop - $obs_end_pad)
-            {
-                push @{ $self->{warn} },
-                  "Dither commanding at $dither->{time}.  During observation.\n";
-            }
-            if ($dither->{time} < $obs_tstart) {
-                last;
-            }
-        }
-    }
 
     # Save these to self for use by any checks outside this method.
     $self->{dither_acq} = $acq_dither;
@@ -714,6 +687,35 @@ sub check_dither {
             # which is greater than the 3 minutes used in the "no dither changes
             # during observation check below
             $obs_end_pad = 5.5 * 60;
+        }
+    }
+
+    # Check for dither changes during the observation.  This needs the updated obs_end_pad
+    # from the large dither checks above.
+    # This also updates the maximum amplitude for any observation that has dither
+    # changes.
+    # ACA-003
+    if (not defined $obs_tstop) {
+        push @{ $self->{warn} },
+"Unable to determine obs tstop; could not check for dither changes during obs\n";
+    }
+    else {
+        foreach my $dither (reverse @{$dthr}) {
+            if ($dither->{time} < $obs_tstop) {
+                $guide_dither->{ampl_p_max} =
+                  max(($dither->{ampl_p}, $guide_dither->{ampl_p_max}));
+                $guide_dither->{ampl_y_max} =
+                  max(($dither->{ampl_y}, $guide_dither->{ampl_y_max}));
+            }
+            if (   $dither->{time} > ($obs_tstart + $obs_beg_pad)
+                && $dither->{time} <= $obs_tstop - $obs_end_pad)
+            {
+                push @{ $self->{warn} },
+                  "Dither commanding at $dither->{time}.  During observation.\n";
+            }
+            if ($dither->{time} < $obs_tstart) {
+                last;
+            }
         }
     }
 
