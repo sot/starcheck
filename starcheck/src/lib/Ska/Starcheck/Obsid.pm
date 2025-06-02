@@ -1026,6 +1026,8 @@ sub check_for_srdcs {
 
     return if (not defined $obs_tstart or not defined $obs_tstop);
 
+    # The SRDC commands in SCSs 142 and 143 so check for commands to activate those
+    # and add fyi/info statements if they are found in the backstop.
     for my $entry (@{$backstop}) {
         if (($entry->{time} >= $obs_tstart) and ($entry->{time} <= $obs_tstop)){
             if ((defined $entry->{command}) and (defined $entry->{command}->{TLMSID})
