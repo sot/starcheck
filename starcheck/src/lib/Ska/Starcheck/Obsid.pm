@@ -1017,6 +1017,30 @@ sub check_momentum_unload {
 }
 
 #############################################################################################
+sub check_for_srdcs {
+#############################################################################################
+    my $self = shift;
+    my $backstop = shift;
+    my $obs_tstart = $self->{obs_tstart};
+    my $obs_tstop = $self->{obs_tstop};
+
+    return if (not defined $obs_tstart or not defined $obs_tstop);
+
+    for my $entry (@{$backstop}) {
+        if (($entry->{time} >= $obs_tstart) and ($entry->{time} <= $obs_tstop)){
+            if ((defined $entry->{command}) and (defined $entry->{command}->{TLMSID})
+                and ($entry->{command}->{TLMSID} =~ /COACTSX/)
+                and (exists $entry->{command}->{COACTS1})
+                and (($entry->{command}->{COACTS1} == 142)
+                or ($entry->{command}->{COACTS1} == 143))){
+                    push @{ $self->{fyi} },
+                      "Scheduled SRDC in backstop at " . $entry->{date} . "\n";
+            }
+        }
+    }
+}
+
+#############################################################################################
 sub check_sim_position {
 #############################################################################################
     my $self = shift;
