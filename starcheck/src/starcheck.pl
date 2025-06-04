@@ -652,6 +652,7 @@ foreach my $obsid (@obsid_id) {
         $obs{$obsid}->check_momentum_unload(\@bs);
         $obs{$obsid}->check_bright_perigee($radmon);
         $obs{$obsid}->check_guide_count();
+        $obs{$obsid}->check_for_srdcs(\@bs);
     }
 
     # Make sure there is only one star catalog per obsid
