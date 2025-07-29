@@ -29,7 +29,7 @@ def make_man_table():
     # Use a range of angles that sample the curve pretty well by eye
     # The duration function is a little slow and not vectorized, so
     # this is sparse.
-    angles = [0, 5, 10, 15, 20, 25, 35, 50, 100, 150, 180]
+    angles = [0, 3, 5, 10, 15, 20, 25, 35, 50, 100, 150, 180]
     for angle in angles:
         q1 = Quat(equatorial=(angle, 0, 0))
         durations.append(duration(q0, q1))
