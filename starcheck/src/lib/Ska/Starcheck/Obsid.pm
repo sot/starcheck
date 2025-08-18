@@ -158,28 +158,6 @@ sub set_ACA_bad_pixels {
     print STDERR "Read ", ($#bad_pixels + 1), " ACA bad pixels from $pixel_file\n";
 }
 
-##################################################################################
-sub set_bad_acqs {
-##################################################################################
-
-    my $rdb_file = shift;
-    if (-r $rdb_file) {
-        my $rdb = new RDB $rdb_file or warn "Problem Loading $rdb_file\n";
-
-        my %data;
-        while ($rdb && $rdb->read(\%data)) {
-            $bad_acqs{ $data{'agasc_id'} }{'n_noids'} = $data{'n_noids'};
-            $bad_acqs{ $data{'agasc_id'} }{'n_obs'} = $data{'n_obs'};
-        }
-
-        undef $rdb;
-        return 1;
-    }
-    else {
-        return 0;
-    }
-
-}
 
 ##################################################################################
 sub set_bad_gui {
@@ -1328,23 +1306,6 @@ sub check_star_catalog {
 
         my $obs_min_cnt = 2;
         my $obs_bad_frac = 0.3;
-
-        # Bad Acquisition Star
-        if ($type =~ /BOT|ACQ|GUI/) {
-            my $n_obs = $bad_acqs{$sid}{n_obs};
-            my $n_noids = $bad_acqs{$sid}{n_noids};
-            if (defined $db_stats->{acq}) {
-                $n_obs = $db_stats->{acq};
-                $n_noids = $db_stats->{acq_noid};
-            }
-            if ($n_noids && $n_obs > $obs_min_cnt && $n_noids / $n_obs > $obs_bad_frac)
-            {
-                push @yellow_warn,
-                  sprintf
-                  "[%2d] Bad Acquisition Star. %s has %2d failed out of %2d attempts\n",
-                  $i, $sid, $n_noids, $n_obs;
-            }
-        }
 
         # Bad Guide Star
         if ($type =~ /BOT|GUI/) {
