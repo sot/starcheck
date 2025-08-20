@@ -171,8 +171,9 @@ def get_obs_man_angle(npnt_tstart, backstop_file):
     if np.abs(CxoTime(npnt_tstart).secs - prev_state["tstop"]) > 600:
         warn = f"Maneuver angle err - no manvr ends within 600s of {CxoTime(npnt_tstart).date}\n"
         return {"angle": 180, "warn": warn}
-    dur = prev_state["tstop"] - prev_state["tstart"]
-    angle = calc_man_angle_for_duration(dur)
+    nmm_dur = prev_state["tstop"] - prev_state["tstart"]
+    manvr_dur = nmm_dur - 10.25  # subtract standard time between AONMMODE and AOMANUVR
+    angle = calc_man_angle_for_duration(manvr_dur)
     return {"angle": angle}
 
 
@@ -188,6 +189,7 @@ def get_obs_man_angle_next(npnt_tstart, backstop_file):
     if next_state is None:
         warn = f"No NMAN state after {CxoTime(npnt_tstart).date}\n"
         return {"angle": 180, "warn": warn}
-    dur = next_state["tstop"] - next_state["tstart"]
-    angle = calc_man_angle_for_duration(dur)
+    nmm_dur = next_state["tstop"] - next_state["tstart"]
+    manvr_dur = nmm_dur - 10.25  # subtract standard time between AONMMODE and AOMANUVR
+    angle = calc_man_angle_for_duration(manvr_dur)
     return {"angle": angle}
