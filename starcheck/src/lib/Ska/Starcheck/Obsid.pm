@@ -707,7 +707,10 @@ sub check_dither {
     # and such observations could end in larger roll errors.  Check added in PR #452.
     # Operationally, we also do not expect to use, for example, 4x4 dither, so this
     # adds a CAUTION for unexpected small dither patterns.
-    my $creep_away = ($man_angle_next_data->{"angle"} < 5.0);
+
+    # Round the angle_next to 1 decimal place
+    my $angle_next = sprintf("%.1f", $man_angle_next_data->{"angle"});
+    my $creep_away = ($angle_next < 3.0);
     my $no_dither = (($guide_dither->{state} eq 'DISA')
             or (($guide_dither->{ampl_y_int} == 0) and ($guide_dither->{ampl_p_int}== 0)));
     my $small_dither = (($guide_dither->{ampl_y_int} < 8) and ($guide_dither->{ampl_p_int} < 8)
