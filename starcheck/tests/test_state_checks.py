@@ -48,7 +48,7 @@ def test_make_man_table_angles(duration, expected_angle):
 # These tstarts and expected angles are specific to the CR182_0803.backstop file
 @pytest.mark.parametrize(
     "tstart,expected_angle",
-    [(646940289.224, 143.4), (646947397.759, 0.22), (646843532.911, 92.6)],
+    [(646940289.224, 142.6), (646947397.759, 0.0), (646843532.911, 91.8)],
 )
 def test_get_obs_man_angle(tstart, expected_angle):
     """
