@@ -586,7 +586,7 @@ def vehicle_filter_backstop(backstop_file, outfile):
     write_backstop(filtered_cmds, outfile)
 
 
-def check_for_planets(date0, duration, att, observer_position="earth", tol=2.25):
+def check_for_planets(date0, duration, att, tol=2.0):
     import astropy.units as u
     from chandra_aca.planets import get_planet_angular_sep
 
@@ -597,15 +597,22 @@ def check_for_planets(date0, duration, att, observer_position="earth", tol=2.25)
     has_planet = dict.fromkeys(planets, False)
 
     for planet in planets:
-        # First check if planet is within 2 deg of aimpoint using Earth as the
-        # reference point (without fetching Chandra ephemeris). These values are
-        # accurate to better than 0.25 deg.
         sep = get_planet_angular_sep(
             planet,
             ra=att.ra,
             dec=att.dec,
             time=date0 + ([0, 0.5, 1] * u.s) * duration,
-            observer_position=observer_position,
+            observer_position="earth",
+        )
+        if np.all(sep > tol + 0.25):
+            continue
+
+        sep = get_planet_angular_sep(
+            planet,
+            ra=att.ra,
+            dec=att.dec,
+            time=date0 + ([0, 0.5, 1] * u.s) * duration,
+            observer_position="chandra",
         )
         if np.all(sep > tol):
             continue
@@ -762,18 +769,6 @@ def run_jupiter_checks(proseco_args):
 
 
 def check_bright_objects(proseco_args):
-    # Do a rough check with Earth ephemeris and padded tolerance of 2.25 deg
-    has_planet = check_for_planets(
-        proseco_args["date"],
-        proseco_args["duration"],
-        proseco_args["att"],
-        observer_position="earth",
-        tol=2.25,
-    )
-    if not any(has_planet.values()):
-        return {}
-
-    # Do the more detailed check with chandra ephemeris
     has_planet = check_for_planets(
         proseco_args["date"],
         proseco_args["duration"],
@@ -782,14 +777,15 @@ def check_bright_objects(proseco_args):
         tol=2,
     )
 
+    if not any(has_planet.values()):
+        return {}
+
     import collections
 
     msgs = collections.defaultdict(list)
 
     if has_planet["venus"]:
-        msgs["warn"].extend(
-            ["Bright object alert: Venus within 2 deg of ACA center\n"]
-        )
+        msgs["warn"].extend(["Bright object alert: Venus within 2 deg of ACA center\n"])
 
     for planet in ("mars", "jupiter", "saturn"):
         if has_planet[planet]:
