@@ -1,3 +1,4 @@
+import collections
 import logging
 import os
 import warnings
@@ -633,7 +634,6 @@ from cxotime import CxoTimeLike
 from Quaternion import QuatLike
 
 
-# This is a modified version of get_jupiter_position from proseco
 def get_planet_position(
     planet: str,
     date: CxoTimeLike,
@@ -666,30 +666,10 @@ def get_planet_position(
     dates = CxoTime.linspace(date0, date0 + duration * u.s, step_max=1000 * u.s)
     times = dates.secs
 
-    from cheta.comps import ephem_stk
-
-    chandra_ephem = ephem_stk.get_ephemeris_stk(start=dates[0], stop=dates[-1])
-
-    # Get Jupiter positions using chandra_aca.planets
-    ephem = {
-        key: np.interp(times, chandra_ephem["time"], chandra_ephem[key])
-        for key in ["x", "y", "z"]
-    }
-    # shape (len(dates), 3), units km
-    from chandra_aca import planets
-
-    pos_earth = planets.get_planet_barycentric("earth", dates)
-
-    chandra_eci = np.array(
-        [
-            ephem["x"] / 1000,  # convert m from get_ephemeris_stk to km,
-            ephem["y"] / 1000,
-            ephem["z"] / 1000,
-        ]
-    ).transpose()
-    eci = planets.get_planet_eci(planet, dates, pos_observer=pos_earth + chandra_eci)
-
+    from chandra_aca.planets import get_planet_chandra
     from chandra_aca.transform import eci_to_radec, radec_to_yagzag, yagzag_to_pixels
+
+    eci = get_planet_chandra(planet, times, ephem_source="stk")
 
     # Convert ECI position to RA, Dec => yag, zag => row, col
     ra, dec = eci_to_radec(eci)
@@ -753,11 +733,13 @@ def get_proseco_catalog(**kw):
 
 
 def run_jupiter_checks(proseco_args):
+    from sparkles.checks import check_run_jupiter_checks
+    from sparkles.messages import MessagesList
+
+    # Override the target name to be Jupiter to run the checks
     proseco_args["target_name"] = "Jupiter"
     aca = get_proseco_catalog(**proseco_args)
     acar = aca.get_review_table()
-    from sparkles.checks import check_run_jupiter_checks
-    from sparkles.messages import MessagesList
 
     msgs = MessagesList(check_run_jupiter_checks(acar))
     return {
@@ -773,14 +755,11 @@ def check_bright_objects(proseco_args):
         proseco_args["date"],
         proseco_args["duration"],
         proseco_args["att"],
-        observer_position="chandra",
         tol=2,
     )
 
     if not any(has_planet.values()):
         return {}
-
-    import collections
 
     msgs = collections.defaultdict(list)
 
