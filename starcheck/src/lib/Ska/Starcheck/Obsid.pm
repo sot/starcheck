@@ -1024,6 +1024,25 @@ sub check_for_srdcs {
 }
 
 #############################################################################################
+sub check_bright_objects {
+#############################################################################################
+    my $self = shift;
+    # pass the proseco parameters do this check in Python
+    my $bright_data = call_python("utils.check_bright_objects",
+                [ $self->{'proseco_args'} ]);
+    #use Data::Dumper;
+    #print Dumper $bright_data;
+    for my $warn_type (qw(warn fyi orange_warn yellow_warn)) {
+        if (exists $bright_data->{$warn_type}) {
+            for my $warn (@{ $bright_data->{$warn_type} }) {
+                push @{ $self->{$warn_type} }, $warn;
+            }
+        }
+    }
+}
+
+
+#############################################################################################
 sub check_sim_position {
 #############################################################################################
     my $self = shift;
@@ -3105,6 +3124,8 @@ sub proseco_args {
     %proseco_args = (
         obsid => $self->{obsid},
         date => $targ_cmd->{stop_date},
+        duration => $self->{obs_tstop} - $self->{obs_tstart},
+        target_name => ($self->{TARGET_NAME}) ? $self->{TARGET_NAME} : $self->{SS_OBJECT},
         att => [
             0 + $targ_cmd->{q1},
             0 + $targ_cmd->{q2},
