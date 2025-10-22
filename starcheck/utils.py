@@ -782,19 +782,19 @@ def check_bright_objects(proseco_args):
                         "but not on CCD\n",
                     ]
                 )
-            elif planet not in proseco_args["target_name"].lower():
-                msgs["orange_warn"].extend(
-                    [
-                        f"Bright object alert: {planet.title()} on CCD but not in target name\n"
-                    ]
-                )
+            else:
+                if planet not in proseco_args["target_name"].lower():
+                    msgs["orange_warn"].extend(
+                        [
+                            f"Bright object alert: {planet.title()} on CCD but not in target name\n"
+                        ]
+                    )
 
-            if planet in ("mars", "saturn"):
-                if len(pos) > 0:
+                if planet in ("mars", "saturn"):
                     msgs["fyi"].extend([f"Bright object: {planet.title()} on CCD\n"])
 
-            if planet == "jupiter":
-                jmsgs = run_jupiter_checks(proseco_args)
-                for key in jmsgs:
-                    msgs[key].extend(jmsgs[key])
+                if planet == "jupiter":
+                    jmsgs = run_jupiter_checks(proseco_args)
+                    for key in jmsgs:
+                        msgs[key].extend(jmsgs[key])
     return msgs
