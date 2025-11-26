@@ -2923,7 +2923,7 @@ sub check_guide_count {
         push @{ $self->{warn} }, "Guide count of $guide_count < $min_num_gui.\n";
     }
 
-    if (($creep_away) & ($guide_count < 4.0) & ($guide_count >= 3.5)) {
+    if (($self->{obsid} < 38000) & ($creep_away) & ($guide_count < 4.0) & ($guide_count >= 3.5)) {
         push @{ $self->{yellow_warn} },
           "Guide count of $guide_count < 4.0 but uses creep-away\n";
     }
