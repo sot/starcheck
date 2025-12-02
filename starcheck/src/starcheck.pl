@@ -822,7 +822,7 @@ for my $obs_idx (0 .. $#obsid_id) {
 
             my $creep_away = $obs{$obsid}->get_creep_status();
 
-            # minumum requirements for fractional guide star count for ERs and ORs
+            # minimum requirements for fractional guide star count for ERs and ORs
             my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000) ? 6.0 : ($creep_away ? 3.5 : 4.0);
 
             # Use the acq prob model values saved in figure_of_merit for the expected
