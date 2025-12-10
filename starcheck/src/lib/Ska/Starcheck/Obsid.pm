@@ -582,6 +582,19 @@ sub set_star_catalog {
 }
 
 #############################################################################################
+sub get_creep_status{
+#############################################################################################
+    my $self = shift;
+    my $targ_cmd = find_command($self, "MP_TARGQUAT", -1);
+    my $man_angle_next_data = call_python("state_checks.get_obs_man_angle_next",
+                [ $targ_cmd->{tstop}, $self->{backstop} ]);
+    # Round the angle_next to 1 decimal place
+    my $angle_next = sprintf("%.1f", $man_angle_next_data->{"angle"});
+    my $creep_away = ($angle_next < 3.0);
+    return $creep_away;
+}
+
+#############################################################################################
 sub check_dither {
 #############################################################################################
     my $self = shift;
@@ -697,20 +710,13 @@ sub check_dither {
         }
     }
 
-    my $targ_cmd = find_command($self, "MP_TARGQUAT", -1);
-    my $man_angle_next_data = call_python("state_checks.get_obs_man_angle_next",
-                [ $targ_cmd->{tstop}, $self->{backstop} ]);
-
 
     # Add a check that for small or zero dither amplitudes, that creep-away is used.
     # The idea is that dynamic background is less effective for small or zero dither
     # and such observations could end in larger roll errors.  Check added in PR #452.
     # Operationally, we also do not expect to use, for example, 4x4 dither, so this
     # adds a CAUTION for unexpected small dither patterns.
-
-    # Round the angle_next to 1 decimal place
-    my $angle_next = sprintf("%.1f", $man_angle_next_data->{"angle"});
-    my $creep_away = ($angle_next < 3.0);
+    my $creep_away = $self->get_creep_status();
     my $no_dither = (($guide_dither->{state} eq 'DISA')
             or (($guide_dither->{ampl_y_int} == 0) and ($guide_dither->{ampl_p_int}== 0)));
     my $small_dither = (($guide_dither->{ampl_y_int} < 8) and ($guide_dither->{ampl_p_int} < 8)
@@ -2905,12 +2911,21 @@ sub check_guide_count {
         "Dither disabled or 0 - dynamic background bonus disabled for guide count.\n";
     }
 
+    my $creep_away = $self->get_creep_status();
+
     my $guide_count = $self->count_guide_stars($dyn_bgd);
 
-    my $min_num_gui = ($self->{obsid} >= 38000) ? 6.0 : 4.0;
+    # If obsid >= 38000, min guide count is 6.0
+    # If an OR, the required number is 3.5 if creep away else 4.0
+    my $min_num_gui = ($self->{obsid} >= 38000) ? 6.0 : ($creep_away ? 3.5 : 4.0);
 
     if ($guide_count < $min_num_gui) {
         push @{ $self->{warn} }, "Guide count of $guide_count < $min_num_gui.\n";
+    }
+
+    if (($self->{obsid} < 38000) && ($creep_away) && ($guide_count < 4.0) && ($guide_count >= 3.5)) {
+        push @{ $self->{yellow_warn} },
+          "Guide count of $guide_count < 4.0 but uses creep-away\n";
     }
 
     # Also save the guide count in the figure_of_merit

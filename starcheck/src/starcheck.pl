@@ -820,8 +820,10 @@ for my $obs_idx (0 .. $#obsid_id) {
         if (defined $cat) {
             my $guide_count = $obs{$obsid}->{figure_of_merit}->{guide_count};
 
-            # minumum requirements for fractional guide star count for ERs and ORs
-            my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000) ? 6.0 : 4.0;
+            my $creep_away = $obs{$obsid}->get_creep_status();
+
+            # minimum requirements for fractional guide star count for ERs and ORs
+            my $min_num_gui = ($obs{$obsid}->{obsid} >= 38000) ? 6.0 : ($creep_away ? 3.5 : 4.0);
 
             # Use the acq prob model values saved in figure_of_merit for the expected
             # number of acq stars and a bad overall probability.  figure_of_merit isn't
