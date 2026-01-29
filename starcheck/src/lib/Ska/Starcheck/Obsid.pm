@@ -310,9 +310,28 @@ sub set_maneuver {
 ##################################################################################
     my $self = shift;
     my $mm = shift;
+    my $ps = shift;
     my $n = 1;
     my $c;
     my $found;
+
+    my $dot_obsid = $self->{dot_obsid};
+    # If date before "2020", get the ER obsids from the processing summary
+    # If the $dot_obsid does not begin with a number
+    if ($dot_obsid !~ /^\d/ && ($self->{date} lt '2020:001:00:00:00.000')) {
+    # The processing summary has lines that look like this
+    # 'P080200   CAL       2017:013:03:00:49.827  2017:013:03:00:59.827  000:00:00:10.000 OBSID = 50385 {Perigee Attitude}
+    # For each line like that, I want to extract the obsid as the up to 5 digit number after OBSID and I
+    # want to extract the "dot_obsid" as the first 5 characters of the line (P0802 in this case)
+        foreach my $ps_line (@$ps) {
+            if ($ps_line =~ /^\s*(\S{5}).*OBSID\s*=\s*(\d{1,5})/) {
+                if ($1 eq $dot_obsid) {
+                    $dot_obsid = $2;
+                    last;
+                }
+            }
+        }
+    }
 
     while ($c = find_command($self, "MP_TARGQUAT", $n++)) {
         $found = 0;
@@ -321,7 +340,7 @@ sub set_maneuver {
 
 # where manvr_dest is either the final_obsid of a maneuver or the eventual destination obsid
             # of a segmented maneuver
-            if (   ($manvr_obsid eq $self->{dot_obsid})
+            if (   ($manvr_obsid eq $dot_obsid)
                 && abs($m->{q1} - $c->{Q1}) < 1e-7
                 && abs($m->{q2} - $c->{Q2}) < 1e-7
                 && abs($m->{q3} - $c->{Q3}) < 1e-7)
@@ -382,6 +401,11 @@ sub set_maneuver {
         push @{ $self->{yellow_warn} },
           sprintf("Did not find match in maneuvers for MP_TARGQUAT at $c->{date}\n")
           unless ($found);
+
+        unless ($found) {
+            # throw error and quit
+            exit(1);
+        }
 
     }
 }
@@ -1024,18 +1048,38 @@ sub check_for_srdcs {
 }
 
 #############################################################################################
-sub check_bright_objects {
+sub check_planets{
 #############################################################################################
     my $self = shift;
+    my $c = find_command($self, 'MP_STARCAT');
+    # Skip this check if the
     # pass the proseco parameters do this check in Python
-    my $bright_data = call_python("utils.check_bright_objects",
+    my $bright_data = call_python("utils.run_sparkles_planet_checks",
                 [ $self->{'proseco_args'} ]);
-    #use Data::Dumper;
-    #print Dumper $bright_data;
     for my $warn_type (qw(warn fyi orange_warn yellow_warn)) {
         if (exists $bright_data->{$warn_type}) {
             for my $warn (@{ $bright_data->{$warn_type} }) {
-                push @{ $self->{$warn_type} }, $warn;
+                # If the warning has an idx in it and an id, update the text to match the starcheck
+                # version of the catalog
+                if ($warn =~ /idx (\d+) id (\d+)/) {
+                    my $idx = $1;
+                    my $star_id = '---';
+                    if (defined $c) {
+                        for my $i (1 .. 16) {
+                            if ($c->{"TYPE$i"} ne 'NUL') {
+                                $idx--;
+                                if ($idx == 0) {
+                                    $star_id = $c->{"GS_ID$i"} if (defined $c->{"GS_ID$i"});
+                                    last;
+                                }
+                            }
+                        }
+                        $star_id = $c->{"GS_ID$idx"} if (defined $c->{"GS_ID$idx"});
+                    }
+                    $warn =~ s/IDX=$idx/STAR_ID=$star_id/;
+                }
+
+                push @{ $self->{$warn_type} }, "$warn\n";
             }
         }
     }
@@ -1122,7 +1166,14 @@ sub check_star_catalog {
     my $is_er = ($self->{obsid} =~ /^\d+$/ && $self->{obsid} >= $ER_MIN_OBSID);
     my $min_guide = $is_science ? 5 : 6;    # Minimum number of each object type
     my $min_acq = $is_science ? 4 : 5;
-    my $min_fid = 3;
+    my $target_name = "";
+    if (defined $self->{TARGET_NAME}) {
+        $target_name = $self->{TARGET_NAME};
+    }
+    if (defined $self->{SS_OBJECT}) {
+        $target_name = $self->{SS_OBJECT};
+    }
+    my $min_fid = ($target_name =~ /Venus/) ? 2 : 3;
     ########################################################################
 
     my @warn = ();
@@ -1170,7 +1221,7 @@ sub check_star_catalog {
 
     # Global checks on star/fid numbers
     # ACA-005 ACA-006 ACA-007 ACA-008 ACA-044
-
+    print STDERR "$target_name\n";
     push @warn, "Too Few Fid Lights\n" if (@{ $self->{fid} } < $min_fid && $is_science);
     push @warn, "Too Many Fid Lights\n"
       if ( (@{ $self->{fid} } > 0 && $is_er)
@@ -3149,7 +3200,6 @@ sub proseco_args {
         n_fid => scalar(@fid_ids),
         acq_indexes => \@acq_indexes
     );
-
     return \%proseco_args;
 
 }
