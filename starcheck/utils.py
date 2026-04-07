@@ -244,7 +244,7 @@ def _pixels_to_yagzag(i, j):
     :params j: pixel col
     :returns tuple: yag, zag as floats
     """
-    yag, zag = pixels_to_yagzag(i, j, allow_bad=True)
+    yag, zag = pixels_to_yagzag(i, j, t_aca=20, allow_bad=True)
     # Convert to lists or floats to avoid numpy types which are not JSON serializable
     return yag.tolist(), zag.tolist()
 
@@ -260,7 +260,7 @@ def _yagzag_to_pixels(yag, zag):
     :params zag: z-angle arcsecs (hopefully as a number from the Perl)
     :returns tuple: row, col as floats
     """
-    row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
+    row, col = yagzag_to_pixels(yag, zag, t_aca=20, allow_bad=True)
     # Convert to lists or floats to avoid numpy types which are not JSON serializable
     return row.tolist(), col.tolist()
 
