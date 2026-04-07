@@ -1394,7 +1394,7 @@ sub check_star_catalog {
         # Star/fid outside of CCD boundaries
         # ACA-019 ACA-020 ACA-021
         my ($pixel_row, $pixel_col) =
-          @{ call_python("utils._yagzag_to_pixels", [ $yag, $zag ]) };
+          @{ call_python("utils._yagzag_to_pixels", [ $yag, $zag, $self->{ccd_temp} ]) };
 
         # Set "acq phase" dither to acq dither or 20.0 if undefined
         my $dither_acq_y = $self->{dither_acq}->{ampl_y} or 20.0;
@@ -2821,7 +2821,7 @@ sub star_image_map {
     my @yags = map { $self->{agasc_hash}->{$_}->{yag} } keys %plot_ids;
     my @zags = map { $self->{agasc_hash}->{$_}->{zag} } keys %plot_ids;
     my ($pix_rows, $pix_cols) =
-      @{ call_python("utils._yagzag_to_pixels", [ \@yags, \@zags ]) };
+      @{ call_python("utils._yagzag_to_pixels", [ \@yags, \@zags, $self->{ccd_temp} ]) };
 
     my $map = "<map name=\"starmap_${obsid}\" id=\"starmap_${obsid}\"> \n";
     my @star_ids = keys %plot_ids;

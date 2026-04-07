@@ -27,6 +27,7 @@ from parse_cm import read_backstop_as_list, write_backstop
 from proseco.catalog import get_aca_catalog
 from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
+from proseco.characteristics import t_aca_minus_t_ccd
 from ska_quatutil import radec2yagzag
 from testr import test_helper
 
@@ -233,7 +234,7 @@ def config_logging(outdir, verbose, name):
     logger.addHandler(filehandler)
 
 
-def _pixels_to_yagzag(i, j):
+def _pixels_to_yagzag(i, j, t_ccd=None):
     """
     Call chandra_aca.transform.pixels_to_yagzag.
 
@@ -244,12 +245,13 @@ def _pixels_to_yagzag(i, j):
     :params j: pixel col
     :returns tuple: yag, zag as floats
     """
-    yag, zag = pixels_to_yagzag(i, j, allow_bad=True)
+    t_aca = t_aca_minus_t_ccd + t_ccd if t_ccd is not None else None
+    yag, zag = pixels_to_yagzag(i, j, t_aca=t_aca, allow_bad=True)
     # Convert to lists or floats to avoid numpy types which are not JSON serializable
     return yag.tolist(), zag.tolist()
 
 
-def _yagzag_to_pixels(yag, zag):
+def _yagzag_to_pixels(yag, zag, t_ccd=None):
     """
     Call chandra_aca.transform.yagzag_to_pixels.
 
@@ -260,7 +262,8 @@ def _yagzag_to_pixels(yag, zag):
     :params zag: z-angle arcsecs (hopefully as a number from the Perl)
     :returns tuple: row, col as floats
     """
-    row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
+    t_aca = t_aca_minus_t_ccd + t_ccd if t_ccd is not None else None
+    row, col = yagzag_to_pixels(yag, zag, t_aca=t_aca, allow_bad=True)
     # Convert to lists or floats to avoid numpy types which are not JSON serializable
     return row.tolist(), col.tolist()
 
