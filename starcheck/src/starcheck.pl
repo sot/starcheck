@@ -52,6 +52,7 @@ my %par = (
     max_obsids => 0,
 );
 
+
 GetOptions(
     \%par,
     'help',
@@ -69,6 +70,7 @@ GetOptions(
     'run_start_time=s',
     'maude!',
     'max_obsids:i',
+    'debug-proseco-pkl!',
 ) || exit(1);
 
 usage(1)
@@ -610,6 +612,7 @@ if ($obsid_temps) {
 }
 
 # Do main checking
+
 foreach my $obsid (@obsid_id) {
     $obs{$obsid}->get_agasc_stars($agasc_file);
     $obs{$obsid}->identify_stars();
@@ -641,6 +644,11 @@ foreach my $obsid (@obsid_id) {
 
         # Get the args that proseco would want
         $obs{$obsid}->{'proseco_args'} = $obs{$obsid}->proseco_args();
+        # Add debug pickle options if requested
+        if ($par{'debug-proseco-pkl'}) {
+            $obs{$obsid}->{'proseco_args'}->{write_debug_pkl} = 1;
+            $obs{$obsid}->{'proseco_args'}->{debug_outdir} = $STARCHECK;
+        }
         $obs{$obsid}->set_proseco_probs_and_check_P2();
         $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
         $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};

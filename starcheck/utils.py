@@ -533,10 +533,14 @@ def proseco_probs(**kw):
     de_bytestr early in this method.
 
     :param **kw: dict of expected keywords
-    :return tuple: (list of floats of star acq probabilties, float P2, float
-        expected acq stars)
-
+    :param debug_outdir: (optional) directory to write debug pkl file (default None, uses current directory)
+    :param write_debug_pkl: (optional) if True, write debug pkl file (default False)
+    :return tuple: (list of floats of star acq probabilties, float P2, float expected acq stars)
     """
+
+
+    debug_outdir = kw.pop("debug_outdir", None)
+    write_debug_pkl = kw.pop("write_debug_pkl", False)
 
     args = {
         "obsid": 0,
@@ -557,8 +561,12 @@ def proseco_probs(**kw):
         "focus_offset": 0,
     }
     aca = get_aca_catalog(**args)
-    import pickle
-    pickle.dump({kw["obsid"]: aca}, open(f"aca_debug_{kw['obsid']}.pkl", "wb"))
+    if write_debug_pkl:
+        import pickle
+        outdir = Path(debug_outdir) if debug_outdir is not None else Path(".")
+        outdir.mkdir(parents=True, exist_ok=True)
+        pkl_path = outdir / f"aca_debug_{kw['obsid']}.pkl"
+        pickle.dump({kw["obsid"]: aca}, open(pkl_path, "wb"))
     acq_cat = aca.acqs
 
     # Assign the proseco probabilities back into an array.
