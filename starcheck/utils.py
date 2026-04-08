@@ -233,20 +233,20 @@ def config_logging(outdir, verbose, name):
     logger.addHandler(filehandler)
 
 
-def _pixels_to_yagzag(i, j):
-    """
-    Call chandra_aca.transform.pixels_to_yagzag.
+# def _pixels_to_yagzag(i, j):
+#     """
+#     Call chandra_aca.transform.pixels_to_yagzag.
 
-    This wrapper is set to pass allow_bad=True, as exceptions from the Python side
-    in this case would not be helpful, and the very small bad pixel list should be
-    on the CCD.
-    :params i: pixel row
-    :params j: pixel col
-    :returns tuple: yag, zag as floats
-    """
-    yag, zag = pixels_to_yagzag(i, j, allow_bad=True)
-    # Convert to lists or floats to avoid numpy types which are not JSON serializable
-    return yag.tolist(), zag.tolist()
+#     This wrapper is set to pass allow_bad=True, as exceptions from the Python side
+#     in this case would not be helpful, and the very small bad pixel list should be
+#     on the CCD.
+#     :params i: pixel row
+#     :params j: pixel col
+#     :returns tuple: yag, zag as floats
+#     """
+#     yag, zag = pixels_to_yagzag(i, j, allow_bad=True)
+#     # Convert to lists or floats to avoid numpy types which are not JSON serializable
+#     return yag.tolist(), zag.tolist()
 
 
 def _yagzag_to_pixels(yag, zag):
@@ -557,6 +557,8 @@ def proseco_probs(**kw):
         "focus_offset": 0,
     }
     aca = get_aca_catalog(**args)
+    import pickle
+    pickle.dump({kw["obsid"]: aca}, open(f"aca_debug_{kw['obsid']}.pkl", "wb"))
     acq_cat = aca.acqs
 
     # Assign the proseco probabilities back into an array.
