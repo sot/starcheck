@@ -587,108 +587,12 @@ def vehicle_filter_backstop(backstop_file, outfile):
     write_backstop(filtered_cmds, outfile)
 
 
-def check_for_planets(date0, duration, att, tol=2.0):
-    import astropy.units as u
-    from chandra_aca.planets import get_planet_angular_sep
-
-    att = Quaternion.Quat(q=att)
-
-    date0 = CxoTime(date0)
-    planets = ("venus", "mars", "jupiter", "saturn")
-    has_planet = dict.fromkeys(planets, False)
-
-    for planet in planets:
-        sep = get_planet_angular_sep(
-            planet,
-            ra=att.ra,
-            dec=att.dec,
-            time=date0 + ([0, 0.5, 1] * u.s) * duration,
-            observer_position="earth",
-        )
-        if np.all(sep > tol + 0.25):
-            continue
-
-        sep = get_planet_angular_sep(
-            planet,
-            ra=att.ra,
-            dec=att.dec,
-            time=date0 + ([0, 0.5, 1] * u.s) * duration,
-            observer_position="chandra",
-        )
-        if np.all(sep > tol):
-            continue
-
-        has_planet[planet] = True
-
-    return has_planet
-
-
-class PlanetPositionTable(Table):
-    @classmethod
-    def empty(cls):
-        return cls({"time": [], "row": [], "col": []})
-
 
 import astropy.units as u
 from cxotime import CxoTimeLike
 from Quaternion import QuatLike
+from chandra_aca.planets import (get_planet_chandra_ccd_position, get_planet_mag_states)
 
-
-def get_planet_position(
-    planet: str,
-    date: CxoTimeLike,
-    duration: float,
-    att: QuatLike,
-) -> PlanetPositionTable:
-    """
-    Get the position of planet on the ACA CCD.
-
-    Parameters
-    ----------
-    planet : str
-        The planet name. Supports
-    date : CxoTimeLike
-        The start date of the observation (acquisition time)
-    duration : float
-        The duration of the observation in seconds.
-    att : Quaternion or Quat-compatible
-        The attitude Quaternion.
-
-    Returns
-    -------
-    PlanetPositionTable
-        A table with columns 'time', 'row', 'col' for the times when Jupiter
-        is on the CCD. If Jupiter is never on the CCD this is a table with zero rows.
-    """
-    date0 = CxoTime(date)
-    att = Quaternion.Quat(att)
-    # dates is a 1-d array with a minimum of 2 points (the end points)
-    dates = CxoTime.linspace(date0, date0 + duration * u.s, step_max=1000 * u.s)
-    times = dates.secs
-
-    from chandra_aca.planets import get_planet_chandra
-    from chandra_aca.transform import eci_to_radec, radec_to_yagzag, yagzag_to_pixels
-
-    eci = get_planet_chandra(planet, times, ephem_source="stk")
-
-    # Convert ECI position to RA, Dec => yag, zag => row, col
-    ra, dec = eci_to_radec(eci)
-    yag, zag = radec_to_yagzag(ra, dec, att)
-    row, col = yagzag_to_pixels(yag, zag, allow_bad=True)
-
-    # Row/col limit in pixels to check for bright object
-    ccd_limit = 512
-
-    # Limit data to entries on the CCD
-    ok = (np.abs(row) <= ccd_limit) & (np.abs(col) <= ccd_limit)
-    out = PlanetPositionTable(
-        {
-            "time": times[ok],
-            "row": row[ok],
-            "col": col[ok],
-        }
-    )
-    return out
 
 
 def get_proseco_catalog(**kw):
@@ -729,19 +633,24 @@ def get_proseco_catalog(**kw):
     if "monitors" in kw:
         args["monitors"] = kw["monitors"]
     aca = get_aca_catalog(**args)
+    # Let's write this out to a pickle file for debugging
+
+    with open(f"aca_debug_{args['obsid']}.pkl", "wb") as f:
+        import pickle
+        pickle.dump(aca, f)
     return aca
 
 
-def run_jupiter_checks(proseco_args):
-    from sparkles.checks import check_run_jupiter_checks
+
+
+def run_sparkles_planet_checks(proseco_args):
+    from sparkles.checks import check_planets
     from sparkles.messages import MessagesList
 
-    # Override the target name to be Jupiter to run the checks
-    proseco_args["target_name"] = "Jupiter"
     aca = get_proseco_catalog(**proseco_args)
     acar = aca.get_review_table()
 
-    msgs = MessagesList(check_run_jupiter_checks(acar))
+    msgs = MessagesList(check_planets(acar))
     return {
         "warn": [w["text"] for w in msgs == "critical"],
         "orange_warn": [w["text"] for w in msgs == "caution"],
@@ -749,52 +658,3 @@ def run_jupiter_checks(proseco_args):
         "fyi": [w["text"] for w in msgs == "info"],
     }
 
-
-def check_bright_objects(proseco_args):
-    has_planet = check_for_planets(
-        proseco_args["date"],
-        proseco_args["duration"],
-        proseco_args["att"],
-        tol=2,
-    )
-
-    if not any(has_planet.values()):
-        return {}
-
-    msgs = collections.defaultdict(list)
-
-    if has_planet["venus"]:
-        msgs["warn"].extend(["Bright object alert: Venus within 2 deg of ACA center\n"])
-
-    for planet in ("mars", "jupiter", "saturn"):
-        if has_planet[planet]:
-            pos = get_planet_position(
-                planet,
-                proseco_args["date"],
-                proseco_args["duration"],
-                proseco_args["att"],
-            )
-
-            if len(pos) == 0:
-                msgs["warn"].extend(
-                    [
-                        f"Bright object alert: {planet.title()} within 2 deg of ACA center, ",
-                        "but not on CCD\n",
-                    ]
-                )
-            else:
-                if planet not in proseco_args["target_name"].lower():
-                    msgs["orange_warn"].extend(
-                        [
-                            f"Bright object alert: {planet.title()} on CCD but not in target name\n"
-                        ]
-                    )
-
-                if planet in ("mars", "saturn"):
-                    msgs["fyi"].extend([f"Bright object: {planet.title()} on CCD\n"])
-
-                if planet == "jupiter":
-                    jmsgs = run_jupiter_checks(proseco_args)
-                    for key in jmsgs:
-                        msgs[key].extend(jmsgs[key])
-    return msgs
