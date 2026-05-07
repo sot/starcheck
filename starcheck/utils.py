@@ -1,4 +1,3 @@
-import collections
 import logging
 import os
 import warnings
@@ -587,14 +586,6 @@ def vehicle_filter_backstop(backstop_file, outfile):
     write_backstop(filtered_cmds, outfile)
 
 
-
-import astropy.units as u
-from cxotime import CxoTimeLike
-from Quaternion import QuatLike
-from chandra_aca.planets import (get_planet_chandra_ccd_position, get_planet_mag_states)
-
-
-
 def get_proseco_catalog(**kw):
     # Note that the fid ids in starcheck are 1-6
     # ACIS, 7-10 HRC-I 11-14 HRC-S.  Proseco just uses indexes 1-6 so
@@ -633,21 +624,25 @@ def get_proseco_catalog(**kw):
     if "monitors" in kw:
         args["monitors"] = kw["monitors"]
     aca = get_aca_catalog(**args)
-    # Let's write this out to a pickle file for debugging
-
-    with open(f"aca_debug_{args['obsid']}.pkl", "wb") as f:
-        import pickle
-        pickle.dump(aca, f)
     return aca
 
 
+# Module-level accumulator for proseco catalogs; populated by get_and_collect_proseco_catalog.
+_proseco_catalogs = {}
+
+
+def get_and_collect_proseco_catalog(proseco_args):
+    """Build a proseco catalog, accumulate it by obsid, and return it."""
+    aca = get_proseco_catalog(**proseco_args)
+    _proseco_catalogs[proseco_args["obsid"]] = aca
+    return aca
 
 
 def run_sparkles_planet_checks(proseco_args):
     from sparkles.checks import check_planets
     from sparkles.messages import MessagesList
 
-    aca = get_proseco_catalog(**proseco_args)
+    aca = get_and_collect_proseco_catalog(proseco_args)
     acar = aca.get_review_table()
 
     msgs = MessagesList(check_planets(acar))
@@ -657,4 +652,11 @@ def run_sparkles_planet_checks(proseco_args):
         "yellow_warn": [w["text"] for w in msgs == "warning"],
         "fyi": [w["text"] for w in msgs == "info"],
     }
+
+
+def save_proseco_catalogs(path):
+    import pickle
+
+    with open(path, "wb") as f:
+        pickle.dump(_proseco_catalogs, f)
 
