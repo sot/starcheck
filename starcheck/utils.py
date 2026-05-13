@@ -659,4 +659,3 @@ def save_proseco_catalogs(path):
 
     with open(path, "wb") as f:
         pickle.dump(_proseco_catalogs, f)
-
