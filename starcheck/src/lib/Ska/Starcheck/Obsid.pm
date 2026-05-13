@@ -2755,7 +2755,7 @@ sub identify_stars {
             # Confirm that the agasc magnitude matches the guide star summary magnitude
             my $gs_mag = $c->{"GS_MAG$i"};
             my $dmag = abs($star->{mag_aca} - $gs_mag);
-            if ($dmag > 0.5) {
+            if ($dmag > 0.01) {
                 push @{ $self->{yellow_warn} },
                   sprintf("[%d] Guide sum mag diff from agasc mag %9.5f\n", $i, $dmag);
             }
