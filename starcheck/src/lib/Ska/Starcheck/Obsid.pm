@@ -1062,13 +1062,8 @@ sub check_planets{
     my $bright_data = call_python("utils.run_sparkles_planet_checks",
                 [ $self->{'proseco_args'} ]);
 
-    if (exists $bright_data->{fyi}) {
-        for my $msg (@{ $bright_data->{fyi} }) {
-            if ($msg =~ /Ran Full OBO Mitigation checks\./) {
-                $self->{planet_full_mitigation} = 1;
-                last;
-            }
-        }
+    if (exists $bright_data->{planet_full_mitigation}) {
+        $self->{planet_full_mitigation} = $bright_data->{planet_full_mitigation} ? 1 : 0;
     }
 
     for my $warn_type (qw(warn fyi orange_warn yellow_warn)) {

@@ -639,18 +639,19 @@ def get_and_collect_proseco_catalog(proseco_args):
 
 
 def run_sparkles_planet_checks(proseco_args):
-    from sparkles.checks import check_planets
+    from sparkles.checks import get_planet_check_data
     from sparkles.messages import MessagesList
 
     aca = get_and_collect_proseco_catalog(proseco_args)
     acar = aca.get_review_table()
-
-    msgs = MessagesList(check_planets(acar))
+    planet_check_data = get_planet_check_data(acar)
+    msgs = MessagesList(planet_check_data["messages"])
     return {
         "warn": [w["text"] for w in msgs == "critical"],
         "orange_warn": [w["text"] for w in msgs == "caution"],
         "yellow_warn": [w["text"] for w in msgs == "warning"],
         "fyi": [w["text"] for w in msgs == "info"],
+        "planet_full_mitigation": planet_check_data["planet_full_mitigation"],
     }
 
 
