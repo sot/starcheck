@@ -587,6 +587,21 @@ def vehicle_filter_backstop(backstop_file, outfile):
 
 
 def get_proseco_catalog(**kw):
+    """
+    Build a full proseco ACA catalog from starcheck observation parameters.
+
+    Translates fid light IDs from starcheck's global numbering (ACIS 1-6,
+    HRC-I 7-10, HRC-S 11-14) to proseco's per-detector numbering by
+    subtracting detector-specific offsets (HRC-I: 6, HRC-S: 10, ACIS: 0).
+
+    :param **kw: keyword arguments matching the proseco_args structure from
+        Obsid.proseco_args(). Required keys: obsid, att, duration,
+        target_name, date, n_acq, n_guide, man_angle, t_ccd_acq, t_ccd_guide,
+        dither_acq, dither_guide, include_ids_acq, include_halfws_acq,
+        detector, sim_offset, include_ids_guide, fid_ids. An optional
+        'monitors' key is passed through to get_aca_catalog.
+    :returns: proseco ACATable catalog
+    """
     # Note that the fid ids in starcheck are 1-6
     # ACIS, 7-10 HRC-I 11-14 HRC-S.  Proseco just uses indexes 1-6 so
     # subtract off the offsets.
@@ -632,13 +647,35 @@ _proseco_catalogs = {}
 
 
 def get_and_collect_proseco_catalog(proseco_args):
-    """Build a proseco catalog, accumulate it by obsid, and return it."""
+    """
+    Build a proseco catalog, store it in _proseco_catalogs by obsid, and return it.
+
+    :param proseco_args: dict of observation parameters (obsid, att, etc.)
+    :returns: proseco ACATable catalog
+    """
     aca = get_proseco_catalog(**proseco_args)
     _proseco_catalogs[proseco_args["obsid"]] = aca
     return aca
 
 
 def run_sparkles_planet_checks(proseco_args):
+    """
+    Run sparkles planet checks and return categorized warnings.
+
+    Builds a proseco catalog for the observation, runs sparkles planet checks,
+    and returns warnings sorted by severity. Also accumulates the catalog in
+    _proseco_catalogs.
+
+    :param proseco_args: dict of observation parameters (same format as
+        Obsid.proseco_args() in the Perl code)
+    :returns: dict with keys:
+        - 'warn' (list[str]): critical-level warnings
+        - 'orange_warn' (list[str]): caution-level warnings
+        - 'yellow_warn' (list[str]): warning-level messages
+        - 'fyi' (list[str]): informational messages
+        - 'planet_full_mitigation' (bool): True if full planet mitigation
+          applies, allowing 2 fid lights instead of the usual 3
+    """
     from sparkles.checks import get_planet_check_data
     from sparkles.messages import MessagesList
 
@@ -656,6 +693,15 @@ def run_sparkles_planet_checks(proseco_args):
 
 
 def save_proseco_catalogs(path):
+    """
+    Write the accumulated proseco catalogs to a pickle file.
+
+    Pickles the module-level _proseco_catalogs dict (keyed by obsid) to path.
+    Intended to be called at the end of a starcheck run to persist catalogs
+    for downstream use.
+
+    :param path: file path to write the pickle
+    """
     import pickle
 
     with open(path, "wb") as f:
