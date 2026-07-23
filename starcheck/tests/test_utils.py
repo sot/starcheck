@@ -1,6 +1,6 @@
 import pickle
 
-import starcheck.utils as utils
+from starcheck import utils
 from starcheck.utils import (
     check_hot_pix,
     get_and_collect_proseco_catalog,
