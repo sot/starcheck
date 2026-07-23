@@ -604,25 +604,48 @@ def get_proseco_catalog(**kw):
         Obsid.proseco_args().
     :returns: proseco ACATable catalog
     """
-    args = kw.copy()
+    # Define the set of valid arguments for proseco.get_aca_catalog
+    PROSECO_ARGS = {
+        "obsid",
+        "att",
+        "duration",
+        "target_name",
+        "date",
+        "n_acq",
+        "n_guide",
+        "man_angle",
+        "t_ccd_acq",
+        "t_ccd_guide",
+        "dither_acq",
+        "dither_guide",
+        "include_ids_acq",
+        "include_halfws_acq",
+        "detector",
+        "sim_offset",
+        "include_ids_guide",
+        "include_ids_fid",
+        "n_fid",
+        "focus_offset",
+        "monitors",
+    }
 
-    # Translate fid_ids from starcheck global to proseco per-detector.
-    fid_offset = FID_OFFSET.get(args["detector"], 0)
-    fid_ids = np.array(args["fid_ids"]) - fid_offset
+    # Create the args dict by picking only the valid keys from kwargs
+    args = {key: kw[key] for key in PROSECO_ARGS if key in kw}
+
+    # --- Handle transformations and required arguments ---
+
+    # Translate fid_ids from starcheck global to proseco per-detector
+    fid_offset = FID_OFFSET.get(kw["detector"], 0)
+    fid_ids = np.array(kw["fid_ids"]) - fid_offset
     args["include_ids_fid"] = list(fid_ids)
     args["n_fid"] = len(fid_ids)
-    del args["fid_ids"]  # Remove original starcheck-style fid_ids
 
-    # Update args with required types and values for proseco
-    args.update(
-        {
-            "obsid": int(args["obsid"]),
-            "att": Quaternion.normalize(args["att"]),
-            "dither_acq": ACABox(args["dither_acq"]),
-            "dither_guide": ACABox(args["dither_guide"]),
-            "focus_offset": 0,
-        }
-    )
+    # Ensure required types and values
+    args["obsid"] = int(kw["obsid"])
+    args["att"] = Quaternion.normalize(kw["att"])
+    args["dither_acq"] = ACABox(kw["dither_acq"])
+    args["dither_guide"] = ACABox(kw["dither_guide"])
+    args["focus_offset"] = 0
 
     aca = get_aca_catalog(**args)
     return aca
