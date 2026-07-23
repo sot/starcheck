@@ -316,9 +316,11 @@ sub set_maneuver {
     my $found;
 
     my $dot_obsid = $self->{dot_obsid};
-    # If date before "2020", get the ER obsids from the processing summary
-    # If the $dot_obsid does not begin with a number
-    if ($dot_obsid !~ /^\d/ && ($self->{date} lt '2020:001:00:00:00.000')) {
+    # If the date is before ORViewer-DOT (promoted end of August 2017), get the ER obsids
+    # from the processing summary if the $dot_obsid does not begin with a number
+    # The last command from a pre-ORViewer-DOT looks to be 2017:240 so this is padded
+    # by a few days.
+    if ($dot_obsid !~ /^\d/ && ($self->{date} lt '2017:250:00:00:00.000')) {
     # The processing summary has lines that look like this
     # 'P080200   CAL       2017:013:03:00:49.827  2017:013:03:00:59.827  000:00:00:10.000 OBSID = 50385 {Perigee Attitude}
     # For each line like that, I want to extract the obsid as the up to 5 digit number after OBSID and I
