@@ -1068,29 +1068,25 @@ sub check_planets{
         $self->{planet_full_mitigation} = $bright_data->{planet_full_mitigation} ? 1 : 0;
     }
 
+    # Get an ordered list of star IDs from the catalog for easy lookup.
+    my @cat_star_ids = ();
+    if (defined $c) {
+        for my $i (1 .. 16) {
+            if ($c->{"TYPE$i"} ne 'NUL') {
+                push @cat_star_ids, ($c->{"GS_ID$i"} // '---');
+            }
+        }
+    }
+
     for my $warn_type (qw(warn fyi orange_warn yellow_warn)) {
         if (exists $bright_data->{$warn_type}) {
             for my $warn (@{ $bright_data->{$warn_type} }) {
-                # If the warning has an idx in it and an id, update the text to match the starcheck
-                # version of the catalog
-                if ($warn =~ /idx (\d+) id (\d+)/) {
+                # If the warning has an 'idx', replace it with the actual star ID.
+                if ($warn =~ /idx (\d+)/) {
                     my $idx = $1;
-                    my $star_id = '---';
-                    if (defined $c) {
-                        for my $i (1 .. 16) {
-                            if ($c->{"TYPE$i"} ne 'NUL') {
-                                $idx--;
-                                if ($idx == 0) {
-                                    $star_id = $c->{"GS_ID$i"} if (defined $c->{"GS_ID$i"});
-                                    last;
-                                }
-                            }
-                        }
-                        $star_id = $c->{"GS_ID$idx"} if (defined $c->{"GS_ID$idx"});
-                    }
-                    $warn =~ s/IDX=$idx/STAR_ID=$star_id/;
+                    my $star_id = $cat_star_ids[$idx] // '---';
+                    $warn =~ s/idx \d+/STAR_ID=$star_id/;
                 }
-
                 push @{ $self->{$warn_type} }, "$warn\n";
             }
         }

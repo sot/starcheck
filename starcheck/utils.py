@@ -1,5 +1,6 @@
 import logging
 import os
+import pickle
 import warnings
 from pathlib import Path
 
@@ -586,58 +587,43 @@ def vehicle_filter_backstop(backstop_file, outfile):
     write_backstop(filtered_cmds, outfile)
 
 
+# Fiducial light ID offsets for different detectors, used to translate
+# starcheck global IDs to proseco per-detector IDs.
+FID_OFFSET = {"HRC-I": 6, "HRC-S": 10, "ACIS-I": 0, "ACIS-S": 0}
+
+
 def get_proseco_catalog(**kw):
     """
     Build a full proseco ACA catalog from starcheck observation parameters.
 
     Translates fid light IDs from starcheck's global numbering (ACIS 1-6,
     HRC-I 7-10, HRC-S 11-14) to proseco's per-detector numbering by
-    subtracting detector-specific offsets (HRC-I: 6, HRC-S: 10, ACIS: 0).
+    subtracting detector-specific offsets.
 
     :param **kw: keyword arguments matching the proseco_args structure from
-        Obsid.proseco_args(). Required keys: obsid, att, duration,
-        target_name, date, n_acq, n_guide, man_angle, t_ccd_acq, t_ccd_guide,
-        dither_acq, dither_guide, include_ids_acq, include_halfws_acq,
-        detector, sim_offset, include_ids_guide, fid_ids. An optional
-        'monitors' key is passed through to get_aca_catalog.
+        Obsid.proseco_args().
     :returns: proseco ACATable catalog
     """
-    # Note that the fid ids in starcheck are 1-6
-    # ACIS, 7-10 HRC-I 11-14 HRC-S.  Proseco just uses indexes 1-6 so
-    # subtract off the offsets.
-    fid_ids = np.array(kw["fid_ids"])
-    if kw["detector"] == "HRC-I":
-        fid_offset = 6
-    elif kw["detector"] == "HRC-S":
-        fid_offset = 10
-    else:
-        fid_offset = 0
-    fid_ids -= fid_offset
+    args = kw.copy()
 
-    args = {
-        "obsid": int(kw["obsid"]),
-        "att": Quaternion.normalize(kw["att"]),
-        "duration": kw["duration"],
-        "target_name": kw["target_name"],
-        "date": kw["date"],
-        "n_acq": kw["n_acq"],
-        "n_guide": kw["n_guide"],
-        "man_angle": kw["man_angle"],
-        "t_ccd_acq": kw["t_ccd_acq"],
-        "t_ccd_guide": kw["t_ccd_guide"],
-        "dither_acq": ACABox(kw["dither_acq"]),
-        "dither_guide": ACABox(kw["dither_guide"]),
-        "include_ids_acq": kw["include_ids_acq"],
-        "include_halfws_acq": kw["include_halfws_acq"],
-        "detector": kw["detector"],
-        "sim_offset": kw["sim_offset"],
-        "include_ids_guide": kw["include_ids_guide"],
-        "include_ids_fid": list(fid_ids),
-        "n_fid": len(kw["fid_ids"]),
-        "focus_offset": 0,
-    }
-    if "monitors" in kw:
-        args["monitors"] = kw["monitors"]
+    # Translate fid_ids from starcheck global to proseco per-detector.
+    fid_offset = FID_OFFSET.get(args["detector"], 0)
+    fid_ids = np.array(args["fid_ids"]) - fid_offset
+    args["include_ids_fid"] = list(fid_ids)
+    args["n_fid"] = len(fid_ids)
+    del args["fid_ids"]  # Remove original starcheck-style fid_ids
+
+    # Update args with required types and values for proseco
+    args.update(
+        {
+            "obsid": int(args["obsid"]),
+            "att": Quaternion.normalize(args["att"]),
+            "dither_acq": ACABox(args["dither_acq"]),
+            "dither_guide": ACABox(args["dither_guide"]),
+            "focus_offset": 0,
+        }
+    )
+
     aca = get_aca_catalog(**args)
     return aca
 
@@ -702,7 +688,5 @@ def save_proseco_catalogs(path):
 
     :param path: file path to write the pickle
     """
-    import pickle
-
     with open(path, "wb") as f:
         pickle.dump(_proseco_catalogs, f)
