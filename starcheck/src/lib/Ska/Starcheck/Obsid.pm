@@ -22,7 +22,7 @@ use strict;
 use warnings;
 use Ska::Starcheck::Python qw(date2time time2date call_python);
 
-use List::Util qw(min max);
+use List::Util qw(min max first);
 use Quat;
 use File::Basename;
 use POSIX qw(floor);
@@ -325,13 +325,10 @@ sub set_maneuver {
     # 'P080200   CAL       2017:013:03:00:49.827  2017:013:03:00:59.827  000:00:00:10.000 OBSID = 50385 {Perigee Attitude}
     # For each line like that, I want to extract the obsid as the up to 5 digit number after OBSID and I
     # want to extract the "dot_obsid" as the first 5 characters of the line (P0802 in this case)
-        foreach my $ps_line (@$ps) {
-            if ($ps_line =~ /^\s*(\S{5}).*OBSID\s*=\s*(\d{1,5})/) {
-                if ($1 eq $dot_obsid) {
-                    $dot_obsid = $2;
-                    last;
-                }
-            }
+    # This uses the list::util first function to find the first line that matches the $dot_obsid and has OBSID in it
+        my $ps_line = first { /^\s*\Q$dot_obsid\E.*OBSID/ } @$ps;
+        if ($ps_line && $ps_line =~ /OBSID\s*=\s*(\d{1,5})/) {
+            $dot_obsid = $1;
         }
     }
 
@@ -400,12 +397,9 @@ sub set_maneuver {
             }
 
         }
-        push @{ $self->{yellow_warn} },
-          sprintf("Did not find match in maneuvers for MP_TARGQUAT at $c->{date}\n")
-          unless ($found);
-
         unless ($found) {
-            # throw error and quit
+            push @{ $self->{yellow_warn} },
+              sprintf("Did not find match in maneuvers for MP_TARGQUAT at $c->{date}\n");
             exit(1);
         }
 
