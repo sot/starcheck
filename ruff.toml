@@ -10,6 +10,7 @@ extend-exclude = [
 # incrementally fixing code to adhere to these rules, but for practical purposes they
 # can be ignored by uncommenting each one. You can also add to this list as needed.
 lint.extend-ignore = [
+  "PLR0917", # Too many positional arguments
   # "B905", # `zip()` without an explicit `strict=` parameter
   # "PLC1901", # compare-to-empty-string
   # "PLR0911", # Too many returns
