@@ -69,6 +69,7 @@ GetOptions(
     'run_start_time=s',
     'maude!',
     'max_obsids:i',
+    'save_pkl=s',
 ) || exit(1);
 
 usage(1)
@@ -437,7 +438,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_obsid(\%guidesumm);    # Commanded obsid
     $obs{$obsid}->set_target();
     $obs{$obsid}->set_star_catalog();
-    $obs{$obsid}->set_maneuver($mm);
+    $obs{$obsid}->set_maneuver($mm, \@ps);
     $obs{$obsid}->set_files(
         $STARCHECK,
         $backstop,
@@ -642,12 +643,17 @@ foreach my $obsid (@obsid_id) {
         # Get the args that proseco would want
         $obs{$obsid}->{'proseco_args'} = $obs{$obsid}->proseco_args();
         $obs{$obsid}->set_proseco_probs_and_check_P2();
+        $obs{$obsid}->check_planets();
         $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
         $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
         $obs{$obsid}->check_momentum_unload(\@bs);
         $obs{$obsid}->check_bright_perigee($radmon);
         $obs{$obsid}->check_guide_count();
         $obs{$obsid}->check_for_srdcs(\@bs);
+    }
+
+    if ($par{save_pkl}) {
+        call_python("utils.save_proseco_catalogs", [ $par{save_pkl} ]);
     }
 
     # Make sure there is only one star catalog per obsid

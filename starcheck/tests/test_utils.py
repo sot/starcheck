@@ -1,4 +1,123 @@
-from starcheck.utils import check_hot_pix
+import pickle
+
+from starcheck import utils
+from starcheck.utils import (
+    check_hot_pix,
+    get_and_collect_proseco_catalog,
+    get_proseco_catalog,
+    run_sparkles_planet_checks,
+    save_proseco_catalogs,
+)
+
+# Real proseco_args from obsid 28777 in JUN2325_A (HRC-I, 3 fids, 8 acq/5 guide)
+_OBS_28777_ARGS = {
+    "obsid": 28777,
+    "att": [0.142378962865, -0.842210948602, 0.4728311264, 0.216424755738],
+    "date": "2025:174:00:42:44.586",
+    "detector": "HRC-I",
+    "dither_acq": [20.0014963044938, 20.0014963044938],
+    "dither_guide": [20.0014963044938, 20.0014963044938],
+    "fid_ids": [8, 9, 10],
+    "include_halfws_acq": [160, 160, 120, 140, 100, 160, 160, 100],
+    "include_ids_acq": [
+        331222504,
+        331224640,
+        260576048,
+        331223656,
+        260571904,
+        260580432,
+        260575280,
+        260575376,
+    ],
+    "include_ids_guide": [331222504, 331224640, 260576048, 331223656, 260571904],
+    "man_angle": 122.221322321489,
+    "n_acq": 8,
+    "n_fid": 3,
+    "n_guide": 5,
+    "sim_offset": 0,
+    "t_ccd_acq": -4.72435604571444,
+    "t_ccd_guide": -4.53268231435102,
+    "duration": 20000.0,
+    "target_name": "SN 1941C",
+}
+
+
+def test_get_proseco_catalog_returns_expected_acq_stars():
+    """get_proseco_catalog returns a catalog containing all commanded acq star IDs."""
+    aca = get_proseco_catalog(**_OBS_28777_ARGS)
+    acq_ids = set(aca.acqs["id"])
+    for star_id in _OBS_28777_ARGS["include_ids_acq"]:
+        assert star_id in acq_ids
+
+
+def test_get_and_collect_proseco_catalog_accumulates():
+    """get_and_collect_proseco_catalog stores the catalog in _proseco_catalogs keyed by obsid."""
+    utils._proseco_catalogs.clear()
+    aca = get_and_collect_proseco_catalog(_OBS_28777_ARGS)
+    assert _OBS_28777_ARGS["obsid"] in utils._proseco_catalogs
+    assert utils._proseco_catalogs[_OBS_28777_ARGS["obsid"]] is aca
+    utils._proseco_catalogs.clear()
+
+
+# Venus bad case adapted from sparkles test_venus_bad (att/date where Venus is on CCD)
+_VENUS_BAD_ARGS = {
+    "obsid": 18696,
+    "att": [-0.54152552, 0.17005146, -0.10308105, 0.81682734],
+    "man_angle": 90,
+    "date": "2017:010:06:57:57.000",
+    "t_ccd_acq": -10.0,
+    "t_ccd_guide": -10.0,
+    "dither_acq": [7.9992, 7.9992],
+    "dither_guide": [7.9992, 7.9992],
+    "detector": "ACIS-I",
+    "sim_offset": 0,
+    "n_acq": 8,
+    "n_guide": 5,
+    "n_fid": 3,
+    "fid_ids": [1, 2, 3],
+    "include_ids_acq": [],
+    "include_halfws_acq": [],
+    "include_ids_guide": [],
+    "duration": 30000.0,
+    "target_name": "Venus",
+}
+
+
+def test_run_sparkles_planet_checks_venus_bad():
+    """run_sparkles_planet_checks produces critical warnings and sets planet_full_mitigation
+    for an attitude where Venus is on the CCD and mitigation requirements are not met."""
+    result = run_sparkles_planet_checks(_VENUS_BAD_ARGS)
+    assert result["planet_full_mitigation"] is True
+    assert "Need 5 guide stars on side of CCD opposite bright object." in result["warn"]
+    assert "Need 2 fid lights on side of CCD opposite bright object." in result["warn"]
+    assert "Bright object tracks too close to CCD boundary row=0." in result["warn"]
+    assert "Full mitigation OBO checks failed." in result["warn"]
+    assert "Venus on CCD. (mag -5.0 to -2.9)." in result["fyi"]
+    assert result["orange_warn"] == []
+    assert result["yellow_warn"] == []
+
+
+def test_run_sparkles_planet_checks_no_planet():
+    """run_sparkles_planet_checks returns no warnings and planet_full_mitigation False
+    for a normal observation with no nearby bright planet."""
+    result = run_sparkles_planet_checks(_OBS_28777_ARGS)
+    assert result["planet_full_mitigation"] is False
+    assert result["warn"] == []
+    assert result["orange_warn"] == []
+    assert result["yellow_warn"] == []
+
+
+def test_save_proseco_catalogs(tmp_path):
+    """save_proseco_catalogs writes _proseco_catalogs to a readable pickle file."""
+    utils._proseco_catalogs.clear()
+    get_and_collect_proseco_catalog(_OBS_28777_ARGS)
+    out_path = tmp_path / "catalogs.pkl"
+    save_proseco_catalogs(out_path)
+    assert out_path.exists()
+    with open(out_path, "rb") as f:
+        loaded = pickle.load(f)
+    assert _OBS_28777_ARGS["obsid"] in loaded
+    utils._proseco_catalogs.clear()
 
 
 def test_check_dynamic_hot_pix():
