@@ -585,13 +585,33 @@ sub set_star_catalog {
 sub get_creep_status{
 #############################################################################################
     my $self = shift;
-    my $targ_cmd = find_command($self, "MP_TARGQUAT", -1);
-    my $man_angle_next_data = call_python("state_checks.get_obs_man_angle_next",
-                [ $targ_cmd->{tstop}, $self->{backstop} ]);
-    # Round the angle_next to 1 decimal place
-    my $angle_next = sprintf("%.1f", $man_angle_next_data->{"angle"});
+    my $angle_next = 180.0;
+    if (defined $self->{next}) {
+        my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
+        if ((defined $next_manvr) and (defined $next_manvr->{angle})) {
+            $angle_next = $next_manvr->{angle};
+        }
+    }
+    $angle_next = sprintf("%.1f", $angle_next);
     my $creep_away = ($angle_next < 3.0);
     return $creep_away;
+}
+
+#############################################################################################
+sub get_creep_nmm_info {
+#############################################################################################
+    my $self = shift;
+    return unless defined $self->{next};
+
+    my $next_manvr = find_command($self->{next}, "MP_TARGQUAT", -1);
+    return unless ((defined $next_manvr)
+        and (defined $next_manvr->{angle})
+        and (defined $next_manvr->{tstop}));
+
+    my $man_angle_next_data = call_python("state_checks.get_obs_man_angle",
+        [ $next_manvr->{tstop}, $self->{backstop}, $next_manvr->{angle} ]);
+
+    return ($next_manvr->{angle}, $man_angle_next_data->{'extra_nmm_time'});
 }
 
 #############################################################################################
@@ -724,6 +744,16 @@ sub check_dither {
     if ($no_dither) {
         if ($creep_away) {
             push @{ $self->{fyi} }, "Dither disabled or 0 - properly configured with creep-away\n";
+            my ($creep_angle_next, $creep_extra_nmm_time) = $self->get_creep_nmm_info();
+
+            # Throw a critical warning if more than 600 seconds extra time in NMM for this
+            # creep-away maneuver
+            if ((defined $creep_extra_nmm_time)
+                and ($creep_extra_nmm_time > 600)) {
+                push @{ $self->{warn}},
+                  sprintf("NMM time exceeds %.1f deg maneuver expectation by %.0f sec\n",
+                    $creep_angle_next, $creep_extra_nmm_time);
+            }
         } else {
             push @{ $self->{warn} }, "Creep-away required with no dither\n";
         }
@@ -3033,8 +3063,10 @@ sub proseco_args {
         return \%proseco_args;
     }
 
+    my @man_angle_args = ($targ_cmd->{tstop}, $self->{backstop});
+    push @man_angle_args, $targ_cmd->{angle} if defined $targ_cmd->{angle};
     my $man_angle_data = call_python("state_checks.get_obs_man_angle",
-        [ $targ_cmd->{tstop}, $self->{backstop} ]);
+        \@man_angle_args);
     $targ_cmd->{man_angle_calc} = $man_angle_data->{'angle'};
 
     if (defined $man_angle_data->{'warn'}){

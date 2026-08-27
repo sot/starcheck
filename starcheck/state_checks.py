@@ -120,6 +120,26 @@ def calc_man_angle_for_duration(duration):
     return out
 
 
+@lru_cache
+def calc_man_duration_for_angle(angle):
+    """
+    Calculate the maneuver-equivalent-duration for a given angle.
+
+    Parameters
+    ----------
+    angle : float
+        The maneuver angle for which the duration should be estimated.
+
+    Returns
+    -------
+    float
+        The maneuver-equivalent-duration corresponding to the given angle.
+    """
+    man_table = make_man_table()
+    out = np.interp(angle, man_table["angle"], man_table["duration"])
+    return out
+
+
 def check_continuity_state_npnt(backstop_file):
     """
     Check that the kadi continuity state (at RLTT) is NPNT.
@@ -141,7 +161,7 @@ def check_continuity_state_npnt(backstop_file):
     return True
 
 
-def get_obs_man_angle(npnt_tstart, backstop_file):
+def get_obs_man_angle(npnt_tstart, backstop_file, actual_angle=None):
     """
     Calculate the maneuver-equivalent-angle for a given NPNT dwell.
 
@@ -154,6 +174,8 @@ def get_obs_man_angle(npnt_tstart, backstop_file):
         Start time of the NPNT dwell.
     backstop_file : str
         Backstop file.
+    actual_angle : float, optional
+        The maneuver angle from the attitude solution for this observation.
 
     Returns
     -------
@@ -174,7 +196,11 @@ def get_obs_man_angle(npnt_tstart, backstop_file):
     nmm_dur = prev_state["tstop"] - prev_state["tstart"]
     manvr_dur = nmm_dur - 10.25  # subtract standard time between AONMMODE and AOMANUVR
     angle = calc_man_angle_for_duration(manvr_dur)
-    return {"angle": angle}
+    out = {"angle": angle, "manvr_dur": manvr_dur}
+    if actual_angle is not None:
+        out["expected_manvr_dur"] = calc_man_duration_for_angle(actual_angle)
+        out["extra_nmm_time"] = out["manvr_dur"] - out["expected_manvr_dur"]
+    return out
 
 
 def get_obs_man_angle_next(npnt_tstart, backstop_file):
