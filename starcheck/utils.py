@@ -24,7 +24,7 @@ from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to
 from cxotime import CxoTime
 from mica.archive import aca_dark
 from parse_cm import read_backstop_as_list, write_backstop
-from proseco.catalog import get_aca_catalog
+from proseco.catalog import ACATable, get_aca_catalog
 from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
 from ska_quatutil import radec2yagzag
@@ -566,6 +566,99 @@ def proseco_probs(**kw):
     ]
 
     return p_acqs, float(-np.log10(acq_cat.calc_p_safe())), float(np.sum(p_acqs))
+
+
+# Starcheck numbers fid lights across all detectors (ACIS 1-6, HRC-I 7-10,
+# HRC-S 11-14) while proseco numbers them per detector starting from 1.
+FID_ID_OFFSET = {"ACIS-I": 0, "ACIS-S": 0, "HRC-I": 6, "HRC-S": 10}
+
+# Keys of Obsid.proseco_args() that are passed through to get_aca_catalog as is.
+PROSECO_CATALOG_KEYS = (
+    "date",
+    "duration",
+    "man_angle",
+    "detector",
+    "sim_offset",
+    "t_ccd_acq",
+    "t_ccd_guide",
+    "n_acq",
+    "include_ids_acq",
+    "include_halfws_acq",
+    "n_guide",
+    "include_ids_guide",
+)
+
+# Sparkles message category to the starcheck Obsid warning list it goes in.
+SPARKLES_CATEGORY_TO_STARCHECK = {
+    "critical": "warn",
+    "caution": "orange_warn",
+    "warning": "yellow_warn",
+    "info": "fyi",
+}
+
+
+def get_proseco_catalog(raise_exc: bool = True, **proseco_args) -> ACATable:
+    """
+    Build the full proseco catalog for an observation from Obsid.proseco_args().
+
+    The commanded acq, guide and fid ids are forced with the include_ids_* arguments
+    so the catalog matches the one in backstop. Fid ids are translated from
+    starcheck's numbering to proseco's per-detector numbering.
+
+    :param raise_exc: raise an exception if proseco fails (default=True). If False,
+        an empty catalog with the traceback in ``.exception`` is returned instead.
+    :param **proseco_args: observation parameters from Obsid.proseco_args()
+    :returns: proseco ACATable catalog
+    """
+    args = {
+        key: proseco_args[key] for key in PROSECO_CATALOG_KEYS if key in proseco_args
+    }
+    args["obsid"] = int(proseco_args["obsid"])
+    args["att"] = Quaternion.normalize(proseco_args["att"])
+    args["dither_acq"] = ACABox(proseco_args["dither_acq"])
+    args["dither_guide"] = ACABox(proseco_args["dither_guide"])
+    # A Perl undef target name arrives here as None
+    args["target_name"] = proseco_args.get("target_name") or ""
+    args["focus_offset"] = 0
+
+    fid_offset = FID_ID_OFFSET[proseco_args["detector"]]
+    args["include_ids_fid"] = [
+        fid_id - fid_offset for fid_id in proseco_args["fid_ids"]
+    ]
+    args["n_fid"] = len(args["include_ids_fid"])
+
+    return get_aca_catalog(raise_exc=raise_exc, **args)
+
+
+def run_sparkles_jupiter_checks(proseco_args: dict) -> dict[str, list[str]]:
+    """
+    Run the sparkles Jupiter checks for an observation.
+
+    This builds the proseco catalog for the observation (see get_proseco_catalog),
+    runs ``sparkles.checks.check_run_jupiter_checks`` on it, and sorts the message
+    texts into the starcheck warning lists. If proseco cannot build the catalog, a
+    single caution is returned instead of raising.
+
+    :param proseco_args: observation parameters from Obsid.proseco_args()
+    :returns: dict with keys 'warn' (critical), 'orange_warn' (caution),
+        'yellow_warn' (warning) and 'fyi' (info), each a list of message texts.
+    """
+    from sparkles.checks import check_run_jupiter_checks
+
+    warnings_by_list = {key: [] for key in SPARKLES_CATEGORY_TO_STARCHECK.values()}
+
+    aca = get_proseco_catalog(raise_exc=False, **proseco_args)
+    if aca.exception:
+        last_line = aca.exception.strip().splitlines()[-1]
+        warnings_by_list["orange_warn"].append(
+            f"Jupiter checks not run: proseco could not build a catalog ({last_line})"
+        )
+        return warnings_by_list
+
+    acar = aca.get_review_table()
+    for msg in check_run_jupiter_checks(acar):
+        warnings_by_list[SPARKLES_CATEGORY_TO_STARCHECK[msg.category]].append(msg.text)
+    return warnings_by_list
 
 
 def vehicle_filter_backstop(backstop_file, outfile):

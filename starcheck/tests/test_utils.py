@@ -1,4 +1,111 @@
-from starcheck.utils import check_hot_pix
+from starcheck.utils import (
+    check_hot_pix,
+    get_proseco_catalog,
+    run_sparkles_jupiter_checks,
+)
+
+# Real proseco_args from obsid 28777 in JUN2325_A (HRC-I, 3 fids, 8 acq/5 guide)
+OBS_28777_ARGS = {
+    "obsid": 28777,
+    "att": [0.142378962865, -0.842210948602, 0.4728311264, 0.216424755738],
+    "date": "2025:174:00:42:44.586",
+    "detector": "HRC-I",
+    "dither_acq": [20.0014963044938, 20.0014963044938],
+    "dither_guide": [20.0014963044938, 20.0014963044938],
+    "fid_ids": [8, 9, 10],
+    "include_halfws_acq": [160, 160, 120, 140, 100, 160, 160, 100],
+    "include_ids_acq": [
+        331222504,
+        331224640,
+        260576048,
+        331223656,
+        260571904,
+        260580432,
+        260575280,
+        260575376,
+    ],
+    "include_ids_guide": [331222504, 331224640, 260576048, 331223656, 260571904],
+    "man_angle": 122.221322321489,
+    "n_acq": 8,
+    "n_fid": 3,
+    "n_guide": 5,
+    "sim_offset": 0,
+    "t_ccd_acq": -4.72435604571444,
+    "t_ccd_guide": -4.53268231435102,
+    "duration": 20000.0,
+    "target_name": "SN 1941C",
+}
+
+# Attitude and date of the obsid 29674 Jupiter observation in SEP1525A, with the
+# star and fid selection left to proseco.
+OBS_29674_ARGS = {
+    "obsid": 29674,
+    "att": [0.47935711, 0.44950136, 0.68474659, 0.31509901],
+    "date": "2025:258:14:42:16.000",
+    "detector": "HRC-S",
+    "dither_acq": [20.0, 20.0],
+    "dither_guide": [20.0, 20.0],
+    "fid_ids": [],
+    "include_halfws_acq": [],
+    "include_ids_acq": [],
+    "include_ids_guide": [],
+    "man_angle": 180.0,
+    "n_acq": 8,
+    "n_guide": 5,
+    "sim_offset": 0,
+    "t_ccd_acq": -8.6,
+    "t_ccd_guide": -8.6,
+    "duration": 10000.0,
+    "target_name": "Jupiter",
+}
+
+RAN_PARTIAL_CHECKS = "Jupiter mag <= -2.0. Ran Partial OBO Mitigation checks."
+
+
+def test_get_proseco_catalog_returns_expected_acq_stars():
+    """get_proseco_catalog returns a catalog containing all commanded acq star IDs."""
+    aca = get_proseco_catalog(**OBS_28777_ARGS)
+    acq_ids = set(aca.acqs["id"])
+    for star_id in OBS_28777_ARGS["include_ids_acq"]:
+        assert star_id in acq_ids
+
+
+def test_get_proseco_catalog_translates_fid_ids():
+    """Starcheck HRC-I fid ids 8-10 become proseco per-detector fid ids 2-4."""
+    aca = get_proseco_catalog(**OBS_28777_ARGS)
+    assert sorted(aca.fids["id"]) == [2, 3, 4]
+
+
+def test_run_sparkles_jupiter_checks_no_jupiter():
+    """A normal observation far from Jupiter gives no Jupiter messages."""
+    result = run_sparkles_jupiter_checks(OBS_28777_ARGS)
+    assert result == {"warn": [], "orange_warn": [], "yellow_warn": [], "fyi": []}
+
+
+def test_run_sparkles_jupiter_checks_jupiter_target():
+    """A Jupiter target in a partial mitigation period runs the Jupiter checks."""
+    result = run_sparkles_jupiter_checks(OBS_29674_ARGS)
+    assert RAN_PARTIAL_CHECKS in result["fyi"]
+
+
+def test_run_sparkles_jupiter_checks_no_target_name():
+    """A missing target name (None from Perl undef) does not raise."""
+    args = OBS_28777_ARGS | {"target_name": None}
+    result = run_sparkles_jupiter_checks(args)
+    assert result == {"warn": [], "orange_warn": [], "yellow_warn": [], "fyi": []}
+
+
+def test_run_sparkles_jupiter_checks_proseco_failure():
+    """If proseco cannot build the catalog, report a caution instead of raising."""
+    args = OBS_28777_ARGS | {"include_ids_acq": [1], "include_halfws_acq": [160]}
+    result = run_sparkles_jupiter_checks(args)
+    assert result["warn"] == []
+    assert result["yellow_warn"] == []
+    assert result["fyi"] == []
+    assert len(result["orange_warn"]) == 1
+    assert result["orange_warn"][0].startswith(
+        "Jupiter checks not run: proseco could not build a catalog"
+    )
 
 
 def test_check_dynamic_hot_pix():
