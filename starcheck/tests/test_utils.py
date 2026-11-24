@@ -1,5 +1,6 @@
 from sparkles.messages import Message
 
+from starcheck import utils
 from starcheck.utils import (
     check_hot_pix,
     format_sparkles_message,
@@ -80,8 +81,13 @@ def test_get_proseco_catalog_translates_fid_ids():
     assert sorted(aca.fids["id"]) == [2, 3, 4]
 
 
-def test_run_sparkles_jupiter_checks_no_jupiter():
-    """A normal observation far from Jupiter gives no Jupiter messages."""
+def test_run_sparkles_jupiter_checks_no_jupiter(monkeypatch):
+    """A target without "jupiter" in the name gives no messages and builds no catalog."""
+
+    def fail_get_proseco_catalog(**kwargs):
+        raise AssertionError("get_proseco_catalog should not be called")
+
+    monkeypatch.setattr(utils, "get_proseco_catalog", fail_get_proseco_catalog)
     result = run_sparkles_jupiter_checks(OBS_28777_ARGS)
     assert result == {"warn": [], "orange_warn": [], "yellow_warn": [], "fyi": []}
 
@@ -101,7 +107,11 @@ def test_run_sparkles_jupiter_checks_no_target_name():
 
 def test_run_sparkles_jupiter_checks_proseco_failure():
     """If proseco cannot build the catalog, report a caution instead of raising."""
-    args = OBS_28777_ARGS | {"include_ids_acq": [1], "include_halfws_acq": [160]}
+    args = OBS_28777_ARGS | {
+        "target_name": "Jupiter",
+        "include_ids_acq": [1],
+        "include_halfws_acq": [160],
+    }
     result = run_sparkles_jupiter_checks(args)
     assert result["warn"] == []
     assert result["yellow_warn"] == []

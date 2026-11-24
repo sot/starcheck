@@ -636,10 +636,12 @@ def run_sparkles_jupiter_checks(proseco_args: dict) -> dict[str, list[str]]:
     """
     Run the sparkles Jupiter checks for an observation.
 
-    This builds the proseco catalog for the observation (see get_proseco_catalog),
-    runs ``sparkles.checks.check_run_jupiter_checks`` on it, and sorts the message
-    texts into the starcheck warning lists. If proseco cannot build the catalog, a
-    single caution is returned instead of raising.
+    As in sparkles, the checks only apply when the target name contains "jupiter"
+    (any case), so other observations return no messages without building a
+    catalog. Otherwise this builds the proseco catalog for the observation (see
+    get_proseco_catalog), runs ``sparkles.checks.check_run_jupiter_checks`` on it,
+    and sorts the message texts into the starcheck warning lists. If proseco cannot
+    build the catalog, a single caution is returned instead of raising.
 
     :param proseco_args: observation parameters from Obsid.proseco_args()
     :returns: dict with keys 'warn' (critical), 'orange_warn' (caution),
@@ -648,6 +650,11 @@ def run_sparkles_jupiter_checks(proseco_args: dict) -> dict[str, list[str]]:
     from sparkles.checks import check_run_jupiter_checks
 
     warnings_by_list = {key: [] for key in SPARKLES_CATEGORY_TO_STARCHECK.values()}
+
+    # A Perl undef target name arrives here as None
+    target_name = proseco_args.get("target_name") or ""
+    if "jupiter" not in target_name.lower():
+        return warnings_by_list
 
     aca = get_proseco_catalog(raise_exc=False, **proseco_args)
     if aca.exception:
