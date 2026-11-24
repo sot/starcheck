@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import warnings
 from pathlib import Path
 
@@ -28,6 +29,7 @@ from proseco.catalog import ACATable, get_aca_catalog
 from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
 from ska_quatutil import radec2yagzag
+from sparkles.messages import Message
 from testr import test_helper
 
 import starcheck
@@ -656,9 +658,66 @@ def run_sparkles_jupiter_checks(proseco_args: dict) -> dict[str, list[str]]:
         return warnings_by_list
 
     acar = aca.get_review_table()
+    detector = proseco_args["detector"]
+    catalog_ids = proseco_args.get("catalog_ids", [])
     for msg in check_run_jupiter_checks(acar):
-        warnings_by_list[SPARKLES_CATEGORY_TO_STARCHECK[msg.category]].append(msg.text)
+        text = format_sparkles_message(msg, acar, detector, catalog_ids)
+        warnings_by_list[SPARKLES_CATEGORY_TO_STARCHECK[msg.category]].append(text)
     return warnings_by_list
+
+
+def get_starcheck_index(
+    acar: ACATable, proseco_idx: int, detector: str, catalog_ids: list[int | None]
+) -> int | None:
+    """
+    Starcheck catalog index of the proseco catalog entry with idx ``proseco_idx``.
+
+    The proseco catalog rebuilt by starcheck can order entries differently from the
+    commanded catalog, so entries are matched by id (fid ids translated to
+    starcheck's numbering) rather than by idx.
+
+    :param acar: proseco catalog (or review table) with 'idx', 'id' and 'type'
+    :param proseco_idx: idx of the entry in ``acar``
+    :param detector: science detector, used to translate fid ids
+    :param catalog_ids: id of the entry at each starcheck catalog index (index 1 is
+        element 0), with None for an empty slot
+    :returns: starcheck catalog index (1-16), or None if there is no match
+    """
+    matches = acar[acar["idx"] == proseco_idx]
+    if len(matches) == 0:
+        return None
+    entry = matches[0]
+    entry_id = int(entry["id"])
+    if entry["type"] == "FID":
+        entry_id += FID_ID_OFFSET[detector]
+    if entry_id not in catalog_ids:
+        return None
+    return catalog_ids.index(entry_id) + 1
+
+
+def format_sparkles_message(
+    msg: Message, acar: ACATable, detector: str, catalog_ids: list[int | None]
+) -> str:
+    """
+    Starcheck text for a sparkles message.
+
+    A message about a catalog entry (``msg.idx`` set) gets the starcheck catalog
+    index as a "[ N]" prefix, and the proseco "idx N" is removed from the text since
+    it can differ from the starcheck index. Other messages are returned unchanged.
+
+    :param msg: sparkles message
+    :param acar: proseco catalog (or review table) the message refers to
+    :param detector: science detector, used to translate fid ids
+    :param catalog_ids: id of the entry at each starcheck catalog index
+    :returns: message text
+    """
+    if msg.idx is None:
+        return msg.text
+    starcheck_idx = get_starcheck_index(acar, msg.idx, detector, catalog_ids)
+    if starcheck_idx is None:
+        return msg.text
+    text = re.sub(rf"\bidx {msg.idx}\s+", "", msg.text)
+    return f"[{starcheck_idx:2d}] {text}"
 
 
 def vehicle_filter_backstop(backstop_file, outfile):

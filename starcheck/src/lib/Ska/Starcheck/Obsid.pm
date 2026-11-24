@@ -1034,8 +1034,8 @@ sub check_jupiter {
 #############################################################################################
     # Run the sparkles Jupiter checks on the proseco catalog for this observation
     # (built from $self->{proseco_args}) and add the messages to the matching
-    # warning lists.  Sparkles puts "idx N" in messages about a catalog entry; that
-    # is copied to the front as "[ N]" to match the other starcheck catalog warnings.
+    # warning lists.  Messages about a catalog entry come back with the starcheck
+    # catalog index as a "[ N]" prefix (matched by id in utils.format_sparkles_message).
     my $self = shift;
     my $args = $self->{proseco_args};
 
@@ -1044,9 +1044,6 @@ sub check_jupiter {
     my $jupiter_warnings = call_python("utils.run_sparkles_jupiter_checks", [$args]);
     for my $warn_type (qw(warn orange_warn yellow_warn fyi)) {
         for my $warn (@{ $jupiter_warnings->{$warn_type} }) {
-            if ($warn =~ /idx (\d+)/) {
-                $warn = sprintf("[%2d] %s", $1, $warn);
-            }
             push @{ $self->{$warn_type} }, "$warn\n";
         }
     }
@@ -3096,11 +3093,15 @@ sub proseco_args {
     my @gui_ids;
     my @fid_ids;
     my @halfwidths;
+    # Id (star or fid) at each catalog index (element 0 is index 1), undef if none.
+    # Used to match messages about the rebuilt proseco catalog back to these indexes.
+    my @catalog_ids;
 
  # Loop over the star catalog and assign the acq stars, guide stars, and fids to arrays.
   IDX:
     foreach my $i (1 .. 16) {
         (my $sid = $cat_cmd->{"GS_ID$i"}) =~ s/[\s\*]//g;
+        $catalog_ids[ $i - 1 ] = ($sid =~ /^\d+$/) ? int($sid) : undef;
 
         # If there is no star there is nothing for proseco probs to do so skip it.
         # But warn if it was a thing that should have had an id (BOT/ACQ/GUI).
@@ -3175,7 +3176,8 @@ sub proseco_args {
         n_guide => scalar(@gui_ids),
         fid_ids => \@fid_ids,
         n_fid => scalar(@fid_ids),
-        acq_indexes => \@acq_indexes
+        acq_indexes => \@acq_indexes,
+        catalog_ids => \@catalog_ids
     );
 
     return \%proseco_args;

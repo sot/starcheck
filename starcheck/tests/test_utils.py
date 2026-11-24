@@ -1,6 +1,10 @@
+from sparkles.messages import Message
+
 from starcheck.utils import (
     check_hot_pix,
+    format_sparkles_message,
     get_proseco_catalog,
+    get_starcheck_index,
     run_sparkles_jupiter_checks,
 )
 
@@ -106,6 +110,51 @@ def test_run_sparkles_jupiter_checks_proseco_failure():
     assert result["orange_warn"][0].startswith(
         "Jupiter checks not run: proseco could not build a catalog"
     )
+
+
+def _starcheck_catalog_ids_28777() -> list[int | None]:
+    """Starcheck catalog ids by index for a made-up ordering of the 28777 catalog.
+
+    Starcheck index 3 is HRC-I fid 8 (proseco fid 2) and index 10 is star 331222504.
+    The other slots are empty.
+    """
+    catalog_ids = [None] * 16
+    catalog_ids[2] = 8
+    catalog_ids[9] = 331222504
+    return catalog_ids
+
+
+def test_get_starcheck_index():
+    """Proseco catalog entries map to starcheck catalog indexes by id."""
+    acar = get_proseco_catalog(**OBS_28777_ARGS).get_review_table()
+    catalog_ids = _starcheck_catalog_ids_28777()
+    fid_idx = acar["idx"][(acar["type"] == "FID") & (acar["id"] == 2)][0]
+    star_idx = acar["idx"][acar["id"] == 331222504][0]
+    other_idx = acar["idx"][acar["id"] == 331224640][0]
+
+    assert get_starcheck_index(acar, fid_idx, "HRC-I", catalog_ids) == 3
+    assert get_starcheck_index(acar, star_idx, "HRC-I", catalog_ids) == 10
+    # In the proseco catalog but not the starcheck one, or not in either
+    assert get_starcheck_index(acar, other_idx, "HRC-I", catalog_ids) is None
+    assert get_starcheck_index(acar, 99, "HRC-I", catalog_ids) is None
+
+
+def test_format_sparkles_message():
+    """The starcheck index replaces the proseco idx in a sparkles message."""
+    acar = get_proseco_catalog(**OBS_28777_ARGS).get_review_table()
+    catalog_ids = _starcheck_catalog_ids_28777()
+    star_idx = int(acar["idx"][acar["id"] == 331222504][0])
+    msg = Message(
+        "critical",
+        f"Jupiter column in acquisition box idx {star_idx} id 331222504 row 1.0 col 2.0",
+        idx=star_idx,
+    )
+    text = format_sparkles_message(msg, acar, "HRC-I", catalog_ids)
+    assert text == "[10] Jupiter column in acquisition box id 331222504 row 1.0 col 2.0"
+
+    # Messages without an idx are unchanged
+    info = Message("info", "Jupiter mag <= -2.0. Ran Partial OBO Mitigation checks.")
+    assert format_sparkles_message(info, acar, "HRC-I", catalog_ids) == info.text
 
 
 def test_check_dynamic_hot_pix():
