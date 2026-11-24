@@ -437,7 +437,7 @@ foreach my $obsid (@obsid_id) {
     $obs{$obsid}->set_obsid(\%guidesumm);    # Commanded obsid
     $obs{$obsid}->set_target();
     $obs{$obsid}->set_star_catalog();
-    $obs{$obsid}->set_maneuver($mm);
+    $obs{$obsid}->set_maneuver($mm, \@ps);
     $obs{$obsid}->set_files(
         $STARCHECK,
         $backstop,

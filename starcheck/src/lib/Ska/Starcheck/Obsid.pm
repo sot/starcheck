@@ -22,7 +22,7 @@ use strict;
 use warnings;
 use Ska::Starcheck::Python qw(date2time time2date call_python);
 
-use List::Util qw(min max);
+use List::Util qw(min max first);
 use Quat;
 use File::Basename;
 use POSIX qw(floor);
@@ -310,9 +310,28 @@ sub set_maneuver {
 ##################################################################################
     my $self = shift;
     my $mm = shift;
+    my $ps = shift;
     my $n = 1;
     my $c;
     my $found;
+
+    my $dot_obsid = $self->{dot_obsid};
+
+    # Before ORViewer-DOT (promoted end of August 2017), engineering request dot obsids
+    # were not numeric (e.g. P0802), while the maneuvers use the numeric obsid.  For
+    # those, get the numeric obsid from the processing summary, which has lines like
+    # 'P080200   CAL  2017:013:03:00:49.827 ... OBSID = 50385 {Perigee Attitude}'.
+    # The last pre-ORViewer-DOT command looks to be 2017:240, so the date is padded by
+    # a few days.  This only matters for running old loads (e.g. regression testing).
+    if (    defined $ps
+        and $dot_obsid !~ /^\d/
+        and $self->{date} lt '2017:250:00:00:00.000')
+    {
+        my $ps_line = first { /^\s*\Q$dot_obsid\E.*OBSID/ } @{$ps};
+        if ($ps_line && $ps_line =~ /OBSID\s*=\s*(\d{1,5})/) {
+            $dot_obsid = $1;
+        }
+    }
 
     while ($c = find_command($self, "MP_TARGQUAT", $n++)) {
         $found = 0;
@@ -321,7 +340,7 @@ sub set_maneuver {
 
 # where manvr_dest is either the final_obsid of a maneuver or the eventual destination obsid
             # of a segmented maneuver
-            if (   ($manvr_obsid eq $self->{dot_obsid})
+            if (   ($manvr_obsid eq $dot_obsid)
                 && abs($m->{q1} - $c->{Q1}) < 1e-7
                 && abs($m->{q2} - $c->{Q2}) < 1e-7
                 && abs($m->{q3} - $c->{Q3}) < 1e-7)
