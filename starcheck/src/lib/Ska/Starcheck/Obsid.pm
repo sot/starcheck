@@ -1030,6 +1030,26 @@ sub check_for_srdcs {
 }
 
 #############################################################################################
+sub check_jupiter {
+#############################################################################################
+    # Run the sparkles Jupiter checks on the proseco catalog for this observation
+    # (built from $self->{proseco_args}) and add the messages to the matching
+    # warning lists.  Messages about a catalog entry come back with the starcheck
+    # catalog index as a "[ N]" prefix (matched by id in utils.format_sparkles_message).
+    my $self = shift;
+    my $args = $self->{proseco_args};
+
+    return if (not %{$args});
+
+    my $jupiter_warnings = call_python("utils.run_sparkles_jupiter_checks", [$args]);
+    for my $warn_type (qw(warn orange_warn yellow_warn fyi)) {
+        for my $warn (@{ $jupiter_warnings->{$warn_type} }) {
+            push @{ $self->{$warn_type} }, "$warn\n";
+        }
+    }
+}
+
+#############################################################################################
 sub check_sim_position {
 #############################################################################################
     my $self = shift;
@@ -3073,11 +3093,15 @@ sub proseco_args {
     my @gui_ids;
     my @fid_ids;
     my @halfwidths;
+    # Id (star or fid) at each catalog index (element 0 is index 1), undef if none.
+    # Used to match messages about the rebuilt proseco catalog back to these indexes.
+    my @catalog_ids;
 
  # Loop over the star catalog and assign the acq stars, guide stars, and fids to arrays.
   IDX:
     foreach my $i (1 .. 16) {
         (my $sid = $cat_cmd->{"GS_ID$i"}) =~ s/[\s\*]//g;
+        $catalog_ids[ $i - 1 ] = ($sid =~ /^\d+$/) ? int($sid) : undef;
 
         # If there is no star there is nothing for proseco probs to do so skip it.
         # But warn if it was a thing that should have had an id (BOT/ACQ/GUI).
@@ -3113,6 +3137,15 @@ sub proseco_args {
         }
     }
 
+    # Observation duration (secs) and target name, used by the Jupiter checks.  The
+    # duration is undef (None in Python) if the observation times are not known, and
+    # the target name falls back to SS_OBJECT as in the report header.
+    my $duration =
+      (defined $self->{obs_tstart} and defined $self->{obs_tstop})
+      ? $self->{obs_tstop} - $self->{obs_tstart}
+      : undef;
+    my $target_name = $self->{TARGET_NAME} || $self->{SS_OBJECT} || '';
+
 # Build a hash of the arguments that could be used by proseco (get_aca_catalog or get_acq_catalog).
 # Zeros are added to most of the numeric parameters as that seems to help "cast" them to floats or ints in
 # Perl to some extent.  Also save the acquisition star catalog indexes to make it easier to assign back
@@ -3120,6 +3153,8 @@ sub proseco_args {
     %proseco_args = (
         obsid => $self->{obsid},
         date => $targ_cmd->{stop_date},
+        duration => $duration,
+        target_name => $target_name,
         att => [
             0 + $targ_cmd->{q1},
             0 + $targ_cmd->{q2},
@@ -3141,7 +3176,8 @@ sub proseco_args {
         n_guide => scalar(@gui_ids),
         fid_ids => \@fid_ids,
         n_fid => scalar(@fid_ids),
-        acq_indexes => \@acq_indexes
+        acq_indexes => \@acq_indexes,
+        catalog_ids => \@catalog_ids
     );
 
     return \%proseco_args;

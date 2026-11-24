@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import warnings
 from pathlib import Path
 
@@ -24,10 +25,11 @@ from chandra_aca.transform import mag_to_count_rate, pixels_to_yagzag, yagzag_to
 from cxotime import CxoTime
 from mica.archive import aca_dark
 from parse_cm import read_backstop_as_list, write_backstop
-from proseco.catalog import get_aca_catalog
+from proseco.catalog import ACATable, get_aca_catalog
 from proseco.core import ACABox
 from proseco.guide import get_imposter_mags
 from ska_quatutil import radec2yagzag
+from sparkles.messages import Message
 from testr import test_helper
 
 import starcheck
@@ -566,6 +568,163 @@ def proseco_probs(**kw):
     ]
 
     return p_acqs, float(-np.log10(acq_cat.calc_p_safe())), float(np.sum(p_acqs))
+
+
+# Starcheck numbers fid lights across all detectors (ACIS 1-6, HRC-I 7-10,
+# HRC-S 11-14) while proseco numbers them per detector starting from 1.
+FID_ID_OFFSET = {"ACIS-I": 0, "ACIS-S": 0, "HRC-I": 6, "HRC-S": 10}
+
+# Keys of Obsid.proseco_args() that are passed through to get_aca_catalog as is.
+PROSECO_CATALOG_KEYS = (
+    "date",
+    "duration",
+    "man_angle",
+    "detector",
+    "sim_offset",
+    "t_ccd_acq",
+    "t_ccd_guide",
+    "n_acq",
+    "include_ids_acq",
+    "include_halfws_acq",
+    "n_guide",
+    "include_ids_guide",
+)
+
+# Sparkles message category to the starcheck Obsid warning list it goes in.
+SPARKLES_CATEGORY_TO_STARCHECK = {
+    "critical": "warn",
+    "caution": "orange_warn",
+    "warning": "yellow_warn",
+    "info": "fyi",
+}
+
+
+def get_proseco_catalog(raise_exc: bool = True, **proseco_args) -> ACATable:
+    """
+    Build the full proseco catalog for an observation from Obsid.proseco_args().
+
+    The commanded acq, guide and fid ids are forced with the include_ids_* arguments
+    so the catalog matches the one in backstop. Fid ids are translated from
+    starcheck's numbering to proseco's per-detector numbering.
+
+    :param raise_exc: raise an exception if proseco fails (default=True). If False,
+        an empty catalog with the traceback in ``.exception`` is returned instead.
+    :param **proseco_args: observation parameters from Obsid.proseco_args()
+    :returns: proseco ACATable catalog
+    """
+    args = {
+        key: proseco_args[key] for key in PROSECO_CATALOG_KEYS if key in proseco_args
+    }
+    args["obsid"] = int(proseco_args["obsid"])
+    args["att"] = Quaternion.normalize(proseco_args["att"])
+    args["dither_acq"] = ACABox(proseco_args["dither_acq"])
+    args["dither_guide"] = ACABox(proseco_args["dither_guide"])
+    # A Perl undef target name arrives here as None
+    args["target_name"] = proseco_args.get("target_name") or ""
+    args["focus_offset"] = 0
+
+    fid_offset = FID_ID_OFFSET[proseco_args["detector"]]
+    args["include_ids_fid"] = [
+        fid_id - fid_offset for fid_id in proseco_args["fid_ids"]
+    ]
+    args["n_fid"] = len(args["include_ids_fid"])
+
+    return get_aca_catalog(raise_exc=raise_exc, **args)
+
+
+def run_sparkles_jupiter_checks(proseco_args: dict) -> dict[str, list[str]]:
+    """
+    Run the sparkles Jupiter checks for an observation.
+
+    As in sparkles, the checks only apply when the target name contains "jupiter"
+    (any case), so other observations return no messages without building a
+    catalog. Otherwise this builds the proseco catalog for the observation (see
+    get_proseco_catalog), runs ``sparkles.checks.check_run_jupiter_checks`` on it,
+    and sorts the message texts into the starcheck warning lists. If proseco cannot
+    build the catalog, a single caution is returned instead of raising.
+
+    :param proseco_args: observation parameters from Obsid.proseco_args()
+    :returns: dict with keys 'warn' (critical), 'orange_warn' (caution),
+        'yellow_warn' (warning) and 'fyi' (info), each a list of message texts.
+    """
+    from sparkles.checks import check_run_jupiter_checks
+
+    warnings_by_list = {key: [] for key in SPARKLES_CATEGORY_TO_STARCHECK.values()}
+
+    # A Perl undef target name arrives here as None
+    target_name = proseco_args.get("target_name") or ""
+    if "jupiter" not in target_name.lower():
+        return warnings_by_list
+
+    aca = get_proseco_catalog(raise_exc=False, **proseco_args)
+    if aca.exception:
+        last_line = aca.exception.strip().splitlines()[-1]
+        warnings_by_list["orange_warn"].append(
+            f"Jupiter checks not run: proseco could not build a catalog ({last_line})"
+        )
+        return warnings_by_list
+
+    acar = aca.get_review_table()
+    detector = proseco_args["detector"]
+    catalog_ids = proseco_args.get("catalog_ids", [])
+    for msg in check_run_jupiter_checks(acar):
+        text = format_sparkles_message(msg, acar, detector, catalog_ids)
+        warnings_by_list[SPARKLES_CATEGORY_TO_STARCHECK[msg.category]].append(text)
+    return warnings_by_list
+
+
+def get_starcheck_index(
+    acar: ACATable, proseco_idx: int, detector: str, catalog_ids: list[int | None]
+) -> int | None:
+    """
+    Starcheck catalog index of the proseco catalog entry with idx ``proseco_idx``.
+
+    The proseco catalog rebuilt by starcheck can order entries differently from the
+    commanded catalog, so entries are matched by id (fid ids translated to
+    starcheck's numbering) rather than by idx.
+
+    :param acar: proseco catalog (or review table) with 'idx', 'id' and 'type'
+    :param proseco_idx: idx of the entry in ``acar``
+    :param detector: science detector, used to translate fid ids
+    :param catalog_ids: id of the entry at each starcheck catalog index (index 1 is
+        element 0), with None for an empty slot
+    :returns: starcheck catalog index (1-16), or None if there is no match
+    """
+    matches = acar[acar["idx"] == proseco_idx]
+    if len(matches) == 0:
+        return None
+    entry = matches[0]
+    entry_id = int(entry["id"])
+    if entry["type"] == "FID":
+        entry_id += FID_ID_OFFSET[detector]
+    if entry_id not in catalog_ids:
+        return None
+    return catalog_ids.index(entry_id) + 1
+
+
+def format_sparkles_message(
+    msg: Message, acar: ACATable, detector: str, catalog_ids: list[int | None]
+) -> str:
+    """
+    Starcheck text for a sparkles message.
+
+    A message about a catalog entry (``msg.idx`` set) gets the starcheck catalog
+    index as a "[ N]" prefix, and the proseco "idx N" is removed from the text since
+    it can differ from the starcheck index. Other messages are returned unchanged.
+
+    :param msg: sparkles message
+    :param acar: proseco catalog (or review table) the message refers to
+    :param detector: science detector, used to translate fid ids
+    :param catalog_ids: id of the entry at each starcheck catalog index
+    :returns: message text
+    """
+    if msg.idx is None:
+        return msg.text
+    starcheck_idx = get_starcheck_index(acar, msg.idx, detector, catalog_ids)
+    if starcheck_idx is None:
+        return msg.text
+    text = re.sub(rf"\bidx {msg.idx}\s+", "", msg.text)
+    return f"[{starcheck_idx:2d}] {text}"
 
 
 def vehicle_filter_backstop(backstop_file, outfile):
