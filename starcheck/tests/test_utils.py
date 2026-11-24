@@ -1,12 +1,16 @@
+import pickle
+
 from sparkles.messages import Message
 
 from starcheck import utils
 from starcheck.utils import (
     check_hot_pix,
+    collect_proseco_catalog,
     format_sparkles_message,
     get_proseco_catalog,
     get_starcheck_index,
     run_sparkles_jupiter_checks,
+    save_proseco_catalogs,
 )
 
 # Real proseco_args from obsid 28777 in JUN2325_A (HRC-I, 3 fids, 8 acq/5 guide)
@@ -165,6 +169,34 @@ def test_format_sparkles_message():
     # Messages without an idx are unchanged
     info = Message("info", "Jupiter mag <= -2.0. Ran Partial OBO Mitigation checks.")
     assert format_sparkles_message(info, acar, "HRC-I", catalog_ids) == info.text
+
+
+def test_save_proseco_catalogs(tmp_path):
+    """Collected catalogs for all obsids, not just Jupiter ones, are saved by obsid."""
+    utils.PROSECO_CATALOGS.clear()
+    collect_proseco_catalog(OBS_28777_ARGS)
+    collect_proseco_catalog(OBS_29674_ARGS)
+    out_path = tmp_path / "catalogs.pkl"
+    save_proseco_catalogs(out_path)
+    with open(out_path, "rb") as fh:
+        catalogs = pickle.load(fh)
+    assert sorted(catalogs) == [28777, 29674]
+    assert set(OBS_28777_ARGS["include_ids_acq"]) <= set(catalogs[28777].acqs["id"])
+    utils.PROSECO_CATALOGS.clear()
+
+
+def test_run_sparkles_jupiter_checks_reuses_collected_catalog(monkeypatch):
+    """The Jupiter checks reuse a catalog already collected for -save_pkl."""
+    utils.PROSECO_CATALOGS.clear()
+    collect_proseco_catalog(OBS_29674_ARGS)
+
+    def fail_get_proseco_catalog(**kwargs):
+        raise AssertionError("get_proseco_catalog should not be called again")
+
+    monkeypatch.setattr(utils, "get_proseco_catalog", fail_get_proseco_catalog)
+    result = run_sparkles_jupiter_checks(OBS_29674_ARGS)
+    assert RAN_PARTIAL_CHECKS in result["fyi"]
+    utils.PROSECO_CATALOGS.clear()
 
 
 def test_check_dynamic_hot_pix():

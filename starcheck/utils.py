@@ -1,5 +1,6 @@
 import logging
 import os
+import pickle
 import re
 import warnings
 from pathlib import Path
@@ -590,6 +591,11 @@ PROSECO_CATALOG_KEYS = (
     "include_ids_guide",
 )
 
+# Proseco catalogs built in this starcheck run, keyed by obsid: all observations with
+# -save_pkl (collect_proseco_catalog), otherwise only the Jupiter targets. Saved with
+# save_proseco_catalogs() for the starcheck -save_pkl option.
+PROSECO_CATALOGS = {}
+
 # Sparkles message category to the starcheck Obsid warning list it goes in.
 SPARKLES_CATEGORY_TO_STARCHECK = {
     "critical": "warn",
@@ -632,6 +638,36 @@ def get_proseco_catalog(raise_exc: bool = True, **proseco_args) -> ACATable:
     return get_aca_catalog(raise_exc=raise_exc, **args)
 
 
+def get_collected_proseco_catalog(proseco_args: dict) -> ACATable:
+    """
+    Proseco catalog for an observation, built once per obsid and kept for -save_pkl.
+
+    The catalog is built with get_proseco_catalog (with raise_exc=False) the first
+    time and stored in PROSECO_CATALOGS, so the Jupiter checks reuse a catalog that
+    collect_proseco_catalog already built.
+
+    :param proseco_args: observation parameters from Obsid.proseco_args()
+    :returns: proseco ACATable catalog (empty with ``.exception`` set on failure)
+    """
+    obsid = int(proseco_args["obsid"])
+    if obsid not in PROSECO_CATALOGS:
+        PROSECO_CATALOGS[obsid] = get_proseco_catalog(raise_exc=False, **proseco_args)
+    return PROSECO_CATALOGS[obsid]
+
+
+def collect_proseco_catalog(proseco_args: dict) -> None:
+    """
+    Build and keep the proseco catalog for an observation for the -save_pkl option.
+
+    starcheck calls this for every observation when -save_pkl is set, so the pickle
+    has all catalogs and not only the ones the Jupiter checks build. Nothing is
+    returned so the call from Perl does not pass back a catalog.
+
+    :param proseco_args: observation parameters from Obsid.proseco_args()
+    """
+    get_collected_proseco_catalog(proseco_args)
+
+
 def run_sparkles_jupiter_checks(proseco_args: dict) -> dict[str, list[str]]:
     """
     Run the sparkles Jupiter checks for an observation.
@@ -656,7 +692,7 @@ def run_sparkles_jupiter_checks(proseco_args: dict) -> dict[str, list[str]]:
     if "jupiter" not in target_name.lower():
         return warnings_by_list
 
-    aca = get_proseco_catalog(raise_exc=False, **proseco_args)
+    aca = get_collected_proseco_catalog(proseco_args)
     if aca.exception:
         last_line = aca.exception.strip().splitlines()[-1]
         warnings_by_list["orange_warn"].append(
@@ -725,6 +761,20 @@ def format_sparkles_message(
         return msg.text
     text = re.sub(rf"\bidx {msg.idx}\s+", "", msg.text)
     return f"[{starcheck_idx:2d}] {text}"
+
+
+def save_proseco_catalogs(path: str | Path) -> None:
+    """
+    Save the proseco catalogs built in this starcheck run to a pickle file.
+
+    This writes PROSECO_CATALOGS (a dict of ACATable keyed by obsid) for debugging,
+    e.g. reviewing a catalog with sparkles outside of starcheck. With -save_pkl
+    starcheck collects a catalog for every observation (collect_proseco_catalog).
+
+    :param path: output pickle file path
+    """
+    with open(path, "wb") as fh:
+        pickle.dump(PROSECO_CATALOGS, fh)
 
 
 def vehicle_filter_backstop(backstop_file, outfile):

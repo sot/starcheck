@@ -69,6 +69,7 @@ GetOptions(
     'run_start_time=s',
     'maude!',
     'max_obsids:i',
+    'save_pkl=s',
 ) || exit(1);
 
 usage(1)
@@ -642,6 +643,10 @@ foreach my $obsid (@obsid_id) {
         # Get the args that proseco would want
         $obs{$obsid}->{'proseco_args'} = $obs{$obsid}->proseco_args();
         $obs{$obsid}->set_proseco_probs_and_check_P2();
+        # With -save_pkl build the proseco catalog for every obsid so all are saved
+        # (the Jupiter checks reuse it)
+        call_python("utils.collect_proseco_catalog", [ $obs{$obsid}->{'proseco_args'} ])
+          if ($par{save_pkl} and %{ $obs{$obsid}->{'proseco_args'} });
         $obs{$obsid}->check_jupiter();
         $obs{$obsid}->check_star_catalog($or{$obsid}, $par{vehicle});
         $obs{$obsid}->check_sim_position(@sim_trans) unless $par{vehicle};
@@ -654,6 +659,11 @@ foreach my $obsid (@obsid_id) {
     # Make sure there is only one star catalog per obsid
     warning("More than one star catalog assigned to Obsid $obsid\n")
       if ($obs{$obsid}->find_command('MP_STARCAT', 2));
+}
+
+# Optionally save the proseco catalogs for all obsids (for debugging)
+if ($par{save_pkl}) {
+    call_python("utils.save_proseco_catalogs", [ $par{save_pkl} ]);
 }
 
 my $final_json = json_obsids();
@@ -1255,6 +1265,11 @@ MAUDE will also be used if no AACCCDPT telemetry can be found in cheta archive f
 =item B<-max_obsids <N>>
 
 Limit starcheck review to first N obsids (for testing).
+
+=item B<-save_pkl <file>>
+
+Build the proseco catalog (with the commanded stars and fids) for every obsid and
+save them to <file> as a pickled dict keyed by obsid (for debugging).
 
 =item B<-fid_char <fid characteristics file>>
 
