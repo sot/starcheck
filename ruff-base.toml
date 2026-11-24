@@ -43,6 +43,7 @@ lint.ignore = [
   "PLR1730", # Checks for if statements that can be replaced with min() or max() calls
   "PLC0415", # `import` should be at the top-level of a file
   "PLW1641", # Class implements `__hash__` if `__eq__` is implemented
+  "PLR0917", # Too many positional arguments
 ]
 
 extend-exclude = [
